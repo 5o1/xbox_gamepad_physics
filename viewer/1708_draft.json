@@ -1,0 +1,240 @@
+{
+  "schema": 1,
+  "target": "Xbox One 1708",
+  "status": "unresolved_no_motion",
+  "source": "specs/xbox_v1.json; specs/interactive_acceptance.json",
+  "joints": [],
+  "pending": [
+    {
+      "channel": 0,
+      "name": "LX",
+      "type": null,
+      "meshes": null,
+      "axis": null,
+      "pivot": null,
+      "q0": null,
+      "q1": null,
+      "reason": "尚无完整且有来源的网格绑定、运动轴/轴心及行程组合；保留输入读数，不构造机械动作。"
+    },
+    {
+      "channel": 1,
+      "name": "LY",
+      "type": null,
+      "meshes": null,
+      "axis": null,
+      "pivot": null,
+      "q0": null,
+      "q1": null,
+      "reason": "尚无完整且有来源的网格绑定、运动轴/轴心及行程组合；保留输入读数，不构造机械动作。"
+    },
+    {
+      "channel": 2,
+      "name": "RX",
+      "type": null,
+      "meshes": null,
+      "axis": null,
+      "pivot": null,
+      "q0": null,
+      "q1": null,
+      "reason": "尚无完整且有来源的网格绑定、运动轴/轴心及行程组合；保留输入读数，不构造机械动作。"
+    },
+    {
+      "channel": 3,
+      "name": "RY",
+      "type": null,
+      "meshes": null,
+      "axis": null,
+      "pivot": null,
+      "q0": null,
+      "q1": null,
+      "reason": "尚无完整且有来源的网格绑定、运动轴/轴心及行程组合；保留输入读数，不构造机械动作。"
+    },
+    {
+      "channel": 4,
+      "name": "A",
+      "type": null,
+      "meshes": null,
+      "axis": null,
+      "pivot": null,
+      "q0": null,
+      "q1": null,
+      "reason": "尚无完整且有来源的网格绑定、运动轴/轴心及行程组合；保留输入读数，不构造机械动作。"
+    },
+    {
+      "channel": 5,
+      "name": "B",
+      "type": null,
+      "meshes": null,
+      "axis": null,
+      "pivot": null,
+      "q0": null,
+      "q1": null,
+      "reason": "尚无完整且有来源的网格绑定、运动轴/轴心及行程组合；保留输入读数，不构造机械动作。"
+    },
+    {
+      "channel": 6,
+      "name": "X",
+      "type": null,
+      "meshes": null,
+      "axis": null,
+      "pivot": null,
+      "q0": null,
+      "q1": null,
+      "reason": "尚无完整且有来源的网格绑定、运动轴/轴心及行程组合；保留输入读数，不构造机械动作。"
+    },
+    {
+      "channel": 7,
+      "name": "Y",
+      "type": null,
+      "meshes": null,
+      "axis": null,
+      "pivot": null,
+      "q0": null,
+      "q1": null,
+      "reason": "尚无完整且有来源的网格绑定、运动轴/轴心及行程组合；保留输入读数，不构造机械动作。"
+    },
+    {
+      "channel": 8,
+      "name": "LB",
+      "type": null,
+      "meshes": null,
+      "axis": null,
+      "pivot": null,
+      "q0": null,
+      "q1": null,
+      "reason": "尚无完整且有来源的网格绑定、运动轴/轴心及行程组合；保留输入读数，不构造机械动作。"
+    },
+    {
+      "channel": 9,
+      "name": "RB",
+      "type": null,
+      "meshes": null,
+      "axis": null,
+      "pivot": null,
+      "q0": null,
+      "q1": null,
+      "reason": "尚无完整且有来源的网格绑定、运动轴/轴心及行程组合；保留输入读数，不构造机械动作。"
+    },
+    {
+      "channel": 10,
+      "name": "LT",
+      "type": null,
+      "meshes": null,
+      "axis": null,
+      "pivot": null,
+      "q0": null,
+      "q1": null,
+      "reason": "尚无完整且有来源的网格绑定、运动轴/轴心及行程组合；保留输入读数，不构造机械动作。"
+    },
+    {
+      "channel": 11,
+      "name": "RT",
+      "type": null,
+      "meshes": null,
+      "axis": null,
+      "pivot": null,
+      "q0": null,
+      "q1": null,
+      "reason": "尚无完整且有来源的网格绑定、运动轴/轴心及行程组合；保留输入读数，不构造机械动作。"
+    },
+    {
+      "channel": 12,
+      "name": "View",
+      "type": null,
+      "meshes": null,
+      "axis": null,
+      "pivot": null,
+      "q0": null,
+      "q1": null,
+      "reason": "尚无完整且有来源的网格绑定、运动轴/轴心及行程组合；保留输入读数，不构造机械动作。"
+    },
+    {
+      "channel": 13,
+      "name": "Menu",
+      "type": null,
+      "meshes": null,
+      "axis": null,
+      "pivot": null,
+      "q0": null,
+      "q1": null,
+      "reason": "尚无完整且有来源的网格绑定、运动轴/轴心及行程组合；保留输入读数，不构造机械动作。"
+    },
+    {
+      "channel": 14,
+      "name": "L3",
+      "type": null,
+      "meshes": null,
+      "axis": null,
+      "pivot": null,
+      "q0": null,
+      "q1": null,
+      "reason": "尚无完整且有来源的网格绑定、运动轴/轴心及行程组合；保留输入读数，不构造机械动作。"
+    },
+    {
+      "channel": 15,
+      "name": "R3",
+      "type": null,
+      "meshes": null,
+      "axis": null,
+      "pivot": null,
+      "q0": null,
+      "q1": null,
+      "reason": "尚无完整且有来源的网格绑定、运动轴/轴心及行程组合；保留输入读数，不构造机械动作。"
+    },
+    {
+      "channel": 16,
+      "name": "DUp",
+      "type": null,
+      "meshes": null,
+      "axis": null,
+      "pivot": null,
+      "q0": null,
+      "q1": null,
+      "reason": "尚无完整且有来源的网格绑定、运动轴/轴心及行程组合；保留输入读数，不构造机械动作。"
+    },
+    {
+      "channel": 17,
+      "name": "DDown",
+      "type": null,
+      "meshes": null,
+      "axis": null,
+      "pivot": null,
+      "q0": null,
+      "q1": null,
+      "reason": "尚无完整且有来源的网格绑定、运动轴/轴心及行程组合；保留输入读数，不构造机械动作。"
+    },
+    {
+      "channel": 18,
+      "name": "DLeft",
+      "type": null,
+      "meshes": null,
+      "axis": null,
+      "pivot": null,
+      "q0": null,
+      "q1": null,
+      "reason": "尚无完整且有来源的网格绑定、运动轴/轴心及行程组合；保留输入读数，不构造机械动作。"
+    },
+    {
+      "channel": 19,
+      "name": "DRight",
+      "type": null,
+      "meshes": null,
+      "axis": null,
+      "pivot": null,
+      "q0": null,
+      "q1": null,
+      "reason": "尚无完整且有来源的网格绑定、运动轴/轴心及行程组合；保留输入读数，不构造机械动作。"
+    },
+    {
+      "channel": 20,
+      "name": "Guide",
+      "type": null,
+      "meshes": null,
+      "axis": null,
+      "pivot": null,
+      "q0": null,
+      "q1": null,
+      "reason": "尚无完整且有来源的网格绑定、运动轴/轴心及行程组合；保留输入读数，不构造机械动作。"
+    }
+  ]
+}

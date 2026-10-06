@@ -1,0 +1,32 @@
+{
+  "scope": "Signal-to-coordinate mapping only; not differentiable contacts, mesh pose or end-to-end VLA training",
+  "sources": [
+    "https://docs.pytorch.org/docs/2.14/generated/torch.where.html",
+    "https://docs.pytorch.org/docs/2.14/generated/torch.autograd.gradcheck.gradcheck.html",
+    "https://www.w3.org/TR/2025/WD-gamepad-20250710/#remapping"
+  ],
+  "design": {
+    "numeric_mapping": "Matches existing viewer/rig.mjs: piecewise affine sticks and affine buttons; inverse clipped to normalized bounds. This is a project mapping, not a measured Xbox transfer function.",
+    "input": "floating tensor [...,21] with standard axes then button values",
+    "output": "[...,J] coordinates in explicit configured channel order; inverse returns only J configured signals, never invented zeros for unknown channels",
+    "parameters": "q0/q1 must be finite and explicitly provided with provenance; fixed buffers, not learnable physical parameters",
+    "non_smooth_points": "Asymmetric stick zero has unequal one-sided derivatives; inverse clipping boundaries are nonsmooth and outside gradients are zero. Gradcheck samples interior points away from these boundaries.",
+    "numerical_safety": "Inactive where branches use safe nonzero divisors so button q0=0 does not introduce NaN gradients.",
+    "runtime_limits": "Validation performs tensor-to-Python checks and can synchronize GPU; no torch.compile or real-time throughput claim."
+  },
+  "harness": {
+    "script": "tests/test_torch_coordinates.py",
+    "reference_generator": "tests/export_coordinate_reference.mjs",
+    "reference": "results/coordinate_reference.json",
+    "reference_scope": "9 state vectors times all 21 channels, neutral/endpoints/intermediate values; synthetic parameters only",
+    "gradient_scope": "Batched [2,3,21] forward, inverse gradcheck in float64; composed upstream gradient; saturated zero gradient; float32 backward; malformed/null configuration rejection",
+    "comparison_tolerance": "atol=rtol=1e-12 for float64 cross-language coordinate comparison; numerical tolerance, not physical accuracy"
+  },
+  "result": {
+    "environment": "GPU node existing robotwin Python environment, torch 2.4.1+cu121, tests on CPU tensors",
+    "tests_passed": 5,
+    "cuda_execution_verified": false,
+    "physical_parameters_added": 0,
+    "real_controller_verified": false
+  }
+}

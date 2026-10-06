@@ -1,0 +1,18 @@
+{
+  "requirement": "User phase-one instruction: unsupported mechanical parameters remain null and marked, while other implementation continues",
+  "reference": "https://json-schema.org/understanding-json-schema/reference/null",
+  "reference_scope": "null is distinct from an absent property or zero; draft layout itself is a project convention, not a robotics standard",
+  "artifact": "viewer/1708_draft.json",
+  "generator": "scripts/make_rig_draft.mjs",
+  "rules": [
+    "Active joints retain strict schema 1 validation and assembly constraints.",
+    "Separate pending entries preserve channel identity and reason; geometry and range fields must explicitly be null. Partial source observations remain in sources/specs rather than masquerading as an active joint.",
+    "Active and pending channel identities cannot overlap. Promoting an entry requires removal from pending and a complete explicit active joint.",
+    "Pending entries never reach coordinate mapping or rendering transforms. No physical defaults are created.",
+    "The draft has 21 pending input channels, not a claim that the controller has 21 independent mechanical degrees of freedom."
+  ],
+  "harness": "tests/test_rig_draft.mjs",
+  "verification": "4 tests passed against actual candidate mesh inventory; UI integration syntax checked, browser rendering remains unverified",
+  "target_parameters_added": 0,
+  "interactive_acceptance": false
+}

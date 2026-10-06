@@ -1,0 +1,18 @@
+{
+  "scope": "Interactive viewer schema 1 transform composition; not Xbox mechanical calibration",
+  "references": [
+    "https://threejs.org/docs/pages/Matrix4.html",
+    "https://threejs.org/docs/pages/Vector3.html"
+  ],
+  "derivation": "For a displayed mesh M = T_n ... T_1 and edited joint j, subsequent transforms S = T_n ... T_(j+1) carry its pivot as a point and axis as a direction. Translation affects the pivot but not the axis. Dragging uses this same world frame, with other channels held fixed during the drag.",
+  "implementation": "viewer/rig.mjs carriedJointFrame; viewer/app.mjs pointerdown",
+  "harness": "tests/test_rig.mjs",
+  "checks": [
+    "Earlier X axis carried by later Z rotation becomes Y",
+    "Offset pivot follows rotation and subsequent translation",
+    "Transforms affecting other meshes are excluded",
+    "Neutral state leaves the joint frame unchanged"
+  ],
+  "browser_harness": "tests/browser_harness.mjs; actual mouse events on LeftThumb/Joystick-Left-Ring synthetic group, held-axis isolation, independent closed-form Rx Ry-equivalent ordered rotation matrix and pivot-translation comparison. Results: results/browser_harness.json. Fixture specifically uses Rx(y)Rz(x).",
+  "limits": "Numerical and synthetic browser tests, not actual controller calibration. Browser test verifies noncommuting sequential-axis interaction and pose composition, not arbitrary camera angles or simultaneous 2D dragging. No physical pivot or motion range is inferred."
+}

@@ -1,0 +1,26 @@
+{
+  "status": "inspection_tool_under_test_not_accepted_physical_asset",
+  "dependencies": {
+    "three": "0.180.0",
+    "tarball": "https://registry.npmjs.org/three/-/three-0.180.0.tgz",
+    "sha256": "ad66d724565ee29a2467277fa84daa5ed0211d6b8d446e9ef29f6bae0cd14144",
+    "license": "MIT; upstream package LICENSE retained on GPU node",
+    "download": "GPU NETWORK_INTERFACE direct, no proxy, registry IP 104.16.10.34 obtained using DNS-over-HTTPS"
+  },
+  "references": {
+    "picking": "https://threejs.org/docs/pages/Raycaster.html",
+    "mesh_loading": "https://threejs.org/docs/pages/OBJLoader.html",
+    "input": "https://www.w3.org/TR/2025/WD-gamepad-20250710/#remapping"
+  },
+  "decisions": {
+    "geometry": "Load actual SHA256-checked width-proxy OBJ parts, not replacement primitives",
+    "motion": "Only explicit source-labeled configuration; no default pivots or physical ranges. Scene presentation defaults are camera/light settings only.",
+    "mapping": "Piecewise-linear signal/joint coordinate mapping, neutral fixed at zero for stick axes. This is inspection interpolation, not a measured sensor calibration.",
+    "composition": "Configured transforms composed in file order about neutral-world axes/pivots; not an inferred internal mechanism",
+    "drag": "Revolute: signed ray-plane angle about configured axis. Prismatic: ray-view-plane displacement projected onto axis, corrected for foreshortening; reject near-end-on views.",
+    "reset": "Immediate kinematic reset or explicit hold; no claim of spring dynamics",
+    "configuration_evidence": "A provenance string is required but not semantically verified. Loading a file never approves its physics.",
+    "server": "Loopback only; explicit roots and no directory listing",
+    "harness": "tests/test_gamepad_state.mjs, tests/test_rig.mjs plus real browser inspection; real-device gate remains separate"
+  }
+}

@@ -1,0 +1,23 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>Xbox Series X|S · 1914 外观候选</title>
+<style>
+body{margin:0;background:#101820;color:#e4e9ed;font:14px system-ui;display:grid;grid-template-columns:1fr 340px;height:100vh}#scene{min-width:0}canvas{display:block;touch-action:none}aside{padding:18px;overflow:auto;background:#1a2631}h1{font-size:20px}button,select,input{margin:6px 0;padding:7px;max-width:100%}pre{white-space:pre-wrap;font:12px monospace}.warning{color:#ffcc75}#status{padding:8px 0}small{color:#b1bec8}label{display:block}
+</style>
+<script type="importmap">{"imports":{"three":"/vendor/build/three.module.js","three/addons/":"/vendor/examples/jsm/"}}</script>
+<main id="scene"></main><aside>
+<h1>Xbox Series X|S · 1914 外观候选</h1><p class="warning">原始模型按 Share 键、圆盘方向键和接口外形判为 1914 外观候选；不是已验证的机械复刻。保留继续评估，不因不匹配 1708 而淘汰。<br>当前交互窗口仍是历史加工版：按 1708 宽度缩放，已移除 Share 网格，不能当作 1914 标准尺寸。<br>下方为完整原始模型的实际正面渲染（44 个部件，含 Share）。无接触动力学。</p>
+<a href="/identity_front.png" target="_blank"><img src="/identity_front.png" alt="保留 Share 键的原始 44 部件正面渲染" style="width:100%"></a>
+<label>输入模式 <select id="mode"><option value="mouse">鼠标 → 部件 → 信号</option><option value="device">真实手柄 → 部件</option></select></label>
+<label>设备 <select id="device"></select></label>
+<label>操作自由度 <select id="channel"></select></label>
+<label><input id="drag2d" type="checkbox" checked>摇杆二维拖动（两轴均已配置时）</label>
+<label><input id="hold" type="checkbox">释放鼠标后保持（诊断用）</label>
+<button id="reset">回到中立位</button><button id="camera">恢复视角</button>
+<p>点击网格选择部件；空白处拖动旋转视角。已配置的自由度可直接拖动部件。右摇杆点击等复用部件，可在上方选择自由度。</p>
+<label>加载带来源的运动配置 <input id="rig" type="file" accept=".json"></label>
+<button id="draft">加载 1708 待确认草稿（不产生动作）</button>
+<details><summary>待确认的运动参数</summary><pre id="pending">尚未加载草稿。</pre></details>
+<small>配置只建立可视化运动关系，不会把参数自动批准为真实物理值。设备模式请先连接手柄并按一次按钮。</small>
+<div id="status">正在加载网格…</div><pre id="values"></pre>
+<details><summary>浏览器原始读数（非 USB HID 报文）</summary><pre id="raw"></pre></details>
+<details><summary>所选部件与参数来源</summary><pre id="selection"></pre></details>
+<script type="module" src="/app.mjs"></script></aside></html>

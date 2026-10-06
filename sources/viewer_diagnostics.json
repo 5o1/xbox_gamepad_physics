@@ -1,0 +1,20 @@
+{
+  "scope": "Interactive acceptance diagnostics; no mechanical parameters inferred",
+  "source": "https://www.w3.org/TR/2025/WD-gamepad-20250710/",
+  "sections": ["Gamepad Interface: timestamp, mapping, axes, buttons", "Remapping"],
+  "decisions": [
+    "Copy all browser-reported axes and button value/pressed/touched fields before standard-layout validation, without calling them raw USB HID packets.",
+    "Unrecognized mappings remain visible for inspection but cannot drive the asset.",
+    "Keep browser snapshot separate from the 21-channel Float32 transport; unavailable channels and unconfigured represented coordinates display null, not fabricated zeros.",
+    "Show browser source timestamp and receipt performance.now separately in milliseconds. Their difference is not a measured physical input or USB transport latency.",
+    "Display kinematic coordinates in rad or m using the same toJoint mapping as rendering. Configured signals do not establish physical accuracy.",
+    "Lifecycle clear removes old snapshot and time metadata along with input values."
+  ],
+  "harness": "tests/test_diagnostics.mjs",
+  "verification": {
+    "three_new_unit_tests": "passed",
+    "javascript_test_files": "4 passed",
+    "browser_render": "unverified: existing browser remains alive but bounded Runtime.evaluate probe timed out",
+    "real_device": "not tested"
+  }
+}

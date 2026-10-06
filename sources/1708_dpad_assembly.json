@@ -1,0 +1,26 @@
+{
+  "target": "Xbox One 1708",
+  "guide": "https://www.ifixit.com/Guide/Xbox+One+Wireless+Controller+Model+1708+Directional+Pad+Replacement/98147",
+  "author": "Dylan Gross and contributors",
+  "locator": "Step 7, text and photograph",
+  "image": {
+    "url": "https://guide-images.cdn.ifixit.com/igi/K1gPMYdctQwIjRAw.medium",
+    "gpu_path": "/path/to/gpu-data/<gpu-project>/xbox-physics-v1/reference_drawings/1708_dpad_step7.jpg",
+    "sha256": "bc2c6963a1bd6740db63f5b3499ef48a408a08f054ffcf8ca4d6a63df4335020",
+    "download": "Direct NETWORK_INTERFACE, proxies disabled, real IP 3.170.221.19 resolved via AliDNS HTTPS at 223.5.5.5",
+    "inspection": "Cross-shaped cap is being removed as one part; silver surrounding retainer remains visible. Image has no calibrated scale or motion sequence.",
+    "reuse": "Third-party reference only, not incorporated as redistributed mesh texture"
+  },
+  "asset_consequence": "Candidate objects DPadDown/Left/Right/Up must receive the same ordered transforms when used to depict the cap. This is a topology consistency constraint, not proof that the candidate is a dimensionally correct 1708 asset.",
+  "implementation": "viewer/assembly_constraints.mjs; validateRig third argument; active in viewer/app.mjs",
+  "harness": "tests/test_assembly_constraints.mjs checks actual candidate inventory, rejects independent direction motion and incomplete groups, accepts transforms shared by the whole group",
+  "unknown": {
+    "joint_type": null,
+    "pivot_m": null,
+    "travel": null,
+    "restoring_force": null,
+    "switch_activation_map": null,
+    "candidate_geometry_match": null
+  },
+  "limit": "No D-pad motion configuration generated; simultaneous opposite direction handling and actual contact model remain unresolved."
+}

@@ -1,0 +1,23 @@
+{
+  "scope": "Mouse interaction implementation, not estimated Xbox mechanics",
+  "references": [
+    "https://threejs.org/docs/pages/Raycaster.html",
+    "https://threejs.org/docs/pages/Vector3.html",
+    "https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.least_squares.html"
+  ],
+  "reference_scope": "Ray picking and projection API; bounded nonlinear residual and finite-difference Jacobian formulation. This small JavaScript solver is not SciPy and does not claim its trust-region implementation.",
+  "derivation": "Keep the picked point in mesh-local coordinates. Minimize its two screen-coordinate residuals against the mouse target over the two normalized stick channels. Evaluate trial points with the same partMatrix used for rendering, including any held click displacement. Solve the 2x2 finite-difference Jacobian system with backtracking; clamp only to the signal domain [-1,1].",
+  "pairing": "LX/LY or RX/RY only, and only if both channels have explicit valid joints affecting the selected mesh. A selected click channel remains single-axis interaction. No missing joint is synthesized.",
+  "numerical_controls": {
+    "stop_error_css_px": 0.1,
+    "finite_difference_signal_step": 0.0001,
+    "maximum_iterations": 20,
+    "minimum_backtracking_factor": 0.0078125,
+    "jacobian_determinant_guard": 1e-8,
+    "meaning": "Software convergence and responsiveness controls, not sourced physical parameters. Degenerate/unreachable target preserves a finite bounded state and reports residual."
+  },
+  "limits": "No circular mechanical envelope inferred, no force/contact or spring behavior; exact physical constraints still require source-backed target configuration. Local solver may stop short at a singular view or signal limit.",
+  "harness": ["tests/test_drag2d.mjs", "tests/browser_harness.mjs"],
+  "browser_result": "results/browser_harness.json: one actual pointer movement changes both configured stick channels; releasing resets both. Explicit synthetic mechanism only, not real-device acceptance.",
+  "target_parameter_changes": []
+}

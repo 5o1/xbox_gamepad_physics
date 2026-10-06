@@ -1,0 +1,25 @@
+{
+  "scope": "Viewer software only; no Xbox physical parameters adopted",
+  "sources": [
+    {
+      "url": "https://developer.mozilla.org/en-US/docs/Web/API/Element/lostpointercapture_event",
+      "use": "Explicit capture release and lost-capture cleanup; clear drag before releasing capture to avoid reentrant cleanup"
+    },
+    {
+      "url": "https://docs.python.org/3/library/http.server.html#http.server.BaseHTTPRequestHandler.log_message",
+      "use": "Default request logging writes to stderr; tolerate unavailable logging sink without aborting HTTP response"
+    }
+  ],
+  "harnesses": {
+    "tests/test_viewer_server.py": "Response headers survive simulated BrokenPipeError and closed-stream ValueError",
+    "tests/browser_harness.mjs": "CDP pointer drag then blur, pointercancel, capture loss, mode switch and device selection; assert zero input, no drag and no capture. DOM-dispatched events are not OS lifecycle validation."
+  },
+  "verification": {
+    "python_gpu": "28 tests passed, none skipped",
+    "javascript_units": "3 test files passed",
+    "new_browser_lifecycle_checks": "Not verified: dedicated Chromium Page.navigate timed out before interaction assertions; retry with extensions and proxy disabled did not promptly load the document",
+    "old_gpu_service": "Ports 8766 and 8767 remained listening; 8767 returned an empty HTTP reply. stderr points to a pipe. A lost logging pipe is a reproduced failure mode, not a confirmed diagnosis of those processes.",
+    "new_gpu_service": "Patched server on 8768 returned HTTP 200 through local tunnel 9876",
+    "physical_acceptance": false
+  }
+}
