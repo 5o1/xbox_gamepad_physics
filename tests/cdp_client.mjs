@@ -1,5 +1,22 @@
 /** Small Chrome DevTools Protocol client with bounded RPCs and clean failure. */
 
+export function describeRuntimeException(details = {}) {
+  return {
+    text: details.text ?? 'Runtime exception',
+    description: details.exception?.description ?? null,
+    value: details.exception?.value ?? null,
+    url: details.url ?? null,
+    lineNumber: Number.isInteger(details.lineNumber) ? details.lineNumber : null,
+    columnNumber: Number.isInteger(details.columnNumber) ? details.columnNumber : null,
+    stack: (details.stackTrace?.callFrames ?? []).map(frame => ({
+      functionName: frame.functionName,
+      url: frame.url,
+      lineNumber: frame.lineNumber,
+      columnNumber: frame.columnNumber,
+    })),
+  };
+}
+
 export async function connectCdp(webSocketUrl, {
   timeoutMs = 20_000,
   WebSocketImpl = globalThis.WebSocket,

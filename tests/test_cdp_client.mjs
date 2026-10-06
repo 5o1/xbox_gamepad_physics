@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import {closeCdpTarget, connectCdp, evaluateCdp} from './cdp_client.mjs';
+import {closeCdpTarget, connectCdp, describeRuntimeException, evaluateCdp} from './cdp_client.mjs';
 
 class FakeWebSocket {
   static CONNECTING=0;
@@ -89,4 +89,33 @@ test('created CDP target is closed through the bounded HTTP endpoint',async()=>{
   });
   assert.equal(observed.url,'http://127.0.0.1:9222/json/close/target%2Fid');
   assert.ok(observed.options.signal);
+});
+
+test('runtime exceptions retain the browser description and stack location',()=>{
+  assert.deepEqual(describeRuntimeException({
+    text:'Uncaught',
+    exception:{description:'TypeError: synthetic failure'},
+    url:'http://127.0.0.1/app.mjs',
+    lineNumber:12,
+    columnNumber:34,
+    stackTrace:{callFrames:[{
+      functionName:'onPointerMove',
+      url:'http://127.0.0.1/app.mjs',
+      lineNumber:11,
+      columnNumber:9,
+    }]},
+  }),{
+    text:'Uncaught',
+    description:'TypeError: synthetic failure',
+    value:null,
+    url:'http://127.0.0.1/app.mjs',
+    lineNumber:12,
+    columnNumber:34,
+    stack:[{
+      functionName:'onPointerMove',
+      url:'http://127.0.0.1/app.mjs',
+      lineNumber:11,
+      columnNumber:9,
+    }],
+  });
 });

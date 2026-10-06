@@ -270,4 +270,9 @@ test('browser harness publishes the failure marker for CDP setup failures', asyn
   assert.ok(connect > pageList && connect < catchStart, 'CDP connect escapes the failure-marker try/catch');
   assert.ok(attemptWrite > catchStart, 'catch does not stage browser_last_attempt.json');
   assert.ok(selectedPublish > attemptWrite, 'catch does not publish only browser_last_attempt.json');
+  assert.match(
+    source,
+    /new PointerEvent\('pointercancel',\{pointerId:POINTER,bubbles:true\}\)/,
+    'synthetic pointercancel must carry the active pointer id used by OrbitControls',
+  );
 });

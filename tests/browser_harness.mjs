@@ -11,7 +11,7 @@ import {
   prepareUncachedNetwork,
   recordCriticalResponse,
 } from './browser_source_binding.mjs';
-import {connectCdp, evaluateCdp} from './cdp_client.mjs';
+import {connectCdp, describeRuntimeException, evaluateCdp} from './cdp_client.mjs';
 
 const argv=process.argv.slice(2);
 const publishIndex=argv.indexOf('--publish');
@@ -91,7 +91,7 @@ try{
       const url=requests.get(message.params.requestId);
       if(url&&isCritical(url))resourceFailures.push({kind:'loadingFailed',url,error:message.params.errorText});
     }
-    if(message.method==='Runtime.exceptionThrown')runtimeFailures.push(message.params.exceptionDetails?.text??'Runtime exception');
+    if(message.method==='Runtime.exceptionThrown')runtimeFailures.push(describeRuntimeException(message.params.exceptionDetails));
   });
   stage='http_health';
   cacheState=await prepareUncachedNetwork(call);
@@ -180,7 +180,7 @@ try{
   stage='input_lifecycle';
   for(const [name,expression,reason] of [
     ['blur_handler',"window.dispatchEvent(new Event('blur'))",'focus_loss'],
-    ['pointer_cancel_handler',"document.querySelector('canvas').dispatchEvent(new PointerEvent('pointercancel'))",'pointer_cancel'],
+    ['pointer_cancel_handler',"document.querySelector('canvas').dispatchEvent(new PointerEvent('pointercancel',{pointerId:POINTER,bubbles:true}))",'pointer_cancel'],
     ['capture_loss',"document.querySelector('canvas').releasePointerCapture(POINTER)",'capture_lost'],
     ['mode_switch',"document.getElementById('mode').value='device';document.getElementById('mode').dispatchEvent(new Event('change'))",'mode_change'],
     ['device_selection_handler',"document.getElementById('device').dispatchEvent(new Event('change'))",'device_change']
