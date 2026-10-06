@@ -1,8 +1,10 @@
 // Synthetic browser integration test, NOT a physical-controller acceptance test.
 import assert from 'node:assert/strict';
 import {writeFile} from 'node:fs/promises';
-const pages=await (await fetch('http://127.0.0.1:9227/json/list')).json();
-const page=pages.find(p=>p.type==='page'&&p.url==='http://127.0.0.1:9876/');
+const cdpUrl=process.env.XBOX_VIEWER_CDP_URL ?? 'http://127.0.0.1:9227';
+const viewerUrl=process.env.XBOX_VIEWER_URL ?? 'http://127.0.0.1:9876/';
+const pages=await (await fetch(`${cdpUrl}/json/list`)).json();
+const page=pages.find(p=>p.type==='page'&&p.url===viewerUrl);
 assert.ok(page,'Dedicated test browser page missing');
 const socket=new WebSocket(page.webSocketDebuggerUrl);
 await new Promise(resolve=>socket.addEventListener('open',resolve,{once:true}));
@@ -14,10 +16,10 @@ const inspect=()=>evaluate("import('/app.mjs').then(m=>m.inspect())");
 const startedAt=new Date().toISOString();
 let stage='http_health';
 try{
-  const health=await fetch('http://127.0.0.1:9876/');
+  const health=await fetch(viewerUrl);
   assert.equal(health.status,200,'Viewer HTTP service unavailable');
   stage='page_navigation';
-  await call('Page.navigate',{url:'http://127.0.0.1:9876/'});
+  await call('Page.navigate',{url:viewerUrl});
   stage='document_readiness';
   await call('Page.bringToFront');
   for(let i=0;i<60;i++){
