@@ -1,0 +1,10 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>Xbox One S · 原始 GLB 材质核对</title>
+<style>body{margin:0;font:15px/1.6 system-ui;background:#20242a;color:#eee;display:grid;grid-template-columns:1fr 340px;height:100vh}#scene{min-width:0}canvas{display:block}aside{padding:20px;overflow:auto}button{padding:8px;margin:5px}pre{white-space:pre-wrap;font:12px monospace}a{color:#9ccfff}</style>
+<script type="importmap">{"imports":{"three":"/vendor/build/three.module.js","three/addons/":"/vendor/examples/jsm/"}}</script>
+<main id="scene"></main><aside><h2>Xbox One S · 材质核对</h2><p>直接读取原始下载 GLB，没有替换贴图、UV 或材质参数。可拖动旋转、滚轮缩放。</p>
+<button id="front">正面</button><button id="angle">斜视</button>
+<p>照明使用 Three.js RoomEnvironment，不是 Sketchfab 网站的环境。色调映射为 ACES Filmic；这不是网站像素一致性验收。</p>
+<p id="status">加载中…</p><details><summary>实际材质通道检查</summary><pre id="audit"></pre></details>
+<p>BatonyRobson · CC BY 4.0<br><a href="https://sketchfab.com/3d-models/xbox-one-s-controllergamepad-animated-a62cf7475b7d4ead9fbf1a86e5a2b6a4">原作</a></p>
+<p>仅检查视觉材质；没有物理参数、关节驱动或动力学。</p></aside>
+<script type="module" src="/material_check.mjs"></script></html>
