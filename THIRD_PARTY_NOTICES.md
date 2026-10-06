@@ -41,9 +41,12 @@ source material are not stored in this Git repository.
 - Source revision: <https://github.com/CasperH2O/3DControllerModels/tree/f0d985618e7c74ca35d4c428228cb5263e3d471e>
 - Repository license declaration: [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/)
 - Repository derivatives: the retained Xbox 1914 appearance-candidate renders
-  under `results/visual_parts/` and `results/current_candidate_front.png`
+  under `results/legacy_casper_1914_visual_parts/` and
+  `results/legacy_casper_1914_width_scaled_1708_proxy_historical_ui_mislabeled_1708.png`
 - Changes: the visual model was inspected, decomposed for diagnostic rendering,
-  and width-scaled for comparison. It was rejected as the Xbox 1708 target.
+  and width-scaled for comparison. It was rejected as the Xbox 1708 target. The
+  latter retained screenshot is historical evidence of that rejection process;
+  its in-image “Xbox One 1708” label was erroneous and is not an identity claim.
 - Caveat: the upstream collection does not provide a separate provenance and
   attribution record for every model. The repository-wide declaration is
   recorded here without inferring more specific authorship.

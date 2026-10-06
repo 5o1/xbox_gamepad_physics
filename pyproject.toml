@@ -1,0 +1,14 @@
+[project]
+name = "xbox-gamepad-physics-validation"
+version = "0.1.0"
+description = "Evidence-bound validation tools for the Xbox gamepad physical asset"
+requires-python = ">=3.10"
+
+[tool.setuptools]
+py-modules = []
+
+[tool.xbox-gamepad-physics]
+full-test-input = "requirements/test.in"
+tested-gpu-constraints = "requirements/gpu-tested.constraints.txt"
+tested-gpu-freeze = "requirements/gpu-tested.freeze.txt"
+regression-command = "python scripts/run_regression.py --profile full"

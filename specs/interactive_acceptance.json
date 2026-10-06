@@ -1,7 +1,17 @@
 {
+  "schema_version": 1,
   "status": "required_not_yet_passed",
   "target_hardware": "Xbox One 1708",
   "requirement_source": "User: interactive asset with mouse-to-gamepad output and real-gamepad-to-asset motion",
+  "canonical_adapter": {
+    "status": "blocked_unimplemented",
+    "canonical_spec": "specs/xbox_v1.json",
+    "canonical_schema_version": 2,
+    "viewer_schema_version": 1,
+    "implementation": null,
+    "physical_acceptance_allowed": false,
+    "reason": "The schema-1 viewer rig is not generated from, or hash-bound to, the canonical schema-2 body/joint graph. It cannot prove preservation of coupled constraints, virtual frames, contact data or inverse mappings."
+  },
   "delivery": {
     "primary_platform": "Browser-local 3D inspection viewer served on localhost; actual meshes stored on GPU node and reachable through an explicit asset route",
     "rationale": "Browser Gamepad API can read the controller attached to the user's own computer; GPU node does not need USB forwarding",
@@ -12,13 +22,13 @@
   "modes": {
     "mouse": {
       "input": "Pick and manipulate actual visible stick, trigger, button and D-pad meshes",
-      "path": "pointer -> constrained part pose -> shared source-traceable pose/state mapping -> gamepad state; source-backed estimates are permitted and must be labeled, real-device calibration is not a prerequisite for mouse preview",
+      "path": "pointer -> constrained part pose -> schema-1 preview mapping -> gamepad state; this path is not the canonical schema-2 physical mapping until the adapter gate passes",
       "display": "Part identity, joint coordinates, axes, analog triggers, button values, sample timestamp and parameter provenance",
       "release": "Explicit return/hold UI policy, labeled as kinematic preview until restoring dynamics are validated"
     },
     "device": {
       "input": "Real controller on user's computer through navigator.getGamepads()",
-      "path": "device -> standard gamepad state -> same pose/state mapping -> actual mesh part motion",
+      "path": "device -> standard gamepad state -> schema-1 preview mapping -> actual mesh part motion; this does not establish canonical schema-2 roundtrip equivalence",
       "display": "Device ID, standard mapping status, raw state, represented state, missing controls, receipt time and source timestamp",
       "arbitration": "Mouse cannot overwrite device-mode values; changing mode, device disconnect, focus loss and pointer cancel must not leave stale commands"
     }
@@ -33,11 +43,13 @@
     "unknown_mapping": "Reject unrecognized device layouts, do not guess axis order",
     "differentiability": "Keep analog values as floats, no binarization in signal transport. JS device capture is not autograd; later Torch pose/state mapping needs its own gradient tests.",
     "rig_calibration": null,
+    "canonical_mapping_status": "blocked until a fail-closed, hash-bound schema-2-to-viewer adapter is implemented and verified",
     "estimate_policy": "User permits estimated physical parameters before measurement. A parameter may be estimated from cited geometry or component evidence with derivation and uncertainty. This does not require prior physical calibration. Unsupported and uninferable parameters remain null; synthetic software fixtures do not supply target parameter values.",
     "roundtrip_tolerance": null
   },
   "acceptance_gates": [
-    {"id": "geometry_identity", "passed": false, "evidence": "sources/geometry_review.json", "check": "Downloaded geometry must be rendered front-on and confirmed by user; compare revision-specific front/back/top controls and openings against identified real-device references before target rig registration. Current candidate is rejected."},
+    {"id": "canonical_v2_to_viewer_adapter", "passed": false, "evidence": null, "check": "Fail closed unless a hash-bound adapter preserves the canonical body/joint graph, joint curves, coupled domains, virtual-frame semantics and inverse input mappings; unsupported constructs must be rejected, not dropped."},
+    {"id": "geometry_identity", "passed": false, "candidate_id": "xbox_one_s_batonyrobson_a62cf747", "evidence": ["assets/asset_index.json", "sources/xbox_replacement_candidates.json"], "check": "The primary appearance candidate has a downloaded-file front render and user appearance acknowledgement. Before target rig registration it still requires revision-specific dimensional, rear/top geometry and mechanical review; appearance acknowledgement alone does not pass this gate."},
     {"id": "mouse_to_signal", "passed": false, "evidence": null, "check": "Visible mesh manipulation produces the correct signed axes and corresponding button/trigger signals"},
     {"id": "real_device_to_mesh", "passed": false, "evidence": null, "check": "User's real 1708 drives all available controls, including simultaneous independent controls"},
     {"id": "shared_mapping_roundtrip", "passed": false, "evidence": null, "check": "state->pose->state tested on neutral, endpoints, diagonals and concurrent inputs; losses/restrictions reported"},

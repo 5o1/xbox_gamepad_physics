@@ -1,0 +1,9 @@
+# Direct dependency versions in the GPU environment that produced the recorded
+# 38/38 Python result. This is an environment snapshot, not a recommendation
+# for VLA training and not permission to silently substitute simulator values.
+# Python: 3.10.21
+numpy==1.26.4
+scipy==1.10.1
+trimesh==4.4.3
+opencv-python==4.10.0.84
+torch==2.4.1

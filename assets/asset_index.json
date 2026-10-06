@@ -1,66 +1,186 @@
 {
+  "schema_version": 1,
   "asset_version": "v1-work-in-progress-2026-10-06",
-  "status": "xbox_one_s_appearance_candidate_user_acknowledged_physics_unresolved",
-  "target_hardware": {"model": "Xbox One Wireless Controller", "revision": "1708", "basis": "owner statement", "physical_measurements_available": false},
-  "primary_appearance_candidate": {
-    "title": "Xbox One S Controller/Gamepad (Animated)",
-    "author": "BatonyRobson",
-    "source": "../sources/xbox_replacement_candidates.json",
-    "front_render": "../results/xbox_one_s_batonyrobson_UNVERIFIED/pos_z.png",
-    "user_appearance_acknowledged": true,
-    "controller_revision_verified": false,
-    "mechanically_verified": false,
-    "mesh_objects": 16,
-    "gpu_root": "/path/to/gpu-data/<gpu-project>/controller-candidates/xbox_one_s_batonyrobson_UNVERIFIED"
+  "registry_role": "canonical_status_authority",
+  "path_bases": {
+    "metadata_links": "asset_index_directory",
+    "visual_manifest_path": "repository_root",
+    "viewer_adapter_acceptance": "repository_root",
+    "external_gpu_paths": "absolute_external"
   },
-  "legacy_visual_model_identification": {"model": "Xbox Series X|S / 1914", "basis": "inferred_from_original_rendered_features", "mechanically_verified": false, "original_part_count": 44, "use": "appearance tooling and viewer software regression only; rejected as 1708 target geometry"},
-  "approved_target_geometry": null,
-  "geometry_review": "../sources/geometry_review.json",
+  "target_hardware": {
+    "model": "Xbox One Wireless Controller",
+    "revision": "1708",
+    "basis": "owner statement",
+    "physical_measurements_available": false
+  },
+  "primary_appearance_candidate_id": "xbox_one_s_batonyrobson_a62cf747",
+  "approved_target_geometry_candidate_id": null,
+  "candidates": {
+    "xbox_one_s_batonyrobson_a62cf747": {
+      "title": "Xbox One S Controller/Gamepad (Animated)",
+      "author": "BatonyRobson",
+      "source": "../sources/xbox_replacement_candidates.json",
+      "front_render": "../results/xbox_one_s_batonyrobson_UNVERIFIED/pos_z.png",
+      "status": "appearance_acknowledged_geometry_and_mechanics_pending",
+      "user_appearance_acknowledged": true,
+      "controller_revision_verified": false,
+      "dimensions_verified": false,
+      "mechanically_verified": false,
+      "approved_for_contact_or_training": false,
+      "target_visual_geometry_approval": {
+        "approved": false,
+        "target_revision": null,
+        "shape_identity_verified": false,
+        "evidence": [],
+        "reason": "Appearance was acknowledged, but revision identity, dimensions and target-shape registration remain unverified."
+      },
+      "mesh_objects": 16,
+      "visual_manifest": {
+        "path": "results/xbox_one_s_batonyrobson_UNVERIFIED/inventory.json",
+        "sha256": "7e59de07af261481dea21bf96c3bb07045c09b84fb3bd47bf19eeeec9b48e1bd",
+        "artifacts": {}
+      },
+      "gpu_root": "/path/to/gpu-data/<gpu-project>/controller-candidates/xbox_one_s_batonyrobson_UNVERIFIED"
+    },
+    "xbox_series_1914_casperh2o_visual": {
+      "title": "CasperH2O Microsoft Xbox One visual model",
+      "upstream_model_label": "CasperH2O/3DControllerModels Microsoft Xbox One.blend",
+      "display_identity": "Feature-inferred Xbox Series X|S / Model 1914 appearance candidate",
+      "source": "../sources/geometry_review.json",
+      "front_render": "../results/legacy_casper_1914_visual_parts/identity_front.png",
+      "status": "rejected_for_1708_retained_for_legacy_visual_regression",
+      "identity_basis": "inferred_from_rendered_features_not_manufacturer_verified",
+      "controller_revision_verified": false,
+      "dimensions_verified": false,
+      "mechanically_verified": false,
+      "approved_for_contact_or_training": false,
+      "target_visual_geometry_approval": {
+        "approved": false,
+        "target_revision": null,
+        "shape_identity_verified": false,
+        "evidence": [],
+        "reason": "Rendered features indicate a 1914-family shell rather than the target 1708 revision."
+      },
+      "original_part_count": 44,
+      "visual_manifest": {
+        "path": "results/legacy_casper_1914_visual_parts/inventory.json",
+        "sha256": "1430fc227cac9c27c1b480e38b603650fa794b3fac21f04a18ebe1123378678a",
+        "artifacts": {
+          "visual_obj": {
+            "mode": "object_files",
+            "manifest_entry": "objects",
+            "metric_scale": {
+              "value": null,
+              "unit": "m/native_unit",
+              "status": "unknown",
+              "evidence": [],
+              "harness": "audit_spec",
+              "reason": "Upstream declares the model non-dimensional; no metric scale with quantified uncertainty is established."
+            }
+          }
+        }
+      },
+      "gpu_root": "/path/to/gpu-data/<gpu-project>/xbox-physics-v1/Xbox_Series_XS_1914_candidate_original_44parts_UNCALIBRATED"
+    }
+  },
+  "derived_variants": {
+    "legacy_casper_1914_width_scaled_1708_proxy": {
+      "source_candidate_id": "xbox_series_1914_casperh2o_visual",
+      "inventory": "../results/legacy_casper_1914_width_scaled_1708_proxy/inventory.json",
+      "inventory_sha256": "c565dd92a5ca6f7a241258b693b9d5120af78cbf5717c89202a51e99d86b50df",
+      "visual_manifest": {
+        "path": "results/legacy_casper_1914_width_scaled_1708_proxy/inventory.json",
+        "sha256": "c565dd92a5ca6f7a241258b693b9d5120af78cbf5717c89202a51e99d86b50df",
+        "artifacts": {
+          "width_scaled_obj": {
+            "mode": "object_files",
+            "manifest_entry": "objects",
+            "metric_scale": {
+              "value": null,
+              "unit": "m/native_unit",
+              "status": "unknown",
+              "evidence": [],
+              "harness": "audit_spec",
+              "reason": "The proxy is width-fitted, but the manufacturer publishes no dimensional tolerance and the source shape is a rejected revision; target metric-scale uncertainty is unresolved."
+            }
+          }
+        }
+      },
+      "gpu_directory": "/path/to/gpu-data/<gpu-project>/xbox-physics-v1/LEGACY_1914_shape_scaled_to_1708_width_NO_SHARE_NOT_VALIDATED",
+      "purpose": "viewer software regression only",
+      "shape_revision_match": false,
+      "mechanical_revision_match": false,
+      "collision_approved": false,
+      "approved_for_contact_or_training": false,
+      "target_visual_geometry_approval": {
+        "approved": false,
+        "target_revision": null,
+        "shape_identity_verified": false,
+        "evidence": [],
+        "reason": "Width scaling does not change the source 1914 shape into a verified 1708 visual geometry."
+      }
+    }
+  },
   "interactive_viewer": {
     "entry": "../viewer/index.html",
     "acceptance": "../specs/interactive_acceptance.json",
     "design_sources": "../sources/viewer_design.json",
-    "visual_asset": "legacy 1914 width proxy, not the primary Xbox One S candidate",
+    "active_variant_id": "legacy_casper_1914_width_scaled_1708_proxy",
+    "verification_scope": "viewer software regression only; not the primary appearance candidate and not target geometry acceptance",
     "target_rig": null,
     "real_controller_verified": false
   },
-  "visual_inventory": "../results/visual_parts/inventory.json",
-  "geometry_audit": "../results/visual_parts/mesh_audit.json",
-  "physical_specification": "../specs/xbox_v1.json",
-  "source_catalog": "../sources/catalog.json",
-  "mechanical_structure_evidence": "../sources/mechanical_structure.json",
+  "physical_asset": {
+    "specification": "../specs/xbox_v1.json",
+    "collision_asset": null,
+    "simulator_asset": null,
+    "meters_per_native_unit": null,
+    "contact_dynamics_validated": false,
+    "viewer_adapter": {
+      "status": "blocked_unimplemented",
+      "canonical_schema_version": 2,
+      "viewer_schema_version": 1,
+      "implementation": null,
+      "physical_acceptance_allowed": false,
+      "interactive_acceptance": "specs/interactive_acceptance.json",
+      "interactive_acceptance_sha256": "882f3f63bed2c8dd99df75d64469d847051b0880e6dd16c110dacab10c3c57f3"
+    }
+  },
+  "evidence": {
+    "source_catalog": "../sources/catalog.json",
+    "mechanical_structure": "../sources/mechanical_structure.json",
+    "geometry_review": "../sources/geometry_review.json",
+    "legacy_visual_inventory": "../results/legacy_casper_1914_visual_parts/inventory.json",
+    "legacy_geometry_audit": "../results/legacy_casper_1914_visual_parts/mesh_audit.json",
+    "whole_controller_dimensions": "../sources/1708_dimensions.json",
+    "hardware_revision": {
+      "document": "../sources/catalog.json",
+      "entry": "sources.user_target_1708"
+    },
+    "legacy_source_copy_on_gpu": "/path/to/gpu-data/<gpu-project>/xbox-physics-v1/input"
+  },
   "reference_stick_envelope": {
     "specification": "../sources/stick_envelope.json",
     "harness_result": "../results/stick_envelope.json",
     "scope": "RKJXV122400R angular upper-envelope only; not installed Xbox motion or dynamics"
   },
-  "mesh_root_on_gpu": "/path/to/gpu-data/<gpu-project>/xbox-physics-v1/Xbox_Series_XS_1914_candidate_original_44parts_UNCALIBRATED",
-  "mesh_root_scope": "legacy 1914 appearance candidate only",
-  "source_copy_on_gpu": "/path/to/gpu-data/<gpu-project>/xbox-physics-v1/input",
-  "meters_per_native_unit": null,
-  "collision_asset": null,
   "unapproved_collision_candidates": {
+    "source_candidate_id": "xbox_series_1914_casperh2o_visual",
+    "source_inventory_sha256": "1430fc227cac9c27c1b480e38b603650fa794b3fac21f04a18ebe1123378678a",
+    "target_revision": "1708",
+    "shape_revision_match": false,
     "scope": "ABXY only; not a replacement for full controller",
-    "gpu_directory": "/path/to/gpu-data/<gpu-project>/xbox-physics-v1/button_collision_candidates",
-    "audit": "../results/button_collisions/collision_audit.json",
-    "assembly_diagnostic": "../results/button_collisions/assembly_audit.json",
+    "gpu_directory": "/path/to/gpu-data/<gpu-project>/xbox-physics-v1/LEGACY_1914_native_unit_button_collision_candidates_NOT_VALIDATED",
+    "audit": "../results/legacy_casper_1914_native_unit_button_collision_candidates/collision_audit.json",
+    "assembly_diagnostic": "../results/legacy_casper_1914_native_unit_button_collision_candidates/assembly_audit.json",
     "method": "../sources/collision_method.json",
     "approved_for_simulation": false
   },
-  "simulator_asset": null,
-  "hardware_revision": "1708",
-  "hardware_revision_evidence": "sources/catalog.json:user_target_1708",
-  "whole_controller_dimensions": "../sources/1708_dimensions.json",
-  "width_matched_visual_proxy": {
-    "inventory": "../results/width_proxy_1708/inventory.json",
-    "gpu_directory": "/path/to/gpu-data/<gpu-project>/xbox-physics-v1/LEGACY_1914_shape_scaled_to_1708_width_NO_SHARE_NOT_VALIDATED",
-    "mechanical_revision_match": false,
-    "collision_approved": false
-  },
-  "reasons": {
-    "scale": "Visual source explicitly disclaims dimensional accuracy. No scale assignment approved.",
-    "collision": "44 exported meshes fail exact-weld watertight checks; no contact-preserving collision reconstruction verified.",
-    "simulator": "Missing pivots, target dynamics and input mapping. No implicit simulator defaults allowed.",
-    "revision": "Owner confirmed 1708. The legacy source includes a ShareButton absent on target. The newer Xbox One S candidate is visually acknowledged by the owner but still lacks revision, dimensional and mechanical verification."
+  "reasons_not_yet_approved": {
+    "scale": "The primary appearance source has no approved dimensional registration to the target controller.",
+    "collision": "No contact-preserving whole-controller collision reconstruction has been verified.",
+    "simulator": "Target pivots, dynamics and full input-to-motion mapping remain unresolved; simulator defaults are forbidden.",
+    "revision": "The owner acknowledged the primary candidate's appearance, but this does not verify revision, dimensions, hidden geometry or mechanics."
   }
 }

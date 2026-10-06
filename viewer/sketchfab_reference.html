@@ -6,6 +6,11 @@
 const uid='a62cf7475b7d4ead9fbf1a86e5a2b6a4',iframe=document.getElementById('api-frame');
 const client=new Sketchfab('1.12.1',iframe);
 window.reference={uid,source:'Sketchfab Viewer API 1.12.1; public model; no material edits',ready:false};
+function fail(stage,error){
+ const detail=error instanceof Error?error.message:String(error??'unknown error');
+ window.reference.error=`${stage}: ${detail}`;window.reference.errorStage=stage;
+ document.body.dataset.error=window.reference.error;
+}
 client.init(uid,{autostart:1,camera:0,ui_controls:0,ui_infos:0,ui_watermark:0,ui_hint:0,ui_help:0,ui_settings:0,ui_stop:0,ui_inspector:0,success(api){
  api.start();api.addEventListener('viewerready',()=>{
   window.reference.api=api;
@@ -13,33 +18,40 @@ client.init(uid,{autostart:1,camera:0,ui_controls:0,ui_infos:0,ui_watermark:0,ui
   // makes repeated screenshots compare the same controller pose rather than
   // whichever animation frame happened to be current after network loading.
   api.pause(pauseError=>{
-   if(pauseError){window.reference.error=String(pauseError);document.body.dataset.error=window.reference.error;return;}
+   if(pauseError){fail('pause',pauseError);return;}
    api.seekTo(0,seekError=>{
-    if(seekError){window.reference.error=String(seekError);document.body.dataset.error=window.reference.error;return;}
+    if(seekError){fail('seekTo',seekError);return;}
     window.reference.animation={paused:true,timeSeconds:0};
     const target=[-0.03751669638838028,0.24024943525070927,-0.2933788650683066];
     // +Z is the controller face.  The camera-axis harness selected this small
     // -Y/+Z offset because it produces a stable upright face view; the tighter
     // 0.9-degree near-pole view left camera roll numerically unstable.
     const position=[target[0],target[1]-0.8,target[2]+4.5];
-    api.setUserInteraction(false);
-    api.setFov(35);
-    let captured=false;
-    api.setCameraLookAtEndAnimationCallback(()=>{
-     if(captured)return;captured=true;
-     api.getEnvironment((envErr,environment)=>{
-      api.getCameraLookAt((camErr,camera)=>{
-       window.reference.environmentError=envErr&&String(envErr);window.reference.environment=environment;
-       window.reference.cameraError=camErr&&String(camErr);window.reference.camera=camera;
-       setTimeout(()=>{window.reference.ready=true;document.body.dataset.ready='true';},1200);
+    api.setUserInteraction(false,interactionError=>{
+     if(interactionError){fail('setUserInteraction',interactionError);return;}
+     api.setFov(35,(fovError,fov)=>{
+      if(fovError){fail('setFov',fovError);return;}
+      window.reference.fov=fov;
+      let captured=false;
+      api.setCameraLookAtEndAnimationCallback(endError=>{
+       if(captured)return;captured=true;
+       if(endError){fail('setCameraLookAtEndAnimationCallback',endError);return;}
+       api.getEnvironment((environmentError,environment)=>{
+        if(environmentError){fail('getEnvironment',environmentError);return;}
+        api.getCameraLookAt((cameraError,camera)=>{
+         if(cameraError){fail('getCameraLookAt',cameraError);return;}
+         window.reference.environment=environment;window.reference.camera=camera;
+         setTimeout(()=>{window.reference.ready=true;document.body.dataset.ready='true';},1200);
+        });
+       });
+      });
+      api.setCameraLookAt(position,target,0.2,cameraStartError=>{
+       if(cameraStartError)fail('setCameraLookAt',cameraStartError);
       });
      });
-    });
-    api.setCameraLookAt(position,target,0.2,err=>{
-     if(err){window.reference.error=String(err);document.body.dataset.error=window.reference.error;}
     });
    });
   });
  });
-},error(...args){window.reference.error='Sketchfab initialization failed';window.reference.errorArguments=args.map(String);document.body.dataset.error=window.reference.error+' '+JSON.stringify(window.reference.errorArguments);}});
+},error(...args){window.reference.errorArguments=args.map(String);fail('initialization',JSON.stringify(window.reference.errorArguments));}});
 </script></html>

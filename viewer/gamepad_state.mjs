@@ -64,12 +64,18 @@ export class InputSession {
     this.frame = readStandardGamepad(pad, receivedAt);
     return this.frame;
   }
-  updateFromPartPose(values, receivedAt) {
+  updateFromPartPose(values, receivedAt, available) {
     if (this.mode !== 'mouse') throw new Error('Mouse cannot overwrite device mode');
     validateState(values);
     if (!Number.isFinite(receivedAt)) throw new Error('Missing finite receipt time');
-    this.frame = {valid: true, values: Float32Array.from(values),
-      available: new Array(21).fill(true), receivedAt, source: 'part_pose'};
+    if (!Array.isArray(available) || available.length !== 21 || available.some(value=>typeof value!=='boolean')) {
+      throw new Error('Mouse pose requires a 21-channel availability mask');
+    }
+    const snapshot=Float32Array.from(values);
+    available.forEach((isAvailable,index)=>{if(!isAvailable)snapshot[index]=0;});
+    this.frame = {valid: available.some(Boolean), values: snapshot,
+      available: Array.from(available), receivedAt, source: 'part_pose',
+      reason: available.some(Boolean) ? null : 'no_configured_motion'};
     return this.frame;
   }
 }

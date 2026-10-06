@@ -10,12 +10,28 @@ import math
 from pathlib import Path
 import re
 import sys
-import bpy
 
-EXPECTED = '5c5671c83a9cf15db4b8399e7010aa7d5cde915687ceb348b583eb00b0ed24e2'
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+SOURCE_RECORD = PROJECT_ROOT / 'sources/xbox_one_s_material_validation.json'
+
+
+def require(condition, message):
+    if not condition:
+        raise RuntimeError(message)
+
+
+record = json.loads(SOURCE_RECORD.read_text())
+expected = record.get('source_glb_sha256')
+require(isinstance(expected, str) and len(expected) == 64, f'{SOURCE_RECORD}: missing source_glb_sha256')
 source, output = map(Path, sys.argv[sys.argv.index('--') + 1:])
 digest = hashlib.sha256(source.read_bytes()).hexdigest()
-assert digest == EXPECTED, 'Different source: inspect provenance before export'
+require(
+    digest == expected,
+    f'Different source: {source} SHA-256 {digest} does not match {SOURCE_RECORD} ({expected})',
+)
+
+import bpy
+
 output.mkdir(parents=True, exist_ok=False)
 bpy.ops.wm.read_factory_settings(use_empty=True)
 bpy.ops.import_scene.gltf(filepath=str(source))
@@ -25,7 +41,7 @@ scene.view_layers[0].update()
 graph = bpy.context.evaluated_depsgraph_get()
 originals = list(scene.objects)
 meshes = sorted((o for o in originals if o.type == 'MESH'), key=lambda o: o.name)
-assert len(meshes) == 16
+require(len(meshes) == 16, f'Expected 16 source mesh objects, found {len(meshes)}')
 records = []
 for index, obj in enumerate(meshes):
     evaluated = obj.evaluated_get(graph)
@@ -36,7 +52,11 @@ for index, obj in enumerate(meshes):
         mesh.flip_normals()
     mesh.calc_loop_triangles()
     vertices = [tuple(v.co) for v in mesh.vertices]
-    assert vertices and all(math.isfinite(c) for v in vertices for c in v)
+    require(vertices, f'{obj.name}: mesh has no vertices')
+    require(
+        all(math.isfinite(c) for v in vertices for c in v),
+        f'{obj.name}: mesh contains a non-finite vertex',
+    )
     name = obj.name.split('_XBox Gamepad')[0]
     stem = f'{index:02d}_{re.sub(r"[^a-zA-Z0-9_-]", "_", name)}_VISUAL_UNCALIBRATED'
     filename = stem + '.obj'
@@ -61,12 +81,13 @@ for index, obj in enumerate(meshes):
     })
 for obj in originals:
     bpy.data.objects.remove(obj, do_unlink=True)
-assert len(list(scene.objects)) == 16
-assert len({r['name'] for r in records}) == 16
+require(len(list(scene.objects)) == 16, 'Static export did not produce exactly 16 scene objects')
+require(len({r['name'] for r in records}) == 16, 'Source mesh names are not unique')
 glb = output / 'Xbox_One_S_BatonyRobson_STATIC_VISUAL_UNCALIBRATED.glb'
 bpy.ops.export_scene.gltf(filepath=str(glb), export_format='GLB', export_animations=False)
 manifest = {
     'source_sha256': digest, 'source': str(source), 'source_frame': 0,
+    'source_record': str(SOURCE_RECORD.relative_to(PROJECT_ROOT)),
     'author': 'BatonyRobson', 'license': 'CC-BY-4.0',
     'source_url': 'https://sketchfab.com/3d-models/xbox-one-s-controllergamepad-animated-a62cf7475b7d4ead9fbf1a86e5a2b6a4',
     'status': 'static_visual_parts_only_not_physics',

@@ -4,7 +4,7 @@ import {readFileSync} from 'node:fs';
 import {validateRig} from '../viewer/rig.mjs';
 import {RIGID_VISUAL_GROUPS} from '../viewer/assembly_constraints.mjs';
 const group=RIGID_VISUAL_GROUPS[0];
-const names=new Set(JSON.parse(readFileSync(new URL('../results/width_proxy_1708/inventory.json',import.meta.url))).objects.map(x=>x.name));
+const names=new Set(JSON.parse(readFileSync(new URL('../results/legacy_casper_1914_width_scaled_1708_proxy/inventory.json',import.meta.url))).objects.map(x=>x.name));
 const joint=meshes=>({channel:16,type:'revolute',axis:[1,0,0],pivot:[0,0,0],q0:0,q1:.1,meshes,evidence:'Synthetic constraint test, not Xbox motion'});
 test('actual candidate inventory contains complete dpad visual group',()=>{
   assert.ok(group.meshes.every(n=>names.has(n)));

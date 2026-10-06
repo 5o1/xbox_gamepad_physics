@@ -4,18 +4,33 @@ Evidence: Sketchfab blender-plugin README known-issues; Khronos glTF 4.5
 pbrMetallicRoughness.py specular() connects texture alpha * 0.5 to IOR Level.
 Render controls below are diagnostic studio settings, not inferred asset data.
 """
-import bpy
 import hashlib
 import json
 import struct
 import sys
 from pathlib import Path
-from mathutils import Vector
 
+
+def require(condition, message):
+    if not condition:
+        raise RuntimeError(message)
+
+
+project_root = Path(__file__).resolve().parents[1]
+source_record_path = project_root / 'sources/xbox_one_s_material_validation.json'
+source_record = json.loads(source_record_path.read_text())
+expected_source_hash = source_record.get('source_glb_sha256')
+require(isinstance(expected_source_hash, str) and len(expected_source_hash) == 64,
+        f'{source_record_path}: missing source_glb_sha256')
 root=Path(sys.argv[sys.argv.index('--')+1])
 source=root/'xbox/xbox_one_s_controllergamepad_animated.glb'
 data=source.read_bytes();digest=hashlib.sha256(data).hexdigest()
-assert digest=='5c5671c83a9cf15db4b8399e7010aa7d5cde915687ceb348b583eb00b0ed24e2'
+require(digest == expected_source_hash,
+        f'{source}: SHA-256 {digest} does not match {source_record_path} ({expected_source_hash})')
+
+import bpy
+from mathutils import Vector
+
 gltf=json.loads(data[20:20+struct.unpack_from('<I',data,12)[0]])
 out=root/('official_import_'+bpy.app.version_string.replace(' ','_'));out.mkdir(exist_ok=True)
 bpy.ops.wm.read_factory_settings(use_empty=True)
@@ -38,7 +53,8 @@ specular_key='Specular IOR Level' if 'Specular IOR Level' in bsdf.inputs else 'S
 channels[specular_key]=upstream(bsdf.inputs[specular_key])
 custom_shapes={p.custom_shape for o in scene.objects if o.type=='ARMATURE' for p in o.pose.bones if p.custom_shape}
 helpers=[o for o in scene.objects if o.type=='MESH' and o in custom_shapes]
-assert all(any(c.hide_render for c in o.users_collection) or o.hide_render for o in helpers), 'Bone helper would enter render'
+require(all(any(c.hide_render for c in o.users_collection) or o.hide_render for o in helpers),
+        'Bone helper would enter render')
 mesh_objects=[o for o in scene.objects if o.type=='MESH' and o not in custom_shapes]
 geometry_hash=hashlib.sha256()
 for obj in sorted(mesh_objects,key=lambda o:o.name):
@@ -49,15 +65,20 @@ for obj in sorted(mesh_objects,key=lambda o:o.name):
         for item in uv.data:geometry_hash.update(struct.pack('<2f',*item.uv))
 checks={'source_hash':digest,'mesh_count':len(mesh_objects),'vertex_color_layers':sum(len(o.data.color_attributes) for o in mesh_objects),'material_geometry_uv_edited':False,'shading_inputs':channels,'specular_texture_reaches_shader':bool(channels[specular_key]),'geometry_uv_hash':geometry_hash.hexdigest()}
 print('IMPORT_CHECKS',json.dumps(checks))
-assert checks['mesh_count']==16 and checks['vertex_color_layers']==0
-assert all(channels[k] for k in ['Base Color','Alpha','Normal','Roughness','Metallic'])
-if bpy.app.version>=(4,5,0):assert checks['specular_texture_reaches_shader']
+require(checks['mesh_count']==16, f"Expected 16 mesh objects, found {checks['mesh_count']}")
+require(checks['vertex_color_layers']==0,
+        f"Expected no vertex color layers, found {checks['vertex_color_layers']}")
+require(all(channels[k] for k in ['Base Color','Alpha','Normal','Roughness','Metallic']),
+        'Required PBR texture path is missing')
+if bpy.app.version>=(4,5,0):
+    require(checks['specular_texture_reaches_shader'],
+            'Specular texture does not reach the Blender 4.5+ shader')
 report={'blender':bpy.app.version_string,'checks':checks,'source_material':gltf['materials'][0],
+ 'source_record':str(source_record_path.relative_to(project_root)),
  'excluded_importer_bone_display_helpers':[o.name for o in helpers],
  'materials': [{'name':n.name,'type':n.type,'image':n.image.name if n.type=='TEX_IMAGE' else None} for n in mat.node_tree.nodes],
  'links':[f'{l.from_node.name}.{l.from_socket.name} -> {l.to_node.name}.{l.to_socket.name}' for l in mat.node_tree.links],
  'limitations':['Baked glTF AO is retained as metadata, not equivalent to Cycles ambient occlusion.','Studio lighting does not reproduce the website HDRI.','Matching website appearance is not yet accepted.']}
-(out/'audit.json').write_text(json.dumps(report,indent=2))
 graph=bpy.context.evaluated_depsgraph_get()
 pts=[e.matrix_world@Vector(p) for obj in mesh_objects for e in [obj.evaluated_get(graph)] for p in e.bound_box]
 lo=Vector([min(p[i] for p in pts) for i in range(3)]);hi=Vector([max(p[i] for p in pts) for i in range(3)])
@@ -73,5 +94,10 @@ scene.render.engine='CYCLES';scene.cycles.samples=32;scene.cycles.use_denoising=
 scene.view_settings.view_transform='Filmic';scene.view_settings.look='None';scene.view_settings.exposure=0;scene.view_settings.gamma=1
 scene.render.resolution_x=900;scene.render.resolution_y=900;scene.render.resolution_percentage=100
 scene.render.filepath=str(out/'front.png');bpy.ops.render.render(write_still=True)
-bpy.ops.wm.save_as_mainfile(filepath=str(out/'Xbox_One_S_BatonyRobson_MATERIAL_REVIEW_UNCALIBRATED.blend'))
+scene_path=out/'Xbox_One_S_BatonyRobson_MATERIAL_REVIEW_UNCALIBRATED.blend'
+bpy.ops.wm.save_as_mainfile(filepath=str(scene_path))
+report['source_scene'] = scene_path.name
+report['source_scene_sha256'] = hashlib.sha256(scene_path.read_bytes()).hexdigest()
+report['source_scene_hash_method'] = 'SHA256 of the saved .blend bytes immediately after save_as_mainfile'
+(out/'audit.json').write_text(json.dumps(report,indent=2))
 print(json.dumps(checks,indent=2))

@@ -1,0 +1,8 @@
+# Install under Python 3.10 for the historical GPU-compatible test environment.
+# Resolve with requirements/gpu-tested.constraints.txt when exact reproduction
+# of that recorded environment is required.
+numpy
+scipy
+trimesh
+opencv-python
+torch

@@ -28,3 +28,11 @@ test('lifecycle clear removes previous raw data and timestamps',()=>{
   assert.equal(d.raw,null);assert.equal(d.receivedAt,null);assert.equal(d.deviceTimestamp,null);
   assert.equal(d.reason,'focus_loss');assert.match(formatFrame(d),/源时间戳：未知/);
 });
+test('mouse partial rig does not present unbound channels as observed zero',()=>{
+  const s=new InputSession(),values=new Float32Array(21),available=new Array(21).fill(false);
+  values[10]=.5;available[10]=true;
+  const d=describeFrame(s.updateFromPartPose(values,25,available),[j],'mouse');
+  assert.equal(d.channels[10].input,.5);
+  assert.equal(d.channels[0].input,null);
+  assert.match(formatFrame(d),/LX\s+—/);
+});

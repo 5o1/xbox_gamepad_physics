@@ -1,6 +1,6 @@
 {
   "status": "tested_not_adopted_as_mechanical_pivot",
-  "input": "results/width_proxy_1708/inventory.json and its SHA256-pinned meshes",
+  "input": "results/legacy_casper_1914_width_scaled_1708_proxy/inventory.json and its SHA256-pinned meshes",
   "algorithm_reference": "https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.least_squares.html",
   "algorithm_scope": "Nonlinear least-squares solver, not evidence of Xbox hinge construction",
   "derivation": "Sphere: squared distance to center equals radius squared. Algebraic linear least squares initializes center/radius; geometric residual is norm(point-center)-radius. Center and scale data before solving.",

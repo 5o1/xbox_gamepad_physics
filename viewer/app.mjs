@@ -17,7 +17,8 @@ resetCamera(); el('camera').onclick = resetCamera;
 scene.add(new T.HemisphereLight(0xffffff,0x555577,2));
 const light = new T.DirectionalLight(0xffffff,3);light.position.set(-.1,-.2,.3);scene.add(light);
 const parts = new Map(), session = new InputSession(), ray = new T.Raycaster();
-let joints = [], pending = [], drag = null, selected = null, ready = false;
+let joints = [], pending = [], drag = null, selected = null, ready = false, activeVariantId = null;
+const jointAvailability=()=>Array.from({length:21},(_,channel)=>joints.some(j=>j.channel===channel));
 names.forEach((name,i)=>el('channel').add(new Option(name,String(i))));
 const status = text => {el('status').textContent=text;};
 function clear(reason){
@@ -86,7 +87,7 @@ renderer.domElement.addEventListener('pointermove',event=>{
     };
     const result=solveDrag2D(project,drag.pair.map(j=>state[j.channel]),[event.clientX,event.clientY]);
     drag.pair.forEach((j,i)=>state[j.channel]=result.values[i]);
-    session.updateFromPartPose(state,performance.now());applyPose();
+    session.updateFromPartPose(state,performance.now(),jointAvailability());applyPose();
     status(`二维拖动投影误差 ${result.errorPx.toFixed(2)} px${result.reached?'':'；可能到达边界或当前视角退化'}`);return;
   }
   pointerRay(event);const current=ray.ray.intersectPlane(drag.plane,new T.Vector3());if(!current)return;
@@ -94,9 +95,9 @@ renderer.domElement.addEventListener('pointermove',event=>{
   if(drag.j.type==='prismatic')delta=current.sub(drag.start).dot(drag.axis)/drag.denominator;
   else{const a=drag.start.clone().sub(drag.pivot),b=current.sub(drag.pivot);delta=Math.atan2(drag.axis.dot(a.clone().cross(b)),a.dot(b));}
   const state=session.frame.values.slice();state[drag.j.channel]=toSignal(drag.j,drag.q+delta);
-  session.updateFromPartPose(state,performance.now());applyPose();
+  session.updateFromPartPose(state,performance.now(),jointAvailability());applyPose();
 });
-function release(event){if(!drag||event.pointerId!==drag.pointer)return;const channels=drag.pair?drag.pair.map(j=>j.channel):[drag.j.channel];drag=null;orbit.enabled=true;if(!el('hold').checked){const state=session.frame.values.slice();channels.forEach(c=>state[c]=0);session.updateFromPartPose(state,performance.now());}}
+function release(event){if(!drag||event.pointerId!==drag.pointer)return;const channels=drag.pair?drag.pair.map(j=>j.channel):[drag.j.channel];drag=null;orbit.enabled=true;if(!el('hold').checked){const state=session.frame.values.slice();channels.forEach(c=>state[c]=0);session.updateFromPartPose(state,performance.now(),jointAvailability());}}
 renderer.domElement.addEventListener('pointerup',release);
 renderer.domElement.addEventListener('pointercancel',()=>clear('pointer_cancel'));
 renderer.domElement.addEventListener('lostpointercapture',()=>{if(drag)clear('capture_lost');});
@@ -109,7 +110,16 @@ function installRig(data){
 el('rig').onchange=async()=>{try{installRig(JSON.parse(await el('rig').files[0].text()));}catch(e){status(`配置拒绝，保留上次配置：${e.message}`);}};
 el('draft').onclick=async()=>{try{const response=await fetch('/1708_draft.json');if(!response.ok)throw Error(`HTTP ${response.status}`);installRig(await response.json());}catch(e){status(`草稿未载入：${e.message}`);}};
 async function load(){
-  const inventory=await (await fetch('/assets/inventory.json')).json(),loader=new OBJLoader();
+  const [registryResponse,inventoryResponse]=await Promise.all([fetch('/registry/asset_index.json'),fetch('/assets/inventory.json')]);
+  if(!registryResponse.ok)throw Error(`资产注册表 HTTP ${registryResponse.status}`);
+  if(!inventoryResponse.ok)throw Error(`资产清单 HTTP ${inventoryResponse.status}`);
+  const registry=await registryResponse.json();activeVariantId=registry.interactive_viewer?.active_variant_id;
+  const variant=registry.derived_variants?.[activeVariantId];
+  if(!activeVariantId||!variant)throw Error('资产注册表没有有效的 viewer variant');
+  const inventoryBytes=await inventoryResponse.arrayBuffer();
+  const inventoryDigest=[...new Uint8Array(await crypto.subtle.digest('SHA-256',inventoryBytes))].map(x=>x.toString(16).padStart(2,'0')).join('');
+  if(inventoryDigest!==variant.inventory_sha256)throw Error(`资产清单与 ${activeVariantId} 注册哈希不匹配`);
+  const inventory=JSON.parse(new TextDecoder().decode(inventoryBytes)),loader=new OBJLoader();
   for(const item of inventory.objects){
     const raw=await (await fetch('/assets/'+encodeURIComponent(item.file))).arrayBuffer();
     const digest=[...new Uint8Array(await crypto.subtle.digest('SHA-256',raw))].map(x=>x.toString(16).padStart(2,'0')).join('');
@@ -118,7 +128,8 @@ async function load(){
     part.traverse(o=>{if(o.isMesh){o.userData.part=item.name;o.material=new T.MeshStandardMaterial({color:/Thumb|Button|Shoulder|Trigger|DPad/.test(item.name)?0x53bcb5:0x8b929b,roughness:.65,side:T.DoubleSide});}});
     parts.set(item.name,part);scene.add(part);
   }
-  ready=true;status(`已核验并载入 ${parts.size} 个网格；尚未配置运动机构。`);
+  ready=true;status(`已核验并载入 ${parts.size} 个网格；variant=${activeVariantId}；尚未配置运动机构。`);
+  document.body.dataset.variantId=activeVariantId;
   document.body.dataset.ready='true';
 }
 let deviceKey='';
@@ -143,7 +154,7 @@ load().catch(e=>{status(e.message);document.body.dataset.error=e.message;});anim
 // Read-only inspection for browser harnesses; not an alternate input path.
 export function inspect(){
   const r=renderer.domElement.getBoundingClientRect();
-  return {ready,selected,mode:session.mode,values:Array.from(session.frame.values),
+  return {ready,activeVariantId,selected,mode:session.mode,values:Array.from(session.frame.values),
     diagnostics:describeFrame(session.frame,joints,session.mode),
     valid:session.frame.valid,reason:session.frame.reason??null,dragging:drag!==null,
     pointerId:drag?.pointer??null,orbitEnabled:orbit.enabled,

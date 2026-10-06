@@ -1,6 +1,16 @@
 {
-  "schema_version": 1,
-  "catalog_sha256": "9388befdad0e13b189086d23f7fce3e8ff9c33d987c10c29879045feaa81b8e2",
+  "schema_version": 2,
+  "catalog_sha256": "f360fa9fb7cac5f77bc576e28c535cd278bf7aad0c111af51e13070a06cb04f5",
+  "asset_registry_binding": {
+    "path": "assets/asset_index.json",
+    "path_base": "repository_root",
+    "sha256": "0f935d97bc6731d248f5db476e2adcb3f843db331418dff6ee00db5aa1b6bc51",
+    "registry_role": "canonical_status_authority",
+    "visual_candidate_collections": [
+      "candidates",
+      "derived_variants"
+    ]
+  },
   "hardware_revision": {
     "value": "1708",
     "unit": null,
@@ -15,1776 +25,955 @@
   "component_inventory_basis": {
     "evidence": [
       "user_target_1708",
-      "ifixit_1708_buttons"
+      "ifixit_1708_buttons",
+      "apple_1708_connect_button"
     ],
-    "scope": "1708 target; visual source remains unverified for this revision. No Share control on target.",
-    "harness": "export_blend_inventory"
+    "scope": "1708 target; visual source remains unverified for this revision. Includes the physical Pair/Bind/Connect control and no Share control.",
+    "harness": "audit_spec"
+  },
+  "input_schema": {
+    "name": "w3c_standard_gamepad_plus_explicit_tensor_order",
+    "evidence": [
+      "w3c_gamepad_standard_mapping"
+    ],
+    "channels": [
+      {
+        "name": "lx",
+        "kind": "axis",
+        "tensor_index": 0,
+        "standard_index": 0,
+        "range": [
+          -1,
+          1
+        ]
+      },
+      {
+        "name": "ly",
+        "kind": "axis",
+        "tensor_index": 1,
+        "standard_index": 1,
+        "range": [
+          -1,
+          1
+        ]
+      },
+      {
+        "name": "rx",
+        "kind": "axis",
+        "tensor_index": 2,
+        "standard_index": 2,
+        "range": [
+          -1,
+          1
+        ]
+      },
+      {
+        "name": "ry",
+        "kind": "axis",
+        "tensor_index": 3,
+        "standard_index": 3,
+        "range": [
+          -1,
+          1
+        ]
+      },
+      {
+        "name": "a",
+        "kind": "button",
+        "tensor_index": 4,
+        "standard_index": 0,
+        "range": [
+          0,
+          1
+        ]
+      },
+      {
+        "name": "b",
+        "kind": "button",
+        "tensor_index": 5,
+        "standard_index": 1,
+        "range": [
+          0,
+          1
+        ]
+      },
+      {
+        "name": "x",
+        "kind": "button",
+        "tensor_index": 6,
+        "standard_index": 2,
+        "range": [
+          0,
+          1
+        ]
+      },
+      {
+        "name": "y",
+        "kind": "button",
+        "tensor_index": 7,
+        "standard_index": 3,
+        "range": [
+          0,
+          1
+        ]
+      },
+      {
+        "name": "left_shoulder",
+        "kind": "button",
+        "tensor_index": 8,
+        "standard_index": 4,
+        "range": [
+          0,
+          1
+        ]
+      },
+      {
+        "name": "right_shoulder",
+        "kind": "button",
+        "tensor_index": 9,
+        "standard_index": 5,
+        "range": [
+          0,
+          1
+        ]
+      },
+      {
+        "name": "left_trigger",
+        "kind": "button",
+        "tensor_index": 10,
+        "standard_index": 6,
+        "range": [
+          0,
+          1
+        ]
+      },
+      {
+        "name": "right_trigger",
+        "kind": "button",
+        "tensor_index": 11,
+        "standard_index": 7,
+        "range": [
+          0,
+          1
+        ]
+      },
+      {
+        "name": "view",
+        "kind": "button",
+        "tensor_index": 12,
+        "standard_index": 8,
+        "range": [
+          0,
+          1
+        ]
+      },
+      {
+        "name": "menu",
+        "kind": "button",
+        "tensor_index": 13,
+        "standard_index": 9,
+        "range": [
+          0,
+          1
+        ]
+      },
+      {
+        "name": "left_stick_click",
+        "kind": "button",
+        "tensor_index": 14,
+        "standard_index": 10,
+        "range": [
+          0,
+          1
+        ]
+      },
+      {
+        "name": "right_stick_click",
+        "kind": "button",
+        "tensor_index": 15,
+        "standard_index": 11,
+        "range": [
+          0,
+          1
+        ]
+      },
+      {
+        "name": "dpad_up",
+        "kind": "button",
+        "tensor_index": 16,
+        "standard_index": 12,
+        "range": [
+          0,
+          1
+        ]
+      },
+      {
+        "name": "dpad_down",
+        "kind": "button",
+        "tensor_index": 17,
+        "standard_index": 13,
+        "range": [
+          0,
+          1
+        ]
+      },
+      {
+        "name": "dpad_left",
+        "kind": "button",
+        "tensor_index": 18,
+        "standard_index": 14,
+        "range": [
+          0,
+          1
+        ]
+      },
+      {
+        "name": "dpad_right",
+        "kind": "button",
+        "tensor_index": 19,
+        "standard_index": 15,
+        "range": [
+          0,
+          1
+        ]
+      },
+      {
+        "name": "guide",
+        "kind": "button",
+        "tensor_index": 20,
+        "standard_index": 16,
+        "range": [
+          0,
+          1
+        ]
+      }
+    ],
+    "note": "The 21-value tensor order is this project's axes-then-buttons transport; W3C defines the four axis and seventeen button indices, not a tensor."
+  },
+  "physical_only_controls": {
+    "pair": {
+      "aliases": [
+        "Pair",
+        "Bind",
+        "Connect",
+        "Sync"
+      ],
+      "evidence": [
+        "apple_1708_connect_button",
+        "ifixit_1708_buttons"
+      ],
+      "standard_gamepad_channel": null,
+      "reason": "The 1708 has this physical control, but it is absent from the W3C Standard Gamepad's 17 buttons and 4 axes."
+    }
+  },
+  "physical_topology": {
+    "status": "unknown",
+    "bodies": [],
+    "configuration_constraints": [],
+    "root_attachment": {
+      "status": "unknown",
+      "mode": null,
+      "root_body": null,
+      "reference_frame": null,
+      "pose": null,
+      "pose_unit": "m,rad",
+      "evidence": [],
+      "harness": "audit_spec",
+      "reason": "Controller instance attachment (free, fixed, kinematic or fixture-mounted) is unresolved.",
+      "applicability": null,
+      "pose_evidence": {
+        "value": null,
+        "unit": "m,rad",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for root_pose; no simulator default permitted."
+      }
+    },
+    "self_collision_policy": {
+      "status": "unknown",
+      "default": null,
+      "pair_overrides": [],
+      "evidence": [],
+      "harness": "audit_spec",
+      "reason": "Articulation self-collision pairs are unresolved; no PhysX default is permitted.",
+      "applicability": null
+    },
+    "evidence": [],
+    "harness": "audit_spec",
+    "reason": "No verified Xbox 1708 rigid-body graph; no body or joint is inferred from visual meshes.",
+    "applicability": null
   },
   "parts": {
     "shell": {
-      "geometry_scale": {
-        "value": null,
-        "unit": "m/native_unit",
+      "motion_model": {
         "status": "unknown",
+        "joints": [],
+        "required_control_effects": [],
+        "physical_only": false,
+        "identity_evidence": [],
+        "configuration_domain": {
+          "status": "unknown",
+          "constraint_ids": [],
+          "approximation": null,
+          "evidence": [],
+          "harness": "audit_spec",
+          "reason": "No verified coupled configuration domain for shell.",
+          "applicability": null,
+          "combination": null,
+          "independent_joint_ids": [],
+          "neutral_configuration": null,
+          "neutral_configuration_evidence": {
+            "value": null,
+            "unit": "per_joint_coordinate_units",
+            "status": "unknown",
+            "evidence": [],
+            "harness": "audit_spec",
+            "reason": "No verified target-hardware evidence for neutral_configuration; no simulator default permitted."
+          }
+        },
         "evidence": [],
         "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for geometry_scale; no simulator default permitted."
-      },
-      "mass": {
-        "value": null,
-        "unit": "kg",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for mass; no simulator default permitted."
-      },
-      "center_of_mass": {
-        "value": null,
-        "unit": "m",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for center_of_mass; no simulator default permitted."
-      },
-      "inertia": {
-        "value": null,
-        "unit": "kg*m^2",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for inertia; no simulator default permitted."
-      },
-      "collision_geometry": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for collision_geometry; no simulator default permitted."
-      },
-      "contact_friction": {
-        "value": null,
-        "unit": "1",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for contact_friction; no simulator default permitted."
-      },
-      "contact_restitution": {
-        "value": null,
-        "unit": "1",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for contact_restitution; no simulator default permitted."
+        "reason": "No verified Xbox 1708 mechanism topology for shell; no joints inferred from visual meshes.",
+        "applicability": null
       }
     },
     "a": {
-      "geometry_scale": {
-        "value": null,
-        "unit": "m/native_unit",
+      "motion_model": {
         "status": "unknown",
+        "joints": [],
+        "required_control_effects": [
+          {
+            "channel": "a",
+            "evidence": [
+              "w3c_gamepad_standard_mapping"
+            ]
+          }
+        ],
+        "physical_only": false,
+        "identity_evidence": [],
+        "configuration_domain": {
+          "status": "unknown",
+          "constraint_ids": [],
+          "approximation": null,
+          "evidence": [],
+          "harness": "audit_spec",
+          "reason": "No verified coupled configuration domain for a.",
+          "applicability": null,
+          "combination": null,
+          "independent_joint_ids": [],
+          "neutral_configuration": null,
+          "neutral_configuration_evidence": {
+            "value": null,
+            "unit": "per_joint_coordinate_units",
+            "status": "unknown",
+            "evidence": [],
+            "harness": "audit_spec",
+            "reason": "No verified target-hardware evidence for neutral_configuration; no simulator default permitted."
+          }
+        },
         "evidence": [],
         "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for geometry_scale; no simulator default permitted."
-      },
-      "mass": {
-        "value": null,
-        "unit": "kg",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for mass; no simulator default permitted."
-      },
-      "center_of_mass": {
-        "value": null,
-        "unit": "m",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for center_of_mass; no simulator default permitted."
-      },
-      "inertia": {
-        "value": null,
-        "unit": "kg*m^2",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for inertia; no simulator default permitted."
-      },
-      "collision_geometry": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for collision_geometry; no simulator default permitted."
-      },
-      "contact_friction": {
-        "value": null,
-        "unit": "1",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for contact_friction; no simulator default permitted."
-      },
-      "contact_restitution": {
-        "value": null,
-        "unit": "1",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for contact_restitution; no simulator default permitted."
-      },
-      "joint_type": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for joint_type; no simulator default permitted."
-      },
-      "joint_origin": {
-        "value": null,
-        "unit": "m,rad",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for joint_origin; no simulator default permitted."
-      },
-      "joint_axis": {
-        "value": null,
-        "unit": "1",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for joint_axis; no simulator default permitted."
-      },
-      "joint_limits": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for joint_limits; no simulator default permitted."
-      },
-      "restoring_curve": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for restoring_curve; no simulator default permitted."
-      },
-      "damping": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for damping; no simulator default permitted."
-      },
-      "joint_friction": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for joint_friction; no simulator default permitted."
-      },
-      "input_mapping": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for input_mapping; no simulator default permitted."
+        "reason": "No verified Xbox 1708 mechanism topology for a; no joints inferred from visual meshes.",
+        "applicability": null
       }
     },
     "b": {
-      "geometry_scale": {
-        "value": null,
-        "unit": "m/native_unit",
+      "motion_model": {
         "status": "unknown",
+        "joints": [],
+        "required_control_effects": [
+          {
+            "channel": "b",
+            "evidence": [
+              "w3c_gamepad_standard_mapping"
+            ]
+          }
+        ],
+        "physical_only": false,
+        "identity_evidence": [],
+        "configuration_domain": {
+          "status": "unknown",
+          "constraint_ids": [],
+          "approximation": null,
+          "evidence": [],
+          "harness": "audit_spec",
+          "reason": "No verified coupled configuration domain for b.",
+          "applicability": null,
+          "combination": null,
+          "independent_joint_ids": [],
+          "neutral_configuration": null,
+          "neutral_configuration_evidence": {
+            "value": null,
+            "unit": "per_joint_coordinate_units",
+            "status": "unknown",
+            "evidence": [],
+            "harness": "audit_spec",
+            "reason": "No verified target-hardware evidence for neutral_configuration; no simulator default permitted."
+          }
+        },
         "evidence": [],
         "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for geometry_scale; no simulator default permitted."
-      },
-      "mass": {
-        "value": null,
-        "unit": "kg",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for mass; no simulator default permitted."
-      },
-      "center_of_mass": {
-        "value": null,
-        "unit": "m",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for center_of_mass; no simulator default permitted."
-      },
-      "inertia": {
-        "value": null,
-        "unit": "kg*m^2",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for inertia; no simulator default permitted."
-      },
-      "collision_geometry": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for collision_geometry; no simulator default permitted."
-      },
-      "contact_friction": {
-        "value": null,
-        "unit": "1",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for contact_friction; no simulator default permitted."
-      },
-      "contact_restitution": {
-        "value": null,
-        "unit": "1",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for contact_restitution; no simulator default permitted."
-      },
-      "joint_type": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for joint_type; no simulator default permitted."
-      },
-      "joint_origin": {
-        "value": null,
-        "unit": "m,rad",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for joint_origin; no simulator default permitted."
-      },
-      "joint_axis": {
-        "value": null,
-        "unit": "1",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for joint_axis; no simulator default permitted."
-      },
-      "joint_limits": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for joint_limits; no simulator default permitted."
-      },
-      "restoring_curve": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for restoring_curve; no simulator default permitted."
-      },
-      "damping": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for damping; no simulator default permitted."
-      },
-      "joint_friction": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for joint_friction; no simulator default permitted."
-      },
-      "input_mapping": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for input_mapping; no simulator default permitted."
+        "reason": "No verified Xbox 1708 mechanism topology for b; no joints inferred from visual meshes.",
+        "applicability": null
       }
     },
     "x": {
-      "geometry_scale": {
-        "value": null,
-        "unit": "m/native_unit",
+      "motion_model": {
         "status": "unknown",
+        "joints": [],
+        "required_control_effects": [
+          {
+            "channel": "x",
+            "evidence": [
+              "w3c_gamepad_standard_mapping"
+            ]
+          }
+        ],
+        "physical_only": false,
+        "identity_evidence": [],
+        "configuration_domain": {
+          "status": "unknown",
+          "constraint_ids": [],
+          "approximation": null,
+          "evidence": [],
+          "harness": "audit_spec",
+          "reason": "No verified coupled configuration domain for x.",
+          "applicability": null,
+          "combination": null,
+          "independent_joint_ids": [],
+          "neutral_configuration": null,
+          "neutral_configuration_evidence": {
+            "value": null,
+            "unit": "per_joint_coordinate_units",
+            "status": "unknown",
+            "evidence": [],
+            "harness": "audit_spec",
+            "reason": "No verified target-hardware evidence for neutral_configuration; no simulator default permitted."
+          }
+        },
         "evidence": [],
         "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for geometry_scale; no simulator default permitted."
-      },
-      "mass": {
-        "value": null,
-        "unit": "kg",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for mass; no simulator default permitted."
-      },
-      "center_of_mass": {
-        "value": null,
-        "unit": "m",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for center_of_mass; no simulator default permitted."
-      },
-      "inertia": {
-        "value": null,
-        "unit": "kg*m^2",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for inertia; no simulator default permitted."
-      },
-      "collision_geometry": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for collision_geometry; no simulator default permitted."
-      },
-      "contact_friction": {
-        "value": null,
-        "unit": "1",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for contact_friction; no simulator default permitted."
-      },
-      "contact_restitution": {
-        "value": null,
-        "unit": "1",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for contact_restitution; no simulator default permitted."
-      },
-      "joint_type": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for joint_type; no simulator default permitted."
-      },
-      "joint_origin": {
-        "value": null,
-        "unit": "m,rad",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for joint_origin; no simulator default permitted."
-      },
-      "joint_axis": {
-        "value": null,
-        "unit": "1",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for joint_axis; no simulator default permitted."
-      },
-      "joint_limits": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for joint_limits; no simulator default permitted."
-      },
-      "restoring_curve": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for restoring_curve; no simulator default permitted."
-      },
-      "damping": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for damping; no simulator default permitted."
-      },
-      "joint_friction": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for joint_friction; no simulator default permitted."
-      },
-      "input_mapping": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for input_mapping; no simulator default permitted."
+        "reason": "No verified Xbox 1708 mechanism topology for x; no joints inferred from visual meshes.",
+        "applicability": null
       }
     },
     "y": {
-      "geometry_scale": {
-        "value": null,
-        "unit": "m/native_unit",
+      "motion_model": {
         "status": "unknown",
+        "joints": [],
+        "required_control_effects": [
+          {
+            "channel": "y",
+            "evidence": [
+              "w3c_gamepad_standard_mapping"
+            ]
+          }
+        ],
+        "physical_only": false,
+        "identity_evidence": [],
+        "configuration_domain": {
+          "status": "unknown",
+          "constraint_ids": [],
+          "approximation": null,
+          "evidence": [],
+          "harness": "audit_spec",
+          "reason": "No verified coupled configuration domain for y.",
+          "applicability": null,
+          "combination": null,
+          "independent_joint_ids": [],
+          "neutral_configuration": null,
+          "neutral_configuration_evidence": {
+            "value": null,
+            "unit": "per_joint_coordinate_units",
+            "status": "unknown",
+            "evidence": [],
+            "harness": "audit_spec",
+            "reason": "No verified target-hardware evidence for neutral_configuration; no simulator default permitted."
+          }
+        },
         "evidence": [],
         "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for geometry_scale; no simulator default permitted."
-      },
-      "mass": {
-        "value": null,
-        "unit": "kg",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for mass; no simulator default permitted."
-      },
-      "center_of_mass": {
-        "value": null,
-        "unit": "m",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for center_of_mass; no simulator default permitted."
-      },
-      "inertia": {
-        "value": null,
-        "unit": "kg*m^2",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for inertia; no simulator default permitted."
-      },
-      "collision_geometry": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for collision_geometry; no simulator default permitted."
-      },
-      "contact_friction": {
-        "value": null,
-        "unit": "1",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for contact_friction; no simulator default permitted."
-      },
-      "contact_restitution": {
-        "value": null,
-        "unit": "1",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for contact_restitution; no simulator default permitted."
-      },
-      "joint_type": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for joint_type; no simulator default permitted."
-      },
-      "joint_origin": {
-        "value": null,
-        "unit": "m,rad",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for joint_origin; no simulator default permitted."
-      },
-      "joint_axis": {
-        "value": null,
-        "unit": "1",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for joint_axis; no simulator default permitted."
-      },
-      "joint_limits": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for joint_limits; no simulator default permitted."
-      },
-      "restoring_curve": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for restoring_curve; no simulator default permitted."
-      },
-      "damping": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for damping; no simulator default permitted."
-      },
-      "joint_friction": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for joint_friction; no simulator default permitted."
-      },
-      "input_mapping": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for input_mapping; no simulator default permitted."
+        "reason": "No verified Xbox 1708 mechanism topology for y; no joints inferred from visual meshes.",
+        "applicability": null
       }
     },
     "left_stick": {
-      "geometry_scale": {
-        "value": null,
-        "unit": "m/native_unit",
+      "motion_model": {
         "status": "unknown",
+        "joints": [],
+        "required_control_effects": [
+          {
+            "channel": "lx",
+            "evidence": [
+              "w3c_gamepad_standard_mapping"
+            ]
+          },
+          {
+            "channel": "ly",
+            "evidence": [
+              "w3c_gamepad_standard_mapping"
+            ]
+          },
+          {
+            "channel": "left_stick_click",
+            "evidence": [
+              "w3c_gamepad_standard_mapping"
+            ]
+          }
+        ],
+        "physical_only": false,
+        "identity_evidence": [],
+        "configuration_domain": {
+          "status": "unknown",
+          "constraint_ids": [],
+          "approximation": null,
+          "evidence": [],
+          "harness": "audit_spec",
+          "reason": "No verified coupled configuration domain for left_stick.",
+          "applicability": null,
+          "combination": null,
+          "independent_joint_ids": [],
+          "neutral_configuration": null,
+          "neutral_configuration_evidence": {
+            "value": null,
+            "unit": "per_joint_coordinate_units",
+            "status": "unknown",
+            "evidence": [],
+            "harness": "audit_spec",
+            "reason": "No verified target-hardware evidence for neutral_configuration; no simulator default permitted."
+          }
+        },
         "evidence": [],
         "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for geometry_scale; no simulator default permitted."
-      },
-      "mass": {
-        "value": null,
-        "unit": "kg",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for mass; no simulator default permitted."
-      },
-      "center_of_mass": {
-        "value": null,
-        "unit": "m",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for center_of_mass; no simulator default permitted."
-      },
-      "inertia": {
-        "value": null,
-        "unit": "kg*m^2",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for inertia; no simulator default permitted."
-      },
-      "collision_geometry": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for collision_geometry; no simulator default permitted."
-      },
-      "contact_friction": {
-        "value": null,
-        "unit": "1",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for contact_friction; no simulator default permitted."
-      },
-      "contact_restitution": {
-        "value": null,
-        "unit": "1",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for contact_restitution; no simulator default permitted."
-      },
-      "joint_type": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for joint_type; no simulator default permitted."
-      },
-      "joint_origin": {
-        "value": null,
-        "unit": "m,rad",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for joint_origin; no simulator default permitted."
-      },
-      "joint_axis": {
-        "value": null,
-        "unit": "1",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for joint_axis; no simulator default permitted."
-      },
-      "joint_limits": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for joint_limits; no simulator default permitted."
-      },
-      "restoring_curve": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for restoring_curve; no simulator default permitted."
-      },
-      "damping": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for damping; no simulator default permitted."
-      },
-      "joint_friction": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for joint_friction; no simulator default permitted."
-      },
-      "input_mapping": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for input_mapping; no simulator default permitted."
+        "reason": "No verified Xbox 1708 mechanism topology for left_stick; no joints inferred from visual meshes.",
+        "applicability": null
       }
     },
     "right_stick": {
-      "geometry_scale": {
-        "value": null,
-        "unit": "m/native_unit",
+      "motion_model": {
         "status": "unknown",
+        "joints": [],
+        "required_control_effects": [
+          {
+            "channel": "rx",
+            "evidence": [
+              "w3c_gamepad_standard_mapping"
+            ]
+          },
+          {
+            "channel": "ry",
+            "evidence": [
+              "w3c_gamepad_standard_mapping"
+            ]
+          },
+          {
+            "channel": "right_stick_click",
+            "evidence": [
+              "w3c_gamepad_standard_mapping"
+            ]
+          }
+        ],
+        "physical_only": false,
+        "identity_evidence": [],
+        "configuration_domain": {
+          "status": "unknown",
+          "constraint_ids": [],
+          "approximation": null,
+          "evidence": [],
+          "harness": "audit_spec",
+          "reason": "No verified coupled configuration domain for right_stick.",
+          "applicability": null,
+          "combination": null,
+          "independent_joint_ids": [],
+          "neutral_configuration": null,
+          "neutral_configuration_evidence": {
+            "value": null,
+            "unit": "per_joint_coordinate_units",
+            "status": "unknown",
+            "evidence": [],
+            "harness": "audit_spec",
+            "reason": "No verified target-hardware evidence for neutral_configuration; no simulator default permitted."
+          }
+        },
         "evidence": [],
         "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for geometry_scale; no simulator default permitted."
-      },
-      "mass": {
-        "value": null,
-        "unit": "kg",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for mass; no simulator default permitted."
-      },
-      "center_of_mass": {
-        "value": null,
-        "unit": "m",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for center_of_mass; no simulator default permitted."
-      },
-      "inertia": {
-        "value": null,
-        "unit": "kg*m^2",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for inertia; no simulator default permitted."
-      },
-      "collision_geometry": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for collision_geometry; no simulator default permitted."
-      },
-      "contact_friction": {
-        "value": null,
-        "unit": "1",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for contact_friction; no simulator default permitted."
-      },
-      "contact_restitution": {
-        "value": null,
-        "unit": "1",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for contact_restitution; no simulator default permitted."
-      },
-      "joint_type": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for joint_type; no simulator default permitted."
-      },
-      "joint_origin": {
-        "value": null,
-        "unit": "m,rad",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for joint_origin; no simulator default permitted."
-      },
-      "joint_axis": {
-        "value": null,
-        "unit": "1",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for joint_axis; no simulator default permitted."
-      },
-      "joint_limits": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for joint_limits; no simulator default permitted."
-      },
-      "restoring_curve": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for restoring_curve; no simulator default permitted."
-      },
-      "damping": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for damping; no simulator default permitted."
-      },
-      "joint_friction": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for joint_friction; no simulator default permitted."
-      },
-      "input_mapping": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for input_mapping; no simulator default permitted."
+        "reason": "No verified Xbox 1708 mechanism topology for right_stick; no joints inferred from visual meshes.",
+        "applicability": null
       }
     },
     "dpad": {
-      "geometry_scale": {
-        "value": null,
-        "unit": "m/native_unit",
+      "motion_model": {
         "status": "unknown",
+        "joints": [],
+        "required_control_effects": [
+          {
+            "channel": "dpad_up",
+            "evidence": [
+              "w3c_gamepad_standard_mapping"
+            ]
+          },
+          {
+            "channel": "dpad_down",
+            "evidence": [
+              "w3c_gamepad_standard_mapping"
+            ]
+          },
+          {
+            "channel": "dpad_left",
+            "evidence": [
+              "w3c_gamepad_standard_mapping"
+            ]
+          },
+          {
+            "channel": "dpad_right",
+            "evidence": [
+              "w3c_gamepad_standard_mapping"
+            ]
+          }
+        ],
+        "physical_only": false,
+        "identity_evidence": [],
+        "configuration_domain": {
+          "status": "unknown",
+          "constraint_ids": [],
+          "approximation": null,
+          "evidence": [],
+          "harness": "audit_spec",
+          "reason": "No verified coupled configuration domain for dpad.",
+          "applicability": null,
+          "combination": null,
+          "independent_joint_ids": [],
+          "neutral_configuration": null,
+          "neutral_configuration_evidence": {
+            "value": null,
+            "unit": "per_joint_coordinate_units",
+            "status": "unknown",
+            "evidence": [],
+            "harness": "audit_spec",
+            "reason": "No verified target-hardware evidence for neutral_configuration; no simulator default permitted."
+          }
+        },
         "evidence": [],
         "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for geometry_scale; no simulator default permitted."
-      },
-      "mass": {
-        "value": null,
-        "unit": "kg",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for mass; no simulator default permitted."
-      },
-      "center_of_mass": {
-        "value": null,
-        "unit": "m",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for center_of_mass; no simulator default permitted."
-      },
-      "inertia": {
-        "value": null,
-        "unit": "kg*m^2",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for inertia; no simulator default permitted."
-      },
-      "collision_geometry": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for collision_geometry; no simulator default permitted."
-      },
-      "contact_friction": {
-        "value": null,
-        "unit": "1",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for contact_friction; no simulator default permitted."
-      },
-      "contact_restitution": {
-        "value": null,
-        "unit": "1",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for contact_restitution; no simulator default permitted."
-      },
-      "joint_type": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for joint_type; no simulator default permitted."
-      },
-      "joint_origin": {
-        "value": null,
-        "unit": "m,rad",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for joint_origin; no simulator default permitted."
-      },
-      "joint_axis": {
-        "value": null,
-        "unit": "1",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for joint_axis; no simulator default permitted."
-      },
-      "joint_limits": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for joint_limits; no simulator default permitted."
-      },
-      "restoring_curve": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for restoring_curve; no simulator default permitted."
-      },
-      "damping": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for damping; no simulator default permitted."
-      },
-      "joint_friction": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for joint_friction; no simulator default permitted."
-      },
-      "input_mapping": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for input_mapping; no simulator default permitted."
+        "reason": "No verified Xbox 1708 mechanism topology for dpad; no joints inferred from visual meshes.",
+        "applicability": null
       }
     },
     "left_shoulder": {
-      "geometry_scale": {
-        "value": null,
-        "unit": "m/native_unit",
+      "motion_model": {
         "status": "unknown",
+        "joints": [],
+        "required_control_effects": [
+          {
+            "channel": "left_shoulder",
+            "evidence": [
+              "w3c_gamepad_standard_mapping"
+            ]
+          }
+        ],
+        "physical_only": false,
+        "identity_evidence": [],
+        "configuration_domain": {
+          "status": "unknown",
+          "constraint_ids": [],
+          "approximation": null,
+          "evidence": [],
+          "harness": "audit_spec",
+          "reason": "No verified coupled configuration domain for left_shoulder.",
+          "applicability": null,
+          "combination": null,
+          "independent_joint_ids": [],
+          "neutral_configuration": null,
+          "neutral_configuration_evidence": {
+            "value": null,
+            "unit": "per_joint_coordinate_units",
+            "status": "unknown",
+            "evidence": [],
+            "harness": "audit_spec",
+            "reason": "No verified target-hardware evidence for neutral_configuration; no simulator default permitted."
+          }
+        },
         "evidence": [],
         "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for geometry_scale; no simulator default permitted."
-      },
-      "mass": {
-        "value": null,
-        "unit": "kg",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for mass; no simulator default permitted."
-      },
-      "center_of_mass": {
-        "value": null,
-        "unit": "m",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for center_of_mass; no simulator default permitted."
-      },
-      "inertia": {
-        "value": null,
-        "unit": "kg*m^2",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for inertia; no simulator default permitted."
-      },
-      "collision_geometry": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for collision_geometry; no simulator default permitted."
-      },
-      "contact_friction": {
-        "value": null,
-        "unit": "1",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for contact_friction; no simulator default permitted."
-      },
-      "contact_restitution": {
-        "value": null,
-        "unit": "1",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for contact_restitution; no simulator default permitted."
-      },
-      "joint_type": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for joint_type; no simulator default permitted."
-      },
-      "joint_origin": {
-        "value": null,
-        "unit": "m,rad",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for joint_origin; no simulator default permitted."
-      },
-      "joint_axis": {
-        "value": null,
-        "unit": "1",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for joint_axis; no simulator default permitted."
-      },
-      "joint_limits": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for joint_limits; no simulator default permitted."
-      },
-      "restoring_curve": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for restoring_curve; no simulator default permitted."
-      },
-      "damping": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for damping; no simulator default permitted."
-      },
-      "joint_friction": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for joint_friction; no simulator default permitted."
-      },
-      "input_mapping": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for input_mapping; no simulator default permitted."
+        "reason": "No verified Xbox 1708 mechanism topology for left_shoulder; no joints inferred from visual meshes.",
+        "applicability": null
       }
     },
     "right_shoulder": {
-      "geometry_scale": {
-        "value": null,
-        "unit": "m/native_unit",
+      "motion_model": {
         "status": "unknown",
+        "joints": [],
+        "required_control_effects": [
+          {
+            "channel": "right_shoulder",
+            "evidence": [
+              "w3c_gamepad_standard_mapping"
+            ]
+          }
+        ],
+        "physical_only": false,
+        "identity_evidence": [],
+        "configuration_domain": {
+          "status": "unknown",
+          "constraint_ids": [],
+          "approximation": null,
+          "evidence": [],
+          "harness": "audit_spec",
+          "reason": "No verified coupled configuration domain for right_shoulder.",
+          "applicability": null,
+          "combination": null,
+          "independent_joint_ids": [],
+          "neutral_configuration": null,
+          "neutral_configuration_evidence": {
+            "value": null,
+            "unit": "per_joint_coordinate_units",
+            "status": "unknown",
+            "evidence": [],
+            "harness": "audit_spec",
+            "reason": "No verified target-hardware evidence for neutral_configuration; no simulator default permitted."
+          }
+        },
         "evidence": [],
         "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for geometry_scale; no simulator default permitted."
-      },
-      "mass": {
-        "value": null,
-        "unit": "kg",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for mass; no simulator default permitted."
-      },
-      "center_of_mass": {
-        "value": null,
-        "unit": "m",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for center_of_mass; no simulator default permitted."
-      },
-      "inertia": {
-        "value": null,
-        "unit": "kg*m^2",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for inertia; no simulator default permitted."
-      },
-      "collision_geometry": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for collision_geometry; no simulator default permitted."
-      },
-      "contact_friction": {
-        "value": null,
-        "unit": "1",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for contact_friction; no simulator default permitted."
-      },
-      "contact_restitution": {
-        "value": null,
-        "unit": "1",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for contact_restitution; no simulator default permitted."
-      },
-      "joint_type": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for joint_type; no simulator default permitted."
-      },
-      "joint_origin": {
-        "value": null,
-        "unit": "m,rad",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for joint_origin; no simulator default permitted."
-      },
-      "joint_axis": {
-        "value": null,
-        "unit": "1",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for joint_axis; no simulator default permitted."
-      },
-      "joint_limits": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for joint_limits; no simulator default permitted."
-      },
-      "restoring_curve": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for restoring_curve; no simulator default permitted."
-      },
-      "damping": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for damping; no simulator default permitted."
-      },
-      "joint_friction": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for joint_friction; no simulator default permitted."
-      },
-      "input_mapping": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for input_mapping; no simulator default permitted."
+        "reason": "No verified Xbox 1708 mechanism topology for right_shoulder; no joints inferred from visual meshes.",
+        "applicability": null
       }
     },
     "left_trigger": {
-      "geometry_scale": {
-        "value": null,
-        "unit": "m/native_unit",
+      "motion_model": {
         "status": "unknown",
+        "joints": [],
+        "required_control_effects": [
+          {
+            "channel": "left_trigger",
+            "evidence": [
+              "w3c_gamepad_standard_mapping"
+            ]
+          }
+        ],
+        "physical_only": false,
+        "identity_evidence": [],
+        "configuration_domain": {
+          "status": "unknown",
+          "constraint_ids": [],
+          "approximation": null,
+          "evidence": [],
+          "harness": "audit_spec",
+          "reason": "No verified coupled configuration domain for left_trigger.",
+          "applicability": null,
+          "combination": null,
+          "independent_joint_ids": [],
+          "neutral_configuration": null,
+          "neutral_configuration_evidence": {
+            "value": null,
+            "unit": "per_joint_coordinate_units",
+            "status": "unknown",
+            "evidence": [],
+            "harness": "audit_spec",
+            "reason": "No verified target-hardware evidence for neutral_configuration; no simulator default permitted."
+          }
+        },
         "evidence": [],
         "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for geometry_scale; no simulator default permitted."
-      },
-      "mass": {
-        "value": null,
-        "unit": "kg",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for mass; no simulator default permitted."
-      },
-      "center_of_mass": {
-        "value": null,
-        "unit": "m",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for center_of_mass; no simulator default permitted."
-      },
-      "inertia": {
-        "value": null,
-        "unit": "kg*m^2",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for inertia; no simulator default permitted."
-      },
-      "collision_geometry": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for collision_geometry; no simulator default permitted."
-      },
-      "contact_friction": {
-        "value": null,
-        "unit": "1",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for contact_friction; no simulator default permitted."
-      },
-      "contact_restitution": {
-        "value": null,
-        "unit": "1",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for contact_restitution; no simulator default permitted."
-      },
-      "joint_type": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for joint_type; no simulator default permitted."
-      },
-      "joint_origin": {
-        "value": null,
-        "unit": "m,rad",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for joint_origin; no simulator default permitted."
-      },
-      "joint_axis": {
-        "value": null,
-        "unit": "1",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for joint_axis; no simulator default permitted."
-      },
-      "joint_limits": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for joint_limits; no simulator default permitted."
-      },
-      "restoring_curve": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for restoring_curve; no simulator default permitted."
-      },
-      "damping": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for damping; no simulator default permitted."
-      },
-      "joint_friction": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for joint_friction; no simulator default permitted."
-      },
-      "input_mapping": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for input_mapping; no simulator default permitted."
+        "reason": "No verified Xbox 1708 mechanism topology for left_trigger; no joints inferred from visual meshes.",
+        "applicability": null
       }
     },
     "right_trigger": {
-      "geometry_scale": {
-        "value": null,
-        "unit": "m/native_unit",
+      "motion_model": {
         "status": "unknown",
+        "joints": [],
+        "required_control_effects": [
+          {
+            "channel": "right_trigger",
+            "evidence": [
+              "w3c_gamepad_standard_mapping"
+            ]
+          }
+        ],
+        "physical_only": false,
+        "identity_evidence": [],
+        "configuration_domain": {
+          "status": "unknown",
+          "constraint_ids": [],
+          "approximation": null,
+          "evidence": [],
+          "harness": "audit_spec",
+          "reason": "No verified coupled configuration domain for right_trigger.",
+          "applicability": null,
+          "combination": null,
+          "independent_joint_ids": [],
+          "neutral_configuration": null,
+          "neutral_configuration_evidence": {
+            "value": null,
+            "unit": "per_joint_coordinate_units",
+            "status": "unknown",
+            "evidence": [],
+            "harness": "audit_spec",
+            "reason": "No verified target-hardware evidence for neutral_configuration; no simulator default permitted."
+          }
+        },
         "evidence": [],
         "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for geometry_scale; no simulator default permitted."
-      },
-      "mass": {
-        "value": null,
-        "unit": "kg",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for mass; no simulator default permitted."
-      },
-      "center_of_mass": {
-        "value": null,
-        "unit": "m",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for center_of_mass; no simulator default permitted."
-      },
-      "inertia": {
-        "value": null,
-        "unit": "kg*m^2",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for inertia; no simulator default permitted."
-      },
-      "collision_geometry": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for collision_geometry; no simulator default permitted."
-      },
-      "contact_friction": {
-        "value": null,
-        "unit": "1",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for contact_friction; no simulator default permitted."
-      },
-      "contact_restitution": {
-        "value": null,
-        "unit": "1",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for contact_restitution; no simulator default permitted."
-      },
-      "joint_type": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for joint_type; no simulator default permitted."
-      },
-      "joint_origin": {
-        "value": null,
-        "unit": "m,rad",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for joint_origin; no simulator default permitted."
-      },
-      "joint_axis": {
-        "value": null,
-        "unit": "1",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for joint_axis; no simulator default permitted."
-      },
-      "joint_limits": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for joint_limits; no simulator default permitted."
-      },
-      "restoring_curve": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for restoring_curve; no simulator default permitted."
-      },
-      "damping": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for damping; no simulator default permitted."
-      },
-      "joint_friction": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for joint_friction; no simulator default permitted."
-      },
-      "input_mapping": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for input_mapping; no simulator default permitted."
+        "reason": "No verified Xbox 1708 mechanism topology for right_trigger; no joints inferred from visual meshes.",
+        "applicability": null
       }
     },
     "view": {
-      "geometry_scale": {
-        "value": null,
-        "unit": "m/native_unit",
+      "motion_model": {
         "status": "unknown",
+        "joints": [],
+        "required_control_effects": [
+          {
+            "channel": "view",
+            "evidence": [
+              "w3c_gamepad_standard_mapping"
+            ]
+          }
+        ],
+        "physical_only": false,
+        "identity_evidence": [],
+        "configuration_domain": {
+          "status": "unknown",
+          "constraint_ids": [],
+          "approximation": null,
+          "evidence": [],
+          "harness": "audit_spec",
+          "reason": "No verified coupled configuration domain for view.",
+          "applicability": null,
+          "combination": null,
+          "independent_joint_ids": [],
+          "neutral_configuration": null,
+          "neutral_configuration_evidence": {
+            "value": null,
+            "unit": "per_joint_coordinate_units",
+            "status": "unknown",
+            "evidence": [],
+            "harness": "audit_spec",
+            "reason": "No verified target-hardware evidence for neutral_configuration; no simulator default permitted."
+          }
+        },
         "evidence": [],
         "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for geometry_scale; no simulator default permitted."
-      },
-      "mass": {
-        "value": null,
-        "unit": "kg",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for mass; no simulator default permitted."
-      },
-      "center_of_mass": {
-        "value": null,
-        "unit": "m",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for center_of_mass; no simulator default permitted."
-      },
-      "inertia": {
-        "value": null,
-        "unit": "kg*m^2",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for inertia; no simulator default permitted."
-      },
-      "collision_geometry": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for collision_geometry; no simulator default permitted."
-      },
-      "contact_friction": {
-        "value": null,
-        "unit": "1",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for contact_friction; no simulator default permitted."
-      },
-      "contact_restitution": {
-        "value": null,
-        "unit": "1",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for contact_restitution; no simulator default permitted."
-      },
-      "joint_type": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for joint_type; no simulator default permitted."
-      },
-      "joint_origin": {
-        "value": null,
-        "unit": "m,rad",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for joint_origin; no simulator default permitted."
-      },
-      "joint_axis": {
-        "value": null,
-        "unit": "1",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for joint_axis; no simulator default permitted."
-      },
-      "joint_limits": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for joint_limits; no simulator default permitted."
-      },
-      "restoring_curve": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for restoring_curve; no simulator default permitted."
-      },
-      "damping": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for damping; no simulator default permitted."
-      },
-      "joint_friction": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for joint_friction; no simulator default permitted."
-      },
-      "input_mapping": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for input_mapping; no simulator default permitted."
+        "reason": "No verified Xbox 1708 mechanism topology for view; no joints inferred from visual meshes.",
+        "applicability": null
       }
     },
     "menu": {
-      "geometry_scale": {
-        "value": null,
-        "unit": "m/native_unit",
+      "motion_model": {
         "status": "unknown",
+        "joints": [],
+        "required_control_effects": [
+          {
+            "channel": "menu",
+            "evidence": [
+              "w3c_gamepad_standard_mapping"
+            ]
+          }
+        ],
+        "physical_only": false,
+        "identity_evidence": [],
+        "configuration_domain": {
+          "status": "unknown",
+          "constraint_ids": [],
+          "approximation": null,
+          "evidence": [],
+          "harness": "audit_spec",
+          "reason": "No verified coupled configuration domain for menu.",
+          "applicability": null,
+          "combination": null,
+          "independent_joint_ids": [],
+          "neutral_configuration": null,
+          "neutral_configuration_evidence": {
+            "value": null,
+            "unit": "per_joint_coordinate_units",
+            "status": "unknown",
+            "evidence": [],
+            "harness": "audit_spec",
+            "reason": "No verified target-hardware evidence for neutral_configuration; no simulator default permitted."
+          }
+        },
         "evidence": [],
         "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for geometry_scale; no simulator default permitted."
-      },
-      "mass": {
-        "value": null,
-        "unit": "kg",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for mass; no simulator default permitted."
-      },
-      "center_of_mass": {
-        "value": null,
-        "unit": "m",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for center_of_mass; no simulator default permitted."
-      },
-      "inertia": {
-        "value": null,
-        "unit": "kg*m^2",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for inertia; no simulator default permitted."
-      },
-      "collision_geometry": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for collision_geometry; no simulator default permitted."
-      },
-      "contact_friction": {
-        "value": null,
-        "unit": "1",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for contact_friction; no simulator default permitted."
-      },
-      "contact_restitution": {
-        "value": null,
-        "unit": "1",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for contact_restitution; no simulator default permitted."
-      },
-      "joint_type": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for joint_type; no simulator default permitted."
-      },
-      "joint_origin": {
-        "value": null,
-        "unit": "m,rad",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for joint_origin; no simulator default permitted."
-      },
-      "joint_axis": {
-        "value": null,
-        "unit": "1",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for joint_axis; no simulator default permitted."
-      },
-      "joint_limits": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for joint_limits; no simulator default permitted."
-      },
-      "restoring_curve": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for restoring_curve; no simulator default permitted."
-      },
-      "damping": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for damping; no simulator default permitted."
-      },
-      "joint_friction": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for joint_friction; no simulator default permitted."
-      },
-      "input_mapping": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for input_mapping; no simulator default permitted."
+        "reason": "No verified Xbox 1708 mechanism topology for menu; no joints inferred from visual meshes.",
+        "applicability": null
       }
     },
     "guide": {
-      "geometry_scale": {
-        "value": null,
-        "unit": "m/native_unit",
+      "motion_model": {
         "status": "unknown",
+        "joints": [],
+        "required_control_effects": [
+          {
+            "channel": "guide",
+            "evidence": [
+              "w3c_gamepad_standard_mapping"
+            ]
+          }
+        ],
+        "physical_only": false,
+        "identity_evidence": [],
+        "configuration_domain": {
+          "status": "unknown",
+          "constraint_ids": [],
+          "approximation": null,
+          "evidence": [],
+          "harness": "audit_spec",
+          "reason": "No verified coupled configuration domain for guide.",
+          "applicability": null,
+          "combination": null,
+          "independent_joint_ids": [],
+          "neutral_configuration": null,
+          "neutral_configuration_evidence": {
+            "value": null,
+            "unit": "per_joint_coordinate_units",
+            "status": "unknown",
+            "evidence": [],
+            "harness": "audit_spec",
+            "reason": "No verified target-hardware evidence for neutral_configuration; no simulator default permitted."
+          }
+        },
         "evidence": [],
         "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for geometry_scale; no simulator default permitted."
-      },
-      "mass": {
-        "value": null,
-        "unit": "kg",
+        "reason": "No verified Xbox 1708 mechanism topology for guide; no joints inferred from visual meshes.",
+        "applicability": null
+      }
+    },
+    "pair": {
+      "motion_model": {
         "status": "unknown",
+        "joints": [],
+        "required_control_effects": [],
+        "physical_only": true,
+        "identity_evidence": [
+          "apple_1708_connect_button",
+          "ifixit_1708_buttons"
+        ],
+        "configuration_domain": {
+          "status": "unknown",
+          "constraint_ids": [],
+          "approximation": null,
+          "evidence": [],
+          "harness": "audit_spec",
+          "reason": "No verified coupled configuration domain for pair.",
+          "applicability": null,
+          "combination": null,
+          "independent_joint_ids": [],
+          "neutral_configuration": null,
+          "neutral_configuration_evidence": {
+            "value": null,
+            "unit": "per_joint_coordinate_units",
+            "status": "unknown",
+            "evidence": [],
+            "harness": "audit_spec",
+            "reason": "No verified target-hardware evidence for neutral_configuration; no simulator default permitted."
+          }
+        },
         "evidence": [],
         "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for mass; no simulator default permitted."
-      },
-      "center_of_mass": {
-        "value": null,
-        "unit": "m",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for center_of_mass; no simulator default permitted."
-      },
-      "inertia": {
-        "value": null,
-        "unit": "kg*m^2",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for inertia; no simulator default permitted."
-      },
-      "collision_geometry": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for collision_geometry; no simulator default permitted."
-      },
-      "contact_friction": {
-        "value": null,
-        "unit": "1",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for contact_friction; no simulator default permitted."
-      },
-      "contact_restitution": {
-        "value": null,
-        "unit": "1",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for contact_restitution; no simulator default permitted."
-      },
-      "joint_type": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for joint_type; no simulator default permitted."
-      },
-      "joint_origin": {
-        "value": null,
-        "unit": "m,rad",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for joint_origin; no simulator default permitted."
-      },
-      "joint_axis": {
-        "value": null,
-        "unit": "1",
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for joint_axis; no simulator default permitted."
-      },
-      "joint_limits": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for joint_limits; no simulator default permitted."
-      },
-      "restoring_curve": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for restoring_curve; no simulator default permitted."
-      },
-      "damping": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for damping; no simulator default permitted."
-      },
-      "joint_friction": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for joint_friction; no simulator default permitted."
-      },
-      "input_mapping": {
-        "value": null,
-        "unit": null,
-        "status": "unknown",
-        "evidence": [],
-        "harness": "audit_spec",
-        "reason": "No verified target-hardware evidence for input_mapping; no simulator default permitted."
+        "reason": "No verified Xbox 1708 mechanism topology for pair; no joints inferred from visual meshes.",
+        "applicability": null
       }
     }
   },
@@ -1829,9 +1018,44 @@
     ]
   },
   "reference_policy": "Candidates are NOT assigned to target parameters. Adoption requires explicit applicability rationale, unit-correct derivation and a test.",
-  "dpad_policy": "Visual direction labels do not establish four independent mechanical buttons; topology unresolved.",
-  "stick_policy": "Must account for two-axis tilt and click; axes, coupling and limits unresolved. Never infer pivot from Blender origin.",
+  "evidence_field_policy": "Known target fields use measured, derived, estimated or reference status. Measured values bind an instrument and workspace measurement protocol; derived/estimated values bind explicit inputs, method, uncertainty range and confidence meaning; reference values bind an adoption rule and applicability. Every known-value harness is a safe existing workspace path, and Python entrypoints are statically resolved. Synthetic fixtures are not a canonical target-value status.",
+  "frame_convention": {
+    "handedness": "right_handed",
+    "translation_axes": "parent_frame_cartesian_xyz",
+    "rotation_representation": "urdf_fixed_axis_extrinsic_xyz_rpy",
+    "rotation_unit": "rad",
+    "joint_axis_frame": "joint_frame_after_origin_transform"
+  },
+  "topology_policy": "Visual bindings, mass, inertia and colliders belong to globally unique bodies in physical_topology.bodies; no logical control is treated as one implicit rigid body. body_owner is a provenance/organization label only: it does not restrict joint endpoints, because one physical body may participate in shared or cross-control mechanisms. Joints are uniquely owned under one logical control but reference global parent/child body ids, and all joints together form one controller graph. A virtual_frame is a representation-only coordinate frame and must carry evidenced intentionally-absent geometry, mass, inertia and contact data; exporters must lower it to a supported compound joint or reject it, never synthesize a tiny-mass link. Visual candidate/artifact/object IDs and file hashes must resolve through a SHA-bound canonical registry manifest and an explicit target-visual-geometry approval. Visual/collision files are safe paths relative to an explicit artifact root supplied at verification/export time. A valid schema is not a validated URDF or SAPIEN asset.",
+  "mesh_unit_policy": "Every visual or collision mesh declares three positive meters_per_native_unit values with unit m/native_unit. A value of [1,1,1] is valid only when evidence establishes that each native mesh unit is one metre; OBJ or other unitless formats must not be assigned an implicit scale.",
+  "curve_policy": "Restoring curves declare equilibrium, internal-effort sign, hysteresis branches, interpolation and reject-outside behavior. Analog mappings are monotone, full-range and uniquely invertible. Digital controls instead declare press/release thresholds, Schmitt-trigger state, and evidenced representative coordinates without claiming a unique inverse. Pair uses the same digital physics with output_kind physical_event and never creates a tensor channel. Any differentiable training surrogate is a separately named approximation artifact, never physical ground truth. Finite joint limits must be the exact mapping/curve domain.",
+  "configuration_constraint_policy": "Coupled multi-joint controls declare intersection constraints plus explicit independent_joint_ids, or an explicit approximation/unmodeled domain. Constraint and independent sets cover every owned joint exactly. A full neutral_configuration is checked against joint equilibria, limits and every constraint as a feasibility witness. Exporters must not assume omitted Cartesian factors.",
+  "simulator_policy": {
+    "evidence": [
+      "physx_shape_offsets",
+      "sapien_collision_groups",
+      "physx_rigid_body_collision"
+    ],
+    "harness": "audit_spec",
+    "scope": "Every collider declares SAPIEN's four uint32 filter words and finite PhysX contact/rest offsets with restOffset strictly below non-negative contactOffset. Triangle meshes declare simulation/query role, exact actor kind, mobility and cooking; a non-kinematic dynamic simulation mesh requires SHA-bound SDF cooking and GPU dynamics. In a reduced-coordinate articulation every body, including an eFIX_BASE root, is a non-kinematic articulation link; only a standalone fixed body is a rigid static actor. Direct parent-child link collision is backend-unconditionally disabled and a policy may not claim it is enabled. A modeled topology declares root attachment and articulation self-collision policy, and mesh actor declarations must agree with graph role. Joint limits are physical coordinate stops. Passive joints mark actuator limits intentionally absent; simulator safety clamps are separate explicit configuration. Exact PhysX version/cooking parameters or a SHA-bound pre-cooked no-recook artifact remain required before dynamics readiness. No PhysX/SAPIEN default is evidence."
+  },
+  "contact_material_policy": {
+    "evidence": [
+      "physx_material"
+    ],
+    "harness": "audit_spec",
+    "scope": "Contact friction records separate static and dynamic coefficients plus an explicit PhysX combine mode. Restitution records its coefficient and combine mode. No PhysX material default is implied, and compliant negative restitution is outside this schema."
+  },
+  "dpad_policy": "Required logical directions do not imply four independent buttons. A future motion_model may use one or more joints, and one joint may map to multiple coupled effects.",
+  "stick_policy": "Each stick requires X, Y and click effects, but their joint count, axes, coupling and limits remain unresolved. Never infer pivots from Blender origins.",
   "trigger_policy": "Do not replace analog triggers with Alpakka digital trigger switches.",
+  "interactive_adapter_gate": {
+    "status": "blocked_unimplemented",
+    "canonical_schema_version": 2,
+    "viewer_schema_version": 1,
+    "adapter": null,
+    "reason": "No fail-closed, hash-bound v2-to-viewer adapter currently proves that the schema-1 preview preserves body/joint graphs, coupled constraints, virtual frames and inverse mappings. Viewer roundtrips are software previews, not physical-asset acceptance."
+  },
   "excluded_visual_controls": {
     "share": {
       "reason": "Not part of confirmed 1708 target; original meshes retained unchanged"

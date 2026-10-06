@@ -12,6 +12,11 @@ import numpy as np
 import trimesh
 
 
+def require(condition, message):
+    if not condition:
+        raise RuntimeError(message)
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("directory", type=Path)
@@ -22,38 +27,58 @@ def main():
         if obj["type"] != "MESH":
             continue
         path = args.directory / obj["file"]
-        assert hashlib.sha256(path.read_bytes()).hexdigest() == obj["sha256"]
+        actual_sha256 = hashlib.sha256(path.read_bytes()).hexdigest()
+        require(
+            actual_sha256 == obj["sha256"],
+            f"{path}: SHA-256 mismatch ({actual_sha256} != {obj['sha256']})",
+        )
         lines = path.read_text().splitlines()
-        raw_vertices = np.array(
-            [
-                [float(x) for x in line.split()[1:]]
-                for line in lines
-                if line.startswith("v ")
-            ]
+        vertex_rows = [
+            [float(x) for x in line.split()[1:]]
+            for line in lines
+            if line.startswith("v ")
+        ]
+        face_rows = [
+            [int(x) - 1 for x in line.split()[1:]]
+            for line in lines
+            if line.startswith("f ")
+        ]
+        require(vertex_rows and all(len(row) == 3 for row in vertex_rows), f"{path}: vertices must be non-empty XYZ triples")
+        require(face_rows and all(len(row) == 3 for row in face_rows), f"{path}: faces must be non-empty triangles")
+        raw_vertices = np.array(vertex_rows)
+        raw_faces = np.array(face_rows)
+        require(
+            len(raw_vertices) == obj["vertices"]
+            and len(raw_faces) == obj["triangles"],
+            f"{path}: inventory vertex/triangle counts do not match",
         )
-        raw_faces = np.array(
-            [
-                [int(x) - 1 for x in line.split()[1:]]
-                for line in lines
-                if line.startswith("f ")
-            ]
+        require(bool(np.isfinite(raw_vertices).all()), f"{path}: non-finite source vertex")
+        require(
+            bool(raw_faces.min() >= 0 and raw_faces.max() < len(raw_vertices)),
+            f"{path}: face index outside the source vertex array",
         )
-        assert (
-            len(raw_vertices) == obj["vertices"] and len(raw_faces) == obj["triangles"]
-        )
-        assert np.isfinite(raw_vertices).all()
-        assert raw_faces.min() >= 0 and raw_faces.max() < len(raw_vertices)
         mesh = trimesh.load(str(path), force="mesh", process=False)
-        assert np.isfinite(mesh.vertices).all()
+        require(bool(np.isfinite(mesh.vertices).all()), f"{path}: non-finite imported vertex")
         # Trimesh drops vertices not referenced by any triangle even with process=False.
         # Verify every surface triangle, rather than hiding the difference in counts.
-        assert len(mesh.faces) == len(raw_faces)
-        assert np.allclose(
-            raw_vertices[raw_faces], mesh.vertices[mesh.faces], rtol=0, atol=1e-12
+        require(len(mesh.faces) == len(raw_faces), f"{path}: imported face count changed")
+        require(
+            bool(
+                np.allclose(
+                    raw_vertices[raw_faces],
+                    mesh.vertices[mesh.faces],
+                    rtol=0,
+                    atol=1e-12,
+                )
+            ),
+            f"{path}: imported triangles differ from source triangles",
         )
         bounds = np.array([raw_vertices.min(0), raw_vertices.max(0)])
         error = float(np.max(np.abs(bounds - np.array(obj["bounds_native"]))))
-        assert error < 1e-7 * max(1.0, float(np.max(np.abs(bounds))))
+        require(
+            error < 1e-7 * max(1.0, float(np.max(np.abs(bounds)))),
+            f"{path}: round-trip bounds error {error} exceeds tolerance",
+        )
         # OBJ may duplicate coincident vertices at seams. Diagnose with EXACT
         # coordinate equality only; do not select an ungrounded weld tolerance.
         unique, inverse = np.unique(raw_vertices, axis=0, return_inverse=True)

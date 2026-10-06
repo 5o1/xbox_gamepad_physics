@@ -5,15 +5,36 @@
     "user_target_1708": {
       "kind": "user_statement",
       "locator": "Conversation confirmation on 2026-10-06",
-      "statement": "我有一个Xbox one 1708，如果做不了我也可以去买别的",
+      "statement": "Owner identified the available target hardware as Xbox One model 1708.",
       "scope": "Target hardware identification by owner; not a measurement of dimensions or physical parameters"
     },
     "ifixit_1708_buttons": {
       "url": "https://www.ifixit.com/Guide/Xbox+One+Wireless+Controller+Model+1708+Button+Replacement/98312",
       "kind": "first_hand_disassembly",
-      "locator": "Steps 7, 8, 14 and 16",
-      "scope": "1708 D-pad removal, removable stick caps, bumper retention and rubber button backing",
+      "locator": "Steps 7, 8, 14 and 16; step 14 explicitly identifies the connect/sync button retained by the face plate",
+      "scope": "1708 D-pad removal, removable stick caps, bumper retention, connect/sync control identity and rubber button backing",
       "limitation": "No force curves or joint frame dimensions. Do not import apparent screw-length typos as dimensions."
+    },
+    "w3c_gamepad_standard_mapping": {
+      "url": "https://www.w3.org/TR/2025/WD-gamepad-20250710/#remapping",
+      "kind": "primary_standard",
+      "locator": "Standard Gamepad table: buttons 0-16 and axes 0-3",
+      "scope": "Canonical logical ordering and normalized ranges for four axes and seventeen buttons",
+      "limitation": "W3C defines logical inputs, not an Xbox mechanical topology or this project's axes-then-buttons tensor concatenation."
+    },
+    "apple_1708_connect_button": {
+      "url": "https://support.apple.com/en-sg/111101",
+      "kind": "manufacturer_support",
+      "locator": "Supported controllers and Pair and connect the controller",
+      "scope": "Identifies Xbox Wireless Controller with Bluetooth Model 1708 and instructs pressing its Connect button",
+      "limitation": "Confirms control identity and function only; supplies no dimensions, force, travel or mechanism topology."
+    },
+    "microsoft_1708_dimensions": {
+      "url": "https://download.microsoft.com/download/7/C/A/7CA6D7FD-9758-4DA8-BD27-4FDAB0C18E1F/TDS_XboxOneControllerPlusCableforWindows.pdf",
+      "kind": "manufacturer_technical_datasheet",
+      "locator": "Page 1, Product Dimensions; FCC/IC ID identifies Model 1708",
+      "scope": "Model 1708 whole-controller width, length, height and battery-loaded mass recorded in sources/1708_dimensions.json",
+      "limitation": "No dimensional tolerance is published. Whole-controller dimensions do not validate a third-party mesh's local geometry or mechanical revision."
     },
     "xbox_visual": {
       "url": "https://github.com/CasperH2O/3DControllerModels/tree/f0d985618e7c74ca35d4c428228cb5263e3d471e",
@@ -73,6 +94,37 @@
       "kind": "format_reference",
       "scope": "Representation only; supplies no Xbox parameters",
       "limitation": "A parsable description is not a calibrated physical asset."
+    },
+    "physx_material": {
+      "url": "https://nvidia-omniverse.github.io/PhysX/physx/5.6.1/_api_build/classPxMaterial.html",
+      "locator": "PxMaterial setStaticFriction, setDynamicFriction and setFrictionCombineMode; linked PxCombineMode enumeration",
+      "kind": "simulator_primary_documentation",
+      "scope": "PhysX contact-material representation: distinct static/dynamic coefficients and the average, min, multiply and max combine modes",
+      "limitation": "Defines simulator fields and constraints only; supplies no Xbox material coefficient or preferred combine mode."
+    },
+    "physx_shape_offsets": {
+      "url": "https://nvidia-omniverse.github.io/PhysX/physx/5.5.0/_api_build/classPxShape.html",
+      "locator": "PxShape::setContactOffset and PxShape::setRestOffset",
+      "kind": "simulator_primary_documentation",
+      "scope": "PhysX shape-offset constraints: contactOffset is finite and non-negative, while restOffset is finite and strictly less than contactOffset",
+      "verification_status": "automated_primary_page_fetch_verified_2026-10-06",
+      "limitation": "Defines backend validity only; it does not supply controller-specific contact offsets."
+    },
+    "sapien_collision_groups": {
+      "url": "https://sapien.ucsd.edu/docs/2.0/apidoc/sapien.core.html",
+      "locator": "set_collision_groups(group0, group1, group2, group3) four-word filtering rule",
+      "kind": "simulator_primary_documentation",
+      "scope": "SAPIEN four-uint32 collision-filter representation and its exact pairwise allow/ignore formula",
+      "verification_status": "unknown_automated_fetch_timed_out_2026-10-06; reviewer supplied the primary-page locator",
+      "limitation": "Defines filter semantics only; it does not choose group words for this controller."
+    },
+    "physx_rigid_body_collision": {
+      "url": "https://nvidia-omniverse.github.io/PhysX/physx/5.5.0/docs/RigidBodyCollision.html",
+      "locator": "Kinematic Triangle Meshes and Dynamic Triangle Meshes with SDFs",
+      "kind": "simulator_primary_documentation",
+      "scope": "Triangle-mesh simulation support matrix: static and kinematic meshes, query-only shapes, and non-kinematic dynamic meshes cooked with SDF for GPU dynamics",
+      "verification_status": "automated_primary_page_fetch_verified_2026-10-06",
+      "limitation": "Defines backend capability and cooking gates only; it supplies no controller collision mesh or SDF parameters."
     }
   },
   "reference_values": {

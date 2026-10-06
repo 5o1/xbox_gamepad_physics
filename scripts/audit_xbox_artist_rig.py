@@ -1,11 +1,19 @@
 """Read original FBX rig geometry; never promote artist transforms to physics."""
-import bpy
+import hashlib
 import json
 import sys
 from pathlib import Path
-from mathutils import Vector
+
+
+def require(condition, message):
+    if not condition:
+        raise RuntimeError(message)
 
 source, destination = map(Path, sys.argv[sys.argv.index('--') + 1:])
+source_sha256 = hashlib.sha256(source.read_bytes()).hexdigest()
+
+import bpy
+
 bpy.ops.wm.read_factory_settings(use_empty=True)
 bpy.ops.import_scene.fbx(filepath=str(source))
 scene = bpy.context.scene
@@ -41,10 +49,13 @@ for obj in scene.objects:
             'bones': [{'name': b.name, 'parent': b.parent.name if b.parent else None,
                        'head_local_native': list(b.head_local), 'tail_local_native': list(b.tail_local),
                        'matrix_local': matrix(b.matrix_local)} for b in obj.data.bones]})
-report = {'source': str(source), 'evidence': 'Direct Blender FBX import; mesh weights and rest bones read without editing source',
+report = {'source': str(source), 'source_sha256': source_sha256,
+          'source_hash_verified_against_publisher_record': False,
+          'source_hash_limitation': 'The retained source record hashes the downloaded FBX archive, not this extracted FBX; no false equivalence is claimed.',
+          'evidence': 'Direct Blender FBX import; mesh weights and rest bones read without editing source',
           'scene_unit_settings': {'system': scene.unit_settings.system, 'scale_length': scene.unit_settings.scale_length},
           'physical_scale_verified': False, 'parts': parts, 'artist_rigs_not_physics': rigs}
-assert len(parts) == 16, 'Unexpected source mesh count; stop instead of accepting a different asset'
-assert len({p['name'] for p in parts}) == 16
+require(len(parts) == 16, f'Unexpected source mesh count {len(parts)}; expected 16')
+require(len({p['name'] for p in parts}) == 16, 'Source mesh names are not unique')
 destination.write_text(json.dumps(report, indent=2))
 print('AUDIT_OK: 16 mesh parts; physical parameters remain null')

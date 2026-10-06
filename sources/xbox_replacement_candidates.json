@@ -1,20 +1,24 @@
 {
+  "schema_version": 1,
   "target": "Xbox One 1708",
-  "accepted_geometry": null,
+  "status_authority": "../assets/asset_index.json",
+  "primary_appearance_candidate_id": "xbox_one_s_batonyrobson_a62cf747",
+  "accepted_geometry_candidate_id": null,
   "candidates": [
     {
+      "candidate_id": "xbox_one_s_batonyrobson_a62cf747",
       "author": "BatonyRobson",
       "title": "Xbox One S Controller/Gamepad (Animated)",
       "url": "https://sketchfab.com/3d-models/xbox-one-s-controllergamepad-animated-a62cf7475b7d4ead9fbf1a86e5a2b6a4",
       "license": "CC BY 4.0, verified in public model metadata",
-      "download_status": "User supplied FBX ZIP, glTF ZIP, USDZ and two GLBs in WINDOWS_HOME/Downloads/xbox; copied unchanged to GPU and imported FBX plus 2K GLB in Blender 3.6.23",
+      "download_status": "User-supplied download bundle containing FBX ZIP, glTF ZIP, USDZ and two GLBs; copied unchanged to GPU and imported FBX plus 2K GLB in Blender 3.6.23",
       "gpu_root": "/path/to/gpu-data/<gpu-project>/controller-candidates/xbox_one_s_batonyrobson_UNVERIFIED",
       "render": "../results/xbox_one_s_batonyrobson_UNVERIFIED/pos_z.png",
       "inventory": "../results/xbox_one_s_batonyrobson_UNVERIFIED/inventory.json",
       "fbx_zip_sha256": "b70a3cc892fb21e1e90f10a11043462a1758064ca6063739ab57662f530be2db",
       "glb_2k_sha256": "5c5671c83a9cf15db4b8399e7010aa7d5cde915687ceb348b583eb00b0ed24e2",
       "mesh_objects": 16,
-      "observed_geometry": "Separate body, ABXY, D-pad, sticks, bumpers, triggers, View/Menu, Guide and connect button. Front render has cross D-pad and no Share. Appearance consistent with 1708 reference; still pending user confirmation and dimensional review.",
+      "observed_geometry": "Separate body, ABXY, D-pad, sticks, bumpers, triggers, View/Menu, Guide and connect button. Front render has cross D-pad and no Share. The user has acknowledged the appearance as matching their controller; dimensional, rear/top geometry, revision and mechanical review remain pending.",
       "user_confirmation": "2026-10-06: user says Xbox One S render looks the same as their controller, possibly the same model. Appearance acknowledgement only, not dimensional or mechanical verification.",
       "animation_caveat": "Four imported FBX action datablocks; artist animations and bones are not measured physical pivots or travel limits.",
       "materials": "2K packed GLB textures successfully imported and rendered; original FBX ZIP also contains six texture PNGs",
@@ -22,12 +26,14 @@
       "geometry_separability": "Already separate named mesh objects; no manual button cutting required"
     },
     {
+      "candidate_id": "xbox_one_s_thingiverse_3674006_lead",
       "title": "Xbox One S updated scan lead",
       "url": "https://www.thingiverse.com/thing:3674006",
       "status": "original availability unresolved; do not infer identity from name",
       "render": null
     },
     {
+      "candidate_id": "xbox_one_s_dishyboar_4763900_faceplate",
       "author": "dishyboar",
       "title": "Xbox One S Controller Faceplate Re-Upload",
       "url": "https://www.thingiverse.com/thing:4763900",
