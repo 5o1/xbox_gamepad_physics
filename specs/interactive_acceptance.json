@@ -1,0 +1,48 @@
+{
+  "status": "required_not_yet_passed",
+  "target_hardware": "Xbox One 1708",
+  "requirement_source": "User: interactive asset with mouse-to-gamepad output and real-gamepad-to-asset motion",
+  "delivery": {
+    "primary_platform": "Browser-local 3D inspection viewer served on localhost; actual meshes stored on GPU node and reachable through an explicit asset route",
+    "rationale": "Browser Gamepad API can read the controller attached to the user's own computer; GPU node does not need USB forwarding",
+    "blender": "Keep exported part names and assembly transforms portable; Blender alone is not the chosen live Gamepad API frontend",
+    "network": "Localhost or HTTPS for browser device access; no public server binding or automatic hardware actuation",
+    "not_accepted_as_substitute": ["static render", "state sliders without manipulating mesh parts", "mocked gamepad only", "test suite without interactive demonstration"]
+  },
+  "modes": {
+    "mouse": {
+      "input": "Pick and manipulate actual visible stick, trigger, button and D-pad meshes",
+      "path": "pointer -> constrained part pose -> shared source-traceable pose/state mapping -> gamepad state; source-backed estimates are permitted and must be labeled, real-device calibration is not a prerequisite for mouse preview",
+      "display": "Part identity, joint coordinates, axes, analog triggers, button values, sample timestamp and parameter provenance",
+      "release": "Explicit return/hold UI policy, labeled as kinematic preview until restoring dynamics are validated"
+    },
+    "device": {
+      "input": "Real controller on user's computer through navigator.getGamepads()",
+      "path": "device -> standard gamepad state -> same pose/state mapping -> actual mesh part motion",
+      "display": "Device ID, standard mapping status, raw state, represented state, missing controls, receipt time and source timestamp",
+      "arbitration": "Mouse cannot overwrite device-mode values; changing mode, device disconnect, focus loss and pointer cancel must not leave stale commands"
+    }
+  },
+  "coverage": ["left/right stick tilt", "left/right stick click", "LT/RT independent analog travel", "A/B/X/Y", "LB/RB", "View/Menu", "D-pad cardinal and diagonal", "Guide when exposed by browser/OS"],
+  "shared_mapping": {
+    "signal_reference": "https://www.w3.org/TR/2025/WD-gamepad-20250710/#remapping",
+    "layout": "4 standard axes followed by 17 standard button values; 21 floats is our serialization choice, W3C specifies separate arrays",
+    "axis_order": ["LX", "LY", "RX", "RY"],
+    "axis_signs": "left/up negative; right/down positive",
+    "button_order": ["A", "B", "X", "Y", "LB", "RB", "LT", "RT", "View", "Menu", "L3", "R3", "DUp", "DDown", "DLeft", "DRight", "Guide"],
+    "unknown_mapping": "Reject unrecognized device layouts, do not guess axis order",
+    "differentiability": "Keep analog values as floats, no binarization in signal transport. JS device capture is not autograd; later Torch pose/state mapping needs its own gradient tests.",
+    "rig_calibration": null,
+    "estimate_policy": "User permits estimated physical parameters before measurement. A parameter may be estimated from cited geometry or component evidence with derivation and uncertainty. This does not require prior physical calibration. Unsupported and uninferable parameters remain null; synthetic software fixtures do not supply target parameter values.",
+    "roundtrip_tolerance": null
+  },
+  "acceptance_gates": [
+    {"id": "geometry_identity", "passed": false, "evidence": "sources/geometry_review.json", "check": "Downloaded geometry must be rendered front-on and confirmed by user; compare revision-specific front/back/top controls and openings against identified real-device references before target rig registration. Current candidate is rejected."},
+    {"id": "mouse_to_signal", "passed": false, "evidence": null, "check": "Visible mesh manipulation produces the correct signed axes and corresponding button/trigger signals"},
+    {"id": "real_device_to_mesh", "passed": false, "evidence": null, "check": "User's real 1708 drives all available controls, including simultaneous independent controls"},
+    {"id": "shared_mapping_roundtrip", "passed": false, "evidence": null, "check": "state->pose->state tested on neutral, endpoints, diagonals and concurrent inputs; losses/restrictions reported"},
+    {"id": "lifecycle", "passed": false, "evidence": null, "check": "No stuck inputs after disconnect, focus loss, pointer cancellation or mode switch"},
+    {"id": "visual_review", "passed": false, "evidence": null, "check": "Record mouse and physical-controller demonstration; inspect wrong axes, pivots, detachment and interpenetration"}
+  ],
+  "physics_separation": "Both interactive paths are required for v1 acceptance. Their success alone does not validate forces, friction, damping or finger contact; those remain separately labeled."
+}

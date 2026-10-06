@@ -1,0 +1,44 @@
+{
+  "checked_on": "2026-10-06",
+  "guide": "https://fr.ifixit.com/Tutoriel/Changement+g%C3%A2chettes+manette+sans+fil+Xbox+One/157833",
+  "author": "Patrick Ashman / Cal Poly Team 2-2, Johann Winter 2023",
+  "claimed_model": "1708",
+  "status": "images_inspected_title_component_mismatch",
+  "english_page_recheck": {
+    "url": "https://www.ifixit.com/Guide/Wireless+Xbox+One+Controller+Bumper+Assembly+Replacement/157833",
+    "current_title": "Wireless Xbox One Controller Bumper Assembly Replacement",
+    "finding": "Current English title and introduction correctly identify the bumper assembly. Earlier mismatch observation applies to the recorded French page, not every language/version of this guide."
+  },
+  "download": "Direct NETWORK_INTERFACE, proxy disabled; real IP 3.170.221.87 obtained from AliDNS HTTPS resolver at 223.5.5.5",
+  "images": [
+    {
+      "step": 7,
+      "url": "https://guide-images.cdn.ifixit.com/igi/VjsyZBAOmtiNxeou.medium",
+      "gpu_path": "/path/to/gpu-data/<gpu-project>/xbox-physics-v1/reference_drawings/1708_trigger_step7.jpg",
+      "sha256": "67d8fed378cc454e9853da5383f63bec350cf263baf33456c51b4e8fb4b737e8",
+      "observation": "A finger lifts one end of the transverse upper bumper strip. A spring and rear trigger assembly remain below it. Arrows describe removal, not gameplay motion."
+    },
+    {
+      "step": 8,
+      "url": "https://guide-images.cdn.ifixit.com/igi/RNaB5AcV2BLjwI34.medium",
+      "gpu_path": "/path/to/gpu-data/<gpu-project>/xbox-physics-v1/reference_drawings/1708_trigger_step8.jpg",
+      "sha256": "5f33018f0f215f46c6f4f20b6af72ae0ddc813f73f55eeab3bb1ff8912bf101b",
+      "observation": "The detached part spans both top shoulders and has a narrow connecting web. Two rear trigger bodies remain on the chassis."
+    }
+  ],
+  "decision": {
+    "trigger_pivot_evidence": false,
+    "bumper_connected_part_reference": true,
+    "reason": "The title and step text call the removed part triggers, but inspected pictures show the LB/RB bumper bridge. Do not infer LT/RT axis positions from these removal arrows.",
+    "supersedes": "Earlier conversational suggestion that guide 157833 steps 7-8 could directly establish trigger hinge construction."
+  },
+  "unknown": {
+    "bumper_flexural_stiffness": null,
+    "bumper_actuation_path": null,
+    "trigger_pivot_m": null,
+    "trigger_spring_constant": null,
+    "photo_scale_m_per_pixel": null
+  },
+  "validation": "Both downloaded images visually inspected; SHA256 recorded. No pixel measurement, photogrammetry or mechanical fit has been performed.",
+  "reuse": "Reference-only third-party images retained on GPU; not licensed here as generated mesh assets."
+}

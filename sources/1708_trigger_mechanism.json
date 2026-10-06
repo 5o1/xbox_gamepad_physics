@@ -1,0 +1,35 @@
+{
+  "target": "Xbox One 1708",
+  "sources": [
+    {"url":"https://www.ifixit.com/Guide/Xbox+One+Wireless+Controller+Model+1708+Trigger+Caps+Replacement/131721","author":"Lucero Cortes-Vitervo and contributors","locator":"Steps 6-8; step 7 photographs 2 and 3","scope":"Cap attachment and motor beneath cap; no calibrated dimensions"},
+    {"url":"https://www.ifixit.com/Guide/How+To+Fix+Sticky+Triggers+Xbox+One+Wireless+Controller+Model+1708/144910","author":"Zach Smith and contributors","locator":"Step 3 and author's December 12, 2021 comment","scope":"Contact pad and opposing trigger surface; pad described by author as cushioning against frame; not a measured constitutive law"}
+  ],
+  "image_directory": "/path/to/gpu-data/<gpu-project>/xbox-physics-v1/reference_drawings",
+  "download": "Direct NETWORK_INTERFACE, no proxy; CDN IP 3.170.221.78 resolved via AliDNS HTTPS at 223.5.5.5",
+  "images": [
+    {"file":"sOpYRqTdddvaTJZb.jpg","url":"https://guide-images.cdn.ifixit.com/igi/sOpYRqTdddvaTJZb.medium","sha256":"ff8925920bb46705f25b6021ade044a98573f12da85af15e023b0b789d65ba0f","observation":"Trigger cap lifted above motor; attachment structure visible, no calibrated scale."},
+    {"file":"n3yVfKH25YjdqRpc.jpg","url":"https://guide-images.cdn.ifixit.com/igi/n3yVfKH25YjdqRpc.medium","sha256":"fe46a2531c5016c3d411fb96b3990db1078cdcf1028c08e04ce956de50d56ab4","observation":"Cap removed; metal motor body and eccentric weight visible, with a coil spring near the shoulder. Photograph does not establish spring rate or a metric hinge frame."},
+    {"file":"3OwvL11y2jv5RvIy.jpg","url":"https://guide-images.cdn.ifixit.com/igi/3OwvL11y2jv5RvIy.medium","sha256":"366a512586636a8983dd2a1d2f325bcc9e8ac3ea38ae02c1db4eb7ca70373f79","observation":"Contact region between trigger and white frame highlighted; image alone does not establish pad thickness or material parameters."}
+  ],
+  "model_requirements": [
+    "Distinguish exterior cap geometry from full moving assembly. If internal components are aggregated into one link, its mass and inertia must represent that assembly, not a uniform-density visual cap.",
+    "Represent or explicitly mark unresolved frame-to-trigger stop contact. Do not silently claim an ideal joint limit reproduces a compliant cushion.",
+    "Do not infer gameplay hinge axes from cap-removal directions.",
+    "Rumble actuation may remain disabled for passive manipulation; documenting the motor's inertial contribution does not require inventing powered vibration behavior."
+  ],
+  "unresolved": {
+    "moving_component_membership_and_transforms": null,
+    "combined_mass_kg": null,
+    "combined_inertia_kg_m2": null,
+    "joint_frame": null,
+    "joint_limits_rad": null,
+    "spring_torque_curve": null,
+    "pad_geometry": null,
+    "pad_force_displacement_curve": null,
+    "pad_material": null
+  },
+  "validation": "Downloaded image hashes recorded and all three images visually inspected. No photogrammetry, dimensional fit, force measurement or dynamic contact validation performed.",
+  "future_harness": "When geometry and parameters exist: sweep each trigger through its configured range, record stop contact separation/penetration and moving-assembly inertia; compare loading and release curves independently. Not yet implemented or passed.",
+  "adoption": "Qualitative 1708 structure requirements only. No numerical target parameter adopted; source screw-size text not used as a scale reference.",
+  "reuse": "Third-party reference photographs retained on GPU, not redistributed as mesh textures."
+}

@@ -1,0 +1,40 @@
+{
+  "status": "candidate_publication_verified_mesh_not_acquired",
+  "checked_on": "2026-10-06",
+  "title": "Xbox one bumpers LB RB replacement for 1708",
+  "url": "https://www.thingiverse.com/thing:5417823",
+  "author_in_primary_page": "melonboi421",
+  "license_in_primary_page": "http://creativecommons.org/licenses/by/4.0/",
+  "evidence_locator": "application/ld+json Product.mainEntityOfPage.author and license",
+  "html_sha256": "6469c4370c91c667f39b7024d0fe86ba87c0e7de55057a07125335e2a0f237cb",
+  "html_gpu_path": "/path/to/gpu-data/<gpu-project>/xbox-physics-v1/reference_drawings/thing5417823.html",
+  "author_description_summary": "Fusion 360 design specifically for model 1708; described as a temporary replacement whose strength depends on print material.",
+  "network": {
+    "direct": "NETWORK_INTERFACE, proxies disabled, DoH-resolved 104.18.32.169: HTTP 403",
+    "fallback": "Only explicitly configured http://127.0.0.1:FALLBACK_PROXY_PORT used; public page downloaded successfully",
+    "zip_route": "HTTP 302 to /thing:5417823/files, not a ZIP response",
+    "files_page": "Fetched; file download URLs not available in retrieved static HTML",
+    "frontend_inspection": "Fetched app.bundle.js and common_app.bundle.js referenced by public files page. CDN real-IP direct request returned 403; FALLBACK_PROXY_PORT fallback succeeded. Inspected, not executed.",
+    "public_file_api": "Public frontend identifies https://www.thingiverse.com/api and getFiles(id) -> /things/id/files. Request for 5417823 returned HTTP 403 both without credentials and with the public frontend's built-in anonymous fallback credential. No personal credentials accessed; credential not stored in this record.",
+    "acquisition_result": "File acquisition remains blocked at public API. No STL bytes acquired, no hash or geometry validation claimed. Do not repeatedly retry the same route without new evidence."
+  },
+  "mesh_sha256": null,
+  "dimensions_m": null,
+  "force_displacement_curve": null,
+  "stiffness": null,
+  "comparison_listing": {
+    "url": "https://cults3d.com/en/3d-model/game/xbox-one-bumpers-lb-rb-replacement-for-1708",
+    "author": "whampshire",
+    "filename": "xbox_bumpers_v1.stl",
+    "reported_bbox_mm": [110.267044,15.72243,18.702129],
+    "license": null,
+    "same_file_as_thingiverse": null,
+    "warning": "Same title and filename do not establish same author, license or mesh. Dimensions are listing metadata, not verified physical measurements."
+  },
+  "adoption_checks": [
+    "Acquire original file through public download and record SHA256 plus attribution",
+    "Inspect topology, units and cross-section against actual 1708 bumper reference photographs",
+    "Do not infer original molded-part compliance from a printed replacement",
+    "Do not substitute this LB/RB part for LT/RT triggers"
+  ]
+}

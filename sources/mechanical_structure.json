@@ -1,0 +1,43 @@
+{
+  "checked_on": "2026-10-06",
+  "reference_variant": "Xbox Wireless Controller model 1914",
+  "user_hardware_match": false,
+  "applicability_update": "Owner confirmed model 1708 on 2026-10-06. This 1914 record is cross-revision reference only, not target evidence.",
+  "visual_asset_variant_match": null,
+  "source": {
+    "url": "https://www.ifixit.com/Guide/Xbox+Series+X%7CS+Wireless+Controller+(Model+1914)+Full+Disassembly/148234",
+    "kind": "First-hand disassembly guide; not manufacturer dimensional CAD",
+    "author": "yoeri and contributors"
+  },
+  "observations": [
+    {
+      "locator": "Step 4",
+      "finding": "Stick caps are removable; the D-pad is retained by a metal ring.",
+      "model_consequence": "Do not interpret separate direction-labeled visual meshes as four independent physical plungers.",
+      "joint_type": null,
+      "joint_origin": null,
+      "joint_limits": null
+    },
+    {
+      "locator": "Steps 7 and 9",
+      "finding": "Trigger caps are fastened with screws; small rumble motors are located in the triggers.",
+      "model_consequence": "A uniform-density cap alone does not establish the moving assembly inertia.",
+      "moving_mass": null,
+      "inertia": null
+    },
+    {
+      "locator": "Steps 11 and 12",
+      "finding": "Buttons become loose after board removal, are keyed for placement, and incorrect Y placement can interfere with RT travel.",
+      "model_consequence": "Button orientation and button-trigger clearance require checks, not only independent joint travel tests.",
+      "clearance_m": null,
+      "button_axis": null
+    }
+  ],
+  "harness_requirements": {
+    "status": "Not implemented: requires mechanism geometry and source-to-physical registration",
+    "dpad": "Check coupled pad movement and switch activation, not four separately animated meshes",
+    "triggers": "Account for all moving components before validating inertia",
+    "clearance": "Sweep Y and RT through measured or source-backed limits; inspect interference",
+    "current_gate": "scripts/asset_spec.py require-dynamics refuses unresolved mechanics"
+  }
+}

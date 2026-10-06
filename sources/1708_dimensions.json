@@ -1,0 +1,28 @@
+{
+  "model": "1708",
+  "url": "https://download.microsoft.com/download/7/C/A/7CA6D7FD-9758-4DA8-BD27-4FDAB0C18E1F/TDS_XboxOneControllerPlusCableforWindows.pdf",
+  "publisher": "Microsoft",
+  "revision": "1611A",
+  "sha256": "84437f2afc30e86b137e3fbe0a19b39037cc0c6081ade386c137d8ecd4c0abac",
+  "gpu_path": "/path/to/gpu-data/<gpu-project>/xbox-physics-v1/reference_drawings/1708_microsoft_tds.pdf",
+  "download": "Direct NETWORK_INTERFACE, no proxy, real IP 23.209.218.63 resolved through DNS-over-HTTPS",
+  "locator": "Page 1, Product Dimensions; FCC/IC ID explicitly identifies Model 1708",
+  "dimensions_m": {"width": 0.153, "length": 0.102, "depth_height": 0.061},
+  "whole_mass_kg": 0.280,
+  "mass_configuration": "With two AA alkaline batteries; not shell or individual-link mass",
+  "tolerance_m": null,
+  "physics_warning": "Life-test loads elsewhere on this sheet are endurance-test conditions, not actuation force curves or spring stiffness.",
+  "scaling_candidate": {
+    "source": "Pinned xbox_visual inventory; not manufacturer CAD",
+    "source_width_axis": 0,
+    "axis_basis": "Visual inspection and left/right control coordinates establish source-world X as lateral direction; does not establish other physical axes.",
+    "formula": "scale = manufacturer width / retained visual assembly X extent",
+    "policy": "Uniform scale only, preserving shapes and source origin; no axis-wise stretching to force all dimensions to fit",
+    "excluded_objects": ["ShareButton", "ShareButtonSymbol"],
+    "exclusion_reason": "Not a control on the owner-confirmed 1708; original files retained. Exclusion alone does not repair the shell opening or establish revision compatibility.",
+    "scale_status": "width_matched_visual_proxy_not_calibrated_geometry",
+    "harness": "scripts/scale_visual_candidate.py, serialized vertex roundtrip and assembly width checks",
+    "joint_frames": null,
+    "contact_approved": false
+  }
+}

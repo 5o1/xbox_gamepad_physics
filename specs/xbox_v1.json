@@ -1,0 +1,1840 @@
+{
+  "schema_version": 1,
+  "catalog_sha256": "9388befdad0e13b189086d23f7fce3e8ff9c33d987c10c29879045feaa81b8e2",
+  "hardware_revision": {
+    "value": "1708",
+    "unit": null,
+    "status": "user_confirmed",
+    "evidence": [
+      "user_target_1708"
+    ],
+    "harness": "audit_spec",
+    "applicability": "Owner identifies the Xbox One 1708 as the target; no physical measurements inferred."
+  },
+  "status": "incomplete_not_for_dynamics_or_RL",
+  "component_inventory_basis": {
+    "evidence": [
+      "user_target_1708",
+      "ifixit_1708_buttons"
+    ],
+    "scope": "1708 target; visual source remains unverified for this revision. No Share control on target.",
+    "harness": "export_blend_inventory"
+  },
+  "parts": {
+    "shell": {
+      "geometry_scale": {
+        "value": null,
+        "unit": "m/native_unit",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for geometry_scale; no simulator default permitted."
+      },
+      "mass": {
+        "value": null,
+        "unit": "kg",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for mass; no simulator default permitted."
+      },
+      "center_of_mass": {
+        "value": null,
+        "unit": "m",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for center_of_mass; no simulator default permitted."
+      },
+      "inertia": {
+        "value": null,
+        "unit": "kg*m^2",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for inertia; no simulator default permitted."
+      },
+      "collision_geometry": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for collision_geometry; no simulator default permitted."
+      },
+      "contact_friction": {
+        "value": null,
+        "unit": "1",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for contact_friction; no simulator default permitted."
+      },
+      "contact_restitution": {
+        "value": null,
+        "unit": "1",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for contact_restitution; no simulator default permitted."
+      }
+    },
+    "a": {
+      "geometry_scale": {
+        "value": null,
+        "unit": "m/native_unit",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for geometry_scale; no simulator default permitted."
+      },
+      "mass": {
+        "value": null,
+        "unit": "kg",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for mass; no simulator default permitted."
+      },
+      "center_of_mass": {
+        "value": null,
+        "unit": "m",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for center_of_mass; no simulator default permitted."
+      },
+      "inertia": {
+        "value": null,
+        "unit": "kg*m^2",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for inertia; no simulator default permitted."
+      },
+      "collision_geometry": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for collision_geometry; no simulator default permitted."
+      },
+      "contact_friction": {
+        "value": null,
+        "unit": "1",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for contact_friction; no simulator default permitted."
+      },
+      "contact_restitution": {
+        "value": null,
+        "unit": "1",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for contact_restitution; no simulator default permitted."
+      },
+      "joint_type": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for joint_type; no simulator default permitted."
+      },
+      "joint_origin": {
+        "value": null,
+        "unit": "m,rad",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for joint_origin; no simulator default permitted."
+      },
+      "joint_axis": {
+        "value": null,
+        "unit": "1",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for joint_axis; no simulator default permitted."
+      },
+      "joint_limits": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for joint_limits; no simulator default permitted."
+      },
+      "restoring_curve": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for restoring_curve; no simulator default permitted."
+      },
+      "damping": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for damping; no simulator default permitted."
+      },
+      "joint_friction": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for joint_friction; no simulator default permitted."
+      },
+      "input_mapping": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for input_mapping; no simulator default permitted."
+      }
+    },
+    "b": {
+      "geometry_scale": {
+        "value": null,
+        "unit": "m/native_unit",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for geometry_scale; no simulator default permitted."
+      },
+      "mass": {
+        "value": null,
+        "unit": "kg",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for mass; no simulator default permitted."
+      },
+      "center_of_mass": {
+        "value": null,
+        "unit": "m",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for center_of_mass; no simulator default permitted."
+      },
+      "inertia": {
+        "value": null,
+        "unit": "kg*m^2",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for inertia; no simulator default permitted."
+      },
+      "collision_geometry": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for collision_geometry; no simulator default permitted."
+      },
+      "contact_friction": {
+        "value": null,
+        "unit": "1",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for contact_friction; no simulator default permitted."
+      },
+      "contact_restitution": {
+        "value": null,
+        "unit": "1",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for contact_restitution; no simulator default permitted."
+      },
+      "joint_type": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for joint_type; no simulator default permitted."
+      },
+      "joint_origin": {
+        "value": null,
+        "unit": "m,rad",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for joint_origin; no simulator default permitted."
+      },
+      "joint_axis": {
+        "value": null,
+        "unit": "1",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for joint_axis; no simulator default permitted."
+      },
+      "joint_limits": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for joint_limits; no simulator default permitted."
+      },
+      "restoring_curve": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for restoring_curve; no simulator default permitted."
+      },
+      "damping": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for damping; no simulator default permitted."
+      },
+      "joint_friction": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for joint_friction; no simulator default permitted."
+      },
+      "input_mapping": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for input_mapping; no simulator default permitted."
+      }
+    },
+    "x": {
+      "geometry_scale": {
+        "value": null,
+        "unit": "m/native_unit",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for geometry_scale; no simulator default permitted."
+      },
+      "mass": {
+        "value": null,
+        "unit": "kg",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for mass; no simulator default permitted."
+      },
+      "center_of_mass": {
+        "value": null,
+        "unit": "m",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for center_of_mass; no simulator default permitted."
+      },
+      "inertia": {
+        "value": null,
+        "unit": "kg*m^2",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for inertia; no simulator default permitted."
+      },
+      "collision_geometry": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for collision_geometry; no simulator default permitted."
+      },
+      "contact_friction": {
+        "value": null,
+        "unit": "1",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for contact_friction; no simulator default permitted."
+      },
+      "contact_restitution": {
+        "value": null,
+        "unit": "1",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for contact_restitution; no simulator default permitted."
+      },
+      "joint_type": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for joint_type; no simulator default permitted."
+      },
+      "joint_origin": {
+        "value": null,
+        "unit": "m,rad",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for joint_origin; no simulator default permitted."
+      },
+      "joint_axis": {
+        "value": null,
+        "unit": "1",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for joint_axis; no simulator default permitted."
+      },
+      "joint_limits": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for joint_limits; no simulator default permitted."
+      },
+      "restoring_curve": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for restoring_curve; no simulator default permitted."
+      },
+      "damping": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for damping; no simulator default permitted."
+      },
+      "joint_friction": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for joint_friction; no simulator default permitted."
+      },
+      "input_mapping": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for input_mapping; no simulator default permitted."
+      }
+    },
+    "y": {
+      "geometry_scale": {
+        "value": null,
+        "unit": "m/native_unit",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for geometry_scale; no simulator default permitted."
+      },
+      "mass": {
+        "value": null,
+        "unit": "kg",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for mass; no simulator default permitted."
+      },
+      "center_of_mass": {
+        "value": null,
+        "unit": "m",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for center_of_mass; no simulator default permitted."
+      },
+      "inertia": {
+        "value": null,
+        "unit": "kg*m^2",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for inertia; no simulator default permitted."
+      },
+      "collision_geometry": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for collision_geometry; no simulator default permitted."
+      },
+      "contact_friction": {
+        "value": null,
+        "unit": "1",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for contact_friction; no simulator default permitted."
+      },
+      "contact_restitution": {
+        "value": null,
+        "unit": "1",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for contact_restitution; no simulator default permitted."
+      },
+      "joint_type": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for joint_type; no simulator default permitted."
+      },
+      "joint_origin": {
+        "value": null,
+        "unit": "m,rad",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for joint_origin; no simulator default permitted."
+      },
+      "joint_axis": {
+        "value": null,
+        "unit": "1",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for joint_axis; no simulator default permitted."
+      },
+      "joint_limits": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for joint_limits; no simulator default permitted."
+      },
+      "restoring_curve": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for restoring_curve; no simulator default permitted."
+      },
+      "damping": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for damping; no simulator default permitted."
+      },
+      "joint_friction": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for joint_friction; no simulator default permitted."
+      },
+      "input_mapping": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for input_mapping; no simulator default permitted."
+      }
+    },
+    "left_stick": {
+      "geometry_scale": {
+        "value": null,
+        "unit": "m/native_unit",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for geometry_scale; no simulator default permitted."
+      },
+      "mass": {
+        "value": null,
+        "unit": "kg",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for mass; no simulator default permitted."
+      },
+      "center_of_mass": {
+        "value": null,
+        "unit": "m",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for center_of_mass; no simulator default permitted."
+      },
+      "inertia": {
+        "value": null,
+        "unit": "kg*m^2",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for inertia; no simulator default permitted."
+      },
+      "collision_geometry": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for collision_geometry; no simulator default permitted."
+      },
+      "contact_friction": {
+        "value": null,
+        "unit": "1",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for contact_friction; no simulator default permitted."
+      },
+      "contact_restitution": {
+        "value": null,
+        "unit": "1",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for contact_restitution; no simulator default permitted."
+      },
+      "joint_type": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for joint_type; no simulator default permitted."
+      },
+      "joint_origin": {
+        "value": null,
+        "unit": "m,rad",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for joint_origin; no simulator default permitted."
+      },
+      "joint_axis": {
+        "value": null,
+        "unit": "1",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for joint_axis; no simulator default permitted."
+      },
+      "joint_limits": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for joint_limits; no simulator default permitted."
+      },
+      "restoring_curve": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for restoring_curve; no simulator default permitted."
+      },
+      "damping": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for damping; no simulator default permitted."
+      },
+      "joint_friction": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for joint_friction; no simulator default permitted."
+      },
+      "input_mapping": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for input_mapping; no simulator default permitted."
+      }
+    },
+    "right_stick": {
+      "geometry_scale": {
+        "value": null,
+        "unit": "m/native_unit",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for geometry_scale; no simulator default permitted."
+      },
+      "mass": {
+        "value": null,
+        "unit": "kg",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for mass; no simulator default permitted."
+      },
+      "center_of_mass": {
+        "value": null,
+        "unit": "m",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for center_of_mass; no simulator default permitted."
+      },
+      "inertia": {
+        "value": null,
+        "unit": "kg*m^2",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for inertia; no simulator default permitted."
+      },
+      "collision_geometry": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for collision_geometry; no simulator default permitted."
+      },
+      "contact_friction": {
+        "value": null,
+        "unit": "1",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for contact_friction; no simulator default permitted."
+      },
+      "contact_restitution": {
+        "value": null,
+        "unit": "1",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for contact_restitution; no simulator default permitted."
+      },
+      "joint_type": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for joint_type; no simulator default permitted."
+      },
+      "joint_origin": {
+        "value": null,
+        "unit": "m,rad",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for joint_origin; no simulator default permitted."
+      },
+      "joint_axis": {
+        "value": null,
+        "unit": "1",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for joint_axis; no simulator default permitted."
+      },
+      "joint_limits": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for joint_limits; no simulator default permitted."
+      },
+      "restoring_curve": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for restoring_curve; no simulator default permitted."
+      },
+      "damping": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for damping; no simulator default permitted."
+      },
+      "joint_friction": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for joint_friction; no simulator default permitted."
+      },
+      "input_mapping": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for input_mapping; no simulator default permitted."
+      }
+    },
+    "dpad": {
+      "geometry_scale": {
+        "value": null,
+        "unit": "m/native_unit",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for geometry_scale; no simulator default permitted."
+      },
+      "mass": {
+        "value": null,
+        "unit": "kg",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for mass; no simulator default permitted."
+      },
+      "center_of_mass": {
+        "value": null,
+        "unit": "m",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for center_of_mass; no simulator default permitted."
+      },
+      "inertia": {
+        "value": null,
+        "unit": "kg*m^2",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for inertia; no simulator default permitted."
+      },
+      "collision_geometry": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for collision_geometry; no simulator default permitted."
+      },
+      "contact_friction": {
+        "value": null,
+        "unit": "1",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for contact_friction; no simulator default permitted."
+      },
+      "contact_restitution": {
+        "value": null,
+        "unit": "1",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for contact_restitution; no simulator default permitted."
+      },
+      "joint_type": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for joint_type; no simulator default permitted."
+      },
+      "joint_origin": {
+        "value": null,
+        "unit": "m,rad",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for joint_origin; no simulator default permitted."
+      },
+      "joint_axis": {
+        "value": null,
+        "unit": "1",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for joint_axis; no simulator default permitted."
+      },
+      "joint_limits": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for joint_limits; no simulator default permitted."
+      },
+      "restoring_curve": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for restoring_curve; no simulator default permitted."
+      },
+      "damping": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for damping; no simulator default permitted."
+      },
+      "joint_friction": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for joint_friction; no simulator default permitted."
+      },
+      "input_mapping": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for input_mapping; no simulator default permitted."
+      }
+    },
+    "left_shoulder": {
+      "geometry_scale": {
+        "value": null,
+        "unit": "m/native_unit",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for geometry_scale; no simulator default permitted."
+      },
+      "mass": {
+        "value": null,
+        "unit": "kg",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for mass; no simulator default permitted."
+      },
+      "center_of_mass": {
+        "value": null,
+        "unit": "m",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for center_of_mass; no simulator default permitted."
+      },
+      "inertia": {
+        "value": null,
+        "unit": "kg*m^2",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for inertia; no simulator default permitted."
+      },
+      "collision_geometry": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for collision_geometry; no simulator default permitted."
+      },
+      "contact_friction": {
+        "value": null,
+        "unit": "1",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for contact_friction; no simulator default permitted."
+      },
+      "contact_restitution": {
+        "value": null,
+        "unit": "1",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for contact_restitution; no simulator default permitted."
+      },
+      "joint_type": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for joint_type; no simulator default permitted."
+      },
+      "joint_origin": {
+        "value": null,
+        "unit": "m,rad",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for joint_origin; no simulator default permitted."
+      },
+      "joint_axis": {
+        "value": null,
+        "unit": "1",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for joint_axis; no simulator default permitted."
+      },
+      "joint_limits": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for joint_limits; no simulator default permitted."
+      },
+      "restoring_curve": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for restoring_curve; no simulator default permitted."
+      },
+      "damping": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for damping; no simulator default permitted."
+      },
+      "joint_friction": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for joint_friction; no simulator default permitted."
+      },
+      "input_mapping": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for input_mapping; no simulator default permitted."
+      }
+    },
+    "right_shoulder": {
+      "geometry_scale": {
+        "value": null,
+        "unit": "m/native_unit",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for geometry_scale; no simulator default permitted."
+      },
+      "mass": {
+        "value": null,
+        "unit": "kg",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for mass; no simulator default permitted."
+      },
+      "center_of_mass": {
+        "value": null,
+        "unit": "m",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for center_of_mass; no simulator default permitted."
+      },
+      "inertia": {
+        "value": null,
+        "unit": "kg*m^2",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for inertia; no simulator default permitted."
+      },
+      "collision_geometry": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for collision_geometry; no simulator default permitted."
+      },
+      "contact_friction": {
+        "value": null,
+        "unit": "1",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for contact_friction; no simulator default permitted."
+      },
+      "contact_restitution": {
+        "value": null,
+        "unit": "1",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for contact_restitution; no simulator default permitted."
+      },
+      "joint_type": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for joint_type; no simulator default permitted."
+      },
+      "joint_origin": {
+        "value": null,
+        "unit": "m,rad",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for joint_origin; no simulator default permitted."
+      },
+      "joint_axis": {
+        "value": null,
+        "unit": "1",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for joint_axis; no simulator default permitted."
+      },
+      "joint_limits": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for joint_limits; no simulator default permitted."
+      },
+      "restoring_curve": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for restoring_curve; no simulator default permitted."
+      },
+      "damping": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for damping; no simulator default permitted."
+      },
+      "joint_friction": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for joint_friction; no simulator default permitted."
+      },
+      "input_mapping": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for input_mapping; no simulator default permitted."
+      }
+    },
+    "left_trigger": {
+      "geometry_scale": {
+        "value": null,
+        "unit": "m/native_unit",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for geometry_scale; no simulator default permitted."
+      },
+      "mass": {
+        "value": null,
+        "unit": "kg",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for mass; no simulator default permitted."
+      },
+      "center_of_mass": {
+        "value": null,
+        "unit": "m",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for center_of_mass; no simulator default permitted."
+      },
+      "inertia": {
+        "value": null,
+        "unit": "kg*m^2",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for inertia; no simulator default permitted."
+      },
+      "collision_geometry": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for collision_geometry; no simulator default permitted."
+      },
+      "contact_friction": {
+        "value": null,
+        "unit": "1",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for contact_friction; no simulator default permitted."
+      },
+      "contact_restitution": {
+        "value": null,
+        "unit": "1",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for contact_restitution; no simulator default permitted."
+      },
+      "joint_type": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for joint_type; no simulator default permitted."
+      },
+      "joint_origin": {
+        "value": null,
+        "unit": "m,rad",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for joint_origin; no simulator default permitted."
+      },
+      "joint_axis": {
+        "value": null,
+        "unit": "1",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for joint_axis; no simulator default permitted."
+      },
+      "joint_limits": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for joint_limits; no simulator default permitted."
+      },
+      "restoring_curve": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for restoring_curve; no simulator default permitted."
+      },
+      "damping": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for damping; no simulator default permitted."
+      },
+      "joint_friction": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for joint_friction; no simulator default permitted."
+      },
+      "input_mapping": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for input_mapping; no simulator default permitted."
+      }
+    },
+    "right_trigger": {
+      "geometry_scale": {
+        "value": null,
+        "unit": "m/native_unit",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for geometry_scale; no simulator default permitted."
+      },
+      "mass": {
+        "value": null,
+        "unit": "kg",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for mass; no simulator default permitted."
+      },
+      "center_of_mass": {
+        "value": null,
+        "unit": "m",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for center_of_mass; no simulator default permitted."
+      },
+      "inertia": {
+        "value": null,
+        "unit": "kg*m^2",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for inertia; no simulator default permitted."
+      },
+      "collision_geometry": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for collision_geometry; no simulator default permitted."
+      },
+      "contact_friction": {
+        "value": null,
+        "unit": "1",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for contact_friction; no simulator default permitted."
+      },
+      "contact_restitution": {
+        "value": null,
+        "unit": "1",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for contact_restitution; no simulator default permitted."
+      },
+      "joint_type": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for joint_type; no simulator default permitted."
+      },
+      "joint_origin": {
+        "value": null,
+        "unit": "m,rad",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for joint_origin; no simulator default permitted."
+      },
+      "joint_axis": {
+        "value": null,
+        "unit": "1",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for joint_axis; no simulator default permitted."
+      },
+      "joint_limits": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for joint_limits; no simulator default permitted."
+      },
+      "restoring_curve": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for restoring_curve; no simulator default permitted."
+      },
+      "damping": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for damping; no simulator default permitted."
+      },
+      "joint_friction": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for joint_friction; no simulator default permitted."
+      },
+      "input_mapping": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for input_mapping; no simulator default permitted."
+      }
+    },
+    "view": {
+      "geometry_scale": {
+        "value": null,
+        "unit": "m/native_unit",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for geometry_scale; no simulator default permitted."
+      },
+      "mass": {
+        "value": null,
+        "unit": "kg",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for mass; no simulator default permitted."
+      },
+      "center_of_mass": {
+        "value": null,
+        "unit": "m",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for center_of_mass; no simulator default permitted."
+      },
+      "inertia": {
+        "value": null,
+        "unit": "kg*m^2",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for inertia; no simulator default permitted."
+      },
+      "collision_geometry": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for collision_geometry; no simulator default permitted."
+      },
+      "contact_friction": {
+        "value": null,
+        "unit": "1",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for contact_friction; no simulator default permitted."
+      },
+      "contact_restitution": {
+        "value": null,
+        "unit": "1",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for contact_restitution; no simulator default permitted."
+      },
+      "joint_type": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for joint_type; no simulator default permitted."
+      },
+      "joint_origin": {
+        "value": null,
+        "unit": "m,rad",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for joint_origin; no simulator default permitted."
+      },
+      "joint_axis": {
+        "value": null,
+        "unit": "1",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for joint_axis; no simulator default permitted."
+      },
+      "joint_limits": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for joint_limits; no simulator default permitted."
+      },
+      "restoring_curve": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for restoring_curve; no simulator default permitted."
+      },
+      "damping": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for damping; no simulator default permitted."
+      },
+      "joint_friction": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for joint_friction; no simulator default permitted."
+      },
+      "input_mapping": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for input_mapping; no simulator default permitted."
+      }
+    },
+    "menu": {
+      "geometry_scale": {
+        "value": null,
+        "unit": "m/native_unit",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for geometry_scale; no simulator default permitted."
+      },
+      "mass": {
+        "value": null,
+        "unit": "kg",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for mass; no simulator default permitted."
+      },
+      "center_of_mass": {
+        "value": null,
+        "unit": "m",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for center_of_mass; no simulator default permitted."
+      },
+      "inertia": {
+        "value": null,
+        "unit": "kg*m^2",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for inertia; no simulator default permitted."
+      },
+      "collision_geometry": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for collision_geometry; no simulator default permitted."
+      },
+      "contact_friction": {
+        "value": null,
+        "unit": "1",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for contact_friction; no simulator default permitted."
+      },
+      "contact_restitution": {
+        "value": null,
+        "unit": "1",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for contact_restitution; no simulator default permitted."
+      },
+      "joint_type": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for joint_type; no simulator default permitted."
+      },
+      "joint_origin": {
+        "value": null,
+        "unit": "m,rad",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for joint_origin; no simulator default permitted."
+      },
+      "joint_axis": {
+        "value": null,
+        "unit": "1",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for joint_axis; no simulator default permitted."
+      },
+      "joint_limits": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for joint_limits; no simulator default permitted."
+      },
+      "restoring_curve": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for restoring_curve; no simulator default permitted."
+      },
+      "damping": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for damping; no simulator default permitted."
+      },
+      "joint_friction": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for joint_friction; no simulator default permitted."
+      },
+      "input_mapping": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for input_mapping; no simulator default permitted."
+      }
+    },
+    "guide": {
+      "geometry_scale": {
+        "value": null,
+        "unit": "m/native_unit",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for geometry_scale; no simulator default permitted."
+      },
+      "mass": {
+        "value": null,
+        "unit": "kg",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for mass; no simulator default permitted."
+      },
+      "center_of_mass": {
+        "value": null,
+        "unit": "m",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for center_of_mass; no simulator default permitted."
+      },
+      "inertia": {
+        "value": null,
+        "unit": "kg*m^2",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for inertia; no simulator default permitted."
+      },
+      "collision_geometry": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for collision_geometry; no simulator default permitted."
+      },
+      "contact_friction": {
+        "value": null,
+        "unit": "1",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for contact_friction; no simulator default permitted."
+      },
+      "contact_restitution": {
+        "value": null,
+        "unit": "1",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for contact_restitution; no simulator default permitted."
+      },
+      "joint_type": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for joint_type; no simulator default permitted."
+      },
+      "joint_origin": {
+        "value": null,
+        "unit": "m,rad",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for joint_origin; no simulator default permitted."
+      },
+      "joint_axis": {
+        "value": null,
+        "unit": "1",
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for joint_axis; no simulator default permitted."
+      },
+      "joint_limits": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for joint_limits; no simulator default permitted."
+      },
+      "restoring_curve": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for restoring_curve; no simulator default permitted."
+      },
+      "damping": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for damping; no simulator default permitted."
+      },
+      "joint_friction": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for joint_friction; no simulator default permitted."
+      },
+      "input_mapping": {
+        "value": null,
+        "unit": null,
+        "status": "unknown",
+        "evidence": [],
+        "harness": "audit_spec",
+        "reason": "No verified target-hardware evidence for input_mapping; no simulator default permitted."
+      }
+    }
+  },
+  "reference_candidates": {
+    "left_stick": [
+      "stick_direction_limit",
+      "stick_operating_torque",
+      "stick_click_force",
+      "stick_click_travel",
+      "stick_return_precision"
+    ],
+    "right_stick": [
+      "stick_direction_limit",
+      "stick_operating_torque",
+      "stick_click_force",
+      "stick_click_travel",
+      "stick_return_precision"
+    ],
+    "a": [
+      "front_force",
+      "front_travel"
+    ],
+    "b": [
+      "front_force",
+      "front_travel"
+    ],
+    "x": [
+      "front_force",
+      "front_travel"
+    ],
+    "y": [
+      "front_force",
+      "front_travel"
+    ],
+    "left_shoulder": [
+      "shoulder_force",
+      "shoulder_travel"
+    ],
+    "right_shoulder": [
+      "shoulder_force",
+      "shoulder_travel"
+    ]
+  },
+  "reference_policy": "Candidates are NOT assigned to target parameters. Adoption requires explicit applicability rationale, unit-correct derivation and a test.",
+  "dpad_policy": "Visual direction labels do not establish four independent mechanical buttons; topology unresolved.",
+  "stick_policy": "Must account for two-axis tilt and click; axes, coupling and limits unresolved. Never infer pivot from Blender origin.",
+  "trigger_policy": "Do not replace analog triggers with Alpakka digital trigger switches.",
+  "excluded_visual_controls": {
+    "share": {
+      "reason": "Not part of confirmed 1708 target; original meshes retained unchanged"
+    }
+  }
+}
