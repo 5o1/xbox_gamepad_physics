@@ -1,0 +1,25 @@
+{
+  "repository": "https://github.com/inputlabs/cad",
+  "tree_ref": "0febaa859a87b5df6cc369e095064d72f5565e21",
+  "gpu_directory": "/path/to/gpu-data/<gpu-project>/xbox-physics-v1/reference_drawings/alpakka_0febaa8",
+  "license": "CC-BY-NC-SA-4.0 as declared in downloaded license.md; reference-only, not merged into Xbox asset license",
+  "download": "Direct NETWORK_INTERFACE, proxy disabled, api.github.com resolved through AliDNS HTTPS to 20.205.243.168; fixed-ref contents API with raw response",
+  "target_applicability": "Different controller. No constants below adopted as Xbox 1708 parameters.",
+  "unit_policy": "Values are recorded in source CAD numeric units; source files do not explicitly declare SI units. No automatic conversion to target metres.",
+  "files": [
+    {"file":"license.md","path":"license.md","sha256":"333367afe2cd99ae6bc37625227ff2bb574d7230c4530d612227c1bc4bc38bc0","constants":{}},
+    {"file":"button_abxy.py","path":"alpakka/build123d/button_abxy.py","sha256":"b25be1c6d62e4e1f52145a1d44d731f9f26a94ba86a0016ca10c196d605237e1","constants":{"TOTAL_BUTTON_HEIGHT":18.3,"LOWER_BUTTON_HEIGHT":2.4,"LOWER_BUTTON_RAD":5.8,"LOWER_BUTTON_WIDTH":9.6,"TOP_BUTTON_HEIGHT":13.9,"MID_BUTTON_RAD":4.8,"CHAMFER_SIZE":0.5}},
+    {"file":"button_dpad.py","path":"alpakka/build123d/button_dpad.py","sha256":"f7743153502ec2b8ccb4872fa2c133d2112239d858bd98c542d31809d4a99ebe","constants":{"TOTAL_BUTTON_HEIGHT":18.3,"TOP_BUTTON_WIDTH":7.6,"SIDE_FILLET_SIZE":1}},
+    {"file":"thumbstick_right.py","path":"alpakka/build123d/thumbstick_right.py","sha256":"ce7487ce67f56535b12f223194e8b9be7702377e602b7c2ff37cb1a775295d5f","constants":{"TOTAL_HEIGHT":8.75,"DOME_RADIUS":12,"HOLE_TOLERANCE_XY":0.1,"HOLE_TOLERANCE_Z":0.5}},
+    {"file":"trigger_r1.py","path":"alpakka/build123d/trigger_r1.py","sha256":"0ca87d769594b765d38543a729f435448e247488920120b11f1f72c7c9d13710","constants":{"SHAFT_RADIUS":3,"SHAFT_TOLERANCE":0.1,"BRIDGE_CONTACT_TOLERANCE_Y":0.3,"TOLERANCE_Z":0.7}}
+  ],
+  "findings": [
+    "ABXY source constructs bottom retention shape, transition loft, upper shaft and chamfer separately. These are geometric features, not button travel.",
+    "Thumbstick cap includes dome, shaft interface hole, and separate XY/Z fit allowances. Dome radius does not establish the internal joystick hinge.",
+    "R1 source contains shaft, bridge, switch-contact relief and manufacturing tolerances. Contact tolerance is not spring displacement or actuation force.",
+    "The four inspected part sources do not define mass, density, inertia, friction, damping, force-displacement law or simulation joints. This is useful manufacturing CAD, not a ready-made validated dynamics asset.",
+    "Alpakka D-pad button geometry is not transferable to the single cross-shaped Xbox 1708 cap."
+  ],
+  "harness": "scripts/audit_cad_reference.py checks every downloaded file hash and named numeric literals without importing/executing third-party CAD",
+  "unknown_target_values": {"mass":null,"inertia":null,"button_travel":null,"force_curve":null,"pivot":null}
+}

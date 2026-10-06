@@ -1,0 +1,26 @@
+{
+  "references": [
+    "https://doc.cgal.org/latest/Principal_component_analysis/index.html",
+    "https://numpy.org/doc/stable/reference/generated/numpy.linalg.eigh.html"
+  ],
+  "method": "Uniform triangle-surface covariance followed by symmetric eigendecomposition, rather than equally weighted mesh vertices. CGAL documents triangle-area weighting and continuous-object PCA; implementation here is NumPy, not CGAL.",
+  "derivation": "For uniform triangle barycentric coordinates, E[li]=1/3, E[li^2]=1/6, E[li*lj]=1/12. For centered vertices vi and s=sum vi, E[xx^T]=(sum vi vi^T+s s^T)/12. Weight each triangle by its area and sum. Center coordinates before forming moments.",
+  "scope": "All four named visual layers of each ABXY button in the existing width-scaled candidate. Every mesh SHA256 is checked against the inventory.",
+  "script": "scripts/button_surface_axes.py",
+  "harness": "tests/test_button_surface_axes.py: analytic rectangle covariance, subdivision invariance, rigid transform covariance, degenerate/nonfinite rejection; 3 tests passed in existing GPU environment",
+  "result": "results/button_surface_axes.json",
+  "observations": [
+    "Outer Button and Interior minimum-variance directions differ by approximately 1.34 to 3.81 degrees across ABXY; Interior2 differs by 0.18 to 1.15 degrees.",
+    "Letter meshes differ from their outer Button direction by approximately 5.84 to 27.61 degrees, showing why a decorative letter is not a reliable source of button axis.",
+    "Minimum-variance direction is an unsigned geometric thin-direction estimate. It is not proof of a prismatic joint, press sign, travel, clearance or alignment to real 1708 guides."
+  ],
+  "decision": "Retain geometry directions for future registration and inspection; do not promote them to target mechanical axes. No adoption threshold invented.",
+  "limitations": [
+    "Uniform surface area is geometric weighting, not a physical density or mass distribution.",
+    "Repeated or nearly repeated eigenvalues can make principal directions ambiguous; all eigenvalues are retained rather than hiding conditioning.",
+    "Surface centroids are not physical centers of mass. Candidate scale is width-matched, not a verified 1708 dimension model."
+  ],
+  "target_axis": null,
+  "target_press_sign": null,
+  "target_travel_m": null
+}
