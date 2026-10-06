@@ -1,0 +1,48 @@
+{
+  "checked_on": "2026-10-06",
+  "model": "1708",
+  "publisher": "Microsoft Corporation, FCC submission; obtained from FCCID.io mirror",
+  "document_id": 3019207,
+  "document_title": "Internal Photos 1708_Rev",
+  "index_url": "https://fccid.io/C3K1708/Internal-Photos/Internal-Photos-1708-Rev-3019207",
+  "original_url": "https://apps.fcc.gov/eas/GetApplicationAttachment.html?id=3019207",
+  "download_url": "https://fccid.io/m/38ff0b3287555a70bf4b1a6ff39d2e32c50575e83e55ff4837b09d8826dae177.pdf",
+  "sha256": "38ff0b3287555a70bf4b1a6ff39d2e32c50575e83e55ff4837b09d8826dae177",
+  "gpu_path": "/path/to/gpu-data/<gpu-project>/xbox-physics-v1/reference_drawings/fcc_3019207.pdf",
+  "download_method": "Direct NETWORK_INTERFACE with proxy disabled, fccid.io resolved to 172.66.43.93 using HTTPS AliDNS at 223.5.5.5. Followed inspected same-host 302 Location explicitly.",
+  "validation": {
+    "sha256_matches_index": true,
+    "pdfinfo_pages": 11,
+    "pdfinfo_size_bytes": 5159901,
+    "visually_inspected_pages_one_based": [1,2,3,4,5,6,7,8,9,10,11],
+    "rendering": "pdftoppm -scale-to 700 -jpeg; small page previews only, original retained unchanged"
+  },
+  "observations": [
+    {
+      "pages": [6,7],
+      "finding": "Two uncapped stick modules mounted on the same PCB, with metal frames and side potentiometer housings. Page 7 includes two perpendicular rulers.",
+      "use": "Candidate for checking stick-center layout and module outline against visual assets. Manufacturer part number and pivot height are not legible in inspected previews.",
+      "caution": "Rulers and raised components are not necessarily coplanar. A scalar pixel-to-mm conversion is not a calibrated 3D measurement."
+    },
+    {
+      "pages": [8,9],
+      "finding": "Front PCB exposes button contact patterns, two stick apertures and shoulder switch components; rulers are visible.",
+      "use": "Cross-check control topology and relative planar placement, not button travel or force."
+    },
+    {
+      "pages": [4],
+      "finding": "Rear assembly view includes large handle vibration motors and both rear trigger assemblies.",
+      "use": "Assembly correspondence reference. This view does not establish a dimensioned trigger hinge or force law."
+    }
+  ],
+  "next_geometry_harness": "Annotate independent ruler marks and PCB landmarks at original resolution, fit image calibration with held-out residuals, account for plane offset/perspective, and compare left/right stick spacing to the existing width-scaled proxy. Do not promote a single-view fit to calibrated 3D axes.",
+  "unknown": {
+    "stick_part_number": null,
+    "stick_pivot_height_m": null,
+    "trigger_pivot_m": null,
+    "button_stroke_m": null,
+    "image_calibration": null,
+    "owner_board_revision_match": null
+  },
+  "reuse": "Reference evidence only. Public FCC disclosure is not treated as an open-source CAD license."
+}

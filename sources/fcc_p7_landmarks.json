@@ -1,0 +1,18 @@
+{
+  "status": "manual_image_annotation_not_3d_calibration",
+  "source_record": "sources/1708_fcc_internal.json",
+  "image_sha256": "241f3742ea82dd4557bf788b164336f524ff42d0215098e61f2564f057d82787",
+  "image_gpu_path": "/path/to/gpu-data/<gpu-project>/xbox-physics-v1/reference_drawings/fcc1708-p7-1400.png",
+  "page_one_based": 7,
+  "image_size_px": [934,1400],
+  "coordinate_convention": "Image origin top-left; y downward. Vertical ruler marked millimeters. Annotated long graduation lines, not text baselines.",
+  "ruler_fit_mm_y_px": [[10,110],[110,699],[210,1293]],
+  "ruler_holdout_mm_y_px": [[60,402],[160,995]],
+  "shaft_opening_centers_px": [[505,458],[350,838]],
+  "manual_readout_sensitivity_px": 6,
+  "sensitivity_meaning": "A deliberately coarse +/-6 px annotation perturbation for sensitivity analysis, not a measured confidence interval or camera calibration accuracy.",
+  "method": "Least-squares y=a*millimeters+b on training ruler marks, report held-out residuals. Divide shaft-center vertical pixel separation by a. No homography or 3D pose estimate.",
+  "physical_distance_m": null,
+  "unresolved": ["ruler versus stick-top plane offset", "perspective and lens distortion", "stick neutral pose", "pixel landmark uncertainty", "registration to visual asset"],
+  "harness": "scripts/check_photo_layout.py and tests/test_photo_layout.py"
+}

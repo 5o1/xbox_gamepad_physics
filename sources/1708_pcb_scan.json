@@ -1,0 +1,39 @@
+{
+  "status": "downloaded_and_visually_inspected_planar_reference",
+  "author": "RDC",
+  "primary_post": "https://acidmods.com/forum/index.php?topic=43981.0",
+  "locator": "Opening post, Clean PCB scans / MCU BOARD TOP CLEAN",
+  "image_url": "https://www.acidmods.com/RDC/XB1/1708/1708%20BBT%20CLEAN.jpg",
+  "image_sha256": "f6d79962b116258e361a5f7d4459e9cbffcac70573e758ace1691874647ec529",
+  "gpu_path": "/path/to/gpu-data/<gpu-project>/xbox-physics-v1/reference_drawings/1708_bbt_clean.jpg",
+  "image_size_px": [1024,421],
+  "download": "No proxy; NETWORK_INTERFACE; www.acidmods.com resolved through AliDNS HTTPS to 108.179.242.126",
+  "observations": [
+    "Bare PCB scan exposes through-hole footprints for both removed stick modules and multiple mounting holes.",
+    "Image is useful for planar landmark correspondence; it contains neither joystick gimbal geometry nor the front housing.",
+    "Silkscreen includes X913434-007; do not silently equate all 1708 board revisions."
+  ],
+  "metadata_caution": "JPEG advertises 1200 dpi but is only 1024 pixels wide; editing/resizing history is not established. Do not convert pixels to millimeters using this tag.",
+  "license": null,
+  "reuse_scope": "Reference image retained separately; no claim of open CAD licensing or permission to redistribute derived textures.",
+  "registration_attempt": {
+    "script": "scripts/register_pcb.py",
+    "method_reference": "https://docs.opencv.org/4.x/d1/de0/tutorial_py_feature_homography.html",
+    "settings": "SIFT, exact BF L2 matching, tutorial ratio 0.7 and RANSAC threshold 5 px; seed 0. Unique destination matches; every third source-x-sorted match withheld before fitting. These are diagnostic algorithm settings, not mechanical tolerances.",
+    "normal_result": "results/pcb_registration_v1.json: 17 correspondences, 11 training, 6 held out, 6 training inliers; held-out median error 315.726 px",
+    "mirror_result": "results/pcb_registration_mirrored.json: only 7 correspondences, no fit attempted",
+    "decision": "Neither orientation supports a usable registration. Do not use the fitted normal-orientation matrix to transfer dimensions or joint coordinates. No calibration promoted."
+  },
+  "manual_registration": {
+    "annotations": "sources/pcb_hole_correspondences.json",
+    "script": "scripts/fit_pcb_holes.py",
+    "result": "results/pcb_holes_v1.json",
+    "fit": "Four outer mounting holes; direct homography without robust rejection",
+    "held_out": "Two inner holes and SW3 contact center, errors approximately 1.80, 5.97, 1.77 photo pixels",
+    "interpretation": "Supports coarse planar layout correspondence, not exact board revision identity or metrology. Larger right-inner-hole error remains unresolved. No absolute scale or shaft height follows."
+  },
+  "next_check": "Review the larger right-inner-hole residual before finer transfers. Use only coplanar PCB features; shaft tops and rulers are on other planes. Do not transfer their coordinates as if on the PCB.",
+  "meters_per_pixel": null,
+  "homography": null,
+  "joint_pivots": null
+}

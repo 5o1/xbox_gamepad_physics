@@ -1,0 +1,23 @@
+{
+  "status": "manual_correspondence_hypothesis",
+  "scan_record": "sources/1708_pcb_scan.json",
+  "photo_record": "sources/fcc_p7_landmarks.json",
+  "coordinate_units": "pixels, original recorded image sizes, top-left origin",
+  "selection": "Four outer mounting holes chosen by PCB outline; two inner mounting holes and a exposed circular contact reserved before fitting. No matching threshold search.",
+  "fit": [
+    {"name":"scan_upper_left_hole", "scan":[77,27], "photo":[538,380]},
+    {"name":"scan_lower_left_outer_hole", "scan":[20,276], "photo":[347,332]},
+    {"name":"scan_upper_right_hole", "scan":[947,27], "photo":[530,1040]},
+    {"name":"scan_lower_right_outer_hole", "scan":[1002,276], "photo":[340,1086]}
+  ],
+  "holdout": [
+    {"name":"scan_lower_left_inner_hole", "scan":[84,283], "photo":[342,380]},
+    {"name":"scan_lower_right_inner_hole", "scan":[938,283], "photo":[341,1037]},
+    {"name":"SW3_circular_contact", "scan":[906,85], "photo":[488,1009]}
+  ],
+  "annotation_note": "Coarse visual center picks. Unknown absolute accuracy; inspect residuals rather than claiming subpixel calibration. Board revisions may differ.",
+  "metric_scale": null,
+  "camera_intrinsics": null,
+  "mechanical_pivots": null,
+  "method_reference": "https://docs.opencv.org/4.x/d1/de0/tutorial_py_feature_homography.html"
+}
