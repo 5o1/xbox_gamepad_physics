@@ -1,0 +1,66 @@
+{
+  "asset_version": "v1-work-in-progress-2026-10-06",
+  "status": "xbox_one_s_appearance_candidate_user_acknowledged_physics_unresolved",
+  "target_hardware": {"model": "Xbox One Wireless Controller", "revision": "1708", "basis": "owner statement", "physical_measurements_available": false},
+  "primary_appearance_candidate": {
+    "title": "Xbox One S Controller/Gamepad (Animated)",
+    "author": "BatonyRobson",
+    "source": "../sources/xbox_replacement_candidates.json",
+    "front_render": "../results/xbox_one_s_batonyrobson_UNVERIFIED/pos_z.png",
+    "user_appearance_acknowledged": true,
+    "controller_revision_verified": false,
+    "mechanically_verified": false,
+    "mesh_objects": 16,
+    "gpu_root": "/path/to/gpu-data/<gpu-project>/controller-candidates/xbox_one_s_batonyrobson_UNVERIFIED"
+  },
+  "legacy_visual_model_identification": {"model": "Xbox Series X|S / 1914", "basis": "inferred_from_original_rendered_features", "mechanically_verified": false, "original_part_count": 44, "use": "appearance tooling and viewer software regression only; rejected as 1708 target geometry"},
+  "approved_target_geometry": null,
+  "geometry_review": "../sources/geometry_review.json",
+  "interactive_viewer": {
+    "entry": "../viewer/index.html",
+    "acceptance": "../specs/interactive_acceptance.json",
+    "design_sources": "../sources/viewer_design.json",
+    "visual_asset": "legacy 1914 width proxy, not the primary Xbox One S candidate",
+    "target_rig": null,
+    "real_controller_verified": false
+  },
+  "visual_inventory": "../results/visual_parts/inventory.json",
+  "geometry_audit": "../results/visual_parts/mesh_audit.json",
+  "physical_specification": "../specs/xbox_v1.json",
+  "source_catalog": "../sources/catalog.json",
+  "mechanical_structure_evidence": "../sources/mechanical_structure.json",
+  "reference_stick_envelope": {
+    "specification": "../sources/stick_envelope.json",
+    "harness_result": "../results/stick_envelope.json",
+    "scope": "RKJXV122400R angular upper-envelope only; not installed Xbox motion or dynamics"
+  },
+  "mesh_root_on_gpu": "/path/to/gpu-data/<gpu-project>/xbox-physics-v1/Xbox_Series_XS_1914_candidate_original_44parts_UNCALIBRATED",
+  "mesh_root_scope": "legacy 1914 appearance candidate only",
+  "source_copy_on_gpu": "/path/to/gpu-data/<gpu-project>/xbox-physics-v1/input",
+  "meters_per_native_unit": null,
+  "collision_asset": null,
+  "unapproved_collision_candidates": {
+    "scope": "ABXY only; not a replacement for full controller",
+    "gpu_directory": "/path/to/gpu-data/<gpu-project>/xbox-physics-v1/button_collision_candidates",
+    "audit": "../results/button_collisions/collision_audit.json",
+    "assembly_diagnostic": "../results/button_collisions/assembly_audit.json",
+    "method": "../sources/collision_method.json",
+    "approved_for_simulation": false
+  },
+  "simulator_asset": null,
+  "hardware_revision": "1708",
+  "hardware_revision_evidence": "sources/catalog.json:user_target_1708",
+  "whole_controller_dimensions": "../sources/1708_dimensions.json",
+  "width_matched_visual_proxy": {
+    "inventory": "../results/width_proxy_1708/inventory.json",
+    "gpu_directory": "/path/to/gpu-data/<gpu-project>/xbox-physics-v1/LEGACY_1914_shape_scaled_to_1708_width_NO_SHARE_NOT_VALIDATED",
+    "mechanical_revision_match": false,
+    "collision_approved": false
+  },
+  "reasons": {
+    "scale": "Visual source explicitly disclaims dimensional accuracy. No scale assignment approved.",
+    "collision": "44 exported meshes fail exact-weld watertight checks; no contact-preserving collision reconstruction verified.",
+    "simulator": "Missing pivots, target dynamics and input mapping. No implicit simulator defaults allowed.",
+    "revision": "Owner confirmed 1708. The legacy source includes a ShareButton absent on target. The newer Xbox One S candidate is visually acknowledged by the owner but still lacks revision, dimensional and mechanical verification."
+  }
+}
