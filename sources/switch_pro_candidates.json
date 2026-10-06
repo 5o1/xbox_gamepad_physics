@@ -1,0 +1,47 @@
+{
+  "scope": "Alternative asset research only; Xbox One 1708 target not changed",
+  "wesk": {
+    "author": "Wesk",
+    "source": "https://bitbuilt.net/forums/threads/switch-pro-controller-scan.5755/",
+    "download": "https://bitbuilt.net/wesk/3D%20Scans/Switch%20Pro%20Controller.zip",
+    "license_source": "https://bitbuilt.net/forums/threads/wesks-3d-scans-license.5444/",
+    "license": "Author-wide scans license: Unlicense/public-domain dedication",
+    "gpu_root": "/path/to/gpu-data/<gpu-project>/controller-candidates/switch-pro-wesk",
+    "download_method": "real-IP DNS over HTTPS, curl --resolve, NETWORK_INTERFACE, no proxy",
+    "zip_sha256": "7c52bb73d58959063206b5189560f854e6d525b93a25e43cf036c1bd90541dc4",
+    "archive_files": ["Front.stl", "Back.stl", "Back Cover.stl", "Grip.stl"],
+    "uncompressed_bytes": 500009436,
+    "actual_front_render": "../results/switch_pro_wesk/pos_z.png",
+    "render_manifest": "../results/switch_pro_wesk/render_manifest.json",
+    "observed": "Front.stl contains shell apertures and inner guide structures, not installed buttons or sticks. Neutral clay render; no textures in archive.",
+    "missing": ["button caps", "stick caps", "D-pad", "shoulder controls", "verified assembly transforms", "physical parameters"],
+    "status": "partial_shell_reference_pending_user_review",
+    "user_confirmation": null,
+    "approved_for_simulation": false
+  },
+  "pixeltaku": {
+    "source": "https://sketchfab.com/3d-models/switch-pro-controller-5e09103601b04f469ca6dbe5cfde00d9",
+    "status": "excluded_from_VLA_candidate_shortlist",
+    "reason": "Public page labels NoAI; permission for intended VLA use unresolved. Anonymous metadata request reports mayDownloadThisModel=false. No downloaded geometry or render; not an accepted asset.",
+    "geometry_separability": null,
+    "geometry_note": "Author says buttons attached to main body mesh. This is NOT a rejection reason: disconnected islands can be separated and connected surfaces can be cut/reconstructed after inspecting the actual file. No topology inspection has occurred."
+  },
+  "lucasmunillaclavero": {
+    "source": "https://sketchfab.com/3d-models/nintendo-switch-pro-controller-7b739b6bde5445e3ba4b861ed84fdfdf",
+    "author": "lucasmunillaclavero",
+    "license": "CC-BY-4.0, read from user-supplied glTF ZIP license.txt",
+    "gpu_root": "/path/to/gpu-data/<gpu-project>/controller-candidates/switch_pro_lucasmunillaclavero_UNVERIFIED",
+    "actual_front_render": "../results/switch_pro_lucasmunillaclavero_UNVERIFIED/neg_y.png",
+    "inventory": "../results/switch_pro_lucasmunillaclavero_UNVERIFIED/inventory.json",
+    "status": "rendered_original_materials_pending_user_geometry_review",
+    "original_fbx": {"mesh_objects": 1, "vertices": 158397, "polygons": 316786, "edge_connected_components": 1, "animations": 0},
+    "separability": "Original FBX is a single connected surface. Buttons cannot be separated merely by loose-parts operation. Manual segmentation and reconstruction remain possible; not rejected solely because merged. Converted GLB splits do not establish mechanical part boundaries.",
+    "provenance_note": "Original archive and FBX names contain Meshy_AI. This alone does not establish geometric accuracy or a particular generation method.",
+    "user_hardware": "User reports Splatoon 3 edition, same mesh as ordinary Switch Pro with different shell textures. This identifies requested geometry family; it is not verification of this downloaded mesh.",
+    "physical_scale_verified": false,
+    "physical_parameters": null,
+    "user_confirmation": null,
+    "approved_for_simulation": false
+  },
+  "selection": null
+}

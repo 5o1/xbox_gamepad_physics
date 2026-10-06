@@ -1,0 +1,25 @@
+{
+  "target": "Xbox One 1708",
+  "candidate": "CasperH2O/3DControllerModels Microsoft Xbox One.blend, width-scaled derivative",
+  "decision": "rejected_as_1708_retained_as_1914_appearance_candidate",
+  "inferred_visual_model": "Xbox Wireless Controller for Series X|S, Model 1914",
+  "identity_status": "feature_based_inference_not_manufacturer_verified_CAD",
+  "intact_source_front_render": "../results/visual_parts/identity_front.png",
+  "intact_source_top_render": "../results/visual_parts/identity_top.png",
+  "identity_reference": "https://www.ifixit.com/Device/Xbox_Series_X_Wireless_Controller",
+  "identity_evidence": ["Original source has ShareButton and ShareButtonSymbol; rendered below View/Menu", "Circular dished D-pad in original front render", "Top render shows rounded rectangular connector consistent with USB-C; internal connector dimensions unverified"],
+  "continued_work": "Evaluate intact 44-part original as a 1914 candidate. Do not discard merely because user owns 1708. Await user's rendered appearance confirmation before adopting a mechanical target.",
+  "render": "../results/current_candidate_front.png",
+  "reference_image": null,
+  "reference_image_policy": "Not redistributed in Git. Use reference_url; the local screenshot, if present, is ignored because its redistribution status is not established.",
+  "reference_url": "https://www.ifixit.com/Device/Xbox_One_Wireless_Controller_Model_1708",
+  "observations": [
+    "Candidate D-pad fills the diagonal quadrants into a circular pad; identified 1708 reference has a cross-shaped cap.",
+    "Candidate retains central extra-button opening after removal of Share meshes. Reference has no matching control."
+  ],
+  "exact_candidate_hardware_revision": null,
+  "approved_for_target_rig_registration": false,
+  "approved_for_contact_or_training": false,
+  "replacement": null,
+  "candidate_policy": "Download and actually render each proposed asset front-on for user confirmation. Missing source file or render means lead only, not an accepted candidate. User approval of front appearance does not validate hidden geometry or dynamics."
+}

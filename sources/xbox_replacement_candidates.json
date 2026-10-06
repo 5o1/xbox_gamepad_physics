@@ -1,0 +1,42 @@
+{
+  "target": "Xbox One 1708",
+  "accepted_geometry": null,
+  "candidates": [
+    {
+      "author": "BatonyRobson",
+      "title": "Xbox One S Controller/Gamepad (Animated)",
+      "url": "https://sketchfab.com/3d-models/xbox-one-s-controllergamepad-animated-a62cf7475b7d4ead9fbf1a86e5a2b6a4",
+      "license": "CC BY 4.0, verified in public model metadata",
+      "download_status": "User supplied FBX ZIP, glTF ZIP, USDZ and two GLBs in WINDOWS_HOME/Downloads/xbox; copied unchanged to GPU and imported FBX plus 2K GLB in Blender 3.6.23",
+      "gpu_root": "/path/to/gpu-data/<gpu-project>/controller-candidates/xbox_one_s_batonyrobson_UNVERIFIED",
+      "render": "../results/xbox_one_s_batonyrobson_UNVERIFIED/pos_z.png",
+      "inventory": "../results/xbox_one_s_batonyrobson_UNVERIFIED/inventory.json",
+      "fbx_zip_sha256": "b70a3cc892fb21e1e90f10a11043462a1758064ca6063739ab57662f530be2db",
+      "glb_2k_sha256": "5c5671c83a9cf15db4b8399e7010aa7d5cde915687ceb348b583eb00b0ed24e2",
+      "mesh_objects": 16,
+      "observed_geometry": "Separate body, ABXY, D-pad, sticks, bumpers, triggers, View/Menu, Guide and connect button. Front render has cross D-pad and no Share. Appearance consistent with 1708 reference; still pending user confirmation and dimensional review.",
+      "user_confirmation": "2026-10-06: user says Xbox One S render looks the same as their controller, possibly the same model. Appearance acknowledgement only, not dimensional or mechanical verification.",
+      "animation_caveat": "Four imported FBX action datablocks; artist animations and bones are not measured physical pivots or travel limits.",
+      "materials": "2K packed GLB textures successfully imported and rendered; original FBX ZIP also contains six texture PNGs",
+      "revision_verified": false,
+      "geometry_separability": "Already separate named mesh objects; no manual button cutting required"
+    },
+    {
+      "title": "Xbox One S updated scan lead",
+      "url": "https://www.thingiverse.com/thing:3674006",
+      "status": "original availability unresolved; do not infer identity from name",
+      "render": null
+    },
+    {
+      "author": "dishyboar",
+      "title": "Xbox One S Controller Faceplate Re-Upload",
+      "url": "https://www.thingiverse.com/thing:4763900",
+      "license": "CC BY 4.0 in publisher page JSON-LD",
+      "scope": "front shell only, not a complete controller",
+      "download_status": "Direct real-IP page request 403; port FALLBACK_PROXY_PORT proxy retrieved publisher HTML. Anonymous files API returned 401. Legacy zip response is HTML redirect, NOT a model archive. No API authorization bypass attempted.",
+      "render": null,
+      "revision_verified": false
+    }
+  ],
+  "policy": "No candidate accepted without actual downloaded-file front render and user confirmation; merged object is a processing question, not an automatic rejection."
+}
