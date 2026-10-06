@@ -1,0 +1,29 @@
+{
+  "asset": "Industrial Workshop Foundry",
+  "authoritative_page": "https://polyhaven.com/a/industrial_workshop_foundry",
+  "authoritative_file_api": "https://api.polyhaven.com/files/industrial_workshop_foundry",
+  "download_url": "https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/4k/industrial_workshop_foundry_4k.hdr",
+  "license": {
+    "name": "CC0 1.0",
+    "poly_haven_statement": "https://polyhaven.com/license",
+    "canonical": "https://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  "file": {
+    "name": "industrial_workshop_foundry_4k.hdr",
+    "bytes": 25896818,
+    "md5": "88b3a40a05ad29da7e7e060513c139af",
+    "sha256": "3dccd8969259460dd0cf28bf7c82b869ba89f64051722ec6c1a3dd83cc24cce4",
+    "type": "Radiance HDR image data",
+    "storage": "/path/to/gpu-data/<gpu-project>/xbox-physics-v1/lighting/polyhaven_industrial_workshop_foundry_cc0/industrial_workshop_foundry_4k.hdr"
+  },
+  "downloaded_utc_date": "2026-10-06",
+  "network_harness": {
+    "proxy": "disabled",
+    "interface": "NETWORK_INTERFACE",
+    "dns": "Ali DoH at 223.5.5.5",
+    "resolved_ipv4_used": "104.26.1.167",
+    "curl": "--noproxy '*' --interface NETWORK_INTERFACE --resolve dl.polyhaven.org:443:104.26.1.167"
+  },
+  "project_role": "licensed industrial-interior lighting approximation; not the proprietary Sketchfab Industrial Room environment",
+  "acceptance_status": "source_and_license_verified_rendering_not_yet_accepted"
+}

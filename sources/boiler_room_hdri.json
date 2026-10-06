@@ -1,0 +1,55 @@
+{
+  "schema": 1,
+  "asset": "Boiler Room 4K EXR",
+  "author": "Oliksiy Yakovlyev",
+  "publisher": "Poly Haven",
+  "asset_page": "https://polyhaven.com/a/boiler_room",
+  "download_url": "https://dl.polyhaven.org/file/ph-assets/HDRIs/exr/4k/boiler_room_4k.exr",
+  "license": {
+    "spdx_like_label": "CC0-1.0",
+    "publisher_page": "https://polyhaven.com/license",
+    "checked_on": "2026-10-06",
+    "scope": "Poly Haven states that all site assets are CC0 and may be used, redistributed, and included in commercial work."
+  },
+  "source_properties": {
+    "publisher_description": "Soft daylight from high windows and cool lamps; low contrast, warm highlights and industrial reflections.",
+    "publisher_tags": [
+      "Interiors",
+      "Workshops & Garages",
+      "Industrial Workshops",
+      "Overcast",
+      "Mixed light",
+      "Low contrast",
+      "Indoor"
+    ],
+    "dynamic_range_ev": 8,
+    "white_balance_kelvin": 5050
+  },
+  "downloaded_file": {
+    "gpu_path": "/path/to/gpu-data/<gpu-project>/xbox-physics-v1/lighting/polyhaven_boiler_room_cc0/boiler_room_4k.exr",
+    "sha256": "8b4c9147603de5aa166046845104a019e339da9b450d54c8d9786ae5758e32f7",
+    "dimensions": [
+      4096,
+      2048
+    ],
+    "format": "OpenEXR scanline, PIZ compression",
+    "downloaded_on": "2026-10-06",
+    "network_harness": {
+      "system_proxy_used": false,
+      "dns_method": "AliDNS DoH contacted at 223.5.5.5",
+      "resolved_ip": "104.26.1.167",
+      "curl_resolve": "dl.polyhaven.org:443:104.26.1.167",
+      "interface": "NETWORK_INTERFACE"
+    }
+  },
+  "applicability": {
+    "role": "licensed visual approximation for Blender lighting ablation",
+    "why_selected": "Its documented low-contrast industrial interior and cool-lamp/mixed-light character are suitable for testing the lighting hypothesis without manually inventing light colors.",
+    "not_evidence_for": [
+      "the identity or pixel values of Sketchfab's Industrial Room environment",
+      "the Xbox controller's physical parameters",
+      "an exact reproduction of the Sketchfab render"
+    ],
+    "acceptance_status": "diagnostic_only"
+  }
+}

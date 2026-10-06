@@ -1,0 +1,59 @@
+{
+  "candidate": "Xbox One S BatonyRobson",
+  "status": "source_material_confirmed_official_viewer_reference_captured_blender_equivalence_not_matched",
+  "source_glb_sha256": "5c5671c83a9cf15db4b8399e7010aa7d5cde915687ceb348b583eb00b0ed24e2",
+  "geometry_uv_sha256_both_versions": "7279bfed85d2dcfb2228e853da7a4044433e1408ccf032c331b07266d4edff1d",
+  "references": [
+    "https://github.com/sketchfab/blender-plugin/blob/master/README.md#known-issues",
+    "https://raw.githubusercontent.com/KhronosGroup/glTF-Blender-IO/blender-v4.5-release/addons/io_scene_gltf2/blender/imp/pbrMetallicRoughness.py",
+    "https://github.com/KhronosGroup/glTF/tree/main/extensions/2.0/Khronos/KHR_materials_specular",
+    "https://docs.blender.org/manual/en/3.3/addons/import_export/scene_gltf2.html",
+    "https://threejs.org/manual/pages/transparency.html",
+    "https://sketchfab.com/developers/viewer/functions",
+    "https://docs.blender.org/manual/en/5.0/render/color_management/displays_views.html",
+    "https://polyhaven.com/a/boiler_room",
+    "https://polyhaven.com/license",
+    "https://webglinsights.github.io/",
+    "https://github.com/cedricpinson/osgjs/tree/e1781ea940cec71c6b128dcd8783dad774f5b55d/examples/pbr",
+    "https://github.com/cedricpinson/envtools/tree/7e5d050df8e55c7189742e09300b0ffab8e8d2c8"
+  ],
+  "harness": "scripts/check_gltf_import_versions.py",
+  "source_settings_extractor": "scripts/extract_public_viewer_settings.mjs",
+  "official_viewer_harness": [
+    "viewer/sketchfab_reference.html",
+    "tests/capture_sketchfab_reference.mjs",
+    "tests/capture_sketchfab_camera_axes.mjs"
+  ],
+  "render_ablation_harnesses": [
+    "scripts/render_color_management_ablation.py",
+    "scripts/render_licensed_ibl_sweep.py"
+  ],
+  "local_review": "../results/xbox_official_import_comparison/review.html",
+  "gpu_blend": "/path/to/gpu-data/<gpu-project>/controller-candidates/xbox_one_s_batonyrobson_UNVERIFIED/official_import_4.5.9_LTS/Xbox_One_S_BatonyRobson_MATERIAL_REVIEW_UNCALIBRATED.blend",
+  "verified": ["same original file hash", "16 source mesh objects", "no vertex colors", "same geometry and UV hashes across importers", "4.5 specular intensity texture reaches Principled shader", "base color / alpha / normal / roughness / metallic texture paths present", "official Sketchfab Viewer API renders the source model with the expected colors without material edits", "public viewer environment state returned enabled=true, exposure=1.543276048228761, lightIntensity=3, rotation=0, shadowEnabled=false", "official animation paused and sought to t=0 before capture", "stable front camera request and returned camera agree after waiting for the end-animation callback", "Blender vertical-FoV probe and official screenshot have the same thresholded bright-shell bounding box: 906x652+359+194"],
+  "not_verified": ["website pixel equivalence", "exact HDRI/background/postprocess reproduction", "equivalence of glTF baked AO to Cycles lighting"],
+  "rejected_diagnostics": ["Original FBX textures directly attached to GLB UV", "Three.js default blended rendering with occlusion artifacts", "Global depthWrite=true with remaining button artifacts"],
+  "render_findings": {
+    "base_color_texture_wrong": false,
+    "primary_difference": "Sketchfab Industrial Room IBL and Blender display transform/lighting mismatch",
+    "current_blender_scene": "neutral gray World, one white AREA light, Filmic",
+    "public_viewer": "Industrial Room IBL, analytic lighting disabled, tone mapping disabled, AO 0.7406035171729057, SSR/bloom/sharpen enabled",
+    "same_linear_render_filmic_vs_standard": "Standard clips the current over-bright studio setup; Filmic preserves highlight range but desaturates the bright emissive letters. Changing only the view transform is insufficient.",
+    "licensed_ibl_test": "Poly Haven Boiler Room CC0 changes white balance and surface contrast substantially, confirming the lighting hypothesis, but its warm/high-dynamic response does not match Industrial Room and remains diagnostic only."
+  },
+  "official_viewer_reference": {
+    "file": "results/xbox_sketchfab_viewer_reference/front.png",
+    "runtime": "results/xbox_sketchfab_viewer_reference/runtime.json",
+    "source": "Sketchfab Viewer API 1.12.1, public model, no material edits",
+    "camera_position": [-0.03751669638838109, -0.5597505647492922, 4.206621134931694],
+    "camera_target": [-0.03751669638838028, 0.24024943525070927, -0.2933788650683066],
+    "vertical_fov_degrees": 35,
+    "animation": {
+      "paused": true,
+      "time_seconds": 0
+    },
+    "acceptance_role": "visual ground truth for future Blender material/light calibration"
+  },
+  "network": "All new downloads on GPU: NETWORK_INTERFACE direct, proxies disabled, real IP resolved through 223.5.5.5 HTTPS; no proxy fallback needed. Blender archive and CC0 HDRI hashes recorded.",
+  "physical_parameters_changed": false
+}
