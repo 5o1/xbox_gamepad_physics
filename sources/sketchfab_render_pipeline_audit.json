@@ -1,0 +1,83 @@
+{
+  "audited_utc_date": "2026-10-06",
+  "question": "Is Sketchfab's current production rendering pipeline publicly available and reusable?",
+  "conclusion": "No complete current production renderer is open source. Public material is sufficient for an official Viewer screenshot oracle and a historically informed approximation, not a pixel-identical standalone reproduction.",
+  "current_official_interface": {
+    "viewer_api_functions": "https://sketchfab.com/developers/viewer/functions",
+    "capabilities_used": [
+      "pause",
+      "seekTo",
+      "setFov",
+      "setCameraLookAt",
+      "getCameraLookAt",
+      "getEnvironment",
+      "getScreenShot"
+    ],
+    "wrapper_repository": "https://github.com/sketchfab/viewer-api",
+    "repository_finding": "README states that only build bundles are present and source is currently unavailable; the wrapper controls a hosted iframe and is not the renderer.",
+    "project_role": "official appearance ground truth only"
+  },
+  "published_architecture": {
+    "source": "https://webglinsights.github.io/",
+    "chapter": "Chapter 12, Sketchfab Material Pipeline: From File Variations to Shader Generation",
+    "authors": [
+      "Cedric Pinson",
+      "Paul Cheyrou-Lagreze"
+    ],
+    "finding": "The chapter describes the scene/material normalization and dynamic shader-graph architecture. It states that generic OSG.JS shader generation is open source while the Sketchfab-specific material pipeline and implementation are private."
+  },
+  "historical_open_source": [
+    {
+      "name": "OSG.JS PBR example",
+      "repository": "https://github.com/cedricpinson/osgjs",
+      "pinned_tree": "https://github.com/cedricpinson/osgjs/tree/e1781ea940cec71c6b128dcd8783dad774f5b55d/examples/pbr",
+      "license": "MIT",
+      "status": "archived historical implementation, not the current production viewer",
+      "useful_components": [
+        "GGX / UE4 split-sum IBL",
+        "spherical-harmonic diffuse lighting",
+        "prefiltered specular environment",
+        "BRDF LUT",
+        "RGBM/RGBE/LogLuv decoding",
+        "linear-to-sRGB output"
+      ]
+    },
+    {
+      "name": "envtools",
+      "repository": "https://github.com/cedricpinson/envtools/tree/7e5d050df8e55c7189742e09300b0ffab8e8d2c8",
+      "license": "MIT",
+      "status": "reusable code for processing separately licensed HDR environments",
+      "useful_components": [
+        "diffuse SH generation",
+        "UE4 prefiltered cubemap and panorama generation",
+        "BRDF LUT generation",
+        "background cubemap generation"
+      ]
+    }
+  ],
+  "industrial_room_environment": {
+    "uid": "9190e8da70694ef3b9d1d0c01541917e",
+    "official_record": "https://sketchfab.com/i/environments/9190e8da70694ef3b9d1d0c01541917e",
+    "license_present_in_record": false,
+    "original_hdr_export_api": false,
+    "historical_reference": "https://github.com/cedricpinson/osgjs/commit/79f726cd8bbcd01a758c9b0ae4b0714189ed635a",
+    "historical_finding": "A 2015 processing script references industrial_room.exr, but the binary and a license were never committed. MIT code licensing does not license the missing image.",
+    "decision": "Do not download, vendor, decode, or redistribute the hosted environment blobs. Use the official Viewer for reference and separately licensed CC0 HDRIs for standalone probes."
+  },
+  "current_unmatched_features": [
+    "current production BRDF details",
+    "Industrial Room source/prefiltered lighting data",
+    "SSR",
+    "TAA",
+    "bloom",
+    "sharpen",
+    "exact AO and specular-occlusion semantics",
+    "clean_dark background image"
+  ],
+  "terms": "https://sketchfab.com/terms",
+  "project_acceptance_policy": {
+    "official_viewer_screenshot": "appearance oracle",
+    "blender_output": "licensed approximation until measured differences pass a declared threshold",
+    "forbidden_claim": "pixel-identical Sketchfab pipeline reproduction"
+  }
+}

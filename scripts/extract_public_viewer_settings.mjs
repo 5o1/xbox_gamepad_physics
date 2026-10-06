@@ -1,0 +1,11 @@
+import {readFile,writeFile} from 'node:fs/promises';
+const [input,output]=process.argv.slice(2);
+const html=await readFile(input,'utf8');
+const raw=html.match(/id="js-dom-data-prefetched-data">\s*<!--([\s\S]*?)-->/)?.[1];
+if(!raw)throw Error('Public settings not present; do not infer them');
+const decoded=raw.replace(/&#34;|&quot;/g,'"').replace(/&#39;/g,"'").replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&');
+const data=JSON.parse(decoded),key='/i/models/a62cf7475b7d4ead9fbf1a86e5a2b6a4';
+const model=data[key];if(model?.uid!=='a62cf7475b7d4ead9fbf1a86e5a2b6a4')throw Error('Wrong model');
+const result={source:'https://sketchfab.com/models/a62cf7475b7d4ead9fbf1a86e5a2b6a4/embed',method:'Read-only extraction of render settings from public embed HTML; no model stream extraction',title:model.name,author:model.user.username,options:model.options,environmentNames:data[key+'/environments?optimized=1']?.results?.map(e=>({uid:e.uid,name:e.name}))};
+await writeFile(output,JSON.stringify(result,null,2));
+console.log(JSON.stringify({title:result.title,environment:result.environmentNames,toneMapping:result.options.scene.postProcess.toneMapping,normalMap:Object.values(result.options.materials).find(m=>m.channels)?.channels.NormalMap}));
