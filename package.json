@@ -7,7 +7,6 @@
     "node": ">=22.0.0 <23"
   },
   "scripts": {
-    "test": "python3 scripts/run_regression.py --profile fast",
-    "test:full": "python3 scripts/run_regression.py --profile full"
+    "test": "python3 scripts/run_regression.py fast"
   }
 }

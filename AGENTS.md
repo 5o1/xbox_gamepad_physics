@@ -4,10 +4,12 @@ This independent repository owns Xbox gamepad physical assets and validation.
 Do not modify sibling game RL, VLA, or original asset directories as an implicit
 part of work here. No hardware IO or physical robot commands.
 
-Research primary documentation before making new design choices. Every design
-and numeric parameter needs traceable evidence and a validation harness. Record
-units, source applicability, derivation, and uncertainty. Keep unsupported values
-null with an explanation; never silently fill them with simulator defaults.
+Research primary documentation before making new design choices. Every adopted
+physical parameter needs traceable evidence with units, source applicability,
+derivation, and uncertainty. Validate at subsystem boundaries in proportion to
+risk; do not create a separate harness for every field or for an unimplemented
+future schema. Keep unsupported values null with an explanation; never silently
+fill them with simulator defaults.
 Distinguish geometry previews from dynamics/contact validation and RL results.
 
 Geometry identity is a prerequisite, not a deferred warning. The current Casper

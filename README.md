@@ -1,318 +1,80 @@
 # Xbox 手柄物理资产
 
-独立维护 Xbox 手柄的可交互物理资产、来源记录和验证程序。
-本目录是独立 Git 仓库，不属于游戏 RL 或 VLA 模型代码。
+这个仓库维护 Xbox 手柄的视觉候选、交互预览、物理规格和来源记录。
+游戏强化学习、VLA 和机械臂控制不在这里实现。
 
 ## 当前状态
 
-当前状态只以 [资产索引](assets/asset_index.json) 为准，其他 JSON 和下文记录只保存证据与历史。
+运行状态以 [资产索引](assets/asset_index.json) 为准；README 只提供入口和边界说明。
 
-| 项目 | 当前结论 |
+| 项目 | 状态 |
 |---|---|
-| 目标实物 | 用户持有的 Xbox One Wireless Controller 1708；尚未实测 |
-| 主外观候选 | `xbox_one_s_batonyrobson_a62cf747`；用户已确认正面外观接近实物 |
-| 已批准目标几何 | 无；尺寸、背面/顶部、版本及机械结构尚未通过 |
-| 默认 viewer 资产 | `legacy_casper_1914_width_scaled_1708_proxy`，只验证软件链路 |
-| 可选 viewer 资产 | `xbox_one_s_batonyrobson_appearance_matched_estimated_v0`；已加入 allowed 列表，未设为 active |
-| 可训练物理资产 | 无；碰撞、实物轴心、行程、质量和力学参数尚未收口 |
-| 第一阶段验收 | 鼠标拖动真实部件产生手柄信号，真实手柄信号反向驱动同一资产；尚未通过 |
+| 目标实物 | Xbox One Wireless Controller 1708；来自持有者陈述，尚未实测 |
+| 主外观候选 | BatonyRobson 的 Xbox One S 模型；正面外观已获用户认可 |
+| 目标几何 | 尚未批准；版本、局部尺寸、背面和顶部仍需核对 |
+| estimated-v0 | 可交互的估计运动学预览，不是可训练物理资产 |
+| 旧 Casper 候选 | 外观特征更接近 1914；只保留旧 viewer 回归用途 |
+| 动力学 | 尚未完成；质量、惯量、碰撞和接触参数仍有空缺 |
+| 真实手柄验收 | 尚未执行 |
 
-BatonyRobson 的 Xbox One S 模型是当前主外观候选，不再处于“等待用户确认”状态；
-但外观确认不等于 1708 型号、尺寸或机械验收。CasperH2O 的旧网格根据 Share 键、
-圆盘方向键和接口外形归为 1914 外观候选，并已排除 1708 目标用途；其缩放派生物只为
-旧 viewer 软件回归保留，不得用于机构配准、接触或训练。详见
-[候选清单](sources/xbox_replacement_candidates.json)、[旧资产复核](sources/geometry_review.json)
-和 [交互验收约定](specs/interactive_acceptance.json)。
+主候选的来源、许可和文件身份记录在
+[候选清单](sources/xbox_replacement_candidates.json)。它使用 16 个视觉节点和作者动画信息
+生成 estimated-v0；统一尺度来自候选整体宽度与微软公布的 1708 宽度之比。
+这种处理只适合外观与交互预览，不能证明候选就是 1708，也不能确定真实轴心、行程或受力。
 
-## 开发记录
+旧 Casper 资产的型号判断见 [几何复核](sources/geometry_review.json)。它的 Share 键、圆盘方向键
+和接口外形与目标 1708 不符；按 1708 宽度缩放的派生物不能用于机构配准、接触或训练。
 
-以下段落记录各阶段做过的试验。段落中的测试数量和“本轮”只对应当时快照，
-不能替代当前 HEAD 的回归报告或物理验收。
+## 第一阶段验收
 
-### 外观匹配 estimated-v0
+[交互验收规格](specs/interactive_acceptance.json)规定了两个必须同时通过的方向：
 
-`xbox_one_s_batonyrobson_appearance_matched_estimated_v0` 是一份可检查的运动学预览，
-不是 Xbox 1708 物理资产。它使用 BatonyRobson 模型的 16 个视觉节点和作者动画中的
-运动方向、端点及基准位姿，生成 20 个预览关节和 3 个约束；标准输入仍严格为 21 个
-浮点通道。Pair/Bind 只作为额外物理事件，不构成第 22 个张量通道。
+1. 用鼠标拖动可见的摇杆、按钮、扳机或方向键，产生对应的虚拟手柄状态。
+2. 读取用户电脑上的真实手柄状态，驱动同一组可见部件运动。
 
-这里的 21 通道是浏览器 Standard Gamepad 快照的本地传输顺序：4 个轴加 17 个按钮，
-其中包含通常由浏览器或操作系统保留的 Guide。它不是游戏/VLA 分支的
-`xinput-normalized-v1` 20 维顺序，两者不能按下标直接相连；后续适配器还必须显式完成
-字段重排、Guide 丢弃策略和摇杆 Y 轴符号约定，并以双向样本测试验证。
+验收还要求：
 
-预览比例只是在完整候选外形上用 1708 官方宽度做的统一宽度拟合。作者动画不是实物测量，
-不能证明型号身份、局部尺寸、真实轴心、行程、触发点、作用力或实时响应。
-运行 profile 的 `schema_version: 2` 属于 `appearance_kinematics_runtime`，也不表示
-canonical 物理 schema-v2 到 viewer 的适配器已经实现。资产注册仍以旧 Casper 代理为
-active variant；estimated-v0 只是显式允许加载的 allowed variant。
+- 中立位、端点、对角和多控件并发输入均可检查；
+- 失焦、断开、取消拖动和模式切换后不能残留输入；
+- 未识别的设备布局必须拒绝，不能猜测轴或按钮顺序；
+- 演示结果需要人工查看错误轴向、错误轴心、脱离和穿插；
+- 交互通过不等于碰撞、摩擦、回弹或手指接触已经通过。
 
-以下物理量继续保持 `null/unknown`：各刚体和控件的质量、惯量、质心，碰撞几何，
-接触摩擦与恢复系数，按钮触发阈值，回弹力/力矩曲线，关节阻尼与摩擦，以及真实 HID
-传递函数。完整记录见
-[estimated-v0 参数来源](sources/appearance_matched_estimated_v0.json)和
-[运行 profile](assets/appearance_matched_estimated_v0/viewer_profile.json)。真实手柄尚未测试，
-`real_controller_verified`、`physical_acceptance` 和 `dynamics_ready` 均为 false。
+本仓库的浏览器传输向量为 21 个浮点数：4 个标准轴，随后是 17 个标准按钮值。
+这是 W3C Standard Gamepad 状态的本地序列化方式，不是游戏/VLA 分支的 20 维
+`xinput-normalized-v1`。连接两者时必须显式处理字段重排、Guide 和摇杆 Y 轴符号，不能按下标直连。
 
-生成文件的非破坏性复核命令：
+## 关键入口
 
-```sh
-python scripts/build_estimated_v0.py --check
-```
+- [资产索引](assets/asset_index.json)：候选、派生版本、哈希和准入状态。
+- [目标物理规格](specs/xbox_v1.json)：部件、物理字段和未决项。
+- [交互验收规格](specs/interactive_acceptance.json)：浏览器双向交互的验收门禁。
+- [estimated-v0 来源](sources/appearance_matched_estimated_v0.json)：估计运动学的来源、推导和限制。
+- [estimated-v0 profile](assets/appearance_matched_estimated_v0/viewer_profile.json)：viewer 使用的运动配置。
+- [1708 官方尺寸记录](sources/1708_dimensions.json)：整体尺寸及其适用边界。
+- [1708 方向键记录](sources/1708_dpad_assembly.json)：十字键整体结构证据。
+- [1708 扳机记录](sources/1708_trigger_mechanism.json)：外帽、内部组件和缓冲接触证据。
+- [1708 FCC 照片记录](sources/1708_fcc_internal.json)：内部照片来源与限制。
+- [第三方声明](THIRD_PARTY_NOTICES.md)：进入 Git 的第三方内容及许可证。
 
-GPU 节点现有目录上的启动示例：
+目录分工：
 
-```sh
-python scripts/serve_viewer.py \
-  --assets /path/to/gpu-data/<gpu-project>/controller-candidates/xbox_one_s_batonyrobson_UNVERIFIED/Xbox_One_S_BatonyRobson_16parts_VISUAL_UNCALIBRATED \
-  --vendor /path/to/gpu-data/<gpu-project>/xbox-physics-v1/tools/three-0.180.0/package \
-  --variant-id xbox_one_s_batonyrobson_appearance_matched_estimated_v0 \
-  --port 8766
-# 浏览器打开 http://127.0.0.1:8766/v0.html
-```
+- `assets/` 保存轻量运行描述；
+- `sources/` 保存来源、推导和适用范围；
+- `specs/` 保存当前规格和明确的未知项；
+- `viewer/` 保存浏览器检查器；
+- `scripts/` 保存构建、转换和审计程序；
+- `tests/` 保存当前行为的回归测试；
+- `results/` 保存已审阅结果和历史实验报告。
 
-estimated-v0 的最小 Chromium/CDP 验收由独立 harness 直接执行；`<CDP URL>` 指向同一台
-浏览器开放的本地调试端口。harness 只创建并关闭自己的页面，不接入发布型回归报告。
-合成的 Standard Gamepad 输入只验证软件通路，不能记作真实设备验收。
+`results/` 中的实验报告保留其生成时的提交和环境含义，不自动代表当前 HEAD 已通过。
 
-```sh
-node tests/browser_v0_harness.mjs \
-  http://127.0.0.1:8766/v0.html \
-  <CDP URL> \
-  <临时输出目录>
-```
+## 快速检查
 
-### 旧版检查器开发状态
-
-浏览器检查器已能加载并核验 42 个真实 OBJ 网格，选择部件、查看标准手柄信号，
-并根据显式运动配置完成鼠标→关节坐标→信号和设备信号→网格变换。
-原生单位网格未替换为简化几何。当前默认不附带未获证实的 1708 转轴、行程配置。
-因此打开页面后可以检查模型和设备读数，但未绑定的部件不会自动运动。
-
-`tests/browser_harness.mjs` 在实际 Chromium 页面使用鼠标事件和合成 Gamepad 输入完成了
-A 键测试分组的双向联动、释放清零、断开清零。测试中的 3 mm 行程仅是软件夹具，
-**不是 Xbox 估计值，也没有写入目标配置**。
-新增双轴软件夹具已在浏览器中通过：先拖动并保持一轴，再拖另一轴，检查通道隔离，
-并将网格矩阵与独立计算的组合旋转及轴心平移比较。夹具使用人为指定的轴和轴心，
-仅验证代码路径；不是 1708 摇杆机构。真手柄和目标全控件联动尚未验收。
-现已支持一次鼠标拖动同时调整摇杆两轴：仅对两轴均已配置的部件启用，
-沿渲染使用的同一姿态映射求解屏幕位置，松手同时归零；可取消复选框回到单轴诊断。
-数值测试覆盖耦合、非线性投影、不可达目标和退化视角，浏览器测试覆盖实际鼠标事件。
-算法依据与限制见 [二维拖动记录](sources/two_axis_drag.json)，未添加任何目标物理参数。
-页面的“来源”字段只保存来源文本，不能替代证据审核。暂不支持接触力学。
-
-输入清空现在会同时释放鼠标捕获，避免退出拖动后浏览器仍占着指针。
-新增失焦、取消拖动、捕获丢失、模式切换、设备选择五类回归断言。
-提交 `fdbf100` 的历史机器记录称：它在独立端口和临时 Chrome profile 中重新执行，
-五类断言全部通过；当时 GPU 上 38 项 Python 测试及本地 24 项 JavaScript 单元测试通过。
-另补了日志管道关闭时的 HTTP 响应保护及测试；旧服务空响应的具体根因尚未确认。
-来源和测试范围见 [输入生命周期记录](sources/input_lifecycle.json)。此前旧服务的顶层导航
-超时仍作为历史诊断保留在 [导航诊断](results/browser_navigation_diagnosis.json)，本次换用隔离
-服务与浏览器后没有复现，因此不能据此声称旧服务根因已经找到。
-浏览器回归可在显式 `--publish` 时写入 `results/browser_last_attempt.json`；普通运行只写临时目录，
-不会覆盖已审核证据。仓库中的旧记录已标为资源加载加固前的历史结果，不能证明当前代码通过。
-
-检查器新增输入诊断：分别显示浏览器读数、标准通道的输入、已绑定信号和关节坐标，
-并显示读取时刻与浏览器源时间戳。没有绑定的动作、不可用的控件显示“—”，不冒充零值。
-未知布局可查看原始数组，但仍不用于驱动网格；这里的“原始”是浏览器读数，不是 USB 报文。
-来源与验证见 [诊断记录](sources/viewer_diagnostics.json)。提交 `fdbf100` 的记录中，
-该阶段新增 3 项单元测试、合计 24 项 JavaScript 测试通过；真实设备仍未验收。
-
-### 可求梯度的坐标映射
-
-`scripts/torch_coordinates.py` 提供 `CoordinateMap(joints)`：输入 `[...,21]` 浮点信号，
-输出已配置的 `[...,J]` 关节坐标；`inverse()` 返回相同 J 个通道的信号，通道顺序见
-`model.channels`。未配置的通道不会被补零冒充有效输出，`q0/q1=null` 会明确拒绝。
-这里只计算坐标，尚未实现可微网格姿态、接触动力学或 VLA 联合训练。
-
-GPU 节点现有 PyTorch 2.4.1 环境中，5 项测试通过（使用 CPU 张量）：前向与反向
-`gradcheck`、向上游输入反传、截断区零梯度、float32 和非法配置检查。
-另由实际 JavaScript 映射生成 9 组全 21 通道样本，与 Torch 双精度结果逐值对照。
-所有测试尺寸均为软件夹具，不是 Xbox 参数。非对称映射零点和截断边界不保证光滑；
-未使用直通估计器。来源、精度与测试范围见 [梯度映射记录](sources/differentiable_coordinates.json)。
-
-GPU 节点启动命令（路径按本次部署）：
-
-```sh
-python3 /path/to/gpu-data/<gpu-project>/xbox-physics-v1/code/scripts/serve_viewer.py \
-  --assets /path/to/gpu-data/<gpu-project>/xbox-physics-v1/LEGACY_1914_shape_scaled_to_1708_width_NO_SHARE_NOT_VALIDATED \
-  --vendor /path/to/gpu-data/<gpu-project>/xbox-physics-v1/tools/three-0.180.0/package \
-  --variant-id legacy_casper_1914_width_scaled_1708_proxy
-```
-
-服务仅绑定 GPU 的 `127.0.0.1:8766`。本机通过已有连接脚本转发后打开 localhost，
-真实手柄连接在运行浏览器的电脑上，不要求接到 GPU 节点。
-
-```sh
-bash ~/shared/network/profiles/gpu_node.sh \
-  -N -L 127.0.0.1:9876:127.0.0.1:8766 -o ExitOnForwardFailure=yes
-# 浏览器打开 http://127.0.0.1:9876/
-```
-
-运动配置格式是 `{ "schema": 1, "joints": [...] }`，每个自由度需明确提供：
-`channel`（21 通道中的索引）、`meshes`（原对象名）、`type`、单位轴 `axis`、
-米制中立世界坐标 `pivot`、`q0/q1`（转动为 rad，移动为 m）和 `evidence`。
-同一部件的多个变换按配置顺序组合，这不是自动识别的机械串联结构。
-缺字段时拒绝配置，不补默认物理参数。
-
-该 schema-1 配置只是 viewer 的软件预览格式，不是
-[schema-2 物理规格](specs/xbox_v1.json)的导出结果。目前没有 v2→viewer 适配器；
-[交互验收](specs/interactive_acceptance.json)中的对应门禁固定为未通过，资产索引同时保存该文件
-的 SHA256。因而浏览器中的双向联动不能算作物理资产验收。适配器以后必须保留刚体/关节图、
-虚拟中间帧、耦合可行域、接触字段和可逆输入曲线；遇到不支持的结构应拒绝，不能静默丢弃。
-
-现可用页面上的“加载 1708 待确认草稿”查看未完成配置。草稿保存在
-`viewer/1708_draft.json`，保持 `joints: []`，21 个输入通道分别列入 `pending`；
-类型、网格绑定、轴、轴心及范围均显式为 `null`，不会生成动作。
-输入通道数量不是机械自由度数量。后续可将完整、有来源的运动项移入 `joints`，
-其余项继续留在 `pending`，不必用默认参数填满整个手柄。
-4 项加载器测试通过；新增页面入口尚未完成浏览器验收。
-设计与验证范围见 [草稿规则](sources/rig_draft_policy.json)。
-
-已修正多自由度部件的拖动坐标系：后续旋转和平移会携带前序关节的轴与轴心，
-鼠标计算使用变换后的坐标，不再固定沿中立姿态轴计算。
-依据和数值测试范围见 [交互坐标记录](sources/interaction_frames.json)。
-已完成双轴软件夹具的浏览器测试，仍不提供缺失的 1708 机械参数。
-
-目标实物现已由用户确认为 **Xbox One 1708**，继续使用现有手柄，不要求购买替代品。
-下文较早的 1914 调研只保留为跨型号参考，不是目标结构证据。
-
-1708 方向键现在有本型号拆解依据：iFixit 98147 第 7 步的照片已下载并逐图核对，
-十字键帽作为一个部件取下。检查器加入装配约束：候选资产中的四个 `DPad*` 对象
-必须共享每一个运动变换，拒绝把它们配置成四个独立升降按钮。
-4 项新增测试通过，包含实际网格清单核对及错误配置拒绝。
-这没有确定十字键的轴心、自由度、行程或开关触发关系，尚未生成其运动配置。
-详见 [1708 方向键结构记录](sources/1708_dpad_assembly.json)。
-
-拆解资料也需逐图核对：iFixit 157833 标题称“扳机更换”，但第 7、8 步取下的
-实际是 LB/RB 顶部连接件，LT/RT 仍在机身上。不能把拆卸箭头当作扳机运动轴。
-图片哈希、观察与撤回结论见 [拆解图片核查](sources/1708_trigger_guide_audit.json)。
-
-已另取得真正针对 1708 扳机帽的拆解资料（iFixit 131721），并核对拆帽后的电机、
-偏心块及邻近弹簧照片；维修资料 144910 则记录了扳机与缓冲垫的接触。
-因此后续必须区分外帽几何与完整运动组件的质量/惯量，并明确缓冲垫接触是否建模。
-允许聚合内部组件，也可关闭震动，但不能把均匀外帽当成整套组件而不作说明。
-三张原图已直连存入 GPU，见 [1708 扳机结构记录](sources/1708_trigger_mechanism.json)。
-资料未提供可标定的转轴、行程、弹簧曲线或垫片参数，这些仍为空；接触验证尚未进行。
-
-微软 FCC 1708 内部照片现已取得并核对全部 11 页，哈希与来源目录一致。
-第 6、7 页有未装帽摇杆模组，第 8、9 页有正面按键 PCB，并带尺子；
-这些可以进一步核对布局，但尺子与元件高度不同，不能直接视为标定后的三维尺寸。
-详见 [FCC 原始照片记录](sources/1708_fcc_internal.json)。原始 PDF 保存在 GPU。
-
-第 7 页已做一轮粗标注和可复算检查：[标注](sources/fcc_p7_landmarks.json)、
-[结果](results/fcc_p7_layout.json)。3 个尺子刻度拟合、2 个未参与拟合的刻度检查，
-残差约为 -2.9 和 -1.4 px。两个摇杆轴孔中心的纵向投影差为 380 px，按尺子
-平面换算约 64.2 mm；它不是实物中心间距。当前视觉网格的摇杆表面拟合中心
-横向间距约 58.3 mm（来自 `results/stick_sphere_fit.json` 的两个 Thumb 整体拟合）。
-尚未完成照片到网格配准，不能由该差异直接纠正模型；它提示外壳宽度一致不足以
-证明内部布局一致。未将这些数值写成目标机械转轴。
-
-复算命令（图像路径使用来源记录中的 GPU 路径或其哈希相同的本地副本）：
-
-```sh
-python scripts/check_photo_layout.py sources/fcc_p7_landmarks.json \
-  --image /tmp/fcc1708-p7-1400.png --output /tmp/fcc_p7_layout_check.json
-python -m unittest discover -s tests -p test_photo_layout.py -v
-```
-
-输出文件必须不存在，避免覆盖既有结果。图像 SHA256 不匹配时拒绝计算。
-
-另取得 RDC 发布的 1708 裸 PCB 扫描图，摇杆已拆除，可看到焊盘与安装孔，
-用于下一步与 FCC 照片做平面对应检查；见 [扫描图记录](sources/1708_pcb_scan.json)。
-其 DPI 元数据不作为尺度依据，板号与 FCC 样本的一致性也仍需核对。
-已实际运行扫描图到 FCC 第 7 页的 SIFT/RANSAC 配准：正常朝向的 6 个保留检查点
-误差中位数约 316 px，镜像假设只有 7 对候选点、不足以进入拟合。
-两种结果均未采用；不能因 OpenCV 返回矩阵就把照片标成“已校准”。
-程序见 `scripts/register_pcb.py`，结果见 `results/pcb_registration_*.json`。
-原 Blender 部件的对象原点也已核对：摇杆、方向键、肩键及扳机共用相同原点
-`[0, 0.1083239168, 0.0864497721]`（原生单位），并非逐部件设置的机械轴心，不能直接采用。
-
-已导出 44 个可独立处理的视觉网格，并建立部件规格、来源表和验证程序。
-仍不是可训练的物理资产：尺度、转轴、质量、碰撞体和力学曲线等未获证实的字段留空。
-现有候选网格仍保存在工作区的 `../assets/xbox_controller_candidate/`，未移动或修改。
-后续采用的文件必须记录来源、版本、许可证、哈希及用途，不能依赖这个相对路径作为发布接口。
-
-## 目录约定
-
-- `sources/`：来源清单、证据摘录与参数适用范围。
-- `specs/`：部件、关节、物理参数及输入映射规格；未知值使用 `null` 并记录原因。
-- `scripts/`：资产生成和转换程序。
-- `tests/`：来源完整性、单位、几何、关节及物理行为的验证 harness。
-- `results/`：小型检查结果与预览；注明验证范围。
-- `assets/`：生成的轻量资产描述；大型网格和中间产物存 GPU 节点，不纳入 Git。
-- `THIRD_PARTY_NOTICES.md`：进入 Git 的第三方衍生图像及其来源、许可证和修改说明。
-
-## 建模要求
-
-每项设计都关联来源和验证方法。区分原始资料、推导、替代元件参考与实测。
-无依据且无法推导的参数留空，不能悄悄使用仿真器默认值。
-来源不完整的部件可以用于明确标注的几何预览，但不能宣称通过动力学验收。
-
-schema v2 能记录全局刚体/关节图、多自由度控件及耦合约束；当前 1708 实例仍为空规格，
-不是 URDF、SAPIEN 或可训练资产。视觉网格须经“候选→SHA 固定的 inventory→artifact/object→
-文件 SHA”链路绑定，并给出 `meters_per_native_unit`。BatonyRobson estimated-v0 已绑定 inventory、
-静态 GLB、profile 和参数来源的 SHA，并记录统一宽度拟合比例；但这个比例不是目标实物的
-局部几何标定，外形版本和机械结构仍未通过，所以目前不能写入 canonical 物理 body。
-
-串联关节所需的纯坐标中间体使用 `virtual_frame`，质量、惯量、视觉和碰撞均明确标为
-`intentionally_absent`，不得塞入微小假质量。实体 body 可以没有视觉或碰撞，但也须给出带证据的
-缺省理由。关节恢复力记录平衡点、正方向、内部广义力符号及加载/释放分支。模拟量映射须严格
-单调、覆盖标准通道范围并可唯一反求；数字按钮则记录按下/释放阈值、滞回状态机和代表坐标，
-明确不把区间到 0/1 的映射伪装成可逆函数。Pair/Bind 复用数字开关语义，但只产生物理事件，
-不增加第 22 个标准通道。碰撞过滤、接触/静止偏移、根部安装和自碰撞策略也不得沿用仿真器默认值。
-有连接边的固定基座仍是 PhysX articulation，根 link 不是 static actor；相邻 parent/child link 的
-碰撞由后端无条件关闭。当前 mesh cooking 尚未绑定精确 PhysX 版本和完整 `PxCookingParams`，也没有
-绑定可禁止重新 cooking 的预制二进制，因此审计会保留 `physics_cooking_parameters_unresolved` 门禁。
-
-上游资产各自保留原许可证；本仓库不为它们重新授权。FBX、glTF、Blend、HDRI、PDF、
-参考网页抓取和可重建的批量渲染均由 `.gitignore` 排除；Git 只保存来源记录、哈希、
-验证脚本、代表性结果和明确许可的衍生图像。
-
-## 本轮产物
-
-- [资产入口](assets/asset_index.json)：关联网格清单、规格和 GPU 存储位置。
-- [来源与参考值](sources/catalog.json)：摇杆及开关元件规格，含单位换算与适用边界。
-- [部件规格](specs/xbox_v1.json)：覆盖壳体、摇杆、方向键、肩键、扳机及按钮；未知值为 null。
-- [estimated-v0 参数来源](sources/appearance_matched_estimated_v0.json)、[运行 profile](assets/appearance_matched_estimated_v0/viewer_profile.json)和[构建审计](results/xbox_one_s_batonyrobson_UNVERIFIED/estimated_v0_build_audit.json)：只覆盖外观绑定和估计运动学。
-- [旧 Casper 1914 外形候选预览](results/legacy_casper_1914_visual_parts/parts_preview.png)：仅为原始几何的分组着色，未启用物理，也不是目标 1708 几何。
-- [旧 Casper 1914 网格清单](results/legacy_casper_1914_visual_parts/inventory.json)、[几何检查](results/legacy_casper_1914_visual_parts/mesh_audit.json)。
-
-GPU 节点按身份分目录保存大文件：原始 Casper 1914 的 44 部件候选位于
-`/path/to/gpu-data/<gpu-project>/xbox-physics-v1/Xbox_Series_XS_1914_candidate_original_44parts_UNCALIBRATED`；
-仅按 1708 宽度缩放、不可共享且未验证的代理位于
-`/path/to/gpu-data/<gpu-project>/xbox-physics-v1/LEGACY_1914_shape_scaled_to_1708_width_NO_SHARE_NOT_VALIDATED`；
-BatonyRobson Xbox One S 候选位于
-`/path/to/gpu-data/<gpu-project>/controller-candidates/xbox_one_s_batonyrobson_UNVERIFIED`。
-这些路径不是发布接口，准入仍以 `assets/asset_index.json` 的身份、manifest、SHA 和目标型号批准为准；
-目前没有候选获准绑定 1708 物理 body。源文件、许可证和说明保存在各候选目录。
-独立安装的 Blender 3.6.23 位于同级 `tools/`，通过真实 IP 与 NETWORK_INTERFACE 直连下载，
-并以 Blender 官方 SHA256 清单核验，供旧 Casper 导出流程使用。BatonyRobson 作者动画审计
-另绑定 Blender 4.5.9 LTS、对应 build hash 和 Python 版本；两套记录不能互相替代。
-没有使用代理或修改共享 Python 环境。
-
-## Harness 覆盖范围
-
-| 设计/处理 | 依据 | 检查 | 尚不能证明 |
-|---|---|---|---|
-| 按原对象分件，不合并方向键或推断转轴 | 固定提交的 Blender 源文件 | 源文件 SHA256、44 个对象清单 | 对象划分等于真实机械连接 |
-| 将 evaluated mesh 变换到源世界坐标 | Blender 对象变换与修改器结果 | OBJ 面数、逐三角面坐标、包围盒往返检查 | 源坐标单位为米 |
-| 不自动补洞或凸化 | 实际网格拓扑检查 | 原始拓扑及完全重合顶点焊接诊断 | 可直接用于接触或体积积分 |
-| 将 ALPS 参数作为参考，不自动赋给 Xbox | 制造商规格与 Alpakka 元件表 | 来源存在性、单位换算、来源表哈希 | 已匹配 Xbox 元件及整机响应 |
-| 未知参数留空，禁止进入动力学 | 用户明确要求 | 注入无来源数值、错单位、假引用及删部件的负例测试 | 来源内容语义的自动真实性判定 |
-
-几何检查发现 DPadLeft 有 1 个孤立顶点，左右 Shoulder 各有 41 个。
-Trimesh 加载时略去这些不属于任何面的点；逐三角面比较证实表面几何未丢失。
-44 个对象在原始索引及完全重合顶点焊接检查中均未闭合；没有选择任意焊接容差修补。
-因此没有把网格体积当作质量依据，也没有把整个手柄凸化成堵住按钮和摇杆开口的碰撞体。
-
-## 本地验证
-
-完整数值测试使用 Python 3.10。兼容 Linux/CUDA 环境可用递归安装快照复现；
-[`gpu-tested.freeze.txt`](requirements/gpu-tested.freeze.txt) 固定本项目依赖闭包，
-但不包含 NVIDIA 驱动、Blender、Chrome 和无关的 RoboTwin 包，因此不冒充跨平台系统镜像。
-直接依赖约束另保存在 `gpu-tested.constraints.txt`，便于在其他平台重新求解。
-JavaScript/CDP 工具要求 Node 22，精确测试版本记录在 `.node-version`，项目没有 npm 第三方依赖。
+Python 环境使用 3.10。完整依赖快照位于
+[gpu-tested.freeze.txt](requirements/gpu-tested.freeze.txt)，直接依赖约束位于
+[gpu-tested.constraints.txt](requirements/gpu-tested.constraints.txt)。JavaScript 测试使用
+[`.node-version`](.node-version) 所列 Node 版本。
 
 ```sh
 python3.10 -m venv .venv
@@ -320,183 +82,61 @@ python3.10 -m venv .venv
 npm ci
 ```
 
-```sh
-python scripts/run_regression.py --profile fast
-# 完整环境中使用；任何 skipped 都会令命令失败
-python scripts/run_regression.py --profile full
-python scripts/asset_spec.py audit
-python scripts/asset_spec.py require-dynamics
-```
-
-`fast` 适合不带数值栈的代码审查，允许依赖门控测试跳过，并把结果标为
-`partial_pass`；它不能作为完整回归。`full` 要求 Python 和 JavaScript 测试无失败、
-无跳过。发布型浏览器链路只保留旧 OBJ 软件夹具的 `--profile browser`；estimated-v0
-使用上文的独立最小 harness，不发布为物理或真实设备验收。
-默认报告只输出到标准输出。完整数值回归与含浏览器的联合回归分开发布，避免
-`browser=null` 的结果被误读成集成通过；两者都要求工作树在执行前完全干净：
+检查 estimated-v0 生成物是否与来源一致：
 
 ```sh
-python scripts/run_regression.py --profile full \
-  --output results/full_regression.json --publish
-python scripts/run_regression.py --profile browser \
-  --base-url http://127.0.0.1:9876/ --cdp-port 9227 \
-  --output results/integrated_regression.json --publish
+python3 scripts/build_estimated_v0.py --check
 ```
 
-浏览器回归在导航前禁用并清空缓存，每次加入独立 nonce；它对实际返回的 viewer 模块、
-注册表、参考图及 Three.js 模块逐字计算 SHA256，再与当前工作树和
-[`viewer_design.json`](sources/viewer_design.json) 交叉核对。旧 viewer 按 inventory 核对 OBJ。
-estimated-v0 的页面和独立 harness 另核对外部 GLB、inventory、profile 和参数来源的哈希；
-外部网格不冒充 Git 内文件，资源身份全部匹配后页面才进入 ready 状态。发布型报告记录测试前后 Git 提交、
-工作树和源码快照；运行期间发生变化就不能发布。直接以 `--publish` 执行 browser harness 时，
-失败只更新 `browser_last_attempt.json`，不会覆盖上一份成功报告和截图。
+运行默认回归：
 
-规格审计同样默认不改 `results/spec_audit.json`；审核后显式执行
-`python scripts/asset_spec.py audit --publish` 才会更新该证据。
-schema 模板演进使用 `python scripts/asset_spec.py sync-spec --publish`：命令刷新不可编辑的 canonical
-元数据，对 `physical_topology` 和 `parts` 只补新增键，已有值（包括仍处于 unknown 状态时先录入的
-测量计划、证据和安装决策）原样保留。写入前先审计合并结果；任何 schema 错误都会拒绝发布，
-不会用空模板覆盖后续实测数据。
+```sh
+python3 scripts/run_regression.py fast
+```
 
-GPU 历史测试环境的直接依赖版本保存在
-[`requirements/gpu-tested.constraints.txt`](requirements/gpu-tested.constraints.txt)。其中
-PyTorch 2.4.1 只是产生旧回归结果的环境事实，不是 VLA 训练版本选择或新环境推荐。
-项目所需直接测试依赖列在 [`requirements/test.in`](requirements/test.in)。
+需要定位失败时，可直接运行底层测试：
 
-最后一条目前必须以退出码 2 拒绝：它不是加载器，不能把通过规格格式检查当作通过动力学验收。
-首次创建规格才使用 `generate`；它拒绝覆盖既有规格。
+```sh
+python3 -m unittest discover -s tests
+node --test tests/test_*.mjs
+```
 
-`scripts/export_blend.py` 需以 Blender 的 `--background --disable-autoexec --python` 运行，
-在 `--` 后提供输入 blend 和一个不存在的输出目录；拒绝非已核验源文件。
-之后在已有 NumPy/Trimesh 环境运行 `scripts/check_meshes.py 输出目录`。
-渲染使用 `scripts/render_parts.py`；相机和颜色只是预览设置，不进入物理参数。
+## 启动交互预览
 
-旧 Sketchfab `runtime.json` 记录了返回相机位姿，但没有保存 `setFov` 回调值；现有对照图和
-manifest 因此只作历史记录。`render_reference_matched_probe.py` 会校验 runtime、参考图和场景
-SHA，并从 runtime 读取位姿与 FOV；在重新采集出带有限 FOV 的 runtime 前会明确拒绝生成新的
-reference-matched 证据，不再使用手抄的 35°。
+viewer 从仓库读取登记信息，但视觉网格和 Three.js 依赖由外部目录提供：
 
-下一步先处理几何尺度和可动部件的机械证据，再构建碰撞体与被动关节。
-当前的参考操作力矩不能直接当 stiffness，开关的操作力和行程也不能唯一确定回弹曲线。
+```sh
+python3 scripts/serve_viewer.py \
+  --assets <estimated-v0-visual-parts-directory> \
+  --vendor <three.js-package-directory> \
+  --variant-id xbox_one_s_batonyrobson_appearance_matched_estimated_v0 \
+  --port 8766
+```
 
-## 旧 Casper 1914 原生单位 ABXY 碰撞候选试验
+打开 `http://127.0.0.1:8766/v0.html`。服务应只绑定本地地址；手柄接在运行浏览器的电脑上，
+通过 `navigator.getGamepads()` 读取，不需要把 USB 设备转发到计算节点。
 
-2026-10-06：核对了微软 [1914 替换按钮清单](https://www.microsoft.com/en-us/d/replacement-buttons-for-xbox-wireless-controller/8zx7z1r45kkq)，
-它支持控件类别核对，但不提供尺寸、转轴或动力学；不据此确认用户实物型号。
+当前页面是运动学检查器。鼠标或 Gamepad 能驱动网格，只说明输入、映射和显示链路工作；
+在 canonical schema-v2 到 viewer 的适配器完成并通过哈希绑定前，不计作物理验收。
 
-已由旧 Casper 1914 外观候选的 4 个原始 Button 对象生成原生单位凸包碰撞候选，未处理壳体、摇杆、方向键或扳机。
-方法与适用边界记录在 [collision_method.json](sources/collision_method.json)。
-所有候选通过闭合、面朝向、包含原始顶点和序列化重载检查。
-GPU 目录见资产入口；这些候选没有被绑定到物理规格，不得直接交给 RL。
+## 建模原则
 
-双向表面采样发现重要差异：原网格到凸包的最大采样距离约为 0.00078–0.00174 原生单位，
-反方向却达到 0.340–0.345 原生单位。这说明只检查“原表面有没有被包含”会漏掉凸包新增的表面。
-距离不是毫米，尺度尚未确定；采样包括全部顶点和三角面中心，不是精确 Hausdorff 距离。
-没有给误差阈值编数值，也未批准这些封闭表面代表真实零件内部。
+- 正式采用的物理参数必须记录来源、单位、适用范围、推导和不确定性。
+- 可以在实测前使用有来源的估计值，但必须标记为 estimated，并说明如何被后续测量推翻或修正。
+- 无法从资料推断的值保持 `null/unknown`，不能静默使用仿真器默认值。
+- 外观确认、整体尺度、作者动画和软件夹具不能替代机械结构证据。
+- visual mesh、collision mesh、刚体/关节和输入映射分别验收。
+- 原始第三方文件保持不变；派生物记录上游版本、许可证、哈希和处理方法。
+- 大型源网格、数据集、权重和可重建中间产物保存在 GPU 节点，不提交到 Git。
 
-[旧 Casper 1914 原生单位检查结果](results/legacy_casper_1914_native_unit_button_collision_candidates/collision_audit.json) 保留每个候选的哈希与误差。
-`tests/test_collision.py` 在 GPU 现有环境实际通过 3 项测试：完整立方体表面保真、
-缺面后新增表面被检测、平面退化几何拒绝而不是自动加厚。
-本地缺少依赖时会显式跳过，不能将本地跳过计作通过。
+现有参考元件和拆解资料只能支持其明确给出的范围。例如，开关操作力和行程不能唯一确定
+回弹曲线，整体重量不能分配为各部件质量，二维照片中的刻度也不能直接给出三维轴心。
 
-### 按钮分层复查
+## 下一步
 
-每个 ABXY 还有字母、Interior、Interior2 等对象，因此进一步检查了完整视觉分组，
-没有仅凭名字把它们认定为同一机械零件。结果见
-[旧 Casper 1914 分层诊断](results/legacy_casper_1914_native_unit_button_collision_candidates/assembly_audit.json)。
-
-| 按钮 | 凸包→外层 | 凸包→全部层 |
-|---|---:|---:|
-| A | 0.34081 | 0.11447 |
-| B | 0.34286 | 0.11501 |
-| X | 0.34468 | 0.09225 |
-| Y | 0.34023 | 0.12734 |
-
-表中是最大采样距离，单位为原生坐标，不是毫米。补入内部层只能解释部分差异，
-不能说明凸包已还原实体。报告同时保留反向距离；内部表面本来就可能离凸包外表面较远，
-因此不能把反向距离直接当作外部接触误差或验收阈值。
-每个最大值都附带采样点、最近表面点和目标三角面编号，便于后续定位。
-没有改变原网格、凸包或物理规格。
-
-`scripts/audit_button_assembly.py` 在 GPU 节点执行完成；几何测试现为 4 项，全部实际通过。
-新增测试核对报告点对的距离能否复现最大值。本地仍只通过 7 项来源测试，4 项几何测试跳过。
-
-[机械结构记录](sources/mechanical_structure.json) 补入了 1914 拆解依据及后续需要检查的机构关系。
-这些资料没有给出转轴坐标、质量和间隙尺寸，相应值继续留空；也尚未证明当前视觉资产与 1914 对应。
-
-## 摇杆方向限位
-
-### 开源制造 CAD 的参考范围
-
-已取得 Input Labs Alpakka 固定版本的 ABXY、方向按钮、右摇杆帽和 R1 源码及许可证，
-原件保存在 GPU。它们给出了限位外形、倒角、配合孔和打印公差等几何设计，
-但检查的四份源码没有定义质量、惯量、摩擦、回弹或关节。这不是现成动力学资产。
-尤其不能把按钮总高度当成按压行程，或把摇杆帽球面半径当成内部机械轴心依据。
-
-参考目录声明 CC-BY-NC-SA-4.0，未将这些几何并入 Xbox 网格或其许可。
-参数、适用边界见 [Alpakka CAD 记录](sources/alpakka_cad_reference.json)；
-[验证结果](results/alpakka_cad_reference_audit.json) 对实际下载文件核对哈希及命名常量，
-校验不执行 CAD 源码。它提供建模参考，但没有补入任何未知的 1708 参数。
-
-从 ALPS 官方产品页取得了 RKJXV122400R 尺寸图，并直接检查了图中标注：
-侧视图的任意方向总摆角最大 46°，产品页给出单方向最大 23°。
-图像哈希、下载路径、证据位置和推导记录在 [stick_envelope.json](sources/stick_envelope.json)。
-这不是 Xbox 实物限位，也不意味着每个方向实际一定能达到 23°。
-
-两根独立关节都设为 ±23° 会允许约 32.08° 的对角倾角，超出参考元件的方向上界。
-新增 [stick_envelope.py](scripts/stick_envelope.py) 按杆身方向检查实际倾角，
-而不是只分别裁剪两个关节角。Rx/Ry 是计算用坐标约定，不宣称识别出了内部铰链顺序。
-没有推断按下动作在倾斜状态下的运动轴，也没有生成假定共点转轴的动力学 URDF。
-
-[验证结果](results/stick_envelope.json) 包含 360 个数学边界样本。
-新增 5 项本地测试通过，覆盖中立位、四个轴向限位、越界、对角组合、方向往返和非法输入；
-它们证明角度计算，不证明接触或实物运动。
-未绑定提交的早期阶段记录称：本地 12 项通过，4 项几何测试因缺依赖跳过；
-后者另在 GPU 节点实际通过。该计数不作为当前回归证据。
-
-尺寸图没有明确给出所需的内部铰链偏置和安装到当前视觉资产的变换，因此这些字段仍为空。
-外形宽深高不能拿来冒充转轴坐标。下一步需要补齐机构几何及配准依据，才能装入整机。
-
-## 1708 型号与尺度更新
-
-微软 [1708 官方规格表](https://download.microsoft.com/download/7/C/A/7CA6D7FD-9758-4DA8-BD27-4FDAB0C18E1F/TDS_XboxOneControllerPlusCableforWindows.pdf)
-明确列出宽 153 mm、长 102 mm、高 61 mm；重量 280 g 包含两节 AA 碱性电池。
-原件已直连下载到 GPU 节点并计算哈希，见 [尺寸记录](sources/1708_dimensions.json)。
-总重不能当壳体质量；寿命测试中的加载力也不能当作按键触发力或弹簧刚度。
-
-规格和来源校验已改为 1708，Share 不再属于目标控件。原始 Share 网格仍保留在源资产中，
-不能仅删去它就声称得到 1708。新增测试会拒绝悄悄换回 1914 或把 Share 加回目标规格。
-
-1708 的 [按钮拆解](https://www.ifixit.com/Guide/Xbox+One+Wireless+Controller+Model+1708+Button+Replacement/98312)
-第 16 步明确记录了按钮背面的橡胶层。因此 ALPS 独立触觉开关参数仍只是异构参考，
-不能直接替代这只手柄的按钮回弹曲线。该页面的部分螺丝长度疑有排版错误，未采纳为几何尺寸。
-
-已在 GPU 节点生成旧版 `legacy_casper_1914_width_scaled_1708_proxy/`，保留 42 个源网格，统一缩放系数为
-0.009875964991416025 m/原生单位。这里只拟合横向宽度，不沿三个方向分别拉伸造型。
-原始源文件不变，ShareButton 和 ShareButtonSymbol 仅从这一候选中排除；没有擅自补壳体开口。
-[交付清单](results/legacy_casper_1914_width_scaled_1708_proxy/inventory.json) 记录各文件哈希、坐标往返误差和宽度复核。
-此目录是**米制视觉候选**，尚不是 1708 机械资产，也没有获准用于碰撞或训练。
-
-未绑定提交的早期阶段记录称：GPU 环境中 20 项测试通过、无跳过，当时规格含
-217 项未知字段。这些数字只描述历史规格，不是当前 HEAD 的回归或未决字段统计。
-
-## 摇杆轴心推断试验
-
-ABXY 也完成了一轮几何方向检查：对每个按钮的四个视觉图层计算三角面面积加权
-协方差，避免顶点疏密影响结果。外层与内部图层的最小方差方向差约 0.18–3.81°，
-而字母图层与外层可相差 5.84–27.61°，不能用字母的朝向代替按压轴。
-这些只是候选网格的无符号几何方向，尚不能确定实物导向、按压正负号或行程。
-未将其升级为目标机械参数。完整结果与验证见
-[按钮方向推断](sources/button_surface_axes.json)；3 项解析与不变性测试在 GPU 通过。
-
-对左右 `Thumb` 和 `Joystick-Ring` 网格做了球面拟合，并逐个检查了连通分量，
-没有挑选小残差点来让结果好看。方法见 [推断记录](sources/stick_center_inference.json)，
-实际结果见 [拟合数据](results/stick_sphere_fit.json)。
-
-完整对象的径向 RMS 约为 1.07 mm（按前述宽度匹配的候选尺度）；不同层的拟合中心
-相差数厘米。部分接近平面的层会拟合出很大的球、较小的残差，这不表示找到机械轴心。
-因此未生成默认摇杆转轴，也没有把这些中心写进检查器运动配置。
-新增 3 项测试在 GPU 实际通过：已知球面恢复、共面点拒绝、非球面残差不被隐藏。
-
-要继续绑定摇杆，优先补 1708 机构图，或固定机位、带尺度参照的多姿态实物图像。
-照片是否足够还需检查视角与对应点；单张图片或只有推拉力计读数不能唯一确定三维轴心。
+1. 核对主候选与 1708 的局部几何、背面、顶部和可动部件对应关系。
+2. 实现 canonical schema-v2 到 viewer 的 fail-closed 适配器，并验证双向映射。
+3. 按部件生成可检查的碰撞候选，避免用整机凸包堵住按钮和摇杆开口。
+4. 以有来源的估计值建立第一版被动关节；保留待推拉计和尺寸测量替换的字段。
+5. 完成鼠标双向检查和真实 1708 手柄录屏验收。
+6. 通过交互门禁后，再进入 PhysX/SAPIEN 接触验证和机器人训练。

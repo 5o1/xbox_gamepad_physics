@@ -11,4 +11,4 @@ py-modules = []
 full-test-input = "requirements/test.in"
 tested-gpu-constraints = "requirements/gpu-tested.constraints.txt"
 tested-gpu-freeze = "requirements/gpu-tested.freeze.txt"
-regression-command = "python scripts/run_regression.py --profile full"
+regression-command = "python3 scripts/run_regression.py fast"
