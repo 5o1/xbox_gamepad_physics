@@ -14,6 +14,7 @@ import {
   recordCriticalResponse,
   sha256CdpBody,
   verifyLocalSourceBindings,
+  V0_SOURCE_RESOURCES,
 } from './browser_source_binding.mjs';
 
 
@@ -209,6 +210,7 @@ test('material capture binds its complete Three 0.180.0 module graph', async () 
     new Set([
       '/material_check.mjs',
       '/vendor/build/three.module.js',
+      '/vendor/build/three.core.js',
       '/vendor/examples/jsm/loaders/GLTFLoader.js',
       '/vendor/examples/jsm/controls/OrbitControls.js',
       '/vendor/examples/jsm/environments/RoomEnvironment.js',
@@ -246,7 +248,7 @@ test('material capture binds its complete Three 0.180.0 module graph', async () 
     MATERIAL_MODULE_SOURCE_RESOURCES,
   );
   assert.equal(verification.verified, true);
-  assert.equal(verification.three_source_record_resource_count, 5);
+  assert.equal(verification.three_source_record_resource_count, 6);
 
   const tampered = resources.map(resource => ({...resource}));
   tampered.find(resource => resource.request_path.endsWith('/GLTFLoader.js')).sha256 = '0'.repeat(64);
@@ -254,6 +256,60 @@ test('material capture binds its complete Three 0.180.0 module graph', async () 
     verifyLocalSourceBindings(tampered, MATERIAL_MODULE_SOURCE_RESOURCES),
     /SHA-256 does not match.*GLTFLoader/,
   );
+});
+
+
+test('estimated-v0 capture binds the complete workspace and Three module graph', async () => {
+  assert.deepEqual(
+    new Set(V0_SOURCE_RESOURCES.map(item => item.request_path)),
+    new Set([
+      '/v0.html',
+      '/v0_app.mjs',
+      '/gamepad_state.mjs',
+      '/drag2d.mjs',
+      '/schema2_runtime.mjs',
+      '/registry/asset_index.json',
+      '/registry/appearance_matched_estimated_v0/viewer_profile.json',
+      '/evidence/appearance_matched_estimated_v0.json',
+      '/candidate-reference/pos_z.png',
+      '/vendor/build/three.module.js',
+      '/vendor/build/three.core.js',
+      '/vendor/examples/jsm/loaders/GLTFLoader.js',
+      '/vendor/examples/jsm/controls/OrbitControls.js',
+      '/vendor/examples/jsm/environments/RoomEnvironment.js',
+      '/vendor/examples/jsm/utils/BufferGeometryUtils.js',
+    ]),
+  );
+  const threeRecord = JSON.parse(
+    await readFile(new URL('../sources/viewer_design.json', import.meta.url), 'utf8'),
+  ).dependencies.extracted_files;
+  const resources = [];
+  for (const specification of V0_SOURCE_RESOURCES) {
+    let digest;
+    let byteLength = 1;
+    if (specification.binding_kind === 'workspace') {
+      const bytes = await readFile(new URL(`../${specification.binding_path}`, import.meta.url));
+      digest = createHash('sha256').update(bytes).digest('hex');
+      byteLength = bytes.length;
+    } else {
+      digest = threeRecord[specification.binding_path];
+    }
+    resources.push({
+      ...specification,
+      response_url: `http://127.0.0.1:9898${specification.request_path}`,
+      status: 200,
+      from_disk_cache: false,
+      from_service_worker: false,
+      response_occurrence_count: 1,
+      duplicate_response_urls: [],
+      byte_length: byteLength,
+      sha256: digest,
+    });
+  }
+  const verification = await verifyLocalSourceBindings(resources, V0_SOURCE_RESOURCES);
+  assert.equal(verification.verified, true);
+  assert.equal(verification.workspace_resource_count, 9);
+  assert.equal(verification.three_source_record_resource_count, 6);
 });
 
 
@@ -275,4 +331,32 @@ test('browser harness publishes the failure marker for CDP setup failures', asyn
     /new PointerEvent\('pointercancel',\{pointerId:POINTER,bubbles:true\}\)/,
     'synthetic pointercancel must carry the active pointer id used by OrbitControls',
   );
+});
+
+test('estimated-v0 keeps only the minimum interactive browser acceptance', async () => {
+  const source = await readFile(new URL('browser_v0_harness.mjs', import.meta.url), 'utf8');
+  assert.equal(source.match(/\/json\/new\?about:blank/g)?.length, 1);
+  assert.match(source, /method:'PUT'/);
+  assert.match(source, /closeCdpTarget\(cdpUrl,page\.id\)/);
+  const ownerSetup = source.indexOf('let page=null');
+  const ownerTry = source.indexOf('try{', ownerSetup);
+  const targetCreate = source.indexOf("new URL('/json/new?about:blank'", ownerTry);
+  const ownerFinally = source.lastIndexOf('}finally{');
+  const targetClose = source.indexOf('closeCdpTarget(cdpUrl,page.id)', ownerFinally);
+  assert.ok(ownerSetup >= 0 && ownerTry > ownerSetup && targetCreate > ownerTry);
+  assert.ok(ownerFinally > targetCreate && targetClose > ownerFinally, 'the uniquely created target is not closed from finally');
+  assert.match(source, /for\(let channel=0;channel<21;channel\+\+\)/);
+  for (const label of ['a_prismatic', 'left_trigger_revolute', 'left_stick_2d', 'dpad_difference']) {
+    assert.match(source, new RegExp(`label:'${label}'`));
+  }
+  assert.match(source, /mouse_release_reset:mouseInteractionChecks\.length===4&&mouseInteractionChecks\.every\(check=>check\.release_reset\)/);
+  assert.match(source, /concurrent_input_probe:true/);
+  assert.match(source, /idle_render_quiescent:idleRenderCheck\.renders_observed===0/);
+  assert.match(source, /assert\.equal\(idleRenderCheck\.renders_observed,0/);
+  assert.doesNotMatch(source, /pivotChecks|channelMatrixSabotageChecks|deviceListChangeDuringDrag|unexpectedResponses|default_camera_elevation_deg/);
+  assert.doesNotMatch(source, /pages\.find\([^\n]*\/v0\.html/);
+
+  const viewerSource = await readFile(new URL('../viewer/v0_app.mjs', import.meta.url), 'utf8');
+  assert.match(viewerSource, /materialStats/);
+  assert.doesNotMatch(viewerSource, /setMaterialDiagnostic|materialDiagnosticMode|materialConfiguration|materialDefaults/);
 });

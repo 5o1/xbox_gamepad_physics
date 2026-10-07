@@ -34,6 +34,7 @@ FINGERPRINT_EXCLUDES = {
 }
 THREE_BROWSER_BINDINGS = {
     "/vendor/build/three.module.js": "build/three.module.js",
+    "/vendor/build/three.core.js": "build/three.core.js",
     "/vendor/examples/jsm/loaders/OBJLoader.js": "examples/jsm/loaders/OBJLoader.js",
     "/vendor/examples/jsm/controls/OrbitControls.js": "examples/jsm/controls/OrbitControls.js",
 }

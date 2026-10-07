@@ -13,7 +13,8 @@
 | 主外观候选 | `xbox_one_s_batonyrobson_a62cf747`；用户已确认正面外观接近实物 |
 | 已批准目标几何 | 无；尺寸、背面/顶部、版本及机械结构尚未通过 |
 | 默认 viewer 资产 | `legacy_casper_1914_width_scaled_1708_proxy`，只验证软件链路 |
-| 可训练物理资产 | 无；碰撞、轴心、行程、质量和力学参数尚未收口 |
+| 可选 viewer 资产 | `xbox_one_s_batonyrobson_appearance_matched_estimated_v0`；已加入 allowed 列表，未设为 active |
+| 可训练物理资产 | 无；碰撞、实物轴心、行程、质量和力学参数尚未收口 |
 | 第一阶段验收 | 鼠标拖动真实部件产生手柄信号，真实手柄信号反向驱动同一资产；尚未通过 |
 
 BatonyRobson 的 Xbox One S 模型是当前主外观候选，不再处于“等待用户确认”状态；
@@ -27,6 +28,59 @@ BatonyRobson 的 Xbox One S 模型是当前主外观候选，不再处于“等�
 
 以下段落记录各阶段做过的试验。段落中的测试数量和“本轮”只对应当时快照，
 不能替代当前 HEAD 的回归报告或物理验收。
+
+### 外观匹配 estimated-v0
+
+`xbox_one_s_batonyrobson_appearance_matched_estimated_v0` 是一份可检查的运动学预览，
+不是 Xbox 1708 物理资产。它使用 BatonyRobson 模型的 16 个视觉节点和作者动画中的
+运动方向、端点及基准位姿，生成 20 个预览关节和 3 个约束；标准输入仍严格为 21 个
+浮点通道。Pair/Bind 只作为额外物理事件，不构成第 22 个张量通道。
+
+这里的 21 通道是浏览器 Standard Gamepad 快照的本地传输顺序：4 个轴加 17 个按钮，
+其中包含通常由浏览器或操作系统保留的 Guide。它不是游戏/VLA 分支的
+`xinput-normalized-v1` 20 维顺序，两者不能按下标直接相连；后续适配器还必须显式完成
+字段重排、Guide 丢弃策略和摇杆 Y 轴符号约定，并以双向样本测试验证。
+
+预览比例只是在完整候选外形上用 1708 官方宽度做的统一宽度拟合。作者动画不是实物测量，
+不能证明型号身份、局部尺寸、真实轴心、行程、触发点、作用力或实时响应。
+运行 profile 的 `schema_version: 2` 属于 `appearance_kinematics_runtime`，也不表示
+canonical 物理 schema-v2 到 viewer 的适配器已经实现。资产注册仍以旧 Casper 代理为
+active variant；estimated-v0 只是显式允许加载的 allowed variant。
+
+以下物理量继续保持 `null/unknown`：各刚体和控件的质量、惯量、质心，碰撞几何，
+接触摩擦与恢复系数，按钮触发阈值，回弹力/力矩曲线，关节阻尼与摩擦，以及真实 HID
+传递函数。完整记录见
+[estimated-v0 参数来源](sources/appearance_matched_estimated_v0.json)和
+[运行 profile](assets/appearance_matched_estimated_v0/viewer_profile.json)。真实手柄尚未测试，
+`real_controller_verified`、`physical_acceptance` 和 `dynamics_ready` 均为 false。
+
+生成文件的非破坏性复核命令：
+
+```sh
+python scripts/build_estimated_v0.py --check
+```
+
+GPU 节点现有目录上的启动示例：
+
+```sh
+python scripts/serve_viewer.py \
+  --assets /path/to/gpu-data/<gpu-project>/controller-candidates/xbox_one_s_batonyrobson_UNVERIFIED/Xbox_One_S_BatonyRobson_16parts_VISUAL_UNCALIBRATED \
+  --vendor /path/to/gpu-data/<gpu-project>/xbox-physics-v1/tools/three-0.180.0/package \
+  --variant-id xbox_one_s_batonyrobson_appearance_matched_estimated_v0 \
+  --port 8766
+# 浏览器打开 http://127.0.0.1:8766/v0.html
+```
+
+estimated-v0 的最小 Chromium/CDP 验收由独立 harness 直接执行；`<CDP URL>` 指向同一台
+浏览器开放的本地调试端口。harness 只创建并关闭自己的页面，不接入发布型回归报告。
+合成的 Standard Gamepad 输入只验证软件通路，不能记作真实设备验收。
+
+```sh
+node tests/browser_v0_harness.mjs \
+  http://127.0.0.1:8766/v0.html \
+  <CDP URL> \
+  <临时输出目录>
+```
 
 ### 旧版检查器开发状态
 
@@ -197,8 +251,9 @@ python -m unittest discover -s tests -p test_photo_layout.py -v
 
 schema v2 能记录全局刚体/关节图、多自由度控件及耦合约束；当前 1708 实例仍为空规格，
 不是 URDF、SAPIEN 或可训练资产。视觉网格须经“候选→SHA 固定的 inventory→artifact/object→
-文件 SHA”链路绑定，并给出 `meters_per_native_unit`。BatonyRobson 主外观 inventory 没有文件
-SHA 和可靠米制比例，所以目前不能写入物理 body；这不是用外观相似度补数值的许可。
+文件 SHA”链路绑定，并给出 `meters_per_native_unit`。BatonyRobson estimated-v0 已绑定 inventory、
+静态 GLB、profile 和参数来源的 SHA，并记录统一宽度拟合比例；但这个比例不是目标实物的
+局部几何标定，外形版本和机械结构仍未通过，所以目前不能写入 canonical 物理 body。
 
 串联关节所需的纯坐标中间体使用 `virtual_frame`，质量、惯量、视觉和碰撞均明确标为
 `intentionally_absent`，不得塞入微小假质量。实体 body 可以没有视觉或碰撞，但也须给出带证据的
@@ -219,6 +274,7 @@ SHA 和可靠米制比例，所以目前不能写入物理 body；这不是用�
 - [资产入口](assets/asset_index.json)：关联网格清单、规格和 GPU 存储位置。
 - [来源与参考值](sources/catalog.json)：摇杆及开关元件规格，含单位换算与适用边界。
 - [部件规格](specs/xbox_v1.json)：覆盖壳体、摇杆、方向键、肩键、扳机及按钮；未知值为 null。
+- [estimated-v0 参数来源](sources/appearance_matched_estimated_v0.json)、[运行 profile](assets/appearance_matched_estimated_v0/viewer_profile.json)和[构建审计](results/xbox_one_s_batonyrobson_UNVERIFIED/estimated_v0_build_audit.json)：只覆盖外观绑定和估计运动学。
 - [旧 Casper 1914 外形候选预览](results/legacy_casper_1914_visual_parts/parts_preview.png)：仅为原始几何的分组着色，未启用物理，也不是目标 1708 几何。
 - [旧 Casper 1914 网格清单](results/legacy_casper_1914_visual_parts/inventory.json)、[几何检查](results/legacy_casper_1914_visual_parts/mesh_audit.json)。
 
@@ -231,7 +287,9 @@ BatonyRobson Xbox One S 候选位于
 这些路径不是发布接口，准入仍以 `assets/asset_index.json` 的身份、manifest、SHA 和目标型号批准为准；
 目前没有候选获准绑定 1708 物理 body。源文件、许可证和说明保存在各候选目录。
 独立安装的 Blender 3.6.23 位于同级 `tools/`，通过真实 IP 与 NETWORK_INTERFACE 直连下载，
-并以 Blender 官方 SHA256 清单核验。没有使用代理或修改共享 Python 环境。
+并以 Blender 官方 SHA256 清单核验，供旧 Casper 导出流程使用。BatonyRobson 作者动画审计
+另绑定 Blender 4.5.9 LTS、对应 build hash 和 Python 版本；两套记录不能互相替代。
+没有使用代理或修改共享 Python 环境。
 
 ## Harness 覆盖范围
 
@@ -272,7 +330,8 @@ python scripts/asset_spec.py require-dynamics
 
 `fast` 适合不带数值栈的代码审查，允许依赖门控测试跳过，并把结果标为
 `partial_pass`；它不能作为完整回归。`full` 要求 Python 和 JavaScript 测试无失败、
-无跳过。浏览器链路使用 `--profile browser --base-url ... --cdp-port ...`。
+无跳过。发布型浏览器链路只保留旧 OBJ 软件夹具的 `--profile browser`；estimated-v0
+使用上文的独立最小 harness，不发布为物理或真实设备验收。
 默认报告只输出到标准输出。完整数值回归与含浏览器的联合回归分开发布，避免
 `browser=null` 的结果被误读成集成通过；两者都要求工作树在执行前完全干净：
 
@@ -286,8 +345,9 @@ python scripts/run_regression.py --profile browser \
 
 浏览器回归在导航前禁用并清空缓存，每次加入独立 nonce；它对实际返回的 viewer 模块、
 注册表、参考图及 Three.js 模块逐字计算 SHA256，再与当前工作树和
-[`viewer_design.json`](sources/viewer_design.json) 交叉核对。OBJ 不冒充 Git 内文件，页面会按
-注册表绑定的 inventory 逐个核对其哈希后才进入 ready 状态。报告分别记录测试前后 Git 提交、
+[`viewer_design.json`](sources/viewer_design.json) 交叉核对。旧 viewer 按 inventory 核对 OBJ。
+estimated-v0 的页面和独立 harness 另核对外部 GLB、inventory、profile 和参数来源的哈希；
+外部网格不冒充 Git 内文件，资源身份全部匹配后页面才进入 ready 状态。发布型报告记录测试前后 Git 提交、
 工作树和源码快照；运行期间发生变化就不能发布。直接以 `--publish` 执行 browser harness 时，
 失败只更新 `browser_last_attempt.json`，不会覆盖上一份成功报告和截图。
 

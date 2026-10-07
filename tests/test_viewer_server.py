@@ -35,7 +35,9 @@ class ViewerLoggingTest(unittest.TestCase):
             '/assets/': base / 'assets',
             '/vendor/': base / 'vendor',
             '/reference/': base / 'reference',
+            '/candidate-reference/': base / 'candidate-reference',
             '/registry/': base / 'registry',
+            '/evidence/': base / 'evidence',
         }
         self.assertEqual(
             Path(handler.translate_path('/reference/identity_front.png')),
@@ -71,6 +73,57 @@ class ViewerLoggingTest(unittest.TestCase):
                 validate_asset_variant(project, assets, variant_id)
             with self.assertRaisesRegex(ValueError, 'not the registry'):
                 validate_asset_variant(project, assets, 'wrong-variant')
+
+    def test_explicit_nondefault_variant_is_hash_bound_to_profile_and_container(self):
+        with tempfile.TemporaryDirectory() as directory:
+            project = Path(directory) / 'project'
+            assets = Path(directory) / 'external'
+            (project / 'assets' / 'profile').mkdir(parents=True)
+            assets.mkdir()
+            inventory = b'{"objects":[]}'
+            container = b'glTF-test-container'
+            profile = {
+                'schema_version': 2,
+                'variant_id': 'estimated_v0',
+                'visual': {
+                    'file': 'model.glb',
+                    'sha256': hashlib.sha256(container).hexdigest(),
+                },
+                'parameter_source': 'sources/parameters.json',
+                'parameter_source_sha256': hashlib.sha256(b'{}').hexdigest(),
+            }
+            profile_bytes = (json.dumps(profile) + '\n').encode()
+            registry = {
+                'interactive_viewer': {
+                    'entry': '../viewer/index.html',
+                    'active_variant_id': 'legacy',
+                    'allowed_variant_ids': ['estimated_v0'],
+                },
+                'derived_variants': {
+                    'estimated_v0': {
+                        'inventory_sha256': hashlib.sha256(inventory).hexdigest(),
+                        'viewer_entry': '../viewer/v0.html',
+                        'viewer_profile': {
+                            'path': 'profile/viewer_profile.json',
+                            'sha256': hashlib.sha256(profile_bytes).hexdigest(),
+                        },
+                    },
+                },
+            }
+            (project / 'assets' / 'asset_index.json').write_text(json.dumps(registry))
+            (project / 'viewer').mkdir()
+            (project / 'viewer' / 'v0.html').write_text('test')
+            (project / 'assets' / 'profile' / 'viewer_profile.json').write_bytes(profile_bytes)
+            (project / 'sources').mkdir()
+            (project / 'sources' / 'parameters.json').write_bytes(b'{}')
+            (assets / 'inventory.json').write_bytes(inventory)
+            (assets / 'model.glb').write_bytes(container)
+            _, variant = validate_asset_variant(project, assets, 'estimated_v0')
+            self.assertEqual(variant['viewer_profile']['sha256'], hashlib.sha256(profile_bytes).hexdigest())
+            self.assertEqual(variant['_validated_viewer_url'], '/v0.html')
+            (assets / 'model.glb').write_bytes(b'tampered')
+            with self.assertRaisesRegex(ValueError, 'visual container SHA-256'):
+                validate_asset_variant(project, assets, 'estimated_v0')
 
     def test_vendor_version_and_key_file_hashes_are_enforced(self):
         with tempfile.TemporaryDirectory() as directory:

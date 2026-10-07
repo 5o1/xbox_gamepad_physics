@@ -75,7 +75,7 @@ class BrowserSourceBindingTest(unittest.TestCase):
         )
         result = regression.validate_browser_source_binding(self.payload(), self.base_url)
         self.assertTrue(result["verified"])
-        self.assertEqual(result["resource_count"], 12)
+        self.assertEqual(result["resource_count"], 13)
         self.assertFalse(result["external_obj_bytes_bound_to_git"])
 
     def test_viewer_and_three_hash_mismatches_fail_closed(self):

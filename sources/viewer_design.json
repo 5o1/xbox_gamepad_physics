@@ -7,6 +7,7 @@
     "extracted_files": {
       "package.json": "aa42494664dba4cf76d89c6975ee38321a402f09a048672e190bad6f13beec93",
       "build/three.module.js": "c8211c69345d2e9949dc7a8ac969380497aa0600a5a8ac6a459c8cd02dd9cb8a",
+      "build/three.core.js": "eb077d2417f61d3e6d9264c317cabc4ea35769ed6b0ab533067292a550784c20",
       "examples/jsm/loaders/OBJLoader.js": "e3ceb6a8ed48ca146049a8f0879c7acbf884d430f2e728779af26c6ea3a57c65",
       "examples/jsm/controls/OrbitControls.js": "b97879c748170baadeb3fb84cea1ffdf4674e283dc06042f34e2acb95a76042c",
       "examples/jsm/loaders/GLTFLoader.js": "67ac5551fdafa6e349bd80c8f8e5e39c136d6b2fb1ad647db9abb21dc86f9e4a",

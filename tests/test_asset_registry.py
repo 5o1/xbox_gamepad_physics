@@ -43,7 +43,8 @@ class AssetRegistryTest(unittest.TestCase):
             self.index["primary_appearance_candidate_id"],
         )
         self.assertIs(variant["approved_for_contact_or_training"], False)
-        self.assertIn("software regression only", self.index["interactive_viewer"]["verification_scope"])
+        self.assertIsNone(self.index["interactive_viewer"]["target_rig"])
+        self.assertIs(self.index["interactive_viewer"]["real_controller_verified"], False)
 
     def test_geometry_gate_names_the_primary_candidate(self):
         acceptance = load("specs/interactive_acceptance.json")
@@ -61,6 +62,18 @@ class AssetRegistryTest(unittest.TestCase):
             target = (ROOT / "assets" / variant["inventory"]).resolve()
             self.assertTrue(target.is_file(), f"missing inventory: {target}")
             self.assertEqual(hashlib.sha256(target.read_bytes()).hexdigest(), variant["inventory_sha256"])
+        for variant_id in self.index["interactive_viewer"].get("allowed_variant_ids", []):
+            variant = self.index["derived_variants"][variant_id]
+            self.assertIs(variant["approved_for_contact_or_training"], False)
+            self.assertIs(variant["collision_approved"], False)
+            profile_binding = variant["viewer_profile"]
+            profile_path = (ROOT / "assets" / profile_binding["path"]).resolve()
+            self.assertTrue(profile_path.is_file(), f"missing viewer profile: {profile_path}")
+            self.assertEqual(hashlib.sha256(profile_path.read_bytes()).hexdigest(), profile_binding["sha256"])
+            profile = json.loads(profile_path.read_text(encoding="utf-8"))
+            self.assertEqual(profile["variant_id"], variant_id)
+            entry = (ROOT / "assets" / variant["viewer_entry"]).resolve()
+            self.assertTrue(entry.is_file(), f"missing viewer entry: {entry}")
         revision = self.index["evidence"]["hardware_revision"]
         self.assertEqual(set(revision), {"document", "entry"})
         document = (ROOT / "assets" / revision["document"]).resolve()

@@ -11,9 +11,16 @@ from urllib.parse import unquote, urlsplit
 def validate_asset_variant(project, assets, variant_id):
     registry_path = project / "assets" / "asset_index.json"
     registry = json.loads(registry_path.read_text(encoding="utf-8"))
-    active = registry.get("interactive_viewer", {}).get("active_variant_id")
-    if variant_id != active:
-        raise ValueError(f"variant {variant_id!r} is not the registry's active viewer variant {active!r}")
+    viewer = registry.get("interactive_viewer", {})
+    active = viewer.get("active_variant_id")
+    allowed = viewer.get("allowed_variant_ids", [])
+    if not isinstance(allowed, list) or not all(isinstance(item, str) for item in allowed):
+        raise ValueError("interactive_viewer.allowed_variant_ids must be a string list")
+    if variant_id != active and variant_id not in allowed:
+        raise ValueError(
+            f"variant {variant_id!r} is not the registry's active viewer variant "
+            f"{active!r} or an explicitly allowed variant"
+        )
     variant = registry.get("derived_variants", {}).get(variant_id)
     if not isinstance(variant, dict):
         raise ValueError(f"variant absent from registry: {variant_id}")
@@ -24,6 +31,67 @@ def validate_asset_variant(project, assets, variant_id):
     expected = variant.get("inventory_sha256")
     if actual != expected:
         raise ValueError(f"inventory SHA-256 {actual} does not match {variant_id} ({expected})")
+    profile_binding = variant.get("viewer_profile")
+    if profile_binding is not None:
+        if not isinstance(profile_binding, dict) or set(profile_binding) != {"path", "sha256"}:
+            raise ValueError(f"{variant_id}: viewer_profile must bind exactly path and sha256")
+        relative = profile_binding.get("path")
+        if (
+            not isinstance(relative, str)
+            or not relative
+            or "\\" in relative
+            or Path(relative).is_absolute()
+            or any(part in {"", ".", ".."} for part in Path(relative).parts)
+        ):
+            raise ValueError(f"{variant_id}: unsafe viewer profile path")
+        profile_root = (project / "assets").resolve()
+        profile_path = (profile_root / relative).resolve()
+        if not profile_path.is_relative_to(profile_root) or not profile_path.is_file():
+            raise ValueError(f"{variant_id}: missing viewer profile")
+        profile_bytes = profile_path.read_bytes()
+        if hashlib.sha256(profile_bytes).hexdigest() != profile_binding.get("sha256"):
+            raise ValueError(f"{variant_id}: viewer profile SHA-256 does not match")
+        profile = json.loads(profile_bytes)
+        if profile.get("schema_version") != 2 or profile.get("variant_id") != variant_id:
+            raise ValueError(f"{variant_id}: viewer profile identity/schema mismatch")
+        visual = profile.get("visual", {})
+        visual_file = visual.get("file")
+        if (
+            not isinstance(visual_file, str)
+            or not visual_file
+            or "\\" in visual_file
+            or Path(visual_file).is_absolute()
+            or any(part in {"", ".", ".."} for part in Path(visual_file).parts)
+        ):
+            raise ValueError(f"{variant_id}: unsafe visual container path")
+        visual_path = (assets.resolve() / visual_file).resolve()
+        if not visual_path.is_relative_to(assets.resolve()) or not visual_path.is_file():
+            raise ValueError(f"{variant_id}: missing visual container")
+        if hashlib.sha256(visual_path.read_bytes()).hexdigest() != visual.get("sha256"):
+            raise ValueError(f"{variant_id}: visual container SHA-256 does not match")
+        parameter_source = profile.get("parameter_source")
+        parameter_hash = profile.get("parameter_source_sha256")
+        if (
+            not isinstance(parameter_source, str)
+            or not parameter_source.startswith("sources/")
+            or "\\" in parameter_source
+            or Path(parameter_source).is_absolute()
+            or any(part in {"", ".", ".."} for part in Path(parameter_source).parts)
+        ):
+            raise ValueError(f"{variant_id}: unsafe parameter source path")
+        parameter_path = (project.resolve() / parameter_source).resolve()
+        if not parameter_path.is_relative_to((project / "sources").resolve()) or not parameter_path.is_file():
+            raise ValueError(f"{variant_id}: missing parameter source")
+        if hashlib.sha256(parameter_path.read_bytes()).hexdigest() != parameter_hash:
+            raise ValueError(f"{variant_id}: parameter source SHA-256 does not match")
+    viewer_entry = variant.get("viewer_entry", viewer.get("entry"))
+    if not isinstance(viewer_entry, str) or not viewer_entry:
+        raise ValueError(f"{variant_id}: missing viewer entry")
+    viewer_root = (project / "viewer").resolve()
+    entry_path = (project / "assets" / viewer_entry).resolve()
+    if not entry_path.is_relative_to(viewer_root) or not entry_path.is_file():
+        raise ValueError(f"{variant_id}: unsafe or missing viewer entry")
+    variant["_validated_viewer_url"] = "/" + entry_path.relative_to(viewer_root).as_posix()
     return registry, variant
 
 
@@ -69,7 +137,7 @@ class Handler(SimpleHTTPRequestHandler):
         route = next(
             (
                 prefix
-                for prefix in ("/assets/", "/vendor/", "/reference/", "/registry/")
+                for prefix in ("/assets/", "/vendor/", "/reference/", "/candidate-reference/", "/registry/", "/evidence/")
                 if path.startswith(prefix)
             ),
             "/",
@@ -101,7 +169,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     project = Path(__file__).resolve().parents[1]
     try:
-        validate_asset_variant(project, args.assets, args.variant_id)
+        _, variant = validate_asset_variant(project, args.assets, args.variant_id)
         validate_vendor(project, args.vendor)
     except (OSError, ValueError, json.JSONDecodeError) as error:
         raise SystemExit(f"Asset identity validation failed: {error}")
@@ -111,10 +179,12 @@ if __name__ == "__main__":
         "/vendor/": args.vendor,
         # Only expose the reviewed front-reference directory, not all results.
         "/reference/": project / "results" / "legacy_casper_1914_visual_parts",
+        "/candidate-reference/": project / "results" / "xbox_one_s_batonyrobson_UNVERIFIED",
         # Canonical IDs used to prove which asset variant the viewer received.
         "/registry/": project / "assets",
+        "/evidence/": project / "sources",
     }
     if not all(p.is_dir() for p in roots.values()):
         raise SystemExit("Missing required directory")
-    print(f"Viewer http://127.0.0.1:{args.port}/ variant={args.variant_id}", flush=True)
+    print(f"Viewer http://127.0.0.1:{args.port}{variant['_validated_viewer_url']} variant={args.variant_id}", flush=True)
     ThreadingHTTPServer(("127.0.0.1", args.port), partial(Handler, roots=roots)).serve_forever()

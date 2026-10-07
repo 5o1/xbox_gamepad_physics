@@ -2,6 +2,10 @@
   "candidate": "Xbox One S BatonyRobson",
   "status": "source_material_confirmed_official_viewer_reference_captured_blender_equivalence_not_matched",
   "source_glb_sha256": "5c5671c83a9cf15db4b8399e7010aa7d5cde915687ceb348b583eb00b0ed24e2",
+  "animation_audit_toolchain": {
+    "blender_version": [4, 5, 9],
+    "selection": "Pinned to the already validated Blender 4.5.9 LTS glTF import toolchain; the audit harness rejects another version."
+  },
   "geometry_uv_sha256_both_versions": "7279bfed85d2dcfb2228e853da7a4044433e1408ccf032c331b07266d4edff1d",
   "references": [
     "https://github.com/sketchfab/blender-plugin/blob/master/README.md#known-issues",

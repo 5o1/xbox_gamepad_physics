@@ -21,6 +21,11 @@ export const CRITICAL_SOURCE_RESOURCES = Object.freeze([
     binding_path: 'build/three.module.js',
   },
   {
+    request_path: '/vendor/build/three.core.js',
+    binding_kind: 'three_source_record',
+    binding_path: 'build/three.core.js',
+  },
+  {
     request_path: '/vendor/examples/jsm/loaders/OBJLoader.js',
     binding_kind: 'three_source_record',
     binding_path: 'examples/jsm/loaders/OBJLoader.js',
@@ -59,6 +64,11 @@ export const MATERIAL_MODULE_SOURCE_RESOURCES = Object.freeze([
     binding_path: 'build/three.module.js',
   },
   {
+    request_path: '/vendor/build/three.core.js',
+    binding_kind: 'three_source_record',
+    binding_path: 'build/three.core.js',
+  },
+  {
     request_path: '/vendor/examples/jsm/loaders/GLTFLoader.js',
     binding_kind: 'three_source_record',
     binding_path: 'examples/jsm/loaders/GLTFLoader.js',
@@ -78,6 +88,29 @@ export const MATERIAL_MODULE_SOURCE_RESOURCES = Object.freeze([
     binding_kind: 'three_source_record',
     binding_path: 'examples/jsm/utils/BufferGeometryUtils.js',
   },
+]);
+
+
+// Complete workspace/vendor graph executed by the schema-2 estimated-v0 page.
+// The external inventory and GLB are verified in-page against the canonical
+// registry/profile hashes because their large bytes deliberately live on the
+// GPU node rather than in this Git worktree.
+export const V0_SOURCE_RESOURCES = Object.freeze([
+  {request_path: '/v0.html', binding_kind: 'workspace', binding_path: 'viewer/v0.html'},
+  {request_path: '/v0_app.mjs', binding_kind: 'workspace', binding_path: 'viewer/v0_app.mjs'},
+  {request_path: '/gamepad_state.mjs', binding_kind: 'workspace', binding_path: 'viewer/gamepad_state.mjs'},
+  {request_path: '/drag2d.mjs', binding_kind: 'workspace', binding_path: 'viewer/drag2d.mjs'},
+  {request_path: '/schema2_runtime.mjs', binding_kind: 'workspace', binding_path: 'viewer/schema2_runtime.mjs'},
+  {request_path: '/registry/asset_index.json', binding_kind: 'workspace', binding_path: 'assets/asset_index.json'},
+  {request_path: '/registry/appearance_matched_estimated_v0/viewer_profile.json', binding_kind: 'workspace', binding_path: 'assets/appearance_matched_estimated_v0/viewer_profile.json'},
+  {request_path: '/evidence/appearance_matched_estimated_v0.json', binding_kind: 'workspace', binding_path: 'sources/appearance_matched_estimated_v0.json'},
+  {request_path: '/candidate-reference/pos_z.png', binding_kind: 'workspace', binding_path: 'results/xbox_one_s_batonyrobson_UNVERIFIED/pos_z.png'},
+  {request_path: '/vendor/build/three.module.js', binding_kind: 'three_source_record', binding_path: 'build/three.module.js'},
+  {request_path: '/vendor/build/three.core.js', binding_kind: 'three_source_record', binding_path: 'build/three.core.js'},
+  {request_path: '/vendor/examples/jsm/loaders/GLTFLoader.js', binding_kind: 'three_source_record', binding_path: 'examples/jsm/loaders/GLTFLoader.js'},
+  {request_path: '/vendor/examples/jsm/controls/OrbitControls.js', binding_kind: 'three_source_record', binding_path: 'examples/jsm/controls/OrbitControls.js'},
+  {request_path: '/vendor/examples/jsm/environments/RoomEnvironment.js', binding_kind: 'three_source_record', binding_path: 'examples/jsm/environments/RoomEnvironment.js'},
+  {request_path: '/vendor/examples/jsm/utils/BufferGeometryUtils.js', binding_kind: 'three_source_record', binding_path: 'examples/jsm/utils/BufferGeometryUtils.js'},
 ]);
 
 

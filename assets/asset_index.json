@@ -85,6 +85,110 @@
     }
   },
   "derived_variants": {
+    "xbox_one_s_batonyrobson_appearance_matched_estimated_v0": {
+      "source_candidate_id": "xbox_one_s_batonyrobson_a62cf747",
+      "inventory": "../results/xbox_one_s_batonyrobson_UNVERIFIED/static_visual_parts_inventory_UNCALIBRATED.json",
+      "inventory_sha256": "ab310d28155b592344c4e1f3890976f4363b59c645585a09dbca24c5fbb13049",
+      "visual_manifest": {
+        "path": "results/xbox_one_s_batonyrobson_UNVERIFIED/static_visual_parts_inventory_UNCALIBRATED.json",
+        "sha256": "ab310d28155b592344c4e1f3890976f4363b59c645585a09dbca24c5fbb13049",
+        "artifacts": {
+          "static_visual_parts": {
+            "mode": "object_files",
+            "manifest_entry": "objects",
+            "metric_scale": {
+              "value": [
+                0.0560472180107161,
+                0.0560472180107161,
+                0.0560472180107161
+              ],
+              "unit": "m/native_unit",
+              "status": "derived",
+              "evidence": [
+                "microsoft_1708_dimensions",
+                "batony_xbox_one_s_visual"
+              ],
+              "harness": {
+                "kind": "python_derivation",
+                "path": "scripts/build_estimated_v0.py",
+                "entrypoint": "build"
+              },
+              "applicability": "Uniform width-fit scale for the appearance-matched estimated-v0 viewer only; not approved target geometry.",
+              "derivation": {
+                "method": "Divide the Microsoft 1708 overall width by the complete downloaded visual candidate X extent and apply the scalar uniformly on all axes.",
+                "inputs": [
+                  {
+                    "name": "target_width",
+                    "value": 0.153,
+                    "unit": "m",
+                    "evidence": [
+                      "microsoft_1708_dimensions"
+                    ]
+                  },
+                  {
+                    "name": "candidate_x_extent",
+                    "value": 2.729841113090515,
+                    "unit": "native_unit",
+                    "evidence": [
+                      "batony_xbox_one_s_visual"
+                    ]
+                  },
+                  {
+                    "name": "derived_meters_per_native_unit",
+                    "value": [
+                      0.0560472180107161,
+                      0.0560472180107161,
+                      0.0560472180107161
+                    ],
+                    "unit": "m/native_unit",
+                    "evidence": [
+                      "microsoft_1708_dimensions",
+                      "batony_xbox_one_s_visual"
+                    ]
+                  }
+                ],
+                "evidence": [
+                  "microsoft_1708_dimensions",
+                  "batony_xbox_one_s_visual"
+                ]
+              },
+              "uncertainty": {
+                "type": "bounded_error",
+                "range": [
+                  0,
+                  0.003230402507294998
+                ],
+                "unit": "m/native_unit",
+                "quantity": "Non-statistical maximum difference between the chosen width-fit scale and independent length/height extent-fit ratios; not a manufacturing tolerance.",
+                "confidence": {
+                  "kind": "non_statistical",
+                  "level": null,
+                  "meaning": "Bounds only the candidate whole-shape mismatch visible in three published overall extents; it excludes local-shape and revision error."
+                }
+              }
+            }
+          }
+        }
+      },
+      "gpu_directory": "/path/to/gpu-data/<gpu-project>/controller-candidates/xbox_one_s_batonyrobson_UNVERIFIED/Xbox_One_S_BatonyRobson_16parts_VISUAL_UNCALIBRATED",
+      "purpose": "appearance-matched estimated-v0 interactive kinematic preview",
+      "shape_revision_match": null,
+      "mechanical_revision_match": null,
+      "collision_approved": false,
+      "approved_for_contact_or_training": false,
+      "viewer_entry": "../viewer/v0.html",
+      "viewer_profile": {
+        "path": "appearance_matched_estimated_v0/viewer_profile.json",
+        "sha256": "e432679089e823364aafff3b83e1573db5ee7c9279920b418ce81780331ac137"
+      },
+      "target_visual_geometry_approval": {
+        "approved": false,
+        "target_revision": null,
+        "shape_identity_verified": false,
+        "evidence": [],
+        "reason": "The user acknowledged appearance similarity, but revision identity, metric local geometry and mechanics remain unverified."
+      }
+    },
     "legacy_casper_1914_width_scaled_1708_proxy": {
       "source_candidate_id": "xbox_series_1914_casperh2o_visual",
       "inventory": "../results/legacy_casper_1914_width_scaled_1708_proxy/inventory.json",
@@ -127,7 +231,10 @@
     "acceptance": "../specs/interactive_acceptance.json",
     "design_sources": "../sources/viewer_design.json",
     "active_variant_id": "legacy_casper_1914_width_scaled_1708_proxy",
-    "verification_scope": "viewer software regression only; not the primary appearance candidate and not target geometry acceptance",
+    "allowed_variant_ids": [
+      "xbox_one_s_batonyrobson_appearance_matched_estimated_v0"
+    ],
+    "verification_scope": "The active legacy OBJ viewer and the allowed estimated-v0 GLB viewer are software/interaction previews only; neither constitutes target geometry, real-controller, contact, or dynamics acceptance.",
     "target_rig": null,
     "real_controller_verified": false
   },

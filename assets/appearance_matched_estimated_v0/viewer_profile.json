@@ -1,0 +1,1084 @@
+{
+  "schema_version": 2,
+  "schema_name": "appearance_kinematics_runtime",
+  "profile_id": "xbox_one_s_batonyrobson_appearance_matched_estimated_v0",
+  "variant_id": "xbox_one_s_batonyrobson_appearance_matched_estimated_v0",
+  "status": "estimated_kinematic_preview_not_physical_asset",
+  "source_bindings": {
+    "static_inventory": "results/xbox_one_s_batonyrobson_UNVERIFIED/static_visual_parts_inventory_UNCALIBRATED.json",
+    "static_inventory_sha256": "ab310d28155b592344c4e1f3890976f4363b59c645585a09dbca24c5fbb13049",
+    "source_glb_sha256": "5c5671c83a9cf15db4b8399e7010aa7d5cde915687ceb348b583eb00b0ed24e2",
+    "static_glb": "Xbox_One_S_BatonyRobson_STATIC_VISUAL_UNCALIBRATED.glb",
+    "static_glb_sha256": "7548b189051b48d8fded7de65079763c923fe0a48ad9e1e36b6e2b89e31fa7ee",
+    "artist_motion_summary": "results/xbox_one_s_batonyrobson_UNVERIFIED/artist_animation_summary_UNCALIBRATED.json",
+    "artist_motion_summary_sha256": "fda7e876a19823fd679d2bd1e9051e1ab8642f23873f62b0707a468259442664",
+    "full_artist_motion_audit_sha256": "4c97d513d66f008e5cbc2b375d3c98692cfb495ecf32178c42d399304b31e6df",
+    "full_artist_motion_audit_gpu_path": "/path/to/gpu-data/<gpu-project>/controller-candidates/xbox_one_s_batonyrobson_UNVERIFIED/harness_repo/results/artist_animation_audit_relative_to_frame0_UNCALIBRATED.json",
+    "dimension_evidence": "sources/1708_dimensions.json",
+    "dimension_evidence_sha256": "25f272d5cbe866d36dc83a2a30bc70a4884cccc4d1d1b3d5dad206c6aac5914c",
+    "stick_reference": "sources/stick_envelope.json",
+    "stick_reference_sha256": "1c71f9576fc3b2ae3111e099acdd50953b1e04621ae5b94e4d7ce2350bc9f88e",
+    "evidence_catalog": "sources/catalog.json",
+    "evidence_catalog_sha256": "fcc2c010f58ea26b94a5c39d04cf39e56d89f4ccfae1003098547e77dd1e4ebb"
+  },
+  "visual": {
+    "mode": "gltf_container",
+    "file": "Xbox_One_S_BatonyRobson_STATIC_VISUAL_UNCALIBRATED.glb",
+    "sha256": "7548b189051b48d8fded7de65079763c923fe0a48ad9e1e36b6e2b89e31fa7ee",
+    "materials": "embedded",
+    "meters_per_native_unit": 0.0560472180107161,
+    "source_frame": "blender_source_z_up_right_handed",
+    "gltf_frame": "gltf_y_up_right_handed",
+    "gltf_to_viewer_rotation_x_rad": 1.5707963267948966,
+    "source_to_gltf_vector": "[x,y,z] -> [x,z,-y]"
+  },
+  "channels": [
+    {
+      "name": "lx",
+      "kind": "axis",
+      "tensor_index": 0,
+      "standard_index": 0,
+      "range": [
+        -1,
+        1
+      ]
+    },
+    {
+      "name": "ly",
+      "kind": "axis",
+      "tensor_index": 1,
+      "standard_index": 1,
+      "range": [
+        -1,
+        1
+      ]
+    },
+    {
+      "name": "rx",
+      "kind": "axis",
+      "tensor_index": 2,
+      "standard_index": 2,
+      "range": [
+        -1,
+        1
+      ]
+    },
+    {
+      "name": "ry",
+      "kind": "axis",
+      "tensor_index": 3,
+      "standard_index": 3,
+      "range": [
+        -1,
+        1
+      ]
+    },
+    {
+      "name": "a",
+      "kind": "button",
+      "tensor_index": 4,
+      "standard_index": 0,
+      "range": [
+        0,
+        1
+      ]
+    },
+    {
+      "name": "b",
+      "kind": "button",
+      "tensor_index": 5,
+      "standard_index": 1,
+      "range": [
+        0,
+        1
+      ]
+    },
+    {
+      "name": "x",
+      "kind": "button",
+      "tensor_index": 6,
+      "standard_index": 2,
+      "range": [
+        0,
+        1
+      ]
+    },
+    {
+      "name": "y",
+      "kind": "button",
+      "tensor_index": 7,
+      "standard_index": 3,
+      "range": [
+        0,
+        1
+      ]
+    },
+    {
+      "name": "left_shoulder",
+      "kind": "button",
+      "tensor_index": 8,
+      "standard_index": 4,
+      "range": [
+        0,
+        1
+      ]
+    },
+    {
+      "name": "right_shoulder",
+      "kind": "button",
+      "tensor_index": 9,
+      "standard_index": 5,
+      "range": [
+        0,
+        1
+      ]
+    },
+    {
+      "name": "left_trigger",
+      "kind": "button",
+      "tensor_index": 10,
+      "standard_index": 6,
+      "range": [
+        0,
+        1
+      ]
+    },
+    {
+      "name": "right_trigger",
+      "kind": "button",
+      "tensor_index": 11,
+      "standard_index": 7,
+      "range": [
+        0,
+        1
+      ]
+    },
+    {
+      "name": "view",
+      "kind": "button",
+      "tensor_index": 12,
+      "standard_index": 8,
+      "range": [
+        0,
+        1
+      ]
+    },
+    {
+      "name": "menu",
+      "kind": "button",
+      "tensor_index": 13,
+      "standard_index": 9,
+      "range": [
+        0,
+        1
+      ]
+    },
+    {
+      "name": "left_stick_click",
+      "kind": "button",
+      "tensor_index": 14,
+      "standard_index": 10,
+      "range": [
+        0,
+        1
+      ]
+    },
+    {
+      "name": "right_stick_click",
+      "kind": "button",
+      "tensor_index": 15,
+      "standard_index": 11,
+      "range": [
+        0,
+        1
+      ]
+    },
+    {
+      "name": "dpad_up",
+      "kind": "button",
+      "tensor_index": 16,
+      "standard_index": 12,
+      "range": [
+        0,
+        1
+      ]
+    },
+    {
+      "name": "dpad_down",
+      "kind": "button",
+      "tensor_index": 17,
+      "standard_index": 13,
+      "range": [
+        0,
+        1
+      ]
+    },
+    {
+      "name": "dpad_left",
+      "kind": "button",
+      "tensor_index": 18,
+      "standard_index": 14,
+      "range": [
+        0,
+        1
+      ]
+    },
+    {
+      "name": "dpad_right",
+      "kind": "button",
+      "tensor_index": 19,
+      "standard_index": 15,
+      "range": [
+        0,
+        1
+      ]
+    },
+    {
+      "name": "guide",
+      "kind": "button",
+      "tensor_index": 20,
+      "standard_index": 16,
+      "range": [
+        0,
+        1
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "source_node": "00_A_Button_VISUAL_UNCALIBRATED",
+      "source_part": "A Button",
+      "control": "a",
+      "joint_ids": [
+        "a_press"
+      ]
+    },
+    {
+      "source_node": "01_B_Button_VISUAL_UNCALIBRATED",
+      "source_part": "B Button",
+      "control": "b",
+      "joint_ids": [
+        "b_press"
+      ]
+    },
+    {
+      "source_node": "02_Bumper_L_VISUAL_UNCALIBRATED",
+      "source_part": "Bumper_L",
+      "control": "left_shoulder",
+      "joint_ids": [
+        "left_shoulder_press"
+      ]
+    },
+    {
+      "source_node": "03_Bumper_R_VISUAL_UNCALIBRATED",
+      "source_part": "Bumper_R",
+      "control": "right_shoulder",
+      "joint_ids": [
+        "right_shoulder_press"
+      ]
+    },
+    {
+      "source_node": "04_Connect_Button_VISUAL_UNCALIBRATED",
+      "source_part": "Connect Button",
+      "control": "pair",
+      "joint_ids": [
+        "pair_press"
+      ]
+    },
+    {
+      "source_node": "05_Controller_Body_VISUAL_UNCALIBRATED",
+      "source_part": "Controller Body",
+      "control": "shell",
+      "joint_ids": []
+    },
+    {
+      "source_node": "06_D-Pad_VISUAL_UNCALIBRATED",
+      "source_part": "D-Pad",
+      "control": "dpad",
+      "joint_ids": [
+        "dpad_horizontal",
+        "dpad_vertical"
+      ]
+    },
+    {
+      "source_node": "07_Menu_L_VISUAL_UNCALIBRATED",
+      "source_part": "Menu_L",
+      "control": "view",
+      "joint_ids": [
+        "view_press"
+      ]
+    },
+    {
+      "source_node": "08_Menu_R_VISUAL_UNCALIBRATED",
+      "source_part": "Menu_R",
+      "control": "menu",
+      "joint_ids": [
+        "menu_press"
+      ]
+    },
+    {
+      "source_node": "09_Stick_L_VISUAL_UNCALIBRATED",
+      "source_part": "Stick_L",
+      "control": "left_stick",
+      "joint_ids": [
+        "left_stick_x",
+        "left_stick_y",
+        "left_stick_click"
+      ]
+    },
+    {
+      "source_node": "10_Stick_R_VISUAL_UNCALIBRATED",
+      "source_part": "Stick_R",
+      "control": "right_stick",
+      "joint_ids": [
+        "right_stick_x",
+        "right_stick_y",
+        "right_stick_click"
+      ]
+    },
+    {
+      "source_node": "11_Trigger_L_VISUAL_UNCALIBRATED",
+      "source_part": "Trigger_L",
+      "control": "left_trigger",
+      "joint_ids": [
+        "left_trigger_hinge"
+      ]
+    },
+    {
+      "source_node": "12_Trigger_R_VISUAL_UNCALIBRATED",
+      "source_part": "Trigger_R",
+      "control": "right_trigger",
+      "joint_ids": [
+        "right_trigger_hinge"
+      ]
+    },
+    {
+      "source_node": "13_X_Button_VISUAL_UNCALIBRATED",
+      "source_part": "X Button",
+      "control": "x",
+      "joint_ids": [
+        "x_press"
+      ]
+    },
+    {
+      "source_node": "14_XboxButton_VISUAL_UNCALIBRATED",
+      "source_part": "XboxButton",
+      "control": "guide",
+      "joint_ids": [
+        "guide_press"
+      ]
+    },
+    {
+      "source_node": "15_Y_Button_VISUAL_UNCALIBRATED",
+      "source_part": "Y Button",
+      "control": "y",
+      "joint_ids": [
+        "y_press"
+      ]
+    }
+  ],
+  "joints": [
+    {
+      "id": "a_press",
+      "node": "00_A_Button_VISUAL_UNCALIBRATED",
+      "type": "prismatic",
+      "axis_source": [
+        6.1918180872594985e-06,
+        6.503695254777861e-09,
+        -0.9999999999808307
+      ],
+      "pivot_source_m": [
+        0.04002423056732907,
+        0.013126528260337849,
+        0.020456241257749547
+      ],
+      "axis_parameter_ref": "a_motion_axis",
+      "pivot_parameter_ref": "a_artist_anchor",
+      "limits": [
+        0.0,
+        0.0008967542780293029
+      ],
+      "unit": "m",
+      "parameter_ref": "a_travel",
+      "driver": {
+        "kind": "linear_channel",
+        "channel": 4,
+        "signal_range": [
+          0.0,
+          1.0
+        ]
+      }
+    },
+    {
+      "id": "b_press",
+      "node": "01_B_Button_VISUAL_UNCALIBRATED",
+      "type": "prismatic",
+      "axis_source": [
+        4.1595754919129415e-06,
+        -2.4540644379985876e-07,
+        -0.9999999999913187
+      ],
+      "pivot_source_m": [
+        0.05077115711401879,
+        0.02296729600826077,
+        0.019034841040880816
+      ],
+      "axis_parameter_ref": "b_motion_axis",
+      "pivot_parameter_ref": "b_artist_anchor",
+      "limits": [
+        0.0,
+        0.0013767679701224785
+      ],
+      "unit": "m",
+      "parameter_ref": "b_travel",
+      "driver": {
+        "kind": "linear_channel",
+        "channel": 5,
+        "signal_range": [
+          0.0,
+          1.0
+        ]
+      }
+    },
+    {
+      "id": "x_press",
+      "node": "13_X_Button_VISUAL_UNCALIBRATED",
+      "type": "prismatic",
+      "axis_source": [
+        3.091441171355075e-06,
+        2.3874884179948e-06,
+        -0.9999999999923714
+      ],
+      "pivot_source_m": [
+        0.029322834073674843,
+        0.023827573147998826,
+        0.021240900559386124
+      ],
+      "axis_parameter_ref": "x_motion_axis",
+      "pivot_parameter_ref": "x_artist_anchor",
+      "limits": [
+        0.0,
+        0.0007809609139585009
+      ],
+      "unit": "m",
+      "parameter_ref": "x_travel",
+      "driver": {
+        "kind": "linear_channel",
+        "channel": 6,
+        "signal_range": [
+          0.0,
+          1.0
+        ]
+      }
+    },
+    {
+      "id": "y_press",
+      "node": "15_Y_Button_VISUAL_UNCALIBRATED",
+      "type": "prismatic",
+      "axis_source": [
+        3.504666386918108e-06,
+        2.7067419704574146e-06,
+        -0.9999999999901954
+      ],
+      "pivot_source_m": [
+        0.0401275810149598,
+        0.033774827401758294,
+        0.020275846503997216
+      ],
+      "axis_parameter_ref": "y_motion_axis",
+      "pivot_parameter_ref": "y_artist_anchor",
+      "limits": [
+        0.0,
+        0.001228400054203025
+      ],
+      "unit": "m",
+      "parameter_ref": "y_travel",
+      "driver": {
+        "kind": "linear_channel",
+        "channel": 7,
+        "signal_range": [
+          0.0,
+          1.0
+        ]
+      }
+    },
+    {
+      "id": "left_shoulder_press",
+      "node": "02_Bumper_L_VISUAL_UNCALIBRATED",
+      "type": "prismatic",
+      "axis_source": [
+        -1.1277621912932724e-06,
+        -0.9999999999990331,
+        8.136039719607227e-07
+      ],
+      "pivot_source_m": [
+        -0.03630171026814612,
+        0.04424259048216938,
+        0.008600218286878524
+      ],
+      "axis_parameter_ref": "left_shoulder_motion_axis",
+      "pivot_parameter_ref": "left_shoulder_artist_anchor",
+      "limits": [
+        0.0,
+        0.0022283242790158146
+      ],
+      "unit": "m",
+      "parameter_ref": "left_shoulder_travel",
+      "driver": {
+        "kind": "linear_channel",
+        "channel": 8,
+        "signal_range": [
+          0.0,
+          1.0
+        ]
+      }
+    },
+    {
+      "id": "right_shoulder_press",
+      "node": "03_Bumper_R_VISUAL_UNCALIBRATED",
+      "type": "prismatic",
+      "axis_source": [
+        1.8706082217508553e-06,
+        -0.9999999999981528,
+        4.418766319515719e-07
+      ],
+      "pivot_source_m": [
+        0.03630171026814612,
+        0.04424259048216938,
+        0.008600219122047155
+      ],
+      "axis_parameter_ref": "right_shoulder_motion_axis",
+      "pivot_parameter_ref": "right_shoulder_artist_anchor",
+      "limits": [
+        0.0,
+        0.002228327410900139
+      ],
+      "unit": "m",
+      "parameter_ref": "right_shoulder_travel",
+      "driver": {
+        "kind": "linear_channel",
+        "channel": 9,
+        "signal_range": [
+          0.0,
+          1.0
+        ]
+      }
+    },
+    {
+      "id": "view_press",
+      "node": "07_Menu_L_VISUAL_UNCALIBRATED",
+      "type": "prismatic",
+      "axis_source": [
+        -3.3568921701465126e-07,
+        -1.6186520570073742e-07,
+        -0.9999999999999306
+      ],
+      "pivot_source_m": [
+        -0.011342160416177301,
+        0.02382919671581563,
+        0.02053230674623673
+      ],
+      "axis_parameter_ref": "view_motion_axis",
+      "pivot_parameter_ref": "view_artist_anchor",
+      "limits": [
+        0.0,
+        0.0012666219641293659
+      ],
+      "unit": "m",
+      "parameter_ref": "view_travel",
+      "driver": {
+        "kind": "linear_channel",
+        "channel": 12,
+        "signal_range": [
+          0.0,
+          1.0
+        ]
+      }
+    },
+    {
+      "id": "menu_press",
+      "node": "08_Menu_R_VISUAL_UNCALIBRATED",
+      "type": "prismatic",
+      "axis_source": [
+        -3.365894047627231e-07,
+        -9.137828559804476e-07,
+        -0.9999999999995259
+      ],
+      "pivot_source_m": [
+        0.011254951272659434,
+        0.023817988752800435,
+        0.02053230841657399
+      ],
+      "axis_parameter_ref": "menu_motion_axis",
+      "pivot_parameter_ref": "menu_artist_anchor",
+      "limits": [
+        0.0,
+        0.001266622590506351
+      ],
+      "unit": "m",
+      "parameter_ref": "menu_travel",
+      "driver": {
+        "kind": "linear_channel",
+        "channel": 13,
+        "signal_range": [
+          0.0,
+          1.0
+        ]
+      }
+    },
+    {
+      "id": "guide_press",
+      "node": "14_XboxButton_VISUAL_UNCALIBRATED",
+      "type": "prismatic",
+      "axis_source": [
+        -1.6769063187666164e-08,
+        -1.336508198928297e-06,
+        -0.9999999999991068
+      ],
+      "pivot_source_m": [
+        -1.234472082340733e-08,
+        0.040710107793741256,
+        0.018321560261379613
+      ],
+      "axis_parameter_ref": "guide_motion_axis",
+      "pivot_parameter_ref": "guide_artist_anchor",
+      "limits": [
+        0.0,
+        0.0007251785396074228
+      ],
+      "unit": "m",
+      "parameter_ref": "guide_travel",
+      "driver": {
+        "kind": "linear_channel",
+        "channel": 20,
+        "signal_range": [
+          0.0,
+          1.0
+        ]
+      }
+    },
+    {
+      "id": "left_trigger_hinge",
+      "node": "11_Trigger_L_VISUAL_UNCALIBRATED",
+      "type": "revolute",
+      "axis_source": [
+        -0.9999999999999929,
+        9.65386395709277e-08,
+        -6.981433956076549e-08
+      ],
+      "pivot_source_m": [
+        -0.045677991465952174,
+        0.036019095885088136,
+        0.002095871962884713
+      ],
+      "axis_parameter_ref": "left_trigger_rotation_axis",
+      "pivot_parameter_ref": "left_trigger_artist_anchor",
+      "limits": [
+        0.0,
+        0.29531940817832947
+      ],
+      "unit": "rad",
+      "parameter_ref": "left_trigger_rotation",
+      "driver": {
+        "kind": "linear_channel",
+        "channel": 10,
+        "signal_range": [
+          0.0,
+          1.0
+        ]
+      }
+    },
+    {
+      "id": "right_trigger_hinge",
+      "node": "12_Trigger_R_VISUAL_UNCALIBRATED",
+      "type": "revolute",
+      "axis_source": [
+        -0.9999999999993869,
+        -1.106527147132005e-06,
+        4.128884582358239e-08
+      ],
+      "pivot_source_m": [
+        0.04567799814730121,
+        0.03601910256643717,
+        0.002095871962884713
+      ],
+      "axis_parameter_ref": "right_trigger_rotation_axis",
+      "pivot_parameter_ref": "right_trigger_artist_anchor",
+      "limits": [
+        0.0,
+        0.29531940817832947
+      ],
+      "unit": "rad",
+      "parameter_ref": "right_trigger_rotation",
+      "driver": {
+        "kind": "linear_channel",
+        "channel": 11,
+        "signal_range": [
+          0.0,
+          1.0
+        ]
+      }
+    },
+    {
+      "id": "left_stick_x",
+      "node": "09_Stick_L_VISUAL_UNCALIBRATED",
+      "type": "revolute",
+      "axis_source": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "pivot_source_m": [
+        -0.038035359991741326,
+        0.024133629044164898,
+        0.01212386322086352
+      ],
+      "axis_parameter_ref": "left_stick_horizontal_rotation_axis",
+      "pivot_parameter_ref": "left_stick_artist_anchor",
+      "limits": [
+        -0.4014257279586958,
+        0.4014257279586958
+      ],
+      "unit": "rad",
+      "parameter_ref": "stick_tilt_limit",
+      "driver": {
+        "kind": "linear_channel",
+        "channel": 0,
+        "signal_range": [
+          -1.0,
+          1.0
+        ]
+      }
+    },
+    {
+      "id": "left_stick_y",
+      "node": "09_Stick_L_VISUAL_UNCALIBRATED",
+      "type": "revolute",
+      "axis_source": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "pivot_source_m": [
+        -0.038035359991741326,
+        0.024133629044164898,
+        0.01212386322086352
+      ],
+      "axis_parameter_ref": "left_stick_vertical_rotation_axis",
+      "pivot_parameter_ref": "left_stick_artist_anchor",
+      "limits": [
+        -0.4014257279586958,
+        0.4014257279586958
+      ],
+      "unit": "rad",
+      "parameter_ref": "stick_tilt_limit",
+      "driver": {
+        "kind": "linear_channel",
+        "channel": 1,
+        "signal_range": [
+          -1.0,
+          1.0
+        ]
+      }
+    },
+    {
+      "id": "left_stick_click",
+      "node": "09_Stick_L_VISUAL_UNCALIBRATED",
+      "type": "prismatic",
+      "axis_source": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "pivot_source_m": [
+        -0.038035359991741326,
+        0.024133629044164898,
+        0.01212386322086352
+      ],
+      "axis_parameter_ref": "stick_click_axis",
+      "pivot_parameter_ref": "left_stick_artist_anchor",
+      "limits": [
+        0.0,
+        0.0004
+      ],
+      "unit": "m",
+      "parameter_ref": "stick_click_travel",
+      "driver": {
+        "kind": "linear_channel",
+        "channel": 14,
+        "signal_range": [
+          0.0,
+          1.0
+        ]
+      }
+    },
+    {
+      "id": "right_stick_x",
+      "node": "10_Stick_R_VISUAL_UNCALIBRATED",
+      "type": "revolute",
+      "axis_source": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "pivot_source_m": [
+        0.02055769754292734,
+        0.0004891360302522314,
+        0.011667980577973374
+      ],
+      "axis_parameter_ref": "right_stick_horizontal_rotation_axis",
+      "pivot_parameter_ref": "right_stick_artist_anchor",
+      "limits": [
+        -0.4014257279586958,
+        0.4014257279586958
+      ],
+      "unit": "rad",
+      "parameter_ref": "stick_tilt_limit",
+      "driver": {
+        "kind": "linear_channel",
+        "channel": 2,
+        "signal_range": [
+          -1.0,
+          1.0
+        ]
+      }
+    },
+    {
+      "id": "right_stick_y",
+      "node": "10_Stick_R_VISUAL_UNCALIBRATED",
+      "type": "revolute",
+      "axis_source": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "pivot_source_m": [
+        0.02055769754292734,
+        0.0004891360302522314,
+        0.011667980577973374
+      ],
+      "axis_parameter_ref": "right_stick_vertical_rotation_axis",
+      "pivot_parameter_ref": "right_stick_artist_anchor",
+      "limits": [
+        -0.4014257279586958,
+        0.4014257279586958
+      ],
+      "unit": "rad",
+      "parameter_ref": "stick_tilt_limit",
+      "driver": {
+        "kind": "linear_channel",
+        "channel": 3,
+        "signal_range": [
+          -1.0,
+          1.0
+        ]
+      }
+    },
+    {
+      "id": "right_stick_click",
+      "node": "10_Stick_R_VISUAL_UNCALIBRATED",
+      "type": "prismatic",
+      "axis_source": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "pivot_source_m": [
+        0.02055769754292734,
+        0.0004891360302522314,
+        0.011667980577973374
+      ],
+      "axis_parameter_ref": "stick_click_axis",
+      "pivot_parameter_ref": "right_stick_artist_anchor",
+      "limits": [
+        0.0,
+        0.0004
+      ],
+      "unit": "m",
+      "parameter_ref": "stick_click_travel",
+      "driver": {
+        "kind": "linear_channel",
+        "channel": 15,
+        "signal_range": [
+          0.0,
+          1.0
+        ]
+      }
+    },
+    {
+      "id": "dpad_horizontal",
+      "node": "06_D-Pad_VISUAL_UNCALIBRATED",
+      "type": "revolute",
+      "axis_source": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "pivot_source_m": [
+        -0.020312119547937303,
+        -0.0018082593043680696,
+        0.011209441263671056
+      ],
+      "axis_parameter_ref": "dpad_horizontal_rotation_axis",
+      "pivot_parameter_ref": "dpad_artist_anchor",
+      "limits": [
+        -0.17453241348266602,
+        0.17453241348266602
+      ],
+      "unit": "rad",
+      "parameter_ref": "dpad_rotation",
+      "driver": {
+        "kind": "difference_channels",
+        "negative_channel": 18,
+        "positive_channel": 19
+      }
+    },
+    {
+      "id": "dpad_vertical",
+      "node": "06_D-Pad_VISUAL_UNCALIBRATED",
+      "type": "revolute",
+      "axis_source": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "pivot_source_m": [
+        -0.020312119547937303,
+        -0.0018082593043680696,
+        0.011209441263671056
+      ],
+      "axis_parameter_ref": "dpad_vertical_rotation_axis",
+      "pivot_parameter_ref": "dpad_artist_anchor",
+      "limits": [
+        -0.17453241348266602,
+        0.17453241348266602
+      ],
+      "unit": "rad",
+      "parameter_ref": "dpad_rotation",
+      "driver": {
+        "kind": "difference_channels",
+        "negative_channel": 16,
+        "positive_channel": 17
+      }
+    },
+    {
+      "id": "pair_press",
+      "node": "04_Connect_Button_VISUAL_UNCALIBRATED",
+      "type": "prismatic",
+      "axis_source": [
+        -1.7461689767657506e-07,
+        0.9999999999997254,
+        7.200898203220628e-07
+      ],
+      "pivot_source_m": [
+        -0.013452665786213338,
+        0.048846280499539575,
+        0.01258336548459628
+      ],
+      "axis_parameter_ref": "pair_motion_axis",
+      "pivot_parameter_ref": "pair_artist_anchor",
+      "limits": [
+        0.0,
+        0.0010423330438958324
+      ],
+      "unit": "m",
+      "parameter_ref": "pair_travel",
+      "driver": {
+        "kind": "physical_event",
+        "event": "pair_bind_connect",
+        "signal_range": [
+          0.0,
+          1.0
+        ]
+      }
+    }
+  ],
+  "constraints": [
+    {
+      "id": "left_stick_radial_envelope",
+      "type": "radial",
+      "joint_ids": [
+        "left_stick_x",
+        "left_stick_y"
+      ],
+      "radius": 0.4014257279586958,
+      "unit": "rad",
+      "parameter_ref": "stick_tilt_limit",
+      "projection": "radial_clamp",
+      "coordinate_space": "joint_coordinates",
+      "model_status": "conservative_joint_space_approximation_not_physical_gate",
+      "approximation_ref": "stick_joint_space_envelope",
+      "loss": "Signals outside the unit disk are radially projected, so the represented state differs from the raw state."
+    },
+    {
+      "id": "right_stick_radial_envelope",
+      "type": "radial",
+      "joint_ids": [
+        "right_stick_x",
+        "right_stick_y"
+      ],
+      "radius": 0.4014257279586958,
+      "unit": "rad",
+      "parameter_ref": "stick_tilt_limit",
+      "projection": "radial_clamp",
+      "coordinate_space": "joint_coordinates",
+      "model_status": "conservative_joint_space_approximation_not_physical_gate",
+      "approximation_ref": "stick_joint_space_envelope",
+      "loss": "Signals outside the unit disk are radially projected, so the represented state differs from the raw state."
+    },
+    {
+      "id": "dpad_radial_envelope",
+      "type": "radial",
+      "joint_ids": [
+        "dpad_horizontal",
+        "dpad_vertical"
+      ],
+      "radius": 0.17453241348266602,
+      "unit": "rad",
+      "parameter_ref": "dpad_rotation",
+      "projection": "radial_clamp",
+      "coordinate_space": "joint_coordinates",
+      "model_status": "artist_motion_joint_space_approximation_not_physical_gate",
+      "approximation_ref": null,
+      "loss": "Simultaneous cardinal inputs are projected to the artist-derived angular envelope; diagonal 1708 travel is unknown."
+    }
+  ],
+  "physical_events": [
+    {
+      "name": "pair_bind_connect",
+      "joint_id": "pair_press",
+      "tensor_channel": null
+    }
+  ],
+  "mapping_semantics": {
+    "kind": "forward_only_numeric_preview",
+    "scope": "21-channel/event signals to preview joint coordinates and represented signals; mesh pose and contact are outside this mapping contract.",
+    "autograd": "none_javascript_runtime_not_torch_or_jax",
+    "training_warning": "This JavaScript implementation does not establish an autograd path for VLA training. A separately tested Torch/JAX adapter is required before joint-gradient claims.",
+    "not_physical_hid_calibration": true,
+    "digital_channels_remain_float": true,
+    "smoothness": {
+      "linear_channel_interior": "affine",
+      "radial_projection_inside_disk_including_origin": "identity_and_smooth_in_an_open_neighborhood_of_the_origin",
+      "radial_projection_outside_disk": "nonlinear_due_to_radius_division",
+      "non_smooth_sets": [
+        "linear/event clamp activation boundaries",
+        "radial projection boundary where joint-coordinate norm equals radius",
+        "difference-channel saturation boundaries where positive-negative equals -1 or +1",
+        "difference-channel represented split at zero due to sign branch and max"
+      ]
+    },
+    "inverse_policy": "return_represented_state_after_constraint_projection"
+  },
+  "parameter_source": "sources/appearance_matched_estimated_v0.json",
+  "parameter_source_sha256": "2e498f8d65fa25fe797e20eddf88da103ef9bbee363c050e207e10526657a4fd",
+  "acceptance": {
+    "appearance_binding": true,
+    "interactive_kinematic_profile": true,
+    "canonical_schema_v2_adapter": false,
+    "geometry_identity_verified": false,
+    "real_controller_verified": false,
+    "physical_acceptance": false,
+    "dynamics_ready": false
+  }
+}

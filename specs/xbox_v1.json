@@ -1,10 +1,10 @@
 {
   "schema_version": 2,
-  "catalog_sha256": "f360fa9fb7cac5f77bc576e28c535cd278bf7aad0c111af51e13070a06cb04f5",
+  "catalog_sha256": "2b7922013b5837235d6c779472e4b18848a203fb62c2cca3fc49ab157922a680",
   "asset_registry_binding": {
     "path": "assets/asset_index.json",
     "path_base": "repository_root",
-    "sha256": "0f935d97bc6731d248f5db476e2adcb3f843db331418dff6ee00db5aa1b6bc51",
+    "sha256": "e2c4d272545e0e55218d1e09c2a68612854c58255f6ce865cbac02f299da492d",
     "registry_role": "canonical_status_authority",
     "visual_candidate_collections": [
       "candidates",

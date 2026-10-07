@@ -36,6 +36,22 @@
       "scope": "Model 1708 whole-controller width, length, height and battery-loaded mass recorded in sources/1708_dimensions.json",
       "limitation": "No dimensional tolerance is published. Whole-controller dimensions do not validate a third-party mesh's local geometry or mechanical revision."
     },
+    "batony_xbox_one_s_visual": {
+      "url": "https://sketchfab.com/3d-models/xbox-one-s-controllergamepad-animated-a62cf7475b7d4ead9fbf1a86e5a2b6a4",
+      "kind": "licensed_visual_asset",
+      "author": "BatonyRobson",
+      "license": "CC BY 4.0",
+      "locator": "Downloaded 2K GLB SHA-256 5c5671c83a9cf15db4b8399e7010aa7d5cde915687ceb348b583eb00b0ed24e2; static 16-part export manifest in results/xbox_one_s_batonyrobson_UNVERIFIED/static_visual_parts_inventory_UNCALIBRATED.json",
+      "scope": "Appearance-acknowledged Xbox One S visual candidate with sixteen named movable parts and embedded 2K materials.",
+      "limitation": "The user acknowledged visual similarity only. Controller revision, metric dimensions, hidden geometry, pivots and mechanics are not verified; this source cannot establish a 1708 digital twin."
+    },
+    "batony_artist_motion_prior": {
+      "url": "https://sketchfab.com/3d-models/xbox-one-s-controllergamepad-animated-a62cf7475b7d4ead9fbf1a86e5a2b6a4",
+      "kind": "artist_animation_prior",
+      "locator": "Blender 4.5.9 audit summarized in results/xbox_one_s_batonyrobson_UNVERIFIED/artist_animation_summary_UNCALIBRATED.json; full audit SHA-256 4c97d513d66f008e5cbc2b375d3c98692cfb495ecf32178c42d399304b31e6df retained on the GPU node",
+      "scope": "Candidate rest pivots, motion directions and displayed endpoint excursions for an explicitly labelled appearance-matched estimated-v0 kinematic preview.",
+      "limitation": "Artist keyframes are neither measurements nor manufacturer specifications. They provide no target-revision identity, forces, mass, inertia, friction, damping, activation threshold or real-time response."
+    },
     "xbox_visual": {
       "url": "https://github.com/CasperH2O/3DControllerModels/tree/f0d985618e7c74ca35d4c428228cb5263e3d471e",
       "locator": "README.md and Models/Microsoft Xbox One.blend",

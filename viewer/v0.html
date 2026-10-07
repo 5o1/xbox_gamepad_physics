@@ -1,0 +1,24 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; worker-src 'none'"><link rel="icon" href="data:,"><title>Xbox One S 外观匹配 estimated-v0 交互检查</title>
+<style>
+body{margin:0;background:#101820;color:#e4e9ed;font:14px system-ui;display:grid;grid-template-columns:1fr 370px;height:100vh}#scene{min-width:0}canvas{display:block;touch-action:none}aside{padding:18px;overflow:auto;background:#1a2631}h1{font-size:20px;line-height:1.35}button,select,input{margin:6px 0;padding:7px;max-width:100%}pre{white-space:pre-wrap;font:12px monospace}.warning{color:#ffcc75}.ok{color:#8fe1ad}#status{padding:8px 0}small{color:#b1bec8}label{display:block}img{width:100%;border-radius:5px}
+</style>
+<script type="importmap">{"imports":{"three":"/vendor/build/three.module.js","three/addons/":"/vendor/examples/jsm/"}}</script>
+<main id="scene"></main><aside>
+<h1>Xbox One S 外观匹配 estimated-v0</h1>
+	<p class="warning">这是可审计的首版运动预览，不是 1708 数字孪生。外观来自用户确认“看起来一致”的 BatonyRobson 模型；行程来自艺术家动画或明确标注的参考部件。质量、惯量、碰撞、摩擦、回中曲线和真实 HID 传递函数仍为空，不能用于接触训练或物理验收。当前 JavaScript 映射只是 forward-only 数值预览，不提供 Torch/JAX autograd；联合训练前必须另做经 gradcheck 验证的适配器。</p>
+<a href="/candidate-reference/pos_z.png" target="_blank"><img src="/candidate-reference/pos_z.png" alt="下载资产的正面审查渲染"></a>
+<label>输入模式 <select id="mode"><option value="mouse">鼠标 → 部件 → 21维状态</option><option value="device">真实手柄 → 21维状态 → 部件</option></select></label>
+<label>设备 <select id="device"></select></label>
+<label>操作通道 <select id="channel"></select></label>
+<label><input id="drag2d" type="checkbox" checked>摇杆二维拖动</label>
+<label><input id="hold" type="checkbox">释放后保持（诊断用）</label>
+<button id="reset">回到中立位</button><button id="camera">恢复视角</button>
+<button id="pair">按住 Pair（独立物理事件，不进入21维张量）</button>
+<p>点击可见部件后拖动。摇杆默认同时解两轴；方向键请先选择 DUp/DDown/DLeft/DRight。空白处拖动旋转视角。</p>
+<small>若摇杆或方向键输入超出当前圆形运动先验，画面会投影到边界，并同时显示原始状态与实际表示状态；不会悄悄把二者当成相同。</small>
+<div id="status">正在核验资产、配置和材质容器…</div><pre id="values"></pre>
+<details><summary>浏览器原始读数</summary><pre id="raw"></pre></details>
+<details><summary>所选部件、参数来源和未确认项</summary><pre id="selection"></pre></details>
+<details><summary>运行边界</summary><pre id="limits"></pre></details>
+<small>视觉模型：<a href="https://sketchfab.com/3d-models/xbox-one-s-controllergamepad-animated-a62cf7475b7d4ead9fbf1a86e5a2b6a4" target="_blank" rel="noopener">Xbox One S Controller/Gamepad (Animated)，BatonyRobson</a>，CC BY 4.0。</small>
+<script type="module" src="/v0_app.mjs"></script></aside></html>
