@@ -18,9 +18,12 @@ class EstimatedV0Test(unittest.TestCase):
 
     def test_profile_is_explicitly_not_physics(self):
         self.assertEqual(self.profile["status"], "estimated_kinematic_preview_not_physical_asset")
+        self.assertTrue(
+            self.profile["acceptance"]["target_appearance_identity_accepted"]
+        )
         self.assertFalse(self.profile["acceptance"]["physical_acceptance"])
         self.assertFalse(self.profile["acceptance"]["dynamics_ready"])
-        self.assertFalse(self.profile["acceptance"]["geometry_identity_verified"])
+        self.assertFalse(self.profile["acceptance"]["metric_geometry_verified"])
 
     def test_uniform_width_scale_keeps_other_dimension_residuals(self):
         fit = self.evidence["scale_fit"]

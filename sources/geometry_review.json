@@ -2,16 +2,16 @@
   "schema_version": 1,
   "candidate_id": "xbox_series_1914_casperh2o_visual",
   "status_authority": "../assets/asset_index.json",
-  "target": "Xbox One 1708",
+  "target": "Xbox One S",
   "candidate": "CasperH2O/3DControllerModels Microsoft Xbox One.blend, width-scaled derivative",
-  "decision": "rejected_as_1708_retained_as_1914_appearance_candidate",
+  "decision": "rejected_for_xbox_one_s_retained_as_1914_appearance_candidate",
   "inferred_visual_model": "Xbox Wireless Controller for Series X|S, Model 1914",
   "identity_status": "feature_based_inference_not_manufacturer_verified_CAD",
   "intact_source_front_render": "../results/legacy_casper_1914_visual_parts/identity_front.png",
   "intact_source_top_render": "../results/legacy_casper_1914_visual_parts/identity_top.png",
   "identity_reference": "https://www.ifixit.com/Device/Xbox_Series_X_Wireless_Controller",
   "identity_evidence": ["Original source has ShareButton and ShareButtonSymbol; rendered below View/Menu", "Circular dished D-pad in original front render", "Top render shows rounded rectangular connector consistent with USB-C; internal connector dimensions unverified"],
-  "continued_work": "Evaluate intact 44-part original as a 1914 candidate. Do not discard merely because user owns 1708. Await user's rendered appearance confirmation before adopting a mechanical target.",
+  "continued_work": "Retain the intact 44-part original as a 1914 legacy viewer fixture. Xbox One S and the BatonyRobson appearance asset are the selected target.",
   "render": "../results/legacy_casper_1914_width_scaled_1708_proxy_historical_ui_mislabeled_1708.png",
   "render_status": "historical_width_scaled_proxy_screenshot_with_erroneous_in_image_1708_label",
   "reference_image": null,
@@ -25,5 +25,5 @@
   "approved_for_target_rig_registration": false,
   "approved_for_contact_or_training": false,
   "replacement_candidate_id": "xbox_one_s_batonyrobson_a62cf747",
-  "candidate_policy": "Download and actually render each proposed asset front-on for user confirmation. Missing source file or render means lead only, not an accepted candidate. User approval of front appearance does not validate hidden geometry or dynamics."
+  "candidate_policy": "Xbox One S and the BatonyRobson asset are selected. Hidden geometry, dimensions and dynamics retain separate calibration status."
 }

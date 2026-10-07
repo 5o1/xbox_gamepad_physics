@@ -1,5 +1,7 @@
 {
-  "target": "Xbox One 1708",
+  "reference_model": "Xbox One Wireless Controller Model 1708",
+  "project_target": "Xbox One S",
+  "target_applicability": "unverified_cross_model_reference",
   "sources": [
     {"url":"https://www.ifixit.com/Guide/Xbox+One+Wireless+Controller+Model+1708+Trigger+Caps+Replacement/131721","author":"Lucero Cortes-Vitervo and contributors","locator":"Steps 6-8; step 7 photographs 2 and 3","scope":"Cap attachment and motor beneath cap; no calibrated dimensions"},
     {"url":"https://www.ifixit.com/Guide/How+To+Fix+Sticky+Triggers+Xbox+One+Wireless+Controller+Model+1708/144910","author":"Zach Smith and contributors","locator":"Step 3 and author's December 12, 2021 comment","scope":"Contact pad and opposing trigger surface; pad described by author as cushioning against frame; not a measured constitutive law"}
@@ -30,6 +32,6 @@
   },
   "validation": "Downloaded image hashes recorded and all three images visually inspected. No photogrammetry, dimensional fit, force measurement or dynamic contact validation performed.",
   "future_harness": "When geometry and parameters exist: sweep each trigger through its configured range, record stop contact separation/penetration and moving-assembly inertia; compare loading and release curves independently. Not yet implemented or passed.",
-  "adoption": "Qualitative 1708 structure requirements only. No numerical target parameter adopted; source screw-size text not used as a scale reference.",
+  "adoption": "Cross-model qualitative structure reference only. No Xbox One S mechanism fact or numerical target parameter is adopted; source screw-size text is excluded from scale calibration. Applicability requires a target teardown or direct mechanism comparison.",
   "reuse": "Third-party reference photographs retained on GPU, not redistributed as mesh textures."
 }

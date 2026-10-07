@@ -67,14 +67,14 @@ class EvidenceTests(unittest.TestCase):
         self.assertFalse(self.audit(catalog=changed_catalog)["schema_valid"])
 
         changed_registry = copy.deepcopy(self.registry)
-        changed_registry["target_hardware"]["revision"] = "1914"
+        changed_registry["target_hardware"]["model"] = "Xbox Series X|S"
         self.assertFalse(self.audit(registry=changed_registry)["schema_valid"])
 
-    def test_target_revision_cannot_be_silently_replaced(self):
-        self.assertEqual(self.spec["hardware_revision"]["value"], "1708")
-        self.assertEqual(self.registry["target_hardware"]["revision"], "1708")
+    def test_target_model_cannot_be_silently_replaced(self):
+        self.assertEqual(self.spec["target_model"]["value"], "Xbox One S")
+        self.assertEqual(self.registry["target_hardware"]["model"], "Xbox One S")
         changed = copy.deepcopy(self.spec)
-        changed["hardware_revision"]["value"] = "1914"
+        changed["target_model"]["value"] = "Xbox Series X|S"
         self.assertFalse(self.audit(changed)["schema_valid"])
 
     def test_standard_interface_has_exactly_21_owned_channels(self):
@@ -96,7 +96,11 @@ class EvidenceTests(unittest.TestCase):
         self.assertNotIn("share", self.spec["parts"])
 
     def test_visual_candidates_are_not_physics_approval(self):
-        self.assertIsNone(self.registry["approved_target_geometry_candidate_id"])
+        self.assertEqual(
+            self.registry["approved_target_appearance_candidate_id"],
+            self.registry["primary_appearance_candidate_id"],
+        )
+        self.assertIsNone(self.registry["approved_metric_geometry_variant_id"])
         self.assertIsNone(self.registry["physical_asset"]["collision_asset"])
         self.assertIsNone(self.registry["physical_asset"]["simulator_asset"])
         self.assertFalse(self.registry["physical_asset"]["contact_dynamics_validated"])

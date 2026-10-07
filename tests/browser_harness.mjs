@@ -25,10 +25,10 @@ function option(name,fallback){
   if(index===argv.length-1)throw Error(`${name} requires a value`);
   return argv.splice(index,2)[1];
 }
-const variantId=option('--variant-id',process.env.XBOX_VIEWER_VARIANT_ID??'legacy_casper_1914_width_scaled_1708_proxy');
+const variantId=option('--variant-id',process.env.XBOX_VIEWER_VARIANT_ID??'legacy_casper_1914_width_scaled_proxy');
 assert.deepEqual(argv,[],`Unknown arguments: ${argv.join(' ')}`);
 const expectedVariants={
-  legacy_casper_1914_width_scaled_1708_proxy:{
+  legacy_casper_1914_width_scaled_proxy:{
     source_candidate_id:'xbox_series_1914_casperh2o_visual',
     status:'width_matched_visual_proxy_not_1708_mechanical_asset',
     inventory_sha256:'c565dd92a5ca6f7a241258b693b9d5120af78cbf5717c89202a51e99d86b50df',
@@ -103,7 +103,11 @@ try{
   const registryResponse=await fetch(new URL('/registry/asset_index.json',viewerUrl),{signal:AbortSignal.timeout(20000)});
   assert.equal(registryResponse.status,200,'Canonical asset registry unavailable');
   const registry=await registryResponse.json();
-  assert.equal(registry.interactive_viewer.active_variant_id,variantId,'Viewer registry active_variant_id does not match requested variant');
+  const registeredVariants=new Set([
+    registry.interactive_viewer.active_variant_id,
+    ...(registry.interactive_viewer.allowed_variant_ids??[]),
+  ]);
+  assert.equal(registeredVariants.has(variantId),true,'Requested legacy fixture is absent from the viewer allowlist');
   const registryVariant=registry.derived_variants?.[variantId];
   assert.ok(registryVariant,`Variant absent from canonical asset registry: ${variantId}`);
   assert.equal(registryVariant.source_candidate_id,expectedVariant.source_candidate_id,'Variant source candidate does not match expected identity');

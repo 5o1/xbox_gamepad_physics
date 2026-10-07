@@ -19,7 +19,7 @@
     "stick_reference": "sources/stick_envelope.json",
     "stick_reference_sha256": "1c71f9576fc3b2ae3111e099acdd50953b1e04621ae5b94e4d7ce2350bc9f88e",
     "evidence_catalog": "sources/catalog.json",
-    "evidence_catalog_sha256": "fcc2c010f58ea26b94a5c39d04cf39e56d89f4ccfae1003098547e77dd1e4ebb"
+    "evidence_catalog_sha256": "56f0ebc4de4c0963f65e4e22d722de30f1ff16beb2340271233c6e4d5cb82f39"
   },
   "visual": {
     "mode": "gltf_container",
@@ -1040,7 +1040,7 @@
       "coordinate_space": "joint_coordinates",
       "model_status": "artist_motion_joint_space_approximation_not_physical_gate",
       "approximation_ref": null,
-      "loss": "Simultaneous cardinal inputs are projected to the artist-derived angular envelope; diagonal 1708 travel is unknown."
+      "loss": "Simultaneous cardinal inputs are projected to the artist-derived angular envelope; physical diagonal travel is unknown."
     }
   ],
   "physical_events": [
@@ -1071,12 +1071,13 @@
     "inverse_policy": "return_represented_state_after_constraint_projection"
   },
   "parameter_source": "sources/appearance_matched_estimated_v0.json",
-  "parameter_source_sha256": "2e498f8d65fa25fe797e20eddf88da103ef9bbee363c050e207e10526657a4fd",
+  "parameter_source_sha256": "ee0c6929327ae3cc503a42da09d26ccaf69305880821a50974c6b92a77442263",
   "acceptance": {
     "appearance_binding": true,
+    "target_appearance_identity_accepted": true,
     "interactive_kinematic_profile": true,
     "canonical_schema_v2_adapter": false,
-    "geometry_identity_verified": false,
+    "metric_geometry_verified": false,
     "real_controller_verified": false,
     "physical_acceptance": false,
     "dynamics_ready": false

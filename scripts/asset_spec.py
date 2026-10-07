@@ -71,7 +71,7 @@ CONTROL_EFFECTS = {
 }
 
 UNRESOLVED_PARAMETERS = {
-    "target_geometry": "No downloaded mesh has been verified as Model 1708 geometry.",
+    "metric_geometry_registration": "The selected Xbox One S mesh has no measured local-dimension registration.",
     "metric_scale": "Local dimensions have not been measured on the target controller.",
     "physical_topology": "No target rigid-body and joint graph has been established.",
     "mass_properties": "Mass, centre of mass and inertia have not been measured.",
@@ -128,7 +128,7 @@ def _unknown_motion_model(name):
         "physical_only": name == "pair",
         "evidence": [],
         "reason": (
-            f"No verified Model 1708 mechanism topology for {name}; "
+            f"No measured Xbox One S mechanism topology for {name}; "
             "visual animation is not treated as physical evidence."
         ),
     }
@@ -146,13 +146,13 @@ def make_spec(catalog, asset_registry=None):
             "sha256": _document_sha256(registry),
             "registry_role": "canonical_status_authority",
         },
-        "hardware_revision": {
-            "value": target.get("revision"),
+        "target_model": {
+            "value": target.get("model"),
             "unit": None,
-            "status": "user_reported_unmeasured",
-            "evidence": ["user_target_1708"],
+            "status": "owner_selected_unmeasured",
+            "evidence": ["user_target_xbox_one_s"],
             "applicability": (
-                "Target identity only; no physical measurement is currently available."
+                "Target product and appearance identity; no physical measurement is currently available."
             ),
         },
         "status": "incomplete_not_for_dynamics_or_RL",
@@ -167,7 +167,7 @@ def make_spec(catalog, asset_registry=None):
         "physical_topology": {
             "status": "unknown",
             "bodies": [],
-            "reason": "No verified Model 1708 rigid-body graph is available.",
+            "reason": "No measured Xbox One S rigid-body graph is available.",
         },
         "parts": {
             name: {"motion_model": _unknown_motion_model(name)}
@@ -224,11 +224,14 @@ def _audit_registry_state(registry, errors):
     if registry.get("registry_role") != "canonical_status_authority":
         errors.append("asset registry is not the canonical status authority")
     target = registry.get("target_hardware")
-    if not isinstance(target, dict) or target.get("revision") != "1708":
-        errors.append("asset registry target must remain the user-reported Model 1708")
-    if registry.get("approved_target_geometry_candidate_id") is not None:
+    if not isinstance(target, dict) or target.get("model") != "Xbox One S":
+        errors.append("asset registry target must remain Xbox One S")
+    primary = registry.get("primary_appearance_candidate_id")
+    if registry.get("approved_target_appearance_candidate_id") != primary:
+        errors.append("the primary Xbox One S appearance must remain owner-approved")
+    if registry.get("approved_metric_geometry_variant_id") is not None:
         errors.append(
-            "target geometry cannot be approved before identity and dimensions are verified"
+            "metric geometry cannot be approved before dimensions are verified"
         )
 
     for collection_name in ("candidates", "derived_variants"):
@@ -240,10 +243,10 @@ def _audit_registry_state(registry, errors):
             if not isinstance(record, dict):
                 errors.append(f"asset registry record {candidate_id} must be an object")
                 continue
-            approval = record.get("target_visual_geometry_approval")
+            approval = record.get("metric_geometry_approval")
             if isinstance(approval, dict) and approval.get("approved") is not False:
                 errors.append(
-                    f"unverified candidate {candidate_id} cannot be target-approved"
+                    f"unmeasured candidate {candidate_id} cannot be metric-geometry-approved"
                 )
             if record.get("approved_for_contact_or_training") is True:
                 errors.append(
@@ -289,11 +292,11 @@ def audit(spec, catalog, artifact_root=None, asset_registry=None):
         if binding.get("registry_role") != "canonical_status_authority":
             errors.append("asset registry binding role changed")
 
-    hardware = spec.get("hardware_revision")
-    if not isinstance(hardware, dict) or hardware.get("value") != "1708":
-        errors.append("hardware revision must remain the user-reported Model 1708")
-    elif hardware.get("status") != "user_reported_unmeasured":
-        errors.append("hardware revision must not be presented as measured")
+    target_model = spec.get("target_model")
+    if not isinstance(target_model, dict) or target_model.get("value") != "Xbox One S":
+        errors.append("target model must remain Xbox One S")
+    elif target_model.get("status") != "owner_selected_unmeasured":
+        errors.append("target model must retain its owner-selected evidence status")
 
     if spec.get("status") != "incomplete_not_for_dynamics_or_RL":
         errors.append("spec must remain blocked from dynamics and RL")

@@ -1,12 +1,12 @@
 {
   "schema_version": 1,
-  "checked_on": "2026-10-06",
+  "checked_on": "2026-10-08",
   "sources": {
-    "user_target_1708": {
+    "user_target_xbox_one_s": {
       "kind": "user_statement",
-      "locator": "Conversation confirmation on 2026-10-06",
-      "statement": "Owner identified the available target hardware as Xbox One model 1708.",
-      "scope": "Target hardware identification by owner; not a measurement of dimensions or physical parameters"
+      "locator": "Conversation confirmations on 2026-10-06 and 2026-10-08",
+      "statement": "Owner selected Xbox One S as the target hardware and accepted the BatonyRobson Xbox One S asset as the target appearance.",
+      "scope": "Target product and appearance identity selected by the owner; dimensions and physical parameters remain unmeasured"
     },
     "ifixit_1708_buttons": {
       "url": "https://www.ifixit.com/Guide/Xbox+One+Wireless+Controller+Model+1708+Button+Replacement/98312",
@@ -42,8 +42,8 @@
       "author": "BatonyRobson",
       "license": "CC BY 4.0",
       "locator": "Downloaded 2K GLB SHA-256 5c5671c83a9cf15db4b8399e7010aa7d5cde915687ceb348b583eb00b0ed24e2; static 16-part export manifest in results/xbox_one_s_batonyrobson_UNVERIFIED/static_visual_parts_inventory_UNCALIBRATED.json",
-      "scope": "Appearance-acknowledged Xbox One S visual candidate with sixteen named movable parts and embedded 2K materials.",
-      "limitation": "The user acknowledged visual similarity only. Controller revision, metric dimensions, hidden geometry, pivots and mechanics are not verified; this source cannot establish a 1708 digital twin."
+      "scope": "User-approved target appearance for the Xbox One S Controller, with sixteen named movable parts and embedded 2K materials.",
+      "limitation": "Selection as the target appearance supplies no metric dimensions, hidden geometry, pivots or mechanics; those require separate measurement or cited evidence."
     },
     "batony_artist_motion_prior": {
       "url": "https://sketchfab.com/3d-models/xbox-one-s-controllergamepad-animated-a62cf7475b7d4ead9fbf1a86e5a2b6a4",

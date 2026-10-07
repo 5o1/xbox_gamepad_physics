@@ -4,7 +4,7 @@
   "gpu_directory": "/path/to/gpu-data/<gpu-project>/xbox-physics-v1/reference_drawings/alpakka_0febaa8",
   "license": "CC-BY-NC-SA-4.0 as declared in downloaded license.md; reference-only, not merged into Xbox asset license",
   "download": "Direct NETWORK_INTERFACE, proxy disabled, api.github.com resolved through AliDNS HTTPS to 20.205.243.168; fixed-ref contents API with raw response",
-  "target_applicability": "Different controller. No constants below adopted as Xbox 1708 parameters.",
+  "target_applicability": "Different controller. No constants below are adopted as Xbox One S parameters.",
   "unit_policy": "Values are recorded in source CAD numeric units; source files do not explicitly declare SI units. No automatic conversion to target metres.",
   "files": [
     {"file":"license.md","path":"license.md","sha256":"333367afe2cd99ae6bc37625227ff2bb574d7230c4530d612227c1bc4bc38bc0","constants":{}},

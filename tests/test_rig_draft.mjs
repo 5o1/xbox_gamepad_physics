@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {loadRig} from '../viewer/rig.mjs';
 import {RIGID_VISUAL_GROUPS} from '../viewer/assembly_constraints.mjs';
-const draft=JSON.parse(readFileSync(new URL('../viewer/1708_draft.json',import.meta.url)));
+const draft=JSON.parse(readFileSync(new URL('../viewer/xbox_one_s_draft.json',import.meta.url)));
 const meshes=new Set(JSON.parse(readFileSync(new URL('../results/legacy_casper_1914_width_scaled_1708_proxy/inventory.json',import.meta.url))).objects.map(o=>o.name));
 test('actual 1708 draft retains 21 null entries and activates no motion',()=>{
   const before=JSON.stringify(draft),loaded=loadRig(draft,meshes,RIGID_VISUAL_GROUPS);

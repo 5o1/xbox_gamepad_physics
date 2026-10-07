@@ -1,9 +1,10 @@
 {
   "schema_version": 1,
-  "target": "Xbox One 1708",
+  "target": "Xbox One S",
   "status_authority": "../assets/asset_index.json",
   "primary_appearance_candidate_id": "xbox_one_s_batonyrobson_a62cf747",
-  "accepted_geometry_candidate_id": null,
+  "accepted_appearance_candidate_id": "xbox_one_s_batonyrobson_a62cf747",
+  "accepted_metric_geometry_variant_id": null,
   "candidates": [
     {
       "candidate_id": "xbox_one_s_batonyrobson_a62cf747",
@@ -18,11 +19,12 @@
       "fbx_zip_sha256": "b70a3cc892fb21e1e90f10a11043462a1758064ca6063739ab57662f530be2db",
       "glb_2k_sha256": "5c5671c83a9cf15db4b8399e7010aa7d5cde915687ceb348b583eb00b0ed24e2",
       "mesh_objects": 16,
-      "observed_geometry": "Separate body, ABXY, D-pad, sticks, bumpers, triggers, View/Menu, Guide and connect button. Front render has cross D-pad and no Share. The user has acknowledged the appearance as matching their controller; dimensional, rear/top geometry, revision and mechanical review remain pending.",
-      "user_confirmation": "2026-10-06: user says Xbox One S render looks the same as their controller, possibly the same model. Appearance acknowledgement only, not dimensional or mechanical verification.",
+      "observed_geometry": "Separate body, ABXY, D-pad, sticks, bumpers, triggers, View/Menu, Guide and connect button. Front render has cross D-pad and no Share. The user selected Xbox One S as the target controller and accepted this asset as the target appearance. Metric geometry and mechanics remain unmeasured.",
+      "user_confirmation": "2026-10-08: user explicitly confirmed Xbox One S is the target controller and directed the project to stop treating the appearance as pending.",
+      "appearance_identity_accepted": true,
       "animation_caveat": "Four imported FBX action datablocks; artist animations and bones are not measured physical pivots or travel limits.",
       "materials": "2K packed GLB textures successfully imported and rendered; original FBX ZIP also contains six texture PNGs",
-      "revision_verified": false,
+      "metric_geometry_verified": false,
       "geometry_separability": "Already separate named mesh objects; no manual button cutting required"
     },
     {
@@ -44,5 +46,5 @@
       "revision_verified": false
     }
   ],
-  "policy": "No candidate accepted without actual downloaded-file front render and user confirmation; merged object is a processing question, not an automatic rejection."
+  "policy": "Xbox One S and the BatonyRobson asset are selected. Any replacement requires an actual downloaded-file render and explicit user approval."
 }

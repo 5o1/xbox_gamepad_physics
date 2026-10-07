@@ -39,7 +39,8 @@ export function sourceToGltfPoint(point) { return sourceToGltfVector(point); }
 export function validateProfile(profile,evidence,nodeNames=null) {
   if(profile?.schema_version!==2||profile?.schema_name!=='appearance_kinematics_runtime')throw Error('Expected appearance kinematics schema 2');
   if(profile.status!=='estimated_kinematic_preview_not_physical_asset')throw Error('Profile status may not imply validated physics');
-  for(const key of ['physical_acceptance','dynamics_ready','geometry_identity_verified'])if(profile.acceptance?.[key]!==false)throw Error(`${key} must remain false`);
+  if(profile.acceptance?.target_appearance_identity_accepted!==true)throw Error('Target Xbox One S appearance must remain accepted');
+  for(const key of ['physical_acceptance','dynamics_ready','metric_geometry_verified'])if(profile.acceptance?.[key]!==false)throw Error(`${key} must remain false`);
   if(evidence?.schema_version!==1||evidence.profile_id!==profile.profile_id||evidence.status!=='appearance_matched_estimated_kinematics_not_physics')throw Error('Evidence identity/schema/status mismatch');
   if(JSON.stringify(evidence.source_bindings)!==JSON.stringify(profile.source_bindings)||JSON.stringify(evidence.acceptance)!==JSON.stringify(profile.acceptance))throw Error('Profile/evidence bindings or acceptance differ');
   if(!Array.isArray(evidence.evidence_index?.available_ids)||!evidence.evidence_index.available_ids.length||new Set(evidence.evidence_index.available_ids).size!==evidence.evidence_index.available_ids.length)throw Error('Evidence source index is invalid');

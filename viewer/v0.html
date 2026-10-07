@@ -5,7 +5,7 @@ body{margin:0;background:#101820;color:#e4e9ed;font:14px system-ui;display:grid;
 <script type="importmap">{"imports":{"three":"/vendor/build/three.module.js","three/addons/":"/vendor/examples/jsm/"}}</script>
 <main id="scene"></main><aside>
 <h1>Xbox One S 外观匹配 estimated-v0</h1>
-	<p class="warning">这是可审计的首版运动预览，不是 1708 数字孪生。外观来自用户确认“看起来一致”的 BatonyRobson 模型；行程来自艺术家动画或明确标注的参考部件。质量、惯量、碰撞、摩擦、回中曲线和真实 HID 传递函数仍为空，不能用于接触训练或物理验收。当前 JavaScript 映射只是 forward-only 数值预览，不提供 Torch/JAX autograd；联合训练前必须另做经 gradcheck 验证的适配器。</p>
+	<p class="warning">Xbox One S 目标外观已选定，当前页面用于可审计的运动预览。外观使用持有者批准的 BatonyRobson 模型；行程来自艺术家动画或明确标注的参考部件。质量、惯量、碰撞、摩擦、回中曲线和真实 HID 传递函数仍为空，尚未达到接触训练或物理验收条件。当前 JavaScript 映射是 forward-only 数值预览；联合训练需要经 gradcheck 验证的 Torch/JAX 适配器。</p>
 <a href="/candidate-reference/pos_z.png" target="_blank"><img src="/candidate-reference/pos_z.png" alt="下载资产的正面审查渲染"></a>
 <label>输入模式 <select id="mode"><option value="mouse">鼠标 → 部件 → 21维状态</option><option value="device">真实手柄 → 21维状态 → 部件</option></select></label>
 <label>设备 <select id="device"></select></label>

@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "target": "Xbox One 1708",
-  "status": "unresolved_no_motion",
+  "target": "Xbox One S",
+  "status": "unresolved_physical_motion",
   "source": "specs/xbox_v1.json; specs/interactive_acceptance.json",
   "joints": [],
   "pending": [

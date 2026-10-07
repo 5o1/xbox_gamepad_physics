@@ -2,7 +2,7 @@
   "requirement": "User phase-one instruction: unsupported mechanical parameters remain null and marked, while other implementation continues",
   "reference": "https://json-schema.org/understanding-json-schema/reference/null",
   "reference_scope": "null is distinct from an absent property or zero; draft layout itself is a project convention, not a robotics standard",
-  "artifact": "viewer/1708_draft.json",
+  "artifact": "viewer/xbox_one_s_draft.json",
   "generator": "scripts/make_rig_draft.mjs",
   "rules": [
     "Active joints retain strict schema 1 validation and assembly constraints.",

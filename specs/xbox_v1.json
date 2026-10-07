@@ -1,19 +1,19 @@
 {
   "schema_version": 2,
-  "catalog_sha256": "e3ab5582e13e29184d6c91f40362d6f54fb9c463475f3ab93d61cf4e352bee03",
+  "catalog_sha256": "9c7f2892f2e477d7e81f90fc38e0a010fbacabfbcef0a5409d6649f8c45917e6",
   "asset_registry_binding": {
     "path": "assets/asset_index.json",
-    "sha256": "48c66c3f5a6f36a755247c1d908e8e921a151a138f7b55e079892a90945fa719",
+    "sha256": "62266d3c6381a64492db20009c1f46c3035675ec75a6fce4a8e8997b0156c6bc",
     "registry_role": "canonical_status_authority"
   },
-  "hardware_revision": {
-    "value": "1708",
+  "target_model": {
+    "value": "Xbox One S",
     "unit": null,
-    "status": "user_reported_unmeasured",
+    "status": "owner_selected_unmeasured",
     "evidence": [
-      "user_target_1708"
+      "user_target_xbox_one_s"
     ],
-    "applicability": "Target identity only; no physical measurement is currently available."
+    "applicability": "Target product and appearance identity; no physical measurement is currently available."
   },
   "status": "incomplete_not_for_dynamics_or_RL",
   "input_schema": {
@@ -253,7 +253,7 @@
   "physical_topology": {
     "status": "unknown",
     "bodies": [],
-    "reason": "No verified Model 1708 rigid-body graph is available."
+    "reason": "No measured Xbox One S rigid-body graph is available."
   },
   "parts": {
     "shell": {
@@ -263,7 +263,7 @@
         "required_control_effects": [],
         "physical_only": false,
         "evidence": [],
-        "reason": "No verified Model 1708 mechanism topology for shell; visual animation is not treated as physical evidence."
+        "reason": "No measured Xbox One S mechanism topology for shell; visual animation is not treated as physical evidence."
       }
     },
     "a": {
@@ -280,7 +280,7 @@
         ],
         "physical_only": false,
         "evidence": [],
-        "reason": "No verified Model 1708 mechanism topology for a; visual animation is not treated as physical evidence."
+        "reason": "No measured Xbox One S mechanism topology for a; visual animation is not treated as physical evidence."
       }
     },
     "b": {
@@ -297,7 +297,7 @@
         ],
         "physical_only": false,
         "evidence": [],
-        "reason": "No verified Model 1708 mechanism topology for b; visual animation is not treated as physical evidence."
+        "reason": "No measured Xbox One S mechanism topology for b; visual animation is not treated as physical evidence."
       }
     },
     "x": {
@@ -314,7 +314,7 @@
         ],
         "physical_only": false,
         "evidence": [],
-        "reason": "No verified Model 1708 mechanism topology for x; visual animation is not treated as physical evidence."
+        "reason": "No measured Xbox One S mechanism topology for x; visual animation is not treated as physical evidence."
       }
     },
     "y": {
@@ -331,7 +331,7 @@
         ],
         "physical_only": false,
         "evidence": [],
-        "reason": "No verified Model 1708 mechanism topology for y; visual animation is not treated as physical evidence."
+        "reason": "No measured Xbox One S mechanism topology for y; visual animation is not treated as physical evidence."
       }
     },
     "left_stick": {
@@ -360,7 +360,7 @@
         ],
         "physical_only": false,
         "evidence": [],
-        "reason": "No verified Model 1708 mechanism topology for left_stick; visual animation is not treated as physical evidence."
+        "reason": "No measured Xbox One S mechanism topology for left_stick; visual animation is not treated as physical evidence."
       }
     },
     "right_stick": {
@@ -389,7 +389,7 @@
         ],
         "physical_only": false,
         "evidence": [],
-        "reason": "No verified Model 1708 mechanism topology for right_stick; visual animation is not treated as physical evidence."
+        "reason": "No measured Xbox One S mechanism topology for right_stick; visual animation is not treated as physical evidence."
       }
     },
     "dpad": {
@@ -424,7 +424,7 @@
         ],
         "physical_only": false,
         "evidence": [],
-        "reason": "No verified Model 1708 mechanism topology for dpad; visual animation is not treated as physical evidence."
+        "reason": "No measured Xbox One S mechanism topology for dpad; visual animation is not treated as physical evidence."
       }
     },
     "left_shoulder": {
@@ -441,7 +441,7 @@
         ],
         "physical_only": false,
         "evidence": [],
-        "reason": "No verified Model 1708 mechanism topology for left_shoulder; visual animation is not treated as physical evidence."
+        "reason": "No measured Xbox One S mechanism topology for left_shoulder; visual animation is not treated as physical evidence."
       }
     },
     "right_shoulder": {
@@ -458,7 +458,7 @@
         ],
         "physical_only": false,
         "evidence": [],
-        "reason": "No verified Model 1708 mechanism topology for right_shoulder; visual animation is not treated as physical evidence."
+        "reason": "No measured Xbox One S mechanism topology for right_shoulder; visual animation is not treated as physical evidence."
       }
     },
     "left_trigger": {
@@ -475,7 +475,7 @@
         ],
         "physical_only": false,
         "evidence": [],
-        "reason": "No verified Model 1708 mechanism topology for left_trigger; visual animation is not treated as physical evidence."
+        "reason": "No measured Xbox One S mechanism topology for left_trigger; visual animation is not treated as physical evidence."
       }
     },
     "right_trigger": {
@@ -492,7 +492,7 @@
         ],
         "physical_only": false,
         "evidence": [],
-        "reason": "No verified Model 1708 mechanism topology for right_trigger; visual animation is not treated as physical evidence."
+        "reason": "No measured Xbox One S mechanism topology for right_trigger; visual animation is not treated as physical evidence."
       }
     },
     "view": {
@@ -509,7 +509,7 @@
         ],
         "physical_only": false,
         "evidence": [],
-        "reason": "No verified Model 1708 mechanism topology for view; visual animation is not treated as physical evidence."
+        "reason": "No measured Xbox One S mechanism topology for view; visual animation is not treated as physical evidence."
       }
     },
     "menu": {
@@ -526,7 +526,7 @@
         ],
         "physical_only": false,
         "evidence": [],
-        "reason": "No verified Model 1708 mechanism topology for menu; visual animation is not treated as physical evidence."
+        "reason": "No measured Xbox One S mechanism topology for menu; visual animation is not treated as physical evidence."
       }
     },
     "guide": {
@@ -543,7 +543,7 @@
         ],
         "physical_only": false,
         "evidence": [],
-        "reason": "No verified Model 1708 mechanism topology for guide; visual animation is not treated as physical evidence."
+        "reason": "No measured Xbox One S mechanism topology for guide; visual animation is not treated as physical evidence."
       }
     },
     "pair": {
@@ -553,15 +553,15 @@
         "required_control_effects": [],
         "physical_only": true,
         "evidence": [],
-        "reason": "No verified Model 1708 mechanism topology for pair; visual animation is not treated as physical evidence."
+        "reason": "No measured Xbox One S mechanism topology for pair; visual animation is not treated as physical evidence."
       }
     }
   },
   "unresolved_parameters": [
     {
-      "id": "target_geometry",
+      "id": "metric_geometry_registration",
       "value": null,
-      "reason": "No downloaded mesh has been verified as Model 1708 geometry."
+      "reason": "The selected Xbox One S mesh has no measured local-dimension registration."
     },
     {
       "id": "metric_scale",
@@ -603,7 +603,7 @@
     "dynamics_ready": false,
     "contact_validated": false,
     "blockers": [
-      "target_geometry",
+      "metric_geometry_registration",
       "metric_scale",
       "physical_topology",
       "mass_properties",

@@ -21,10 +21,14 @@ class AssetRegistryTest(unittest.TestCase):
 
     def test_registry_states_current_acceptance_boundary(self):
         self.assertEqual(self.index["registry_role"], "canonical_status_authority")
-        self.assertEqual(self.index["target_hardware"]["revision"], "1708")
+        self.assertEqual(self.index["target_hardware"]["model"], "Xbox One S")
         primary = self.index["primary_appearance_candidate_id"]
         self.assertIn(primary, self.index["candidates"])
-        self.assertIsNone(self.index["approved_target_geometry_candidate_id"])
+        self.assertEqual(self.index["approved_target_appearance_candidate_id"], primary)
+        self.assertTrue(
+            self.index["candidates"][primary]["target_appearance_approval"]["approved"]
+        )
+        self.assertIsNone(self.index["approved_metric_geometry_variant_id"])
         physical = self.index["physical_asset"]
         self.assertIsNone(physical["collision_asset"])
         self.assertIsNone(physical["simulator_asset"])
@@ -53,21 +57,26 @@ class AssetRegistryTest(unittest.TestCase):
                         profile_binding["sha256"],
                     )
 
-    def test_legacy_1914_assets_cannot_become_1708_physics(self):
+    def test_legacy_1914_assets_cannot_become_xbox_one_s_physics(self):
         active_id = self.index["interactive_viewer"]["active_variant_id"]
         active = self.index["derived_variants"][active_id]
-        self.assertNotEqual(
+        self.assertEqual(
             active["source_candidate_id"],
             self.index["primary_appearance_candidate_id"],
         )
-        self.assertFalse(active["approved_for_contact_or_training"])
-        self.assertFalse(active["collision_approved"])
+        self.assertTrue(active["target_appearance_approval"]["approved"])
+
+        legacy = self.index["derived_variants"][
+            "legacy_casper_1914_width_scaled_proxy"
+        ]
+        self.assertFalse(legacy["approved_for_contact_or_training"])
+        self.assertFalse(legacy["collision_approved"])
 
         collision = self.index["unapproved_collision_candidates"]
         source = self.index["candidates"][collision["source_candidate_id"]]
         self.assertIn("1914", source["display_identity"])
         self.assertEqual(
-            collision["target_revision"], self.index["target_hardware"]["revision"]
+            collision["target_model"], self.index["target_hardware"]["model"]
         )
         self.assertFalse(collision["shape_revision_match"])
         self.assertFalse(collision["approved_for_simulation"])

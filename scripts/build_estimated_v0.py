@@ -1,7 +1,7 @@
 """Build the appearance-matched estimated-v0 viewer profile from pinned evidence.
 
-This builder does not create a validated Xbox 1708 physical model.  It derives
-an inspectable kinematic preview from the acknowledged BatonyRobson appearance,
+This builder does not create a calibrated Xbox One S physical model. It derives
+an inspectable kinematic preview from the owner-approved BatonyRobson appearance,
 the source artist animation and explicitly labelled reference-component data.
 Unknown dynamics remain null.
 """
@@ -35,7 +35,7 @@ EXPECTED_MOTION_SHA256 = "fda7e876a19823fd679d2bd1e9051e1ab8642f23873f62b0707a46
 EXPECTED_FULL_MOTION_AUDIT_SHA256 = "4c97d513d66f008e5cbc2b375d3c98692cfb495ecf32178c42d399304b31e6df"
 EXPECTED_DIMENSIONS_SHA256 = "25f272d5cbe866d36dc83a2a30bc70a4884cccc4d1d1b3d5dad206c6aac5914c"
 EXPECTED_STICK_REFERENCE_SHA256 = "1c71f9576fc3b2ae3111e099acdd50953b1e04621ae5b94e4d7ce2350bc9f88e"
-EXPECTED_CATALOG_SHA256 = "fcc2c010f58ea26b94a5c39d04cf39e56d89f4ccfae1003098547e77dd1e4ebb"
+EXPECTED_CATALOG_SHA256 = "56f0ebc4de4c0963f65e4e22d722de30f1ff16beb2340271233c6e4d5cb82f39"
 
 PART_TO_CONTROL = {
     "Controller Body": "shell",
@@ -185,7 +185,7 @@ def build():
             status="derived",
             evidence=["microsoft_1708_dimensions", "batony_xbox_one_s_visual"],
             derivation={
-                "method": "Uniformly fit the downloaded candidate's complete source-world X extent to the Microsoft 1708 overall width; do not stretch axes independently.",
+                "method": "Uniformly fit the downloaded candidate's complete source-world X extent to the Microsoft-published whole-controller width; do not stretch axes independently.",
                 "inputs": {
                     "native_bounds": [bounds_min, bounds_max],
                     "native_extents": extents,
@@ -589,7 +589,7 @@ def build():
         "coordinate_space": "joint_coordinates",
         "model_status": "artist_motion_joint_space_approximation_not_physical_gate",
         "approximation_ref": None,
-        "loss": "Simultaneous cardinal inputs are projected to the artist-derived angular envelope; diagonal 1708 travel is unknown.",
+        "loss": "Simultaneous cardinal inputs are projected to the artist-derived angular envelope; physical diagonal travel is unknown.",
     })
 
     driven = []
@@ -686,9 +686,10 @@ def build():
         },
         "acceptance": {
             "appearance_binding": True,
+            "target_appearance_identity_accepted": True,
             "interactive_kinematic_profile": True,
             "canonical_schema_v2_adapter": False,
-            "geometry_identity_verified": False,
+            "metric_geometry_verified": False,
             "real_controller_verified": False,
             "physical_acceptance": False,
             "dynamics_ready": False,

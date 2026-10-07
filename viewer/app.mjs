@@ -108,17 +108,18 @@ function installRig(data){
   status(`已载入 ${joints.length} 个自由度，${pending.length} 个待确认通道；未确认项不产生动作。`);
 }
 el('rig').onchange=async()=>{try{installRig(JSON.parse(await el('rig').files[0].text()));}catch(e){status(`配置拒绝，保留上次配置：${e.message}`);}};
-el('draft').onclick=async()=>{try{const response=await fetch('/1708_draft.json');if(!response.ok)throw Error(`HTTP ${response.status}`);installRig(await response.json());}catch(e){status(`草稿未载入：${e.message}`);}};
+el('draft').onclick=async()=>{try{const response=await fetch('/xbox_one_s_draft.json');if(!response.ok)throw Error(`HTTP ${response.status}`);installRig(await response.json());}catch(e){status(`草稿未载入：${e.message}`);}};
 async function load(){
   const [registryResponse,inventoryResponse]=await Promise.all([fetch('/registry/asset_index.json'),fetch('/assets/inventory.json')]);
   if(!registryResponse.ok)throw Error(`资产注册表 HTTP ${registryResponse.status}`);
   if(!inventoryResponse.ok)throw Error(`资产清单 HTTP ${inventoryResponse.status}`);
-  const registry=await registryResponse.json();activeVariantId=registry.interactive_viewer?.active_variant_id;
-  const variant=registry.derived_variants?.[activeVariantId];
-  if(!activeVariantId||!variant)throw Error('资产注册表没有有效的 viewer variant');
+  const registry=await registryResponse.json();
   const inventoryBytes=await inventoryResponse.arrayBuffer();
   const inventoryDigest=[...new Uint8Array(await crypto.subtle.digest('SHA-256',inventoryBytes))].map(x=>x.toString(16).padStart(2,'0')).join('');
-  if(inventoryDigest!==variant.inventory_sha256)throw Error(`资产清单与 ${activeVariantId} 注册哈希不匹配`);
+  const allowed=new Set([registry.interactive_viewer?.active_variant_id,...(registry.interactive_viewer?.allowed_variant_ids??[])]);
+  const matches=Object.entries(registry.derived_variants??{}).filter(([id,variant])=>allowed.has(id)&&variant.inventory_sha256===inventoryDigest);
+  if(matches.length!==1)throw Error(`资产清单必须唯一匹配一个允许的 viewer variant；当前匹配 ${matches.length} 个`);
+  [activeVariantId]=matches[0];const variant=matches[0][1];
   const inventory=JSON.parse(new TextDecoder().decode(inventoryBytes)),loader=new OBJLoader();
   for(const item of inventory.objects){
     const raw=await (await fetch('/assets/'+encodeURIComponent(item.file))).arrayBuffer();

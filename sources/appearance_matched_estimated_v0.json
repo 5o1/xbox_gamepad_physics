@@ -17,11 +17,11 @@
     "stick_reference": "sources/stick_envelope.json",
     "stick_reference_sha256": "1c71f9576fc3b2ae3111e099acdd50953b1e04621ae5b94e4d7ce2350bc9f88e",
     "evidence_catalog": "sources/catalog.json",
-    "evidence_catalog_sha256": "fcc2c010f58ea26b94a5c39d04cf39e56d89f4ccfae1003098547e77dd1e4ebb"
+    "evidence_catalog_sha256": "56f0ebc4de4c0963f65e4e22d722de30f1ff16beb2340271233c6e4d5cb82f39"
   },
   "evidence_index": {
     "catalog": "sources/catalog.json",
-    "catalog_sha256": "fcc2c010f58ea26b94a5c39d04cf39e56d89f4ccfae1003098547e77dd1e4ebb",
+    "catalog_sha256": "56f0ebc4de4c0963f65e4e22d722de30f1ff16beb2340271233c6e4d5cb82f39",
     "available_ids": [
       "alpakka_specs",
       "alps_front",
@@ -38,7 +38,7 @@
       "physx_shape_offsets",
       "sapien_collision_groups",
       "urdf_joint",
-      "user_target_1708",
+      "user_target_xbox_one_s",
       "w3c_gamepad_standard_mapping",
       "xbox_scan",
       "xbox_visual"
@@ -149,7 +149,7 @@
         "batony_xbox_one_s_visual"
       ],
       "derivation": {
-        "method": "Uniformly fit the downloaded candidate's complete source-world X extent to the Microsoft 1708 overall width; do not stretch axes independently.",
+        "method": "Uniformly fit the downloaded candidate's complete source-world X extent to the Microsoft-published whole-controller width; do not stretch axes independently.",
         "inputs": {
           "native_bounds": [
             [
@@ -2029,9 +2029,10 @@
   },
   "acceptance": {
     "appearance_binding": true,
+    "target_appearance_identity_accepted": true,
     "interactive_kinematic_profile": true,
     "canonical_schema_v2_adapter": false,
-    "geometry_identity_verified": false,
+    "metric_geometry_verified": false,
     "real_controller_verified": false,
     "physical_acceptance": false,
     "dynamics_ready": false
