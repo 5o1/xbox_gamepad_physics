@@ -1,0 +1,160 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/5o1/xbox_gamepad_physics/schemas/backend_manifest.schema.json",
+  "title": "Xbox One S simulator backend resource manifest",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "asset_id",
+    "backend",
+    "profile",
+    "available",
+    "dynamics_ready",
+    "entrypoint",
+    "required_files",
+    "reason"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "asset_id": {
+      "const": "xbox_one_s"
+    },
+    "backend": {
+      "enum": ["robotwin", "mujoco"]
+    },
+    "profile": {
+      "type": "string",
+      "minLength": 1
+    },
+    "available": {
+      "type": "boolean"
+    },
+    "dynamics_ready": {
+      "type": "boolean"
+    },
+    "entrypoint": {
+      "type": ["string", "null"]
+    },
+    "required_files": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
+    },
+    "reason": {
+      "type": ["string", "null"]
+    },
+    "joint_dynamics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "stiffness",
+          "damping",
+          "force_limit",
+          "friction",
+          "target"
+        ],
+        "properties": {
+          "name": {"type": "string", "minLength": 1},
+          "stiffness": {"type": "number", "minimum": 0},
+          "damping": {"type": "number", "minimum": 0},
+          "force_limit": {"type": "number", "exclusiveMinimum": 0},
+          "friction": {"type": "number", "minimum": 0},
+          "target": {"type": "number"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "scenes": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "bindings": {
+      "type": "object",
+      "required": ["joints", "sensors"],
+      "properties": {
+        "joints": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "sensors": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {"available": {"const": true}},
+        "required": ["available"]
+      },
+      "then": {
+        "properties": {
+          "entrypoint": {"type": "string", "minLength": 1},
+          "required_files": {"minItems": 1}
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {"dynamics_ready": {"const": true}},
+        "required": ["dynamics_ready"]
+      },
+      "then": {
+        "properties": {"available": {"const": true}}
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "backend": {"const": "robotwin"},
+          "dynamics_ready": {"const": true}
+        },
+        "required": ["backend", "dynamics_ready"]
+      },
+      "then": {
+        "required": ["joint_dynamics"],
+        "properties": {"joint_dynamics": {"minItems": 1}}
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "backend": {"const": "mujoco"},
+          "dynamics_ready": {"const": true}
+        },
+        "required": ["backend", "dynamics_ready"]
+      },
+      "then": {
+        "required": ["scenes", "bindings"],
+        "properties": {
+          "scenes": {"minProperties": 1},
+          "bindings": {
+            "properties": {
+              "joints": {"minProperties": 1}
+            }
+          }
+        }
+      }
+    }
+  ],
+  "additionalProperties": true
+}

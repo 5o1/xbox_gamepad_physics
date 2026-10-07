@@ -9,21 +9,22 @@
 
 | 项目 | 状态 |
 |---|---|
-| 目标实物 | Xbox One Wireless Controller 1708；来自持有者陈述，尚未实测 |
-| 主外观候选 | BatonyRobson 的 Xbox One S 模型；正面外观已获用户认可 |
-| 目标几何 | 尚未批准；版本、局部尺寸、背面和顶部仍需核对 |
+| 目标实物 | Xbox One S；由持有者明确确认 |
+| 目标外观资产 | BatonyRobson 的 Xbox One S 模型；已选定 |
+| 物理几何标定 | 局部尺寸、内部结构和关节位置尚未实测 |
 | estimated-v0 | 可交互的估计运动学预览，不是可训练物理资产 |
 | 旧 Casper 候选 | 外观特征更接近 1914；只保留旧 viewer 回归用途 |
 | 动力学 | 尚未完成；质量、惯量、碰撞和接触参数仍有空缺 |
+| 双后端基础设施 | Python 包、RoboTwin 场景加载器、MuJoCo `MjSpec` 附加器已建立；物理资源仍被 readiness 门禁阻断 |
 | 真实手柄验收 | 尚未执行 |
 
 主候选的来源、许可和文件身份记录在
 [候选清单](sources/xbox_replacement_candidates.json)。它使用 16 个视觉节点和作者动画信息
-生成 estimated-v0；统一尺度来自候选整体宽度与微软公布的 1708 宽度之比。
-这种处理只适合外观与交互预览，不能证明候选就是 1708，也不能确定真实轴心、行程或受力。
+生成 estimated-v0；统一尺度来自候选整体宽度与微软公布宽度之比。
+目标产品与外观资产已确认。尺度拟合用于交互预览；真实轴心、行程和受力保持待标定状态。
 
 旧 Casper 资产的型号判断见 [几何复核](sources/geometry_review.json)。它的 Share 键、圆盘方向键
-和接口外形与目标 1708 不符；按 1708 宽度缩放的派生物不能用于机构配准、接触或训练。
+和接口外形与目标 Xbox One S 不符；宽度缩放派生物只用于历史 viewer 回归。
 
 ## 第一阶段验收
 
@@ -51,15 +52,18 @@
 - [交互验收规格](specs/interactive_acceptance.json)：浏览器双向交互的验收门禁。
 - [estimated-v0 来源](sources/appearance_matched_estimated_v0.json)：估计运动学的来源、推导和限制。
 - [estimated-v0 profile](assets/appearance_matched_estimated_v0/viewer_profile.json)：viewer 使用的运动配置。
-- [1708 官方尺寸记录](sources/1708_dimensions.json)：整体尺寸及其适用边界。
-- [1708 方向键记录](sources/1708_dpad_assembly.json)：十字键整体结构证据。
-- [1708 扳机记录](sources/1708_trigger_mechanism.json)：外帽、内部组件和缓冲接触证据。
-- [1708 FCC 照片记录](sources/1708_fcc_internal.json)：内部照片来源与限制。
+- [官方尺寸记录](sources/1708_dimensions.json)：整体尺寸及其适用边界。
+- [方向键记录](sources/1708_dpad_assembly.json)：十字键整体结构证据。
+- [扳机记录](sources/1708_trigger_mechanism.json)：外帽、内部组件和缓冲接触证据。
+- [FCC 照片记录](sources/1708_fcc_internal.json)：内部照片来源与限制。
 - [第三方声明](THIRD_PARTY_NOTICES.md)：进入 Git 的第三方内容及许可证。
 
 目录分工：
 
 - `assets/` 保存轻量运行描述；
+- `src/xbox_gamepad_physics/` 保存公共状态接口和双后端运行时；
+- `schemas/` 保存可发布资源的 manifest 格式；
+- `docs/` 保存导入与维护约定；
 - `sources/` 保存来源、推导和适用范围；
 - `specs/` 保存当前规格和明确的未知项；
 - `viewer/` 保存浏览器检查器；
@@ -93,6 +97,20 @@ python3 scripts/build_estimated_v0.py --check
 ```sh
 python3 scripts/run_regression.py fast
 ```
+
+检查可安装包和双后端资源状态：
+
+```sh
+python3 -m pip install -e .
+python3 -m xbox_gamepad_physics status
+```
+
+离线的既有 RoboTwin 环境使用 `python3 -m pip install -e . --no-build-isolation`，仓库中的
+`setup.py` 兼容其 Python 3.10 / setuptools 59 安装链。
+
+当前两个 backend profile 都会报告 `blocked`。这表示导入基础设施可用，物理 URDF/MJCF
+仍未通过资源、惯量、碰撞和动力学门禁。完整导入接口见
+[RoboTwin 与 MuJoCo 导入约定](docs/importing.md)。
 
 需要定位失败时，可直接运行底层测试：
 
@@ -134,9 +152,9 @@ python3 scripts/serve_viewer.py \
 
 ## 下一步
 
-1. 核对主候选与 1708 的局部几何、背面、顶部和可动部件对应关系。
+1. 测量并登记目标手柄的局部尺寸、内部结构和可动部件坐标。
 2. 实现 canonical schema-v2 到 viewer 的 fail-closed 适配器，并验证双向映射。
 3. 按部件生成可检查的碰撞候选，避免用整机凸包堵住按钮和摇杆开口。
 4. 以有来源的估计值建立第一版被动关节；保留待推拉计和尺寸测量替换的字段。
-5. 完成鼠标双向检查和真实 1708 手柄录屏验收。
+5. 完成鼠标双向检查和真实 Xbox One S 手柄录屏验收。
 6. 通过交互门禁后，再进入 PhysX/SAPIEN 接触验证和机器人训练。

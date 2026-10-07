@@ -1,0 +1,1 @@
+recursive-include src/xbox_gamepad_physics/resource_data *
