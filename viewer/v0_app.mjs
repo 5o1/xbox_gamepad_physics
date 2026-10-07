@@ -11,6 +11,10 @@ const scene=new T.Scene();scene.background=new T.Color('#101820');
 const camera=new T.PerspectiveCamera(40,1,.001,10);camera.up.set(0,0,1);
 const renderer=new T.WebGLRenderer({antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.outputColorSpace=T.SRGBColorSpace;renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1;
 el('scene').append(renderer.domElement);
+// Explicit r180 MeshStandardMaterial/MeshPhysicalMaterial texture slots.  Do
+// not infer texture use from generic object enumeration: the acceptance check
+// is about documented material inputs, not incidental property enumerability.
+const textureSlots=['map','lightMap','aoMap','emissiveMap','bumpMap','normalMap','displacementMap','roughnessMap','metalnessMap','alphaMap','envMap','anisotropyMap','clearcoatMap','clearcoatRoughnessMap','clearcoatNormalMap','iridescenceMap','iridescenceThicknessMap','sheenColorMap','sheenRoughnessMap','transmissionMap','thicknessMap','specularIntensityMap','specularColorMap'];
 const environment=new RoomEnvironment();const pmrem=new T.PMREMGenerator(renderer);scene.environment=pmrem.fromScene(environment).texture;environment.dispose();pmrem.dispose();
 scene.add(new T.HemisphereLight(0xffffff,0x556270,1.25));const key=new T.DirectionalLight(0xffffff,1.5);key.position.set(-.12,-.2,.3);scene.add(key);
 const orbit=new OrbitControls(camera,renderer.domElement);orbit.enableDamping=true;
@@ -170,9 +174,9 @@ async function load(){
     const node=model.getObjectByName(record.source_node);if(!node)throw Error(`GLB 缺少节点：${record.source_node}`);node.updateMatrix();restMatrices.set(record.source_node,node.matrix.clone());node.matrixAutoUpdate=false;
     node.traverse(object=>{if(object.isMesh)object.userData.profileNode=record.source_node;});parts.set(record.source_node,node);
   }
-  const materialNames=new Set(),textures=new Set();let meshCount=0,materialSlotCount=0;
-  model.traverse(object=>{if(!object.isMesh)return;meshCount++;for(const material of Array.isArray(object.material)?object.material:[object.material]){if(!material)continue;materialSlotCount++;materialNames.add(material.name);for(const value of Object.values(material))if(value?.isTexture)textures.add(value.uuid);}});
-  materialStats={mesh_count:meshCount,material_slot_count:materialSlotCount,unique_material_names:[...materialNames].sort(),unique_texture_count:textures.size};
+  const materialNames=new Set(),textures=new Set(),usedTextureSlots=new Set();let meshCount=0,materialSlotCount=0;
+  model.traverse(object=>{if(!object.isMesh)return;meshCount++;for(const material of Array.isArray(object.material)?object.material:[object.material]){if(!material)continue;materialSlotCount++;materialNames.add(material.name);for(const slot of textureSlots){const texture=material[slot];if(texture?.isTexture){textures.add(texture.uuid);usedTextureSlots.add(slot);}}}});
+  materialStats={mesh_count:meshCount,material_slot_count:materialSlotCount,unique_material_names:[...materialNames].sort(),used_texture_slots:[...usedTextureSlots].sort(),unique_texture_count:textures.size};
   verifiedBindings={
     inventory:{url:'/assets/inventory.json',actual_sha256:inventoryHash,expected_sha256:variant.inventory_sha256},
     profile:{url:'/registry/'+binding.path,actual_sha256:profileHash,expected_sha256:binding.sha256},

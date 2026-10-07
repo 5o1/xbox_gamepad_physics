@@ -359,4 +359,6 @@ test('estimated-v0 keeps only the minimum interactive browser acceptance', async
   const viewerSource = await readFile(new URL('../viewer/v0_app.mjs', import.meta.url), 'utf8');
   assert.match(viewerSource, /materialStats/);
   assert.doesNotMatch(viewerSource, /setMaterialDiagnostic|materialDiagnosticMode|materialConfiguration|materialDefaults/);
+  const viewerHtml = await readFile(new URL('../viewer/v0.html', import.meta.url), 'utf8');
+  assert.match(viewerHtml, /connect-src 'self' blob:/, 'ImageBitmapLoader must be allowed to fetch embedded GLB blob URLs');
 });
