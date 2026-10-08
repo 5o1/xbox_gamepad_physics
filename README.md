@@ -18,8 +18,8 @@ GPU 节点，存档位置见 `sources/switch_pro_candidates.json` 和 `assets/as
 | 物理几何标定 | 局部尺寸、内部结构和关节位置尚未实测 |
 | estimated-v0 | 可交互的估计运动学预览，不是可训练物理资产 |
 | 旧 Casper 候选 | 外观特征更接近 1914；模型在 GPU 节点存档，不分发 |
-| 动力学 | 尚未完成；质量、惯量、碰撞和接触参数仍有空缺 |
-| 双后端基础设施 | Python 包、RoboTwin 场景加载器、MuJoCo `MjSpec` 附加器已建立；物理资源仍被 readiness 门禁阻断 |
+| 动力学 | RoboTwin 左摇杆 estimated-v0 已可运行；完整手柄仍有空缺 |
+| 双后端基础设施 | RoboTwin 左摇杆纵向切片已通过自动接触检查；MuJoCo 物理 profile 仍被门禁阻断 |
 | 真实手柄验收 | 尚未执行 |
 
 主候选的来源、许可和文件身份记录在
@@ -112,8 +112,8 @@ python3 -m xbox_gamepad_physics status
 离线的既有 RoboTwin 环境使用 `python3 -m pip install -e . --no-build-isolation`，仓库中的
 `setup.py` 兼容其 Python 3.10 / setuptools 59 安装链。
 
-当前两个 backend profile 都会报告 `blocked`。这表示导入基础设施可用，物理 URDF/MJCF
-仍未通过资源、惯量、碰撞和动力学门禁。完整导入接口见
+完整手柄的两个 `estimated_v0` profile 都会报告 `blocked`。RoboTwin 的
+`left_stick_estimated_v0` 是独立的可运行局部 profile。完整导入接口见
 [RoboTwin 与 MuJoCo 导入约定](docs/importing.md)。
 
 需要定位失败时，可直接运行底层测试：

@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "source": "common/xbox_one_s/visual/manifest.json",
+  "source_sha256": "4949463388206258ab23a513eefad1254ea9f99cac0beb79fa03646c2ab0fcae",
+  "root_link": "controller_body",
+  "moving_parts": {
+    "09_Stick_L_VISUAL_UNCALIBRATED": {
+      "link": "left_stick",
+      "pivot_m_source_frame": [
+        -0.038035359991741326,
+        0.024133629044164898,
+        0.01212386322086352
+      ]
+    }
+  },
+  "static_parts": [
+    "00_A_Button_VISUAL_UNCALIBRATED",
+    "01_B_Button_VISUAL_UNCALIBRATED",
+    "02_Bumper_L_VISUAL_UNCALIBRATED",
+    "03_Bumper_R_VISUAL_UNCALIBRATED",
+    "04_Connect_Button_VISUAL_UNCALIBRATED",
+    "05_Controller_Body_VISUAL_UNCALIBRATED",
+    "06_D-Pad_VISUAL_UNCALIBRATED",
+    "07_Menu_L_VISUAL_UNCALIBRATED",
+    "08_Menu_R_VISUAL_UNCALIBRATED",
+    "10_Stick_R_VISUAL_UNCALIBRATED",
+    "11_Trigger_L_VISUAL_UNCALIBRATED",
+    "12_Trigger_R_VISUAL_UNCALIBRATED",
+    "13_X_Button_VISUAL_UNCALIBRATED",
+    "14_XboxButton_VISUAL_UNCALIBRATED",
+    "15_Y_Button_VISUAL_UNCALIBRATED"
+  ]
+}

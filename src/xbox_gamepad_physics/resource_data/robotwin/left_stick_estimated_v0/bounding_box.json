@@ -1,0 +1,16 @@
+{
+  "min": [
+    -0.07664,
+    -0.05554,
+    -0.02986
+  ],
+  "max": [
+    0.07636,
+    0.04905,
+    0.03004
+  ],
+  "unit": "m",
+  "source": "metric-scaled approved visual assembly",
+  "visual_body_part": "05_Controller_Body_VISUAL_UNCALIBRATED",
+  "meters_per_native_unit": 0.0560472180107161
+}

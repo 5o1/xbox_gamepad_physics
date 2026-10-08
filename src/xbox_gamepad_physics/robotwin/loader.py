@@ -17,7 +17,12 @@ from xbox_gamepad_physics.profiles import require_physics_ready
 from xbox_gamepad_physics.resources import load_json_resource, resource_path
 from xbox_gamepad_physics.errors import MissingBackendDependencyError
 
-from .articulation import XboxOneSArticulation, joint_name
+from .articulation import (
+    AxisMapping,
+    RadialGroup,
+    XboxOneSArticulation,
+    joint_name,
+)
 from .errors import (
     ArticulationLoadError,
     JointConfigurationError,
@@ -52,6 +57,19 @@ class JointDynamics:
 class RoboTwinAssetDescription:
     urdf_path: Path
     joint_dynamics: tuple[JointDynamics, ...]
+    axis_mappings: tuple[AxisMapping, ...]
+    radial_groups: tuple[RadialGroup, ...]
+    contact_material: "ContactMaterial"
+    visual_binding: Mapping[str, Any]
+
+
+@dataclass(frozen=True)
+class ContactMaterial:
+    static_friction: float
+    dynamic_friction: float
+    restitution: float
+    contact_offset: float
+    rest_offset: float
 
 
 def _number(record: Mapping[str, Any], field: str, joint: str) -> float:
@@ -142,7 +160,92 @@ def _validated_description(profile: str) -> RoboTwinAssetDescription:
                 f"joint {name!r} force_limit must be positive"
             )
         dynamics.append(item)
-    description = RoboTwinAssetDescription(urdf_path, tuple(dynamics))
+    mapping = manifest.get("state_mapping")
+    if not isinstance(mapping, dict):
+        raise RoboTwinManifestError("ready RoboTwin profile needs state_mapping")
+    raw_axes = mapping.get("axes")
+    if not isinstance(raw_axes, list) or not raw_axes:
+        raise RoboTwinManifestError("state_mapping.axes must be a non-empty list")
+    axis_mappings: list[AxisMapping] = []
+    channels: set[str] = set()
+    for index, raw in enumerate(raw_axes):
+        if not isinstance(raw, dict):
+            raise RoboTwinManifestError(f"state_mapping.axes[{index}] must be an object")
+        channel = raw.get("channel")
+        joint = raw.get("joint")
+        if channel not in {"lx", "ly", "rx", "ry"} or channel in channels:
+            raise RoboTwinManifestError(
+                f"state_mapping.axes[{index}] has invalid or duplicate channel"
+            )
+        if joint not in names:
+            raise RoboTwinManifestError(
+                f"state_mapping.axes[{index}] references undeclared joint {joint!r}"
+            )
+        lower = _number(raw, "lower", f"state_mapping.axes[{index}]")
+        upper = _number(raw, "upper", f"state_mapping.axes[{index}]")
+        if not lower < 0 < upper:
+            raise RoboTwinManifestError(
+                f"state_mapping.axes[{index}] limits must straddle zero"
+            )
+        channels.add(channel)
+        axis_mappings.append(AxisMapping(channel, joint, lower, upper))
+    raw_groups = mapping.get("radial_groups", [])
+    if not isinstance(raw_groups, list):
+        raise RoboTwinManifestError("state_mapping.radial_groups must be a list")
+    radial_groups: list[RadialGroup] = []
+    for index, raw in enumerate(raw_groups):
+        if not isinstance(raw, dict):
+            raise RoboTwinManifestError(
+                f"state_mapping.radial_groups[{index}] must be an object"
+            )
+        group_channels = raw.get("channels")
+        if (
+            not isinstance(group_channels, list)
+            or len(group_channels) != 2
+            or group_channels[0] not in channels
+            or group_channels[1] not in channels
+            or group_channels[0] == group_channels[1]
+        ):
+            raise RoboTwinManifestError(
+                f"state_mapping.radial_groups[{index}] needs two mapped channels"
+            )
+        radius = _number(raw, "radius", f"state_mapping.radial_groups[{index}]")
+        if radius <= 0 or radius > 1:
+            raise RoboTwinManifestError(
+                f"state_mapping.radial_groups[{index}].radius must be in (0, 1]"
+            )
+        radial_groups.append(RadialGroup(tuple(group_channels), radius))
+
+    raw_contact = manifest.get("contact_material")
+    if not isinstance(raw_contact, dict):
+        raise RoboTwinManifestError("ready RoboTwin profile needs contact_material")
+    contact = ContactMaterial(
+        static_friction=_number(raw_contact, "static_friction", "contact_material"),
+        dynamic_friction=_number(raw_contact, "dynamic_friction", "contact_material"),
+        restitution=_number(raw_contact, "restitution", "contact_material"),
+        contact_offset=_number(raw_contact, "contact_offset_m", "contact_material"),
+        rest_offset=_number(raw_contact, "rest_offset_m", "contact_material"),
+    )
+    if (
+        contact.static_friction < 0
+        or contact.dynamic_friction < 0
+        or not 0 <= contact.restitution <= 1
+        or contact.contact_offset <= contact.rest_offset
+        or contact.rest_offset < 0
+    ):
+        raise RoboTwinManifestError("contact_material values are outside valid ranges")
+    visual_binding = manifest.get("visual_binding")
+    if not isinstance(visual_binding, dict):
+        raise RoboTwinManifestError("ready RoboTwin profile needs visual_binding")
+
+    description = RoboTwinAssetDescription(
+        urdf_path,
+        tuple(dynamics),
+        tuple(axis_mappings),
+        tuple(radial_groups),
+        contact,
+        visual_binding,
+    )
     _validate_urdf_physics(description)
     return description
 
@@ -387,10 +490,16 @@ def _extract_one_articulation(load_result: Any) -> Any:
 
 
 def _configure_joints(
-    articulation: Any, dynamics: tuple[JointDynamics, ...]
+    articulation: Any,
+    dynamics: tuple[JointDynamics, ...],
+    axis_mappings: tuple[AxisMapping, ...],
+    radial_groups: tuple[RadialGroup, ...],
 ) -> XboxOneSArticulation:
     wrapper = XboxOneSArticulation(
-        articulation, (configuration.name for configuration in dynamics)
+        articulation,
+        (configuration.name for configuration in dynamics),
+        axis_mappings,
+        radial_groups,
     )
     joints = {joint_name(joint): joint for joint in articulation.get_active_joints()}
     for configuration in dynamics:
@@ -412,11 +521,31 @@ def _configure_joints(
     return wrapper
 
 
+def _configure_contact_material(
+    scene: Any, articulation: Any, configuration: ContactMaterial
+) -> None:
+    creator = getattr(scene, "create_physical_material", None)
+    if not callable(creator):
+        raise SceneCompatibilityError("SAPIEN scene lacks create_physical_material()")
+    material = creator(
+        configuration.static_friction,
+        configuration.dynamic_friction,
+        configuration.restitution,
+    )
+    links = articulation.get_links()
+    for link in links:
+        for shape in link.get_collision_shapes():
+            shape.set_physical_material(material)
+            shape.set_contact_offset(configuration.contact_offset)
+            shape.set_rest_offset(configuration.rest_offset)
+
+
 def load_into_scene(
     scene: Any,
     pose: Any,
     fixed_root: bool,
     profile: str,
+    attach_visual: bool = True,
 ) -> XboxOneSArticulation:
     """Load the packaged Xbox One S URDF directly into a SAPIEN scene.
 
@@ -427,6 +556,8 @@ def load_into_scene(
 
     if type(fixed_root) is not bool:
         raise TypeError("fixed_root must be bool")
+    if type(attach_visual) is not bool:
+        raise TypeError("attach_visual must be bool")
     description = _validated_description(profile)
     resolved_scene = _resolve_scene(scene)
     root_pose = _coerce_pose(pose)
@@ -456,4 +587,16 @@ def load_into_scene(
             "loaded articulation exposes neither set_root_pose() nor set_pose()"
         )
     set_pose(root_pose)
-    return _configure_joints(articulation, description.joint_dynamics)
+    _configure_contact_material(
+        resolved_scene, articulation, description.contact_material
+    )
+    if attach_visual:
+        from .visual import attach_visual_to_articulation
+
+        attach_visual_to_articulation(articulation, description.visual_binding)
+    return _configure_joints(
+        articulation,
+        description.joint_dynamics,
+        description.axis_mappings,
+        description.radial_groups,
+    )

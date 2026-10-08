@@ -269,6 +269,31 @@
       "interactive_acceptance_sha256": "feddf5cea382263721454dacc5ff7dd5a6298c979e0645b38b2d6b60dc102dd8"
     }
   },
+  "partial_physics_profiles": {
+    "robotwin_left_stick_estimated_v0": {
+      "backend": "robotwin",
+      "profile": "left_stick_estimated_v0",
+      "scope": "left-stick contact and lx/ly signal vertical slice only",
+      "status": "automated_sapien_validation_passed_user_visual_review_pending",
+      "full_controller_ready": false,
+      "hardware_calibrated": false,
+      "source": "../sources/robotwin_left_stick_estimated_v0.json",
+      "source_sha256": "2a4b0ba61eecaa273457f7bb6adc48785fc3345c5756297f58f74aa2b36658f5",
+      "manifest": "../src/xbox_gamepad_physics/resource_data/robotwin/left_stick_estimated_v0/manifest.json",
+      "manifest_sha256": "74523bb3803fc39a660009624826c7566f0d079e71435b479714e58b855dc35b",
+      "validation_result": "../results/robotwin_left_stick_estimated_v0/result.json",
+      "validation_result_sha256": "2b2ceb3323b29cf239c98c57201f6a53318399dafcdd4c965845a81c6d893c45",
+      "sensitivity_result": "../results/robotwin_left_stick_estimated_v0/sensitivity.json",
+      "sensitivity_result_sha256": "d5e931c672ea0fcebb73dc6da7fa48c5e3634f35d8694cc307bbe3622c8d0e15",
+      "review_video": "../results/robotwin_left_stick_estimated_v0/render/left_stick_contact_probe.mp4",
+      "review_video_sha256": "8a9293c7ce6417273712ad70d5a6f706dcc37ffb74328c5cd3d4189879ba9ab7",
+      "limitations": [
+        "Mass, damping and contact material include explicitly labeled simulation estimates.",
+        "The reference stick component has not been identified as the installed Xbox part.",
+        "Only the left-stick two-axis slice is implemented."
+      ]
+    }
+  },
   "evidence": {
     "source_catalog": "../sources/catalog.json",
     "mechanical_structure": "../sources/mechanical_structure.json",

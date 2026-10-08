@@ -14,7 +14,11 @@ sys.path.insert(0, str(ROOT / "src"))
 
 from xbox_gamepad_physics.profiles import BackendProfile
 from xbox_gamepad_physics.errors import PhysicsNotReadyError
-from xbox_gamepad_physics.robotwin.articulation import XboxOneSArticulation
+from xbox_gamepad_physics.robotwin.articulation import (
+    AxisMapping,
+    RadialGroup,
+    XboxOneSArticulation,
+)
 from xbox_gamepad_physics.robotwin.errors import (
     JointConfigurationError,
     RoboTwinManifestError,
@@ -48,6 +52,7 @@ class FakeArticulation:
         self.qvel = [0.0, 0.0]
         self.root_poses = []
         self.mass_writes = []
+        self.links = [FakeLink()]
 
     def get_active_joints(self):
         return self.joints
@@ -63,6 +68,33 @@ class FakeArticulation:
 
     def set_root_pose(self, value):
         self.root_poses.append(value)
+
+    def get_links(self):
+        return self.links
+
+
+class FakeCollisionShape:
+    def __init__(self):
+        self.materials = []
+        self.contact_offsets = []
+        self.rest_offsets = []
+
+    def set_physical_material(self, value):
+        self.materials.append(value)
+
+    def set_contact_offset(self, value):
+        self.contact_offsets.append(value)
+
+    def set_rest_offset(self, value):
+        self.rest_offsets.append(value)
+
+
+class FakeLink:
+    def __init__(self):
+        self.shape = FakeCollisionShape()
+
+    def get_collision_shapes(self):
+        return [self.shape]
 
 
 class FakeSetPoseArticulation(FakeArticulation):
@@ -96,6 +128,9 @@ class FakeScene:
 
     def create_urdf_loader(self):
         return self.loader
+
+    def create_physical_material(self, static_friction, dynamic_friction, restitution):
+        return (static_friction, dynamic_friction, restitution)
 
 
 def ready_profile(urdf):
@@ -142,6 +177,25 @@ def ready_manifest():
                 "target": 0.0,
             },
         ],
+        "state_mapping": {
+            "axes": [
+                {
+                    "channel": "lx",
+                    "joint": "left_stick_x",
+                    "lower": -0.4,
+                    "upper": 0.4,
+                }
+            ],
+            "radial_groups": [],
+        },
+        "contact_material": {
+            "static_friction": 0.5,
+            "dynamic_friction": 0.4,
+            "restitution": 0.05,
+            "contact_offset_m": 0.0002,
+            "rest_offset_m": 0.0,
+        },
+        "visual_binding": {},
     }
 
 
@@ -201,6 +255,9 @@ class RoboTwinRuntimeTest(unittest.TestCase):
             mock.patch.object(
                 loader_module, "_import_sapien", side_effect=AssertionError("eager import")
             ),
+            mock.patch(
+                "xbox_gamepad_physics.robotwin.visual.attach_visual_to_articulation"
+            ),
         ):
             wrapper = loader_module.load_into_scene(
                 passed_scene, pose, fixed_root=True, profile="test_ready"
@@ -244,6 +301,9 @@ class RoboTwinRuntimeTest(unittest.TestCase):
                 loader_module, "load_json_resource", return_value=ready_manifest()
             ),
             mock.patch.object(loader_module, "resource_path", return_value=urdf),
+            mock.patch(
+                "xbox_gamepad_physics.robotwin.visual.attach_visual_to_articulation"
+            ),
         ):
             loader_module.load_into_scene(
                 scene, pose, fixed_root=True, profile="test_ready"
@@ -260,6 +320,23 @@ class RoboTwinRuntimeTest(unittest.TestCase):
         )
         with self.assertRaisesRegex(KeyError, "unknown Xbox One S joint"):
             wrapper.joint_position("joint_0")
+
+    def test_gamepad_state_normalizes_and_projects_stick_radius(self):
+        articulation = FakeArticulation()
+        articulation.qpos = [0.4, 0.4]
+        wrapper = XboxOneSArticulation(
+            articulation,
+            ["button_a", "left_stick_x"],
+            [
+                AxisMapping("lx", "button_a", -0.4, 0.4),
+                AxisMapping("ly", "left_stick_x", -0.4, 0.4),
+            ],
+            [RadialGroup(("lx", "ly"), 1.0)],
+        )
+        state = wrapper.gamepad_state()
+        self.assertAlmostEqual(state.lx, 2 ** -0.5)
+        self.assertAlmostEqual(state.ly, 2 ** -0.5)
+        self.assertEqual(state.rx, 0.0)
 
     def test_profile_missing_required_joint_field_fails_closed_before_scene_load(self):
         temporary = tempfile.TemporaryDirectory()

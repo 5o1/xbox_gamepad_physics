@@ -1,0 +1,160 @@
+<?xml version='1.0' encoding='utf-8'?>
+<robot name="xbox_one_s_left_stick_estimated_v0">
+  <link name="controller_body">
+    <inertial>
+      <origin xyz="-0.00014 -0.00325 -0.00475" rpy="0 0 0" />
+      <mass value="0.275" />
+      <inertia ixx="0.000308473190071" ixy="0" ixz="0" iyy="0.000594248108237" iyz="0" izz="0.000787137581834" />
+    </inertial>
+    <collision name="body_central_support">
+      <origin xyz="0 0 -0.018" rpy="0 0 0" />
+      <geometry>
+        <box size="0.12 0.075 0.028" />
+      </geometry>
+    </collision>
+    <collision name="left_stick_gate_00">
+      <origin xyz="-0.0239853599917 0.0241336290442 0.0181238632209" rpy="0 0 0" />
+      <geometry>
+        <box size="0.0079 0.00401802982107 0.004" />
+      </geometry>
+    </collision>
+    <collision name="left_stick_gate_01">
+      <origin xyz="-0.02505485256 0.0295103312689 0.0181238632209" rpy="0 0 0.392699081699" />
+      <geometry>
+        <box size="0.0079 0.00401802982107 0.004" />
+      </geometry>
+    </collision>
+    <collision name="left_stick_gate_02">
+      <origin xyz="-0.0281005097161 0.0340684793198 0.0181238632209" rpy="0 0 0.785398163397" />
+      <geometry>
+        <box size="0.0079 0.00401802982107 0.004" />
+      </geometry>
+    </collision>
+    <collision name="left_stick_gate_03">
+      <origin xyz="-0.032658657767 0.0371141364759 0.0181238632209" rpy="0 0 1.1780972451" />
+      <geometry>
+        <box size="0.0079 0.00401802982107 0.004" />
+      </geometry>
+    </collision>
+    <collision name="left_stick_gate_04">
+      <origin xyz="-0.0380353599917 0.0381836290442 0.0181238632209" rpy="0 0 1.57079632679" />
+      <geometry>
+        <box size="0.0079 0.00401802982107 0.004" />
+      </geometry>
+    </collision>
+    <collision name="left_stick_gate_05">
+      <origin xyz="-0.0434120622165 0.0371141364759 0.0181238632209" rpy="0 0 1.96349540849" />
+      <geometry>
+        <box size="0.0079 0.00401802982107 0.004" />
+      </geometry>
+    </collision>
+    <collision name="left_stick_gate_06">
+      <origin xyz="-0.0479702102674 0.0340684793198 0.0181238632209" rpy="0 0 2.35619449019" />
+      <geometry>
+        <box size="0.0079 0.00401802982107 0.004" />
+      </geometry>
+    </collision>
+    <collision name="left_stick_gate_07">
+      <origin xyz="-0.0510158674235 0.0295103312689 0.0181238632209" rpy="0 0 2.74889357189" />
+      <geometry>
+        <box size="0.0079 0.00401802982107 0.004" />
+      </geometry>
+    </collision>
+    <collision name="left_stick_gate_08">
+      <origin xyz="-0.0520853599917 0.0241336290442 0.0181238632209" rpy="0 0 3.14159265359" />
+      <geometry>
+        <box size="0.0079 0.00401802982107 0.004" />
+      </geometry>
+    </collision>
+    <collision name="left_stick_gate_09">
+      <origin xyz="-0.0510158674235 0.0187569268194 0.0181238632209" rpy="0 0 3.53429173529" />
+      <geometry>
+        <box size="0.0079 0.00401802982107 0.004" />
+      </geometry>
+    </collision>
+    <collision name="left_stick_gate_10">
+      <origin xyz="-0.0479702102674 0.0141987787685 0.0181238632209" rpy="0 0 3.92699081699" />
+      <geometry>
+        <box size="0.0079 0.00401802982107 0.004" />
+      </geometry>
+    </collision>
+    <collision name="left_stick_gate_11">
+      <origin xyz="-0.0434120622165 0.0111531216124 0.0181238632209" rpy="0 0 4.31968989869" />
+      <geometry>
+        <box size="0.0079 0.00401802982107 0.004" />
+      </geometry>
+    </collision>
+    <collision name="left_stick_gate_12">
+      <origin xyz="-0.0380353599917 0.0100836290442 0.0181238632209" rpy="0 0 4.71238898038" />
+      <geometry>
+        <box size="0.0079 0.00401802982107 0.004" />
+      </geometry>
+    </collision>
+    <collision name="left_stick_gate_13">
+      <origin xyz="-0.032658657767 0.0111531216124 0.0181238632209" rpy="0 0 5.10508806208" />
+      <geometry>
+        <box size="0.0079 0.00401802982107 0.004" />
+      </geometry>
+    </collision>
+    <collision name="left_stick_gate_14">
+      <origin xyz="-0.0281005097161 0.0141987787685 0.0181238632209" rpy="0 0 5.49778714378" />
+      <geometry>
+        <box size="0.0079 0.00401802982107 0.004" />
+      </geometry>
+    </collision>
+    <collision name="left_stick_gate_15">
+      <origin xyz="-0.02505485256 0.0187569268194 0.0181238632209" rpy="0 0 5.89048622548" />
+      <geometry>
+        <box size="0.0079 0.00401802982107 0.004" />
+      </geometry>
+    </collision>
+  </link>
+  <link name="left_stick_x_frame">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="0.001" />
+      <inertia ixx="2e-08" ixy="0" ixz="0" iyy="2e-08" iyz="0" izz="2e-08" />
+    </inertial>
+  </link>
+  <link name="left_stick">
+    <inertial>
+      <origin xyz="0 0 0.014" rpy="0 0 0" />
+      <mass value="0.004" />
+      <inertia ixx="3.68085203165e-07" ixy="0" ixz="0" iyy="3.68085203165e-07" iyz="0" izz="5.13505204263e-07" />
+    </inertial>
+    <collision name="lower_stem">
+      <origin xyz="0 0 0.004" rpy="0 0 0" />
+      <geometry>
+        <cylinder radius="0.0067" length="0.008" />
+      </geometry>
+    </collision>
+    <collision name="upper_stem">
+      <origin xyz="0 0 0.011" rpy="0 0 0" />
+      <geometry>
+        <cylinder radius="0.0052" length="0.006" />
+      </geometry>
+    </collision>
+    <collision name="cap">
+      <origin xyz="0 0 0.016" rpy="0 0 0" />
+      <geometry>
+        <cylinder radius="0.0096" length="0.004" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="left_stick_x" type="revolute">
+    <origin xyz="-0.0380353599917 0.0241336290442 0.0121238632209" rpy="0 0 0" />
+    <parent link="controller_body" />
+    <child link="left_stick_x_frame" />
+    <axis xyz="0 1 0" />
+    <limit lower="-0.401425727959" upper="0.401425727959" effort="0.024" velocity="10" />
+    <dynamics damping="0.00035" friction="0" />
+  </joint>
+  <joint name="left_stick_y" type="revolute">
+    <origin xyz="0 0 0" rpy="0 0 0" />
+    <parent link="left_stick_x_frame" />
+    <child link="left_stick" />
+    <axis xyz="1 0 0" />
+    <limit lower="-0.401425727959" upper="0.401425727959" effort="0.024" velocity="10" />
+    <dynamics damping="0.00035" friction="0" />
+  </joint>
+</robot>

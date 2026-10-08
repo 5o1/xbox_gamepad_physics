@@ -1,0 +1,75 @@
+{
+  "scale": 1.0,
+  "transform_matrix": [
+    [
+      1,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      1,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      1,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      1
+    ]
+  ],
+  "init_qpos": [
+    0.0,
+    0.0
+  ],
+  "target_points": [],
+  "contact_points": [
+    {
+      "matrix": [
+        [
+          1,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          1,
+          0.018
+        ],
+        [
+          0,
+          0,
+          0,
+          1
+        ]
+      ],
+      "base": "left_stick"
+    }
+  ],
+  "functional_points": [],
+  "orientation_point": [],
+  "contact_points_group": [],
+  "contact_points_mask": [],
+  "target_points_discription": [],
+  "contact_points_discription": [
+    "top center of the left-stick contact cap"
+  ],
+  "functional_points_discription": [],
+  "orientation_point_discription": []
+}

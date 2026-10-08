@@ -1,8 +1,10 @@
-"""Native SAPIEN visuals for appearance inspection; no rigid-body components."""
+"""Native SAPIEN visuals shared by inspection and physical articulations."""
 from dataclasses import dataclass
 from importlib import import_module
+import json
 import math
 from pathlib import Path
+from typing import Mapping
 
 from xbox_gamepad_physics.resources import load_json_resource, resource_path
 
@@ -23,22 +25,23 @@ class XboxOneSVisual:
         return False
 
 
-def load_visual_into_scene(scene, pose=None, *, directory=None):
-    """Add 16 render-only entities to a SAPIEN scene or a RoboTwin task.
+@dataclass
+class XboxOneSArticulationVisual:
+    components: dict
+    manifest: dict
 
-    Geometry, normals and UVs are reused. Width-fit scale is the existing visual
-    estimate. This entry never creates collision shapes or supplies inertial data.
-    """
-    sapien=import_module('sapien')
-    render=sapien.render
-    target=getattr(scene,'scene',scene)
+
+def _visual_resources(directory=None):
     if directory is None:
         manifest=load_json_resource('common','xbox_one_s','visual/manifest.json')
         root=resource_path('common','xbox_one_s','visual/manifest.json').parent
     else:
-        import json
         root=Path(directory).resolve()
-        manifest=json.loads((root/'manifest.json').read_text())
+        manifest=json.loads((root/'manifest.json').read_text(encoding='utf-8'))
+    return root,manifest
+
+
+def _render_material(render, root, manifest):
     textures={name:render.RenderTexture2D(str(root/path),mipmap_levels=12,
                 srgb=name in ('base_color_texture','emission_texture'))
               for name,path in manifest['sapien_material']['textures'].items()}
@@ -48,6 +51,91 @@ def load_visual_into_scene(scene, pose=None, *, directory=None):
             ior=record['ior'],transmission=0)
     for name,texture in textures.items():
         setattr(material,name,texture)
+    return material
+
+
+def _part_records(manifest):
+    return {part['name']:part for part in manifest['parts']}
+
+
+def _link(articulation, name):
+    finder=getattr(articulation,'find_link_by_name',None)
+    if callable(finder):
+        found=finder(name)
+        if found is not None:
+            return found
+    getter=getattr(articulation,'get_links',None)
+    links=getter() if callable(getter) else getattr(articulation,'links',())
+    for candidate in links:
+        value=getattr(candidate,'name',None)
+        if value==name:
+            return candidate
+    raise ValueError(f'articulation has no link {name!r}')
+
+
+def _link_entity(link, name):
+    entity=getattr(link,'entity',None)
+    if entity is None:
+        getter=getattr(link,'get_entity',None)
+        entity=getter() if callable(getter) else None
+    if entity is None or not callable(getattr(entity,'add_component',None)):
+        raise TypeError(f'articulation link {name!r} has no mutable SAPIEN entity')
+    return entity
+
+
+def attach_visual_to_articulation(articulation, binding: Mapping, *, directory=None):
+    """Attach the approved PBR parts to named physical articulation links."""
+
+    sapien=import_module('sapien')
+    render=sapien.render
+    root,manifest=_visual_resources(directory)
+    material=_render_material(render,root,manifest)
+    records=_part_records(manifest)
+    scale=manifest['meters_per_native_unit']
+    conversion=sapien.Pose(q=[math.sqrt(.5),math.sqrt(.5),0,0])
+    assignments={name:(binding['root_link'],None) for name in binding['static_parts']}
+    for part_name,record in binding['moving_parts'].items():
+        assignments[part_name]=(record['link'],record['pivot_m_source_frame'])
+    if set(assignments)!=set(records):
+        raise ValueError(
+            'visual binding part mismatch: '
+            f'missing={sorted(set(records)-set(assignments))}, '
+            f'extra={sorted(set(assignments)-set(records))}'
+        )
+
+    grouped={}
+    for part_name,(link_name,pivot) in assignments.items():
+        grouped.setdefault(link_name,[]).append((part_name,pivot))
+    components={}
+    for link_name,items in grouped.items():
+        body=render.RenderBodyComponent()
+        for part_name,pivot in items:
+            record=records[part_name]
+            shape=render.RenderShapeTriangleMesh(
+                str(root/record['file']),scale=[scale]*3,material=material
+            )
+            if pivot is None:
+                shape.local_pose=conversion
+            else:
+                shape.local_pose=sapien.Pose(p=[-float(value) for value in pivot])*conversion
+            body.attach(shape)
+        entity=_link_entity(_link(articulation,link_name),link_name)
+        entity.add_component(body)
+        components[link_name]=body
+    return XboxOneSArticulationVisual(components,manifest)
+
+
+def load_visual_into_scene(scene, pose=None, *, directory=None):
+    """Add 16 render-only entities to a SAPIEN scene or a RoboTwin task.
+
+    Geometry, normals and UVs are reused. Width-fit scale is the existing visual
+    estimate. This entry never creates collision shapes or supplies inertial data.
+    """
+    sapien=import_module('sapien')
+    render=sapien.render
+    target=getattr(scene,'scene',scene)
+    root,manifest=_visual_resources(directory)
+    material=_render_material(render,root,manifest)
     scale=manifest['meters_per_native_unit']
     entities={}
     for part in manifest['parts']:

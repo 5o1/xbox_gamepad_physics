@@ -57,6 +57,26 @@ class AssetRegistryTest(unittest.TestCase):
                         profile_binding["sha256"],
                     )
 
+        for profile_id, profile in self.index.get(
+            "partial_physics_profiles", {}
+        ).items():
+            with self.subTest(partial_profile=profile_id):
+                self.assertFalse(profile["full_controller_ready"])
+                self.assertFalse(profile["hardware_calibrated"])
+                for path_field, hash_field in (
+                    ("source", "source_sha256"),
+                    ("manifest", "manifest_sha256"),
+                    ("validation_result", "validation_result_sha256"),
+                    ("sensitivity_result", "sensitivity_result_sha256"),
+                    ("review_video", "review_video_sha256"),
+                ):
+                    path = resolve_from_assets(profile[path_field])
+                    self.assertTrue(path.is_file())
+                    self.assertEqual(
+                        hashlib.sha256(path.read_bytes()).hexdigest(),
+                        profile[hash_field],
+                    )
+
     def test_legacy_1914_assets_cannot_become_xbox_one_s_physics(self):
         active_id = self.index["interactive_viewer"]["active_variant_id"]
         active = self.index["derived_variants"][active_id]

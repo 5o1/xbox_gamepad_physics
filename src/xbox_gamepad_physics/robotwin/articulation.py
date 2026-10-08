@@ -12,6 +12,7 @@ import math
 from typing import Any, Iterable, Mapping
 
 from .errors import JointConfigurationError
+from xbox_gamepad_physics.state import GamepadState
 
 
 def joint_name(joint: Any) -> str:
@@ -44,10 +45,30 @@ class _JointBinding:
     joint: Any
 
 
+@dataclass(frozen=True)
+class AxisMapping:
+    channel: str
+    joint: str
+    lower: float
+    upper: float
+
+
+@dataclass(frozen=True)
+class RadialGroup:
+    channels: tuple[str, str]
+    radius: float
+
+
 class XboxOneSArticulation:
     """A name-addressed handle around the underlying SAPIEN articulation."""
 
-    def __init__(self, articulation: Any, expected_joint_names: Iterable[str]):
+    def __init__(
+        self,
+        articulation: Any,
+        expected_joint_names: Iterable[str],
+        axis_mappings: Iterable[AxisMapping] = (),
+        radial_groups: Iterable[RadialGroup] = (),
+    ):
         self._articulation = articulation
         get_active_joints = getattr(articulation, "get_active_joints", None)
         if not callable(get_active_joints):
@@ -91,6 +112,8 @@ class XboxOneSArticulation:
                 f"qpos length {len(qpos)} does not match active-joint DOF total {offset}"
             )
         self._bindings = bindings
+        self._axis_mappings = tuple(axis_mappings)
+        self._radial_groups = tuple(radial_groups)
 
     @property
     def articulation(self) -> Any:
@@ -162,3 +185,21 @@ class XboxOneSArticulation:
                 f"joint {name!r} does not expose set_drive_target()"
             )
         setter(number)
+
+    def gamepad_state(self) -> GamepadState:
+        """Return normalized Standard Gamepad channels from articulation qpos."""
+
+        values = GamepadState.neutral().as_dict()
+        for mapping in self._axis_mappings:
+            q = self.joint_position(mapping.joint)
+            scale = -mapping.lower if q < 0 else mapping.upper
+            signal = q / scale
+            values[mapping.channel] = max(-1.0, min(1.0, signal))
+        for group in self._radial_groups:
+            first, second = group.channels
+            radius = math.hypot(values[first], values[second])
+            if radius > group.radius:
+                factor = group.radius / radius
+                values[first] *= factor
+                values[second] *= factor
+        return GamepadState(**values)

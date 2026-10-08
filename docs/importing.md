@@ -44,10 +44,11 @@ MuJoCo/Filament 开发使用独立 Python 3.12 环境。GPU 节点当前验证�
 ```sh
 python -m xbox_gamepad_physics verify --backend mujoco
 python -m xbox_gamepad_physics verify --backend robotwin
+python -m xbox_gamepad_physics verify --backend robotwin --profile left_stick_estimated_v0
 ```
 
-当前 `estimated_v0` 的两个后端都处于 blocked 状态。视觉资产、碰撞体、惯量和被动力学
-通过审核后，才会把对应 manifest 的 `available` 与 `dynamics_ready` 置为 `true`。
+完整手柄的 `estimated_v0` 在两个后端都处于 blocked 状态。RoboTwin 另有一个可运行的
+`left_stick_estimated_v0` profile，只覆盖左摇杆物理闭环；它不代表完整手柄已经就绪。
 
 ## RoboTwin / SAPIEN
 
@@ -72,8 +73,11 @@ gamepad = load_into_scene(
     scene=self,  # RoboTwin task，或直接传 sapien.Scene
     pose=[0.0, 0.0, 0.8, 1.0, 0.0, 0.0, 0.0],
     fixed_root=True,
-    profile="estimated_v0",
+    profile="left_stick_estimated_v0",
 )
+
+state = gamepad.gamepad_state()
+print(state.lx, state.ly)
 ```
 
 加载器执行以下门禁：
@@ -85,7 +89,9 @@ gamepad = load_into_scene(
 - manifest 的 joint dynamics 与 articulation 的活动 joint 名称完全一致。
 
 加载过程保留 URDF inertial，并按 joint name 设置 drive、摩擦与中立目标。返回的
-`XboxOneSArticulation` 也只接受 joint name；qpos 数组顺序不会成为公共接口。
+`XboxOneSArticulation` 也只接受 joint name；qpos 数组顺序不会成为公共接口。左摇杆
+profile 将两轴 qpos 归一化到 `[-1, 1]`，并在对角超出单位圆时做径向投影。完整接触
+验证示例见 `examples/robotwin_left_stick.py`。
 
 需要使用 RoboTwin 原生目录时，可以先查看 copy plan：
 

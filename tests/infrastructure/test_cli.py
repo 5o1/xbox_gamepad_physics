@@ -39,6 +39,21 @@ class CliTest(unittest.TestCase):
         self.assertEqual(status, 2)
         self.assertIn("dynamics_ready=False", errors.getvalue())
 
+    def test_verify_accepts_ready_robotwin_left_stick_profile(self):
+        output = io.StringIO()
+        with redirect_stdout(output):
+            status = main(
+                [
+                    "verify",
+                    "--backend",
+                    "robotwin",
+                    "--profile",
+                    "left_stick_estimated_v0",
+                ]
+            )
+        self.assertEqual(status, 0)
+        self.assertIn("robotwin/left_stick_estimated_v0: ready", output.getvalue())
+
 
 if __name__ == "__main__":
     unittest.main()

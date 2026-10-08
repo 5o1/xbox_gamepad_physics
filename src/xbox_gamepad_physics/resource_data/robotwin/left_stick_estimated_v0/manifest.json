@@ -1,0 +1,121 @@
+{
+  "schema_version": 1,
+  "asset_id": "xbox_one_s",
+  "backend": "robotwin",
+  "profile": "left_stick_estimated_v0",
+  "available": true,
+  "dynamics_ready": true,
+  "entrypoint": "mobility.urdf",
+  "required_files": [
+    "mobility.urdf",
+    "model_data.json",
+    "bounding_box.json",
+    "semantics.txt",
+    "visual/manifest.json",
+    "collision/manifest.json"
+  ],
+  "reason": null,
+  "scope": "RoboTwin/SAPIEN left-stick contact and signal vertical slice",
+  "evidence_status": "simulation_estimate_pending_owner_hardware_measurement",
+  "source_record": "sources/robotwin_left_stick_estimated_v0.json",
+  "source_sha256": "2a4b0ba61eecaa273457f7bb6adc48785fc3345c5756297f58f74aa2b36658f5",
+  "joint_dynamics": [
+    {
+      "name": "left_stick_x",
+      "stiffness": 0.03487569187752837,
+      "damping": 0.00035,
+      "force_limit": 0.024,
+      "friction": 0.0,
+      "target": 0.0
+    },
+    {
+      "name": "left_stick_y",
+      "stiffness": 0.03487569187752837,
+      "damping": 0.00035,
+      "force_limit": 0.024,
+      "friction": 0.0,
+      "target": 0.0
+    }
+  ],
+  "state_mapping": {
+    "axes": [
+      {
+        "channel": "lx",
+        "joint": "left_stick_x",
+        "lower": -0.4014257279586958,
+        "upper": 0.4014257279586958
+      },
+      {
+        "channel": "ly",
+        "joint": "left_stick_y",
+        "lower": -0.4014257279586958,
+        "upper": 0.4014257279586958
+      }
+    ],
+    "radial_groups": [
+      {
+        "channels": [
+          "lx",
+          "ly"
+        ],
+        "radius": 1.0
+      }
+    ],
+    "deadzone": null
+  },
+  "contact_material": {
+    "static_friction": 0.5,
+    "dynamic_friction": 0.4,
+    "restitution": 0.05,
+    "contact_offset_m": 0.0002,
+    "rest_offset_m": 0.0,
+    "status": "simulation_assumption_pending_fingertip_pair_identification",
+    "sensitivity_ranges": {
+      "static_friction": [
+        0.2,
+        0.8
+      ],
+      "dynamic_friction": [
+        0.15,
+        0.7
+      ],
+      "restitution": [
+        0.0,
+        0.15
+      ]
+    }
+  },
+  "visual_binding": {
+    "schema_version": 1,
+    "source": "common/xbox_one_s/visual/manifest.json",
+    "source_sha256": "4949463388206258ab23a513eefad1254ea9f99cac0beb79fa03646c2ab0fcae",
+    "root_link": "controller_body",
+    "moving_parts": {
+      "09_Stick_L_VISUAL_UNCALIBRATED": {
+        "link": "left_stick",
+        "pivot_m_source_frame": [
+          -0.038035359991741326,
+          0.024133629044164898,
+          0.01212386322086352
+        ]
+      }
+    },
+    "static_parts": [
+      "00_A_Button_VISUAL_UNCALIBRATED",
+      "01_B_Button_VISUAL_UNCALIBRATED",
+      "02_Bumper_L_VISUAL_UNCALIBRATED",
+      "03_Bumper_R_VISUAL_UNCALIBRATED",
+      "04_Connect_Button_VISUAL_UNCALIBRATED",
+      "05_Controller_Body_VISUAL_UNCALIBRATED",
+      "06_D-Pad_VISUAL_UNCALIBRATED",
+      "07_Menu_L_VISUAL_UNCALIBRATED",
+      "08_Menu_R_VISUAL_UNCALIBRATED",
+      "10_Stick_R_VISUAL_UNCALIBRATED",
+      "11_Trigger_L_VISUAL_UNCALIBRATED",
+      "12_Trigger_R_VISUAL_UNCALIBRATED",
+      "13_X_Button_VISUAL_UNCALIBRATED",
+      "14_XboxButton_VISUAL_UNCALIBRATED",
+      "15_Y_Button_VISUAL_UNCALIBRATED"
+    ]
+  }
+}
