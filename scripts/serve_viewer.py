@@ -2,6 +2,7 @@
 import argparse
 import hashlib
 import json
+import shlex
 from functools import partial
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -128,16 +129,34 @@ def validate_vendor(project, vendor):
 
 
 class Handler(SimpleHTTPRequestHandler):
-    def __init__(self, *args, roots, **kwargs):
+    def __init__(self, *args, roots, cycles=None, **kwargs):
         self.roots = roots
+        self.cycles = cycles
         super().__init__(*args, **kwargs)
+
+    def do_POST(self):
+        if self.path != '/cycles/frame' or self.cycles is None:
+            self.send_error(404)
+            return
+        try:
+            length = int(self.headers.get('Content-Length', 0))
+            if not 0 < length <= 32768:
+                raise ValueError('invalid request size')
+            frame = self.cycles.render(json.loads(self.rfile.read(length)))
+            self.send_response(200)
+            self.send_header('Content-Type', 'image/png')
+            self.send_header('Content-Length', str(len(frame)))
+            self.end_headers()
+            self.wfile.write(frame)
+        except (ValueError, KeyError, TypeError, RuntimeError, OSError) as error:
+            self.send_error(500, str(error))
 
     def translate_path(self, path):
         path = unquote(urlsplit(path).path)
         route = next(
             (
                 prefix
-                for prefix in ("/assets/", "/source/", "/vendor/", "/reference/", "/candidate-reference/", "/registry/", "/evidence/")
+                for prefix in ("/assets/", "/source/", "/approved/", "/accepted-reference/", "/vendor/", "/reference/", "/candidate-reference/", "/registry/", "/evidence/")
                 if path.startswith(prefix)
             ),
             "/",
@@ -166,6 +185,8 @@ if __name__ == "__main__":
     parser.add_argument("--vendor", type=Path, required=True)
     parser.add_argument("--variant-id", required=True)
     parser.add_argument("--port", type=int, default=8766)
+    parser.add_argument("--blender", default="blender", help="Blender 4.5 executable")
+    parser.add_argument("--cycles-command", help="Explicit worker command, e.g. SSH to an existing Blender installation")
     args = parser.parse_args()
     project = Path(__file__).resolve().parents[1]
     try:
@@ -177,6 +198,8 @@ if __name__ == "__main__":
         "/": project / "viewer",
         "/assets/": args.assets,
         "/source/": project / "assets" / "xbox_one_s" / "source",
+        "/approved/": project / "assets" / "xbox_one_s",
+        "/accepted-reference/": project / "results/xbox_official_import_comparison/official_import_4.5.9_LTS/reference_matched_cycles_probe",
         "/vendor/": args.vendor,
         # Only expose the reviewed front-reference directory, not all results.
         "/reference/": project / "results" / "legacy_casper_1914_visual_parts",
@@ -188,4 +211,13 @@ if __name__ == "__main__":
     if not all(p.is_dir() for p in roots.values()):
         raise SystemExit("Missing required directory")
     print(f"Viewer http://127.0.0.1:{args.port}{variant['_validated_viewer_url']} variant={args.variant_id}", flush=True)
-    ThreadingHTTPServer(("127.0.0.1", args.port), partial(Handler, roots=roots)).serve_forever()
+    from cycles_bridge import CyclesBridge
+    command = shlex.split(args.cycles_command) if args.cycles_command else [
+        args.blender, '--background', str(project / 'assets/xbox_one_s/render/Xbox_One_S_approved_cycles.blend'),
+        '--python', str(project / 'scripts/cycles_worker.py'),
+    ]
+    cycles = CyclesBridge(command)
+    try:
+        ThreadingHTTPServer(("127.0.0.1", args.port), partial(Handler, roots=roots, cycles=cycles)).serve_forever()
+    finally:
+        cycles.close()

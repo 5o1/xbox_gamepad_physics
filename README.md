@@ -125,7 +125,7 @@ node --test tests/test_*.mjs
 
 ## 启动交互预览
 
-需要 Python 3.10 或更新版本、Node.js 22 和 npm。Xbox One S 网格、材质和贴图已在仓库中，
+需要 Python 3.10 或更新版本、Node.js 22、npm 和 Blender 4.5.9。Xbox One S 网格、材质和贴图已在仓库中，
 Three.js 版本由 npm 锁文件固定。全新环境执行：
 
 ```sh
@@ -137,6 +137,16 @@ npm run viewer
 
 打开 `http://127.0.0.1:8766/v0.html`。无需连接 GPU 节点或提供额外的模型路径。
 视觉验收由用户检查并确认。需要指定端口时使用 `npm run viewer -- --port 8767`。
+Blender 未加入 PATH 时，使用 `npm run viewer -- --blender "/完整路径/blender"`。
+
+当前画面直接由 Blender/Cycles 绘制，复用用户确认的 Boiler Room 强度 1.0 / Standard / 35°
+方案。`assets/xbox_one_s/render/Xbox_One_S_approved_cycles.blend` 已打包模型、材质和 HDRI，
+也可以直接用 Blender 打开。浏览器仅处理鼠标、手柄输入与图片显示；Three.js 用于拾取和坐标计算。
+同一服务只有一个常驻渲染进程，有新姿态时才出图；渲染期间只保留最新待处理姿态。
+这是 Cycles 交互检查器，画面更新速度取决于硬件，不保证游戏帧率。
+
+复用远端安装时，可以通过 `--cycles-command` 显式指定 SSH 启动命令；
+命令须打开同一份打包场景并执行 `scripts/cycles_worker.py`。
 
 手动指定资源目录的等价命令：
 

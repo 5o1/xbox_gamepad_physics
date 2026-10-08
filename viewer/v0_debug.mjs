@@ -105,6 +105,7 @@ export function installViewerDebug(api) {
       dragging: state.drag !== null,
       verifiedBindings: state.verifiedBindings,
       materialStats: materialStats(state.model),
+      cycles: state.cycles,
       parts: [...parts].map(([name, node]) => {
         const box = new T.Box3().setFromObject(node);
         const worldCenter = box.getCenter(new T.Vector3());

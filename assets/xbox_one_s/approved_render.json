@@ -1,0 +1,23 @@
+{
+  "user_selected_reference": "results/xbox_official_import_comparison/official_import_4.5.9_LTS/reference_matched_cycles_probe/boiler_room_vertical_fov35_strength_1p0.png",
+  "reference_sha256": "260187ba839674ce2ed49d5d37c3eeb5ca95206fccb7c13ce2655d7001204907",
+  "packed_scene": "render/Xbox_One_S_approved_cycles.blend",
+  "packed_scene_sha256": "44fe631eb0ee395a70891ba6228bd9a6d4105343d97d263dfc416f2acf4ad8b0",
+  "source_scene_sha256": "8f517046e08da298a35fa2d42c803b09e88ede897afe07e982769b21c9f27432",
+  "hdri_sha256": "8b4c9147603de5aa166046845104a019e339da9b450d54c8d9786ae5758e32f7",
+  "renderer": "CYCLES",
+  "environment": "Poly Haven Boiler Room",
+  "environment_strength": 1.0,
+  "camera": {
+    "position": [-0.037516698241233826, -0.5597505569458008, 4.206621170043945],
+    "target": [-0.037516698241233826, 0.24024944007396698, -0.2933788597583771],
+    "fov_degrees": 35,
+    "sensor_fit": "VERTICAL"
+  },
+  "color_management": {"view_transform": "Standard", "look": "None", "exposure": 0, "gamma": 1},
+  "camera_background_linear": [0.0111807, 0.0111807, 0.0111807],
+  "samples": 64,
+  "denoising": true,
+  "resolution": [1600, 900],
+  "recipe": "scripts/render_reference_matched_probe.py; original recipe recorded in commit f44da6c; select Boiler Room strength 1.0 only"
+}

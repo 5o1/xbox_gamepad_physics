@@ -83,6 +83,8 @@ try {
     throw new Error(`${label}; last state=${JSON.stringify(observed)}`);
   };
   let state = await waitFor(candidate => candidate.ready, 'viewer did not become ready');
+  const waitForCycles=()=>waitFor(candidate=>candidate.cycles?.frame>0&&!candidate.cycles.running&&candidate.cycles.frame===candidate.cycles.request,'Cycles frame did not settle',2400);
+  await waitForCycles();
   const pageError = await evaluate('document.body.dataset.error || null');
   assert.equal(pageError, null, `viewer error: ${pageError}`);
   assert.equal(state.parts.length, 16);
@@ -228,6 +230,30 @@ try {
     label: 'left_stick', node: '09_Stick_L_VISUAL_UNCALIBRATED', channel: 0,
     target: stickTarget, activeChannels: [0, 1], drag2d: true,
   });
+  // Reproduce the reported bug: move beyond the circular gate, then back in
+  // without releasing the pointer. Test actual DOM mouse events on both sticks.
+  const boundaryReturnChecks=[];
+  for(const [node,channels] of [['09_Stick_L_VISUAL_UNCALIBRATED',[0,1]],['10_Stick_R_VISUAL_UNCALIBRATED',[2,3]]]){
+    await configureMouse(channels[0],true);
+    const pick=await debugCall('findVisiblePick',[node]);
+    const origin=await debugCall('projectInteractionPoint',[node,pick.local_point,neutral()]);
+    const edge=neutral();edge[channels[0]]=.6;edge[channels[1]]=.8;
+    const endpoint=await debugCall('projectInteractionPoint',[node,pick.local_point,edge]);
+    await call('Input.dispatchMouseEvent',{type:'mousePressed',x:pick.screen[0],y:pick.screen[1],button:'left',buttons:1,clickCount:1});
+    const trace=[];
+    for(const radius of [.5,1,2,3,2,1,.9,.8,.6,.4,.2,0]){
+      const target=neutral();target[channels[0]]=.6*Math.min(radius,1);target[channels[1]]=.8*Math.min(radius,1);
+      const point=radius>1?origin.map((v,i)=>v+radius*(endpoint[i]-v)):await debugCall('projectInteractionPoint',[node,pick.local_point,target]);
+      await call('Input.dispatchMouseEvent',{type:'mouseMoved',x:point[0],y:point[1],button:'left',buttons:1});
+      const observed=await inspect();
+      const pair=channels.map(i=>observed.values[i]);
+      assert.ok(Math.hypot(...pair)<=1+1e-6,'solver left circular domain');
+      if(radius<1)assert.ok(channels.every(i=>Math.abs(observed.values[i]-target[i])<.03),`${node}: boundary return stuck or jumped at ${radius}: ${pair}`);
+      trace.push({radius,values:pair});
+    }
+    await call('Input.dispatchMouseEvent',{type:'mouseReleased',x:origin[0],y:origin[1],button:'left',buttons:0,clickCount:1});
+    boundaryReturnChecks.push({node,trace});
+  }
   const dpadTarget = neutral();
   dpadTarget[19] = 1;
   await exerciseMouse({
@@ -244,6 +270,7 @@ try {
     'concurrent Gamepad state did not propagate');
   const expected = [...concurrentAxes, ...Array.from({length: 17}, (_, index) => concurrentButtons[index] ?? 0)];
   assert.ok(state.values.every((value, index) => Math.abs(value - expected[index]) < 1e-6));
+  await waitForCycles();
   const concurrentShot = await call('Page.captureScreenshot', {format: 'png'});
   await writeFile(
     join(output, 'estimated_v0_concurrent_input.png'),
@@ -269,6 +296,7 @@ try {
     material_stats: state.materialStats,
     standard_gamepad_21_channels: channelChecks,
     mouse_controls: mouseChecks,
+    circular_boundary_return: boundaryReturnChecks,
     concurrent_gamepad_encoding: true,
     real_controller_tested: false,
     physical_acceptance: false,

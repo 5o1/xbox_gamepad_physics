@@ -57,6 +57,7 @@ lighting/
 !assets/xbox_one_s/visual/*.obj
 !assets/xbox_one_s/visual/Xbox_One_S_BatonyRobson_STATIC_VISUAL_UNCALIBRATED.glb
 !assets/xbox_one_s/source/xbox_one_s_controllergamepad_animated.glb
+!assets/xbox_one_s/render/Xbox_One_S_approved_cycles.blend
 
 # Third-party reference captures retained outside Git. Their URLs and hashes are
 # recorded under sources/; absence here is intentional, not lost evidence.

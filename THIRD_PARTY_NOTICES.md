@@ -6,8 +6,8 @@ forces, or controller revision have been verified.
 
 No license for the project's own source code is declared by this notice. The
 licenses below apply only to the identified third-party works and derivatives.
-The selected Xbox One S source GLB and visual derivatives are stored under
-`assets/xbox_one_s/`. Other original archives, Blender files, HDR environments,
+The selected Xbox One S source GLB, visual derivatives and packed Cycles scene are
+stored under `assets/xbox_one_s/`. Other original archives, Blender files, HDR environments,
 PDFs and large intermediates remain outside this Git repository.
 
 ## Xbox One S Controller/Gamepad (Animated)
@@ -71,15 +71,20 @@ PDFs and large intermediates remain outside this Git repository.
 
 ## Poly Haven HDR environments
 
-The following environments were used only to produce lighting diagnostics:
+The following environments were used in the rendering work:
 
 - [Boiler Room](https://polyhaven.com/a/boiler_room)
 - [Industrial Workshop Foundry](https://polyhaven.com/a/industrial_workshop_foundry)
 - [Studio Small 08](https://polyhaven.com/a/studio_small_08)
 
 Poly Haven publishes these assets under
-[CC0 1.0](https://polyhaven.com/license). The HDR/EXR files are not included;
+[CC0 1.0](https://polyhaven.com/license). Standalone HDR/EXR files are not included;
 download hashes and acquisition records are kept in `sources/*_hdri.json`.
+The user-selected Boiler Room environment is also packed unchanged in
+`assets/xbox_one_s/render/Xbox_One_S_approved_cycles.blend` for the Cycles viewer.
+It is by Oliksiy Yakovlyev, distributed by Poly Haven under CC0; its source and
+hash are recorded in `sources/boiler_room_hdri.json`.
+
 These environments are licensed approximations, not copies of Sketchfab's
 Industrial Room environment.
 

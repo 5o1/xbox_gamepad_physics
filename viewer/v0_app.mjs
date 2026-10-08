@@ -1,7 +1,7 @@
 import * as T from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
-import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
+import {CyclesView} from './cycles_view.mjs';
 import {InputSession,AXES,BUTTONS,neutralState} from './gamepad_state.mjs';
 import {solveDrag2D,projectUnitDisk} from './drag2d.mjs';
 import {configuredChannels,evaluateProfile,nodeSteps,validateProfile} from './schema2_runtime.mjs';
@@ -9,10 +9,8 @@ import {configuredChannels,evaluateProfile,nodeSteps,validateProfile} from './sc
 const el=id=>document.getElementById(id),displayNames=[...AXES,...BUTTONS];
 const scene=new T.Scene();scene.background=new T.Color('#101820');
 const camera=new T.PerspectiveCamera(40,1,.001,10);camera.up.set(0,0,1);
-const renderer=new T.WebGLRenderer({antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.outputColorSpace=T.SRGBColorSpace;renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1;
-el('scene').append(renderer.domElement);
-const environment=new RoomEnvironment();const pmrem=new T.PMREMGenerator(renderer);scene.environment=pmrem.fromScene(environment).texture;environment.dispose();pmrem.dispose();
-scene.add(new T.HemisphereLight(0xffffff,0x556270,1.25));const key=new T.DirectionalLight(0xffffff,1.5);key.position.set(-.12,-.2,.3);scene.add(key);
+const renderer=new CyclesView(el('scene'));
+let approvedRender=null;
 const orbit=new OrbitControls(camera,renderer.domElement);orbit.enableDamping=true;
 const session=new InputSession(),ray=new T.Raycaster(),parts=new Map(),restMatrices=new Map();
 let profile=null,evidence=null,model=null,activeVariantId=null,ready=false,drag=null,selected=null,lastEvaluation=null,pairValue=0;
@@ -27,6 +25,11 @@ displayNames.forEach((name,index)=>el('channel').add(new Option(name,String(inde
 
 async function digest(bytes){return [...new Uint8Array(await crypto.subtle.digest('SHA-256',bytes))].map(value=>value.toString(16).padStart(2,'0')).join('');}
 function resetCamera(){
+  if(approvedRender&&profile){
+    const scale=profile.visual.meters_per_native_unit,view=approvedRender.camera;
+    camera.position.fromArray(view.position).multiplyScalar(scale);orbit.target.fromArray(view.target).multiplyScalar(scale);
+    camera.fov=view.fov_degrees;camera.updateProjectionMatrix();orbit.update();requestRender();return;
+  }
   if(!model){camera.position.set(0,-.27,.13);orbit.target.set(0,0,0);orbit.update();requestRender();return;}
   model.updateMatrixWorld(true);const box=new T.Box3().setFromObject(model),center=box.getCenter(new T.Vector3()),size=box.getSize(new T.Vector3()),span=Math.max(size.x,size.y,size.z);
   orbit.target.copy(center);camera.position.set(center.x,center.y-span*1.35,center.z+span*1.95);camera.near=Math.max(.0001,span/1000);camera.far=Math.max(10,span*20);camera.updateProjectionMatrix();orbit.update();requestRender();
@@ -130,6 +133,7 @@ function updateReadouts(){
 }
 
 async function load(){
+  const renderResponse=await fetch('/approved/approved_render.json');if(!renderResponse.ok)throw Error('无法读取用户确认的渲染方案');approvedRender=await renderResponse.json();
   const [registryResponse,inventoryResponse]=await Promise.all([fetch('/registry/asset_index.json'),fetch('/assets/inventory.json')]);
   if(!registryResponse.ok||!inventoryResponse.ok)throw Error('资产注册表或外部清单不可用');
   const registry=await registryResponse.json(),inventoryBytes=await inventoryResponse.arrayBuffer(),inventoryHash=await digest(inventoryBytes),allowed=new Set([registry.interactive_viewer?.active_variant_id,...(registry.interactive_viewer?.allowed_variant_ids??[])]);
@@ -150,9 +154,8 @@ async function load(){
   if(sourceHash!==profile.source_bindings.source_glb_sha256)throw Error('原始材质 GLB 哈希不匹配');
   const sourceGltf=await new GLTFLoader().parseAsync(sourceBytes,'/source/');
   const sourceMaterial=await sourceGltf.parser.getDependency('material',0);
-  // Alpha-to-coverage preserves the texture alpha with MSAA depth testing,
-  // avoiding the per-object transparent sorting artifacts documented earlier.
-  sourceMaterial.transparent=false;sourceMaterial.alphaToCoverage=true;sourceMaterial.depthWrite=true;sourceMaterial.needsUpdate=true;
+  // Retain the source material metadata for inspection and picking. The visible
+  // image and transparency are rendered by Cycles from the packed .blend.
   const exportedMaterials=new Set();
   model.traverse(object=>{if(object.isMesh){exportedMaterials.add(object.material);object.material=sourceMaterial;}});
   for(const material of exportedMaterials)material.dispose();
@@ -179,8 +182,8 @@ let deviceKey='';function animate(){
   if(keyValue!==deviceKey){const previous=el('device').value;el('device').replaceChildren();pads.forEach(pad=>el('device').add(new Option(`${pad.index}: ${pad.id}`,String(pad.index))));if(pads.some(pad=>String(pad.index)===previous))el('device').value=previous;deviceKey=keyValue;if(session.mode==='device')clear('device_list_change');}
   if(session.mode==='device'&&!document.hidden&&document.hasFocus()){try{session.updateDevice(pads.find(pad=>String(pad.index)===el('device').value)??null,performance.now());}catch(error){clear(error.message);}}
   if(valuesChanged(beforeValues,session.frame.values))applyPose();updateReadouts();
-  const width=el('scene').clientWidth,height=el('scene').clientHeight,resized=renderer.domElement.width!==Math.round(width*renderer.getPixelRatio())||renderer.domElement.height!==Math.round(height*renderer.getPixelRatio());if(resized){renderer.setSize(width,height);camera.aspect=width/height;camera.updateProjectionMatrix();requestRender();}
-  const orbitChanged=orbit.update();if(renderRequested||orbitChanged){renderer.render(scene,camera);renderRequested=false;}
+  const width=Math.floor(Math.min(el('scene').clientWidth,el('scene').clientHeight*16/9)),height=Math.round(width*9/16),resized=renderer.domElement.width!==width||renderer.domElement.height!==height;if(resized){renderer.setSize(width,height);camera.aspect=width/height;camera.updateProjectionMatrix();requestRender();}
+  const orbitChanged=orbit.update();if(renderRequested||orbitChanged){if(ready)renderer.render(parts,camera,profile.visual.meters_per_native_unit);renderRequested=false;}
   if(orbitChanged)scheduleFrame('orbit_damping');
   if(devicePollingActive())scheduleFrame('device_poll');
 }
@@ -188,7 +191,7 @@ load().catch(error=>{status(error.message);document.body.dataset.error=error.mes
 if(new URLSearchParams(location.search).get('debug')==='1'){
   import('./v0_debug.mjs').then(({installViewerDebug})=>installViewerDebug({
     scene,camera,renderer,orbit,parts,restMatrices,
-    getState:()=>({ready,activeVariantId,profile,model,session,lastEvaluation,pairValue,selected,drag,deviceKey,verifiedBindings}),
+    getState:()=>({ready,activeVariantId,profile,model,session,lastEvaluation,pairValue,selected,drag,deviceKey,verifiedBindings,cycles:{frame:renderer.frame,request:renderer.request,running:renderer.running,error:renderer.lastError}}),
     projectPickedPoint,resetCamera,requestRender,
   })).catch(error=>{document.body.dataset.error=`debug module: ${error.message}`;});
 }

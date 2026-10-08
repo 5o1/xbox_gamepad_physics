@@ -1,4 +1,4 @@
-<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' blob:; font-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; worker-src 'none'"><link rel="icon" href="data:,"><title>Xbox One S 外观匹配 estimated-v0 交互检查</title>
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' blob:; font-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; worker-src 'none'"><link rel="icon" href="data:,"><title>Xbox One S · 已验收 Cycles 方案</title>
 <style>
 body{margin:0;background:#101820;color:#e4e9ed;font:14px system-ui;display:grid;grid-template-columns:1fr 370px;height:100vh}#scene{min-width:0}canvas{display:block;touch-action:none}aside{padding:18px;overflow:auto;background:#1a2631}h1{font-size:20px;line-height:1.35}button,select,input{margin:6px 0;padding:7px;max-width:100%}pre{white-space:pre-wrap;font:12px monospace}.warning{color:#ffcc75}.ok{color:#8fe1ad}#status{padding:8px 0}small{color:#b1bec8}label{display:block}img{width:100%;border-radius:5px}
 </style>
@@ -6,7 +6,8 @@ body{margin:0;background:#101820;color:#e4e9ed;font:14px system-ui;display:grid;
 <main id="scene"></main><aside>
 <h1>Xbox One S 外观匹配 estimated-v0</h1>
 	<p class="warning">Xbox One S 目标外观已选定，当前页面用于可审计的运动预览。外观使用持有者批准的 BatonyRobson 模型；行程来自艺术家动画或明确标注的参考部件。质量、惯量、碰撞、摩擦、回中曲线和真实 HID 传递函数仍为空，尚未达到接触训练或物理验收条件。当前 JavaScript 映射是 forward-only 数值预览；联合训练需要经 gradcheck 验证的 Torch/JAX 适配器。</p>
-<a href="/candidate-reference/pos_z.png" target="_blank"><img src="/candidate-reference/pos_z.png" alt="下载资产的正面审查渲染"></a>
+<a href="/accepted-reference/boiler_room_vertical_fov35_strength_1p0.png" target="_blank"><img src="/accepted-reference/boiler_room_vertical_fov35_strength_1p0.png" alt="用户确认的 Boiler Room / Cycles 参考图"></a>
+<p>画面由 Blender/Cycles 绘制，沿用上图的材质与灯光。拖动期间渲染最新姿态，出图速度取决于运行设备。</p>
 <label>输入模式 <select id="mode"><option value="mouse">鼠标 → 部件 → 21维状态</option><option value="device">真实手柄 → 21维状态 → 部件</option></select></label>
 <label>设备 <select id="device"></select></label>
 <label>操作通道 <select id="channel"></select></label>

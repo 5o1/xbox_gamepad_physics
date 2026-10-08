@@ -40,6 +40,13 @@
 并使用 MSAA alpha-to-coverage 处理透明区域。记录及四角度截图位于
 `results/viewer_material_repair/`。该修复尚未获得用户视觉确认，亦未声称复现旧 Blender 灯光效果。
 
+当前交付已改为直接使用 Blender/Cycles。用户明确指定的旧基准与参数写入
+`assets/xbox_one_s/approved_render.json`，完整打包场景位于
+`assets/xbox_one_s/render/Xbox_One_S_approved_cycles.blend`（约 27 MiB）。
+该场景复用 Boiler Room 强度 1.0 / Standard / 35° 原配方，复现图平均通道差异小于 0.005/255。
+前述 WebGL 画面属于被替换的实现，不作为当前交付依据。
+新截图和交互验证见 `results/approved_cycles_reuse/`；本次交付仍待用户视觉确认。
+
 验收：新 clone 的用户按命令获取资源后能显示完整手柄，无需知道开发环境的 GPU 私有目录。
 
 许可依据：仓库记录 BatonyRobson 的模型采用 CC BY 4.0，允许分发和修改。
