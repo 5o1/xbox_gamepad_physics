@@ -46,6 +46,8 @@
 该场景复用 Boiler Room 强度 1.0 / Standard / 35° 原配方，复现图平均通道差异小于 0.005/255。
 前述 WebGL 画面属于被替换的实现，不作为当前交付依据。
 新截图和交互验证见 `results/approved_cycles_reuse/`；本次交付仍待用户视觉确认。
+已从 `e6aa505` 全新 clone 再次验证安装、Cycles 出图和左右摇杆越界返回；
+结果见该目录的 `clean_clone_browser.json` 和 `clean_clone.png`。
 
 验收：新 clone 的用户按命令获取资源后能显示完整手柄，无需知道开发环境的 GPU 私有目录。
 
