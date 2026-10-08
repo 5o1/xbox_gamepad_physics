@@ -40,12 +40,6 @@
 并使用 MSAA alpha-to-coverage 处理透明区域。记录及四角度截图位于
 `results/viewer_material_repair/`。该修复尚未获得用户视觉确认，亦未声称复现旧 Blender 灯光效果。
 
-后续已从保存的 Blender 4.5.9 场景直接导出环境、面光源与 Filmic 设置，
-接入查看器默认渲染。原始设置及 LUT 位于 `assets/xbox_one_s/render/`，
-运行记录和四角度截图位于 `results/saved_render_integration/`。
-12 组灰阶和彩色样本经浏览器 Filmic 处理后与 Blender 输出逐通道一致（8 位最大误差 0）。
-该验证只确认色彩变换与设置接入，Cycles 与 WebGL 的光照求解仍有差异；用户视觉验收待完成。
-
 验收：新 clone 的用户按命令获取资源后能显示完整手柄，无需知道开发环境的 GPU 私有目录。
 
 许可依据：仓库记录 BatonyRobson 的模型采用 CC BY 4.0，允许分发和修改。

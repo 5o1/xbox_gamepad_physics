@@ -96,8 +96,6 @@ try {
   assert.ok(state.verifiedBindings.material, 'original material source was not verified');
   assert.ok(state.materialStats.used_texture_slots.includes('specularIntensityMap'), 'original specular intensity map was lost');
   assert.ok(!state.materialStats.used_texture_slots.includes('specularColorMap'), 'static-export specular color substitution is still active');
-  assert.equal(state.renderSettings.color.view, 'Filmic');
-  assert.equal(state.renderSettings.source_scene_sha256, '8f517046e08da298a35fa2d42c803b09e88ede897afe07e982769b21c9f27432');
 
   const actualNavigationUrl = await evaluate('location.href');
   const sourceBinding = await buildVerifiedSourceBinding({
@@ -269,7 +267,6 @@ try {
     source_binding: sourceBinding,
     external_asset_bindings: state.verifiedBindings,
     material_stats: state.materialStats,
-    render_settings: state.renderSettings,
     standard_gamepad_21_channels: channelChecks,
     mouse_controls: mouseChecks,
     concurrent_gamepad_encoding: true,

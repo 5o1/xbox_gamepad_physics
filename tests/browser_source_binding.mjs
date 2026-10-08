@@ -21,7 +21,6 @@ export const V0_SOURCE_RESOURCES = Object.freeze([
   {request_path: '/registry/asset_index.json'},
   {request_path: '/registry/appearance_matched_estimated_v0/viewer_profile.json'},
   {request_path: '/evidence/appearance_matched_estimated_v0.json'},
-  {request_path: '/render-settings/settings.json'},
 ]);
 
 

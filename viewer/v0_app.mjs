@@ -1,7 +1,7 @@
 import * as T from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
-import {installSavedRender} from './saved_render.mjs';
+import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
 import {InputSession,AXES,BUTTONS,neutralState} from './gamepad_state.mjs';
 import {solveDrag2D,projectUnitDisk} from './drag2d.mjs';
 import {configuredChannels,evaluateProfile,nodeSteps,validateProfile} from './schema2_runtime.mjs';
@@ -11,11 +11,12 @@ const scene=new T.Scene();scene.background=new T.Color('#101820');
 const camera=new T.PerspectiveCamera(40,1,.001,10);camera.up.set(0,0,1);
 const renderer=new T.WebGLRenderer({antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.outputColorSpace=T.SRGBColorSpace;renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1;
 el('scene').append(renderer.domElement);
+const environment=new RoomEnvironment();const pmrem=new T.PMREMGenerator(renderer);scene.environment=pmrem.fromScene(environment).texture;environment.dispose();pmrem.dispose();
+scene.add(new T.HemisphereLight(0xffffff,0x556270,1.25));const key=new T.DirectionalLight(0xffffff,1.5);key.position.set(-.12,-.2,.3);scene.add(key);
 const orbit=new OrbitControls(camera,renderer.domElement);orbit.enableDamping=true;
 const session=new InputSession(),ray=new T.Raycaster(),parts=new Map(),restMatrices=new Map();
 let profile=null,evidence=null,model=null,activeVariantId=null,ready=false,drag=null,selected=null,lastEvaluation=null,pairValue=0;
 let renderRequested=true,framePending=false,verifiedBindings=null;
-let savedRender=null;
 const status=text=>{el('status').textContent=text;};
 function devicePollingActive(){return session.mode==='device'&&!document.hidden&&document.hasFocus();}
 function scheduleFrame(){
@@ -141,8 +142,6 @@ async function load(){
   if(profile.source_bindings.static_inventory_sha256!==inventoryHash)throw Error('profile 与外部清单绑定不一致');
   const glbResponse=await fetch('/assets/'+encodeURIComponent(profile.visual.file));if(!glbResponse.ok)throw Error(`GLB HTTP ${glbResponse.status}`);const glbBytes=await glbResponse.arrayBuffer(),glbHash=await digest(glbBytes);if(glbHash!==profile.visual.sha256)throw Error('GLB 哈希不匹配');
   const gltf=await new Promise((resolve,reject)=>new GLTFLoader().parse(glbBytes,'/assets/',resolve,reject));model=gltf.scene;model.rotation.x=profile.visual.gltf_to_viewer_rotation_x_rad;model.scale.setScalar(profile.visual.meters_per_native_unit);scene.add(model);model.updateMatrixWorld(true);
-  savedRender=await installSavedRender(renderer,scene,camera,profile.visual.meters_per_native_unit);
-  savedRender.composer.setSize(el('scene').clientWidth,el('scene').clientHeight);
   // Reuse the original, previously audited material. Blender's static export
   // changed KHR_materials_specular from intensity-in-alpha to specular color.
   const sourceUrl='/source/xbox_one_s_controllergamepad_animated.glb';
@@ -181,8 +180,7 @@ let deviceKey='';function animate(){
   if(session.mode==='device'&&!document.hidden&&document.hasFocus()){try{session.updateDevice(pads.find(pad=>String(pad.index)===el('device').value)??null,performance.now());}catch(error){clear(error.message);}}
   if(valuesChanged(beforeValues,session.frame.values))applyPose();updateReadouts();
   const width=el('scene').clientWidth,height=el('scene').clientHeight,resized=renderer.domElement.width!==Math.round(width*renderer.getPixelRatio())||renderer.domElement.height!==Math.round(height*renderer.getPixelRatio());if(resized){renderer.setSize(width,height);camera.aspect=width/height;camera.updateProjectionMatrix();requestRender();}
-  if(savedRender&&resized)savedRender.composer.setSize(width,height);
-  const orbitChanged=orbit.update();if(renderRequested||orbitChanged){if(savedRender)savedRender.composer.render();else renderer.render(scene,camera);renderRequested=false;}
+  const orbitChanged=orbit.update();if(renderRequested||orbitChanged){renderer.render(scene,camera);renderRequested=false;}
   if(orbitChanged)scheduleFrame('orbit_damping');
   if(devicePollingActive())scheduleFrame('device_poll');
 }
@@ -190,7 +188,7 @@ load().catch(error=>{status(error.message);document.body.dataset.error=error.mes
 if(new URLSearchParams(location.search).get('debug')==='1'){
   import('./v0_debug.mjs').then(({installViewerDebug})=>installViewerDebug({
     scene,camera,renderer,orbit,parts,restMatrices,
-    getState:()=>({ready,activeVariantId,profile,model,session,lastEvaluation,pairValue,selected,drag,deviceKey,verifiedBindings,renderSettings:savedRender?.settings}),
+    getState:()=>({ready,activeVariantId,profile,model,session,lastEvaluation,pairValue,selected,drag,deviceKey,verifiedBindings}),
     projectPickedPoint,resetCamera,requestRender,
   })).catch(error=>{document.body.dataset.error=`debug module: ${error.message}`;});
 }
