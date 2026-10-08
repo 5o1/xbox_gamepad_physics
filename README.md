@@ -138,6 +138,10 @@ npm run viewer
 打开 `http://127.0.0.1:8766/v0.html`。无需连接 GPU 节点或提供额外的模型路径。
 视觉验收由用户检查并确认。需要指定端口时使用 `npm run viewer -- --port 8767`。
 
+默认渲染复用已保存 Blender 4.5.9 场景的灰色环境、面光源和 Filmic/None 色彩设置。
+参数与原始 LUT 保存在 `assets/xbox_one_s/render/`；原始 GLB 提供 2K 材质。
+查看器使用 WebGL 实时绘制，最终视觉效果由用户确认。
+
 手动指定资源目录的等价命令：
 
 ```sh

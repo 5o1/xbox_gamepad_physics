@@ -83,7 +83,16 @@ download hashes and acquisition records are kept in `sources/*_hdri.json`.
 These environments are licensed approximations, not copies of Sketchfab's
 Industrial Room environment.
 
-## Reference-only sources
+## Blender color-management data
+
+`assets/xbox_one_s/render/` includes unchanged Filmic LUTs and the OCIO configuration
+from the Blender 4.5.9 distribution used by the saved review scene. Filmic is by
+Troy James Sobotka; the configuration header preserves additional author credits.
+Blender's distribution license is included as `assets/xbox_one_s/render/COPYING`.
+These are separate from the Xbox model's CC BY license. Source data and hashes
+are retained alongside the settings; the WebGL adapter is `viewer/saved_render.mjs`.
+
+## Reference-only sources (research documents)
 
 iFixit photographs, FCC exhibits, manufacturer data sheets, Input Labs Alpakka
 documents, and other research references are represented by URLs, locators, and
