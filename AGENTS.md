@@ -4,12 +4,13 @@ This independent repository owns Xbox gamepad physical assets and validation.
 Do not modify sibling game RL, VLA, or original asset directories as an implicit
 part of work here. No hardware IO or physical robot commands.
 
-The user-selected rendering baseline is the Boiler Room Cycles frame recorded
-in `assets/xbox_one_s/approved_render.json`. Reuse its actual Cycles scene,
-Standard color transform and strength 1.0 environment. Gray-world/Filmic and
-WebGL approximations were rejected. Browser picking/input does not determine
-which engine renders the displayed image. Keep this accepted baseline distinct
-from a new delivery's pending user visual acceptance.
+The user-selected visual reference is the Boiler Room Cycles frame recorded
+in `assets/xbox_one_s/approved_render.json`. The current delivery targets are
+native RoboTwin/SAPIEN and MuJoCo assets with complete appearance and fluent
+inspection. Reuse the source geometry, 2K textures and material evidence;
+the reference image does not require running Cycles for interactive display.
+Use each target platform's native renderer and let the user confirm the result.
+Keep visual/kinematic inspection separate from contact-physics readiness.
 
 Research primary documentation before making new design choices. Every adopted
 physical parameter needs traceable evidence with units, source applicability,
