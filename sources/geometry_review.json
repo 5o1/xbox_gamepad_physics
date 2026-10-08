@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "candidate_id": "xbox_series_1914_casperh2o_visual",
-  "status_authority": "../src/xbox_gamepad_physics/resource_data/asset_index.json",
+  "status_authority": "../assets/asset_index.json",
   "target": "Xbox One S",
   "candidate": "CasperH2O/3DControllerModels Microsoft Xbox One.blend, width-scaled derivative",
   "decision": "rejected_for_xbox_one_s_retained_as_1914_appearance_candidate",

@@ -4,12 +4,12 @@
 游戏强化学习、VLA 和机械臂控制不在这里实现。
 
 当前只分发 Xbox One S 的模型资产。Switch Pro 和旧 Xbox Series X|S 候选模型保存在
-GPU 节点，存档位置见 `sources/switch_pro_candidates.json` 和 `src/xbox_gamepad_physics/resource_data/asset_index.json`。
+GPU 节点，存档位置见 `sources/switch_pro_candidates.json` 和 `assets/asset_index.json`。
 仓库保留相关历史报告、图片和来源记录；旧型号已退出查看器可选入口。
 
 ## 当前状态
 
-运行状态以 [资产索引](src/xbox_gamepad_physics/resource_data/asset_index.json) 为准；README 只提供入口和边界说明。
+运行状态以 [资产索引](assets/asset_index.json) 为准；README 只提供入口和边界说明。
 
 | 项目 | 状态 |
 |---|---|
@@ -51,11 +51,11 @@ GPU 节点，存档位置见 `sources/switch_pro_candidates.json` 和 `src/xbox_
 
 ## 关键入口
 
-- [资产索引](src/xbox_gamepad_physics/resource_data/asset_index.json)：候选、派生版本、哈希和准入状态。
+- [资产索引](assets/asset_index.json)：候选、派生版本、哈希和准入状态。
 - [目标物理规格](specs/xbox_v1.json)：部件、物理字段和未决项。
 - [交互验收规格](specs/interactive_acceptance.json)：浏览器双向交互的验收门禁。
 - [estimated-v0 来源](sources/appearance_matched_estimated_v0.json)：估计运动学的来源、推导和限制。
-- [estimated-v0 profile](src/xbox_gamepad_physics/resource_data/appearance_matched_estimated_v0/viewer_profile.json)：viewer 使用的运动配置。
+- [estimated-v0 profile](assets/appearance_matched_estimated_v0/viewer_profile.json)：viewer 使用的运动配置。
 - [官方尺寸记录](sources/1708_dimensions.json)：整体尺寸及其适用边界。
 - [方向键记录](sources/1708_dpad_assembly.json)：十字键整体结构证据。
 - [扳机记录](sources/1708_trigger_mechanism.json)：外帽、内部组件和缓冲接触证据。
@@ -64,8 +64,7 @@ GPU 节点，存档位置见 `sources/switch_pro_candidates.json` 和 `src/xbox_
 
 目录分工：
 
-- `src/xbox_gamepad_physics/resource_data/` 统一保存运行资源、资产索引和运动配置；
-- `archive/xbox_one_s/` 保存未修改的原始模型；
+- `assets/` 保存轻量运行描述；
 - `src/xbox_gamepad_physics/` 保存公共状态接口和双后端运行时；
 - `schemas/` 保存可发布资源的 manifest 格式；
 - `docs/` 保存导入与维护约定；
@@ -126,11 +125,11 @@ node --test tests/test_*.mjs
 
 ## 启动交互预览
 
-Xbox One S 视觉网格已归档到仓库的 `src/xbox_gamepad_physics/resource_data/xbox_one_s/visual/`；Three.js 依赖由外部目录提供：
+Xbox One S 视觉网格已归档到仓库的 `assets/xbox_one_s/visual/`；Three.js 依赖由外部目录提供：
 
 ```sh
 python3 scripts/serve_viewer.py \
-  --assets src/xbox_gamepad_physics/resource_data/xbox_one_s/visual \
+  --assets assets/xbox_one_s/visual \
   --vendor <three.js-package-directory> \
   --variant-id xbox_one_s_batonyrobson_appearance_matched_estimated_v0 \
   --port 8766

@@ -9,7 +9,7 @@ from urllib.parse import unquote, urlsplit
 
 
 def validate_asset_variant(project, assets, variant_id):
-    registry_path = project / "src/xbox_gamepad_physics/resource_data" / "asset_index.json"
+    registry_path = project / "assets" / "asset_index.json"
     registry = json.loads(registry_path.read_text(encoding="utf-8"))
     viewer = registry.get("interactive_viewer", {})
     active = viewer.get("active_variant_id")
@@ -44,7 +44,7 @@ def validate_asset_variant(project, assets, variant_id):
             or any(part in {"", ".", ".."} for part in Path(relative).parts)
         ):
             raise ValueError(f"{variant_id}: unsafe viewer profile path")
-        profile_root = (project / "src/xbox_gamepad_physics/resource_data").resolve()
+        profile_root = (project / "assets").resolve()
         profile_path = (profile_root / relative).resolve()
         if not profile_path.is_relative_to(profile_root) or not profile_path.is_file():
             raise ValueError(f"{variant_id}: missing viewer profile")
@@ -88,7 +88,7 @@ def validate_asset_variant(project, assets, variant_id):
     if not isinstance(viewer_entry, str) or not viewer_entry:
         raise ValueError(f"{variant_id}: missing viewer entry")
     viewer_root = (project / "viewer").resolve()
-    entry_path = (project / "src/xbox_gamepad_physics/resource_data" / viewer_entry).resolve()
+    entry_path = (project / "assets" / viewer_entry).resolve()
     if not entry_path.is_relative_to(viewer_root) or not entry_path.is_file():
         raise ValueError(f"{variant_id}: unsafe or missing viewer entry")
     variant["_validated_viewer_url"] = "/" + entry_path.relative_to(viewer_root).as_posix()
@@ -162,7 +162,7 @@ class Handler(SimpleHTTPRequestHandler):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--assets", type=Path, default=Path(__file__).resolve().parents[1] / "src/xbox_gamepad_physics/resource_data/xbox_one_s/visual")
+    parser.add_argument("--assets", type=Path, required=True)
     parser.add_argument("--vendor", type=Path, required=True)
     parser.add_argument("--variant-id", required=True)
     parser.add_argument("--port", type=int, default=8766)
@@ -181,7 +181,7 @@ if __name__ == "__main__":
         "/reference/": project / "results" / "legacy_casper_1914_visual_parts",
         "/candidate-reference/": project / "results" / "xbox_one_s_batonyrobson_UNVERIFIED",
         # Canonical IDs used to prove which asset variant the viewer received.
-        "/registry/": project / "src/xbox_gamepad_physics/resource_data",
+        "/registry/": project / "assets",
         "/evidence/": project / "sources",
     }
     if not all(p.is_dir() for p in roots.values()):

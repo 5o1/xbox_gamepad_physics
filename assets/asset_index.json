@@ -3,7 +3,7 @@
   "asset_version": "v1-work-in-progress-2026-10-06",
   "registry_role": "canonical_status_authority",
   "path_bases": {
-    "metadata_links": "resource_data_directory",
+    "metadata_links": "asset_index_directory",
     "visual_manifest_path": "repository_root",
     "viewer_adapter_acceptance": "repository_root",
     "external_gpu_paths": "absolute_external"
@@ -20,8 +20,8 @@
     "xbox_one_s_batonyrobson_a62cf747": {
       "title": "Xbox One S Controller/Gamepad (Animated)",
       "author": "BatonyRobson",
-      "source": "../../../sources/xbox_replacement_candidates.json",
-      "front_render": "../../../results/xbox_one_s_batonyrobson_UNVERIFIED/pos_z.png",
+      "source": "../sources/xbox_replacement_candidates.json",
+      "front_render": "../results/xbox_one_s_batonyrobson_UNVERIFIED/pos_z.png",
       "status": "target_appearance_approved_physical_calibration_pending",
       "user_appearance_acknowledged": true,
       "target_product_match_confirmed_by_user": true,
@@ -32,10 +32,7 @@
       "target_appearance_approval": {
         "approved": true,
         "target_model": "Xbox One S",
-        "evidence": [
-          "user_target_xbox_one_s",
-          "batony_xbox_one_s_visual"
-        ],
+        "evidence": ["user_target_xbox_one_s", "batony_xbox_one_s_visual"],
         "reason": "The owner selected Xbox One S and approved this downloaded asset as the target appearance."
       },
       "metric_geometry_approval": {
@@ -55,8 +52,8 @@
       "title": "CasperH2O Microsoft Xbox One visual model",
       "upstream_model_label": "CasperH2O/3DControllerModels Microsoft Xbox One.blend",
       "display_identity": "Feature-inferred Xbox Series X|S / Model 1914 appearance candidate",
-      "source": "../../../sources/geometry_review.json",
-      "front_render": "../../../results/legacy_casper_1914_visual_parts/identity_front.png",
+      "source": "../sources/geometry_review.json",
+      "front_render": "../results/legacy_casper_1914_visual_parts/identity_front.png",
       "status": "archived_on_gpu_not_distributed",
       "identity_basis": "inferred_from_rendered_features_not_manufacturer_verified",
       "controller_revision_verified": false,
@@ -98,7 +95,7 @@
   "derived_variants": {
     "xbox_one_s_batonyrobson_appearance_matched_estimated_v0": {
       "source_candidate_id": "xbox_one_s_batonyrobson_a62cf747",
-      "inventory": "../../../results/xbox_one_s_batonyrobson_UNVERIFIED/static_visual_parts_inventory_UNCALIBRATED.json",
+      "inventory": "../results/xbox_one_s_batonyrobson_UNVERIFIED/static_visual_parts_inventory_UNCALIBRATED.json",
       "inventory_sha256": "ab310d28155b592344c4e1f3890976f4363b59c645585a09dbca24c5fbb13049",
       "visual_manifest": {
         "path": "results/xbox_one_s_batonyrobson_UNVERIFIED/static_visual_parts_inventory_UNCALIBRATED.json",
@@ -188,7 +185,7 @@
       "mechanical_revision_match": null,
       "collision_approved": false,
       "approved_for_contact_or_training": false,
-      "viewer_entry": "../../../viewer/v0.html",
+      "viewer_entry": "../viewer/v0.html",
       "viewer_profile": {
         "path": "appearance_matched_estimated_v0/viewer_profile.json",
         "sha256": "ef204cfcc34dedcac72832223591d60fcf159121c5bea684a44409c797108691"
@@ -196,10 +193,7 @@
       "target_appearance_approval": {
         "approved": true,
         "target_model": "Xbox One S",
-        "evidence": [
-          "user_target_xbox_one_s",
-          "batony_xbox_one_s_visual"
-        ],
+        "evidence": ["user_target_xbox_one_s", "batony_xbox_one_s_visual"],
         "reason": "This variant uses the owner-approved target appearance."
       },
       "metric_geometry_approval": {
@@ -210,7 +204,7 @@
     },
     "legacy_casper_1914_width_scaled_proxy": {
       "source_candidate_id": "xbox_series_1914_casperh2o_visual",
-      "inventory": "../../../results/legacy_casper_1914_width_scaled_1708_proxy/inventory.json",
+      "inventory": "../results/legacy_casper_1914_width_scaled_1708_proxy/inventory.json",
       "inventory_sha256": "c565dd92a5ca6f7a241258b693b9d5120af78cbf5717c89202a51e99d86b50df",
       "visual_manifest": {
         "path": "results/legacy_casper_1914_width_scaled_1708_proxy/inventory.json",
@@ -232,7 +226,7 @@
       },
       "gpu_directory": "/path/to/gpu-data/<gpu-project>/xbox-physics-v1/LEGACY_1914_shape_scaled_to_1708_width_NO_SHARE_NOT_VALIDATED",
       "purpose": "viewer software regression only",
-      "viewer_entry": "../../../viewer/index.html",
+      "viewer_entry": "../viewer/index.html",
       "shape_revision_match": false,
       "mechanical_revision_match": false,
       "collision_approved": false,
@@ -250,9 +244,9 @@
     }
   },
   "interactive_viewer": {
-    "entry": "../../../viewer/v0.html",
-    "acceptance": "../../../specs/interactive_acceptance.json",
-    "design_sources": "../../../sources/viewer_design.json",
+    "entry": "../viewer/v0.html",
+    "acceptance": "../specs/interactive_acceptance.json",
+    "design_sources": "../sources/viewer_design.json",
     "active_variant_id": "xbox_one_s_batonyrobson_appearance_matched_estimated_v0",
     "allowed_variant_ids": [],
     "verification_scope": "The active estimated-v0 viewer uses the approved Xbox One S appearance. Metric geometry, real-controller, contact and dynamics acceptance remain separate gates.",
@@ -260,7 +254,7 @@
     "real_controller_verified": false
   },
   "physical_asset": {
-    "specification": "../../../specs/xbox_v1.json",
+    "specification": "../specs/xbox_v1.json",
     "collision_asset": null,
     "simulator_asset": null,
     "meters_per_native_unit": null,
@@ -272,25 +266,25 @@
       "implementation": null,
       "physical_acceptance_allowed": false,
       "interactive_acceptance": "specs/interactive_acceptance.json",
-      "interactive_acceptance_sha256": "a64828431b79dae36b65e51cb6f1916d56be7f6f00e0d89cb6c70930b9fe3522"
+      "interactive_acceptance_sha256": "feddf5cea382263721454dacc5ff7dd5a6298c979e0645b38b2d6b60dc102dd8"
     }
   },
   "evidence": {
-    "source_catalog": "../../../sources/catalog.json",
-    "mechanical_structure": "../../../sources/mechanical_structure.json",
-    "geometry_review": "../../../sources/geometry_review.json",
-    "legacy_visual_inventory": "../../../results/legacy_casper_1914_visual_parts/inventory.json",
-    "legacy_geometry_audit": "../../../results/legacy_casper_1914_visual_parts/mesh_audit.json",
-    "whole_controller_dimensions": "../../../sources/1708_dimensions.json",
+    "source_catalog": "../sources/catalog.json",
+    "mechanical_structure": "../sources/mechanical_structure.json",
+    "geometry_review": "../sources/geometry_review.json",
+    "legacy_visual_inventory": "../results/legacy_casper_1914_visual_parts/inventory.json",
+    "legacy_geometry_audit": "../results/legacy_casper_1914_visual_parts/mesh_audit.json",
+    "whole_controller_dimensions": "../sources/1708_dimensions.json",
     "target_model": {
-      "document": "../../../sources/catalog.json",
+      "document": "../sources/catalog.json",
       "entry": "sources.user_target_xbox_one_s"
     },
     "legacy_source_copy_on_gpu": "/path/to/gpu-data/<gpu-project>/xbox-physics-v1/input"
   },
   "reference_stick_envelope": {
-    "specification": "../../../sources/stick_envelope.json",
-    "harness_result": "../../../results/stick_envelope.json",
+    "specification": "../sources/stick_envelope.json",
+    "harness_result": "../results/stick_envelope.json",
     "scope": "RKJXV122400R angular upper-envelope only; not installed Xbox motion or dynamics"
   },
   "unapproved_collision_candidates": {
@@ -300,9 +294,9 @@
     "shape_revision_match": false,
     "scope": "ABXY only; not a replacement for full controller",
     "gpu_directory": "/path/to/gpu-data/<gpu-project>/xbox-physics-v1/LEGACY_1914_native_unit_button_collision_candidates_NOT_VALIDATED",
-    "audit": "../../../results/legacy_casper_1914_native_unit_button_collision_candidates/collision_audit.json",
-    "assembly_diagnostic": "../../../results/legacy_casper_1914_native_unit_button_collision_candidates/assembly_audit.json",
-    "method": "../../../sources/collision_method.json",
+    "audit": "../results/legacy_casper_1914_native_unit_button_collision_candidates/collision_audit.json",
+    "assembly_diagnostic": "../results/legacy_casper_1914_native_unit_button_collision_candidates/assembly_audit.json",
+    "method": "../sources/collision_method.json",
     "approved_for_simulation": false
   },
   "reasons_not_yet_approved": {

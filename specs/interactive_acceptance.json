@@ -49,7 +49,7 @@
   },
   "acceptance_gates": [
     {"id": "canonical_v2_to_viewer_adapter", "passed": false, "evidence": null, "check": "Fail closed unless a hash-bound adapter preserves the canonical body/joint graph, joint curves, coupled domains, virtual-frame semantics and inverse input mappings; unsupported constructs must be rejected, not dropped."},
-    {"id": "target_appearance_identity", "passed": true, "candidate_id": "xbox_one_s_batonyrobson_a62cf747", "evidence": ["src/xbox_gamepad_physics/resource_data/asset_index.json", "sources/xbox_replacement_candidates.json"], "check": "The owner selected Xbox One S and approved the downloaded BatonyRobson asset as the target appearance. Metric geometry and mechanics have separate acceptance fields."},
+    {"id": "target_appearance_identity", "passed": true, "candidate_id": "xbox_one_s_batonyrobson_a62cf747", "evidence": ["assets/asset_index.json", "sources/xbox_replacement_candidates.json"], "check": "The owner selected Xbox One S and approved the downloaded BatonyRobson asset as the target appearance. Metric geometry and mechanics have separate acceptance fields."},
     {"id": "mouse_to_signal", "passed": false, "evidence": null, "check": "Visible mesh manipulation produces the correct signed axes and corresponding button/trigger signals"},
     {"id": "real_device_to_mesh", "passed": false, "evidence": null, "check": "User's real Xbox One S drives all available controls, including simultaneous independent controls"},
     {"id": "shared_mapping_roundtrip", "passed": false, "evidence": null, "check": "state->pose->state tested on neutral, endpoints, diagonals and concurrent inputs; losses/restrictions reported"},

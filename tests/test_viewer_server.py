@@ -37,7 +37,7 @@ class ViewerServerTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             project = Path(directory) / "project"
             external = Path(directory) / "external"
-            (project / "src/xbox_gamepad_physics/resource_data/profile").mkdir(parents=True)
+            (project / "assets/profile").mkdir(parents=True)
             (project / "viewer").mkdir()
             (project / "sources").mkdir()
             external.mkdir()
@@ -58,14 +58,14 @@ class ViewerServerTest(unittest.TestCase):
             profile_bytes = (json.dumps(profile) + "\n").encode()
             registry = {
                 "interactive_viewer": {
-                    "entry": "../../../viewer/index.html",
+                    "entry": "../viewer/index.html",
                     "active_variant_id": "legacy",
                     "allowed_variant_ids": ["estimated_v0"],
                 },
                 "derived_variants": {
                     "estimated_v0": {
                         "inventory_sha256": hashlib.sha256(inventory).hexdigest(),
-                        "viewer_entry": "../../../viewer/v0.html",
+                        "viewer_entry": "../viewer/v0.html",
                         "viewer_profile": {
                             "path": "profile/viewer_profile.json",
                             "sha256": hashlib.sha256(profile_bytes).hexdigest(),
@@ -73,8 +73,8 @@ class ViewerServerTest(unittest.TestCase):
                     }
                 },
             }
-            (project / "src/xbox_gamepad_physics/resource_data/asset_index.json").write_text(json.dumps(registry))
-            (project / "src/xbox_gamepad_physics/resource_data/profile/viewer_profile.json").write_bytes(profile_bytes)
+            (project / "assets/asset_index.json").write_text(json.dumps(registry))
+            (project / "assets/profile/viewer_profile.json").write_bytes(profile_bytes)
             (project / "viewer/v0.html").write_text("test")
             (project / "sources/parameters.json").write_bytes(parameters)
             (external / "inventory.json").write_bytes(inventory)

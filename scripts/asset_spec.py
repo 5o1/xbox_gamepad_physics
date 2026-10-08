@@ -17,7 +17,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 CATALOG_PATH = ROOT / "sources/catalog.json"
-ASSET_REGISTRY_PATH = ROOT / "src/xbox_gamepad_physics/resource_data/asset_index.json"
+ASSET_REGISTRY_PATH = ROOT / "assets/asset_index.json"
 SPEC_PATH = ROOT / "specs/xbox_v1.json"
 
 SCHEMA_VERSION = 2
@@ -142,7 +142,7 @@ def make_spec(catalog, asset_registry=None):
         "schema_version": SCHEMA_VERSION,
         "catalog_sha256": _document_sha256(catalog),
         "asset_registry_binding": {
-            "path": "src/xbox_gamepad_physics/resource_data/asset_index.json",
+            "path": "assets/asset_index.json",
             "sha256": _document_sha256(registry),
             "registry_role": "canonical_status_authority",
         },
@@ -285,7 +285,7 @@ def audit(spec, catalog, artifact_root=None, asset_registry=None):
     if not isinstance(binding, dict):
         errors.append("asset registry binding is missing")
     else:
-        if binding.get("path") != "src/xbox_gamepad_physics/resource_data/asset_index.json":
+        if binding.get("path") != "assets/asset_index.json":
             errors.append("asset registry binding path changed")
         if binding.get("sha256") != _document_sha256(registry):
             errors.append("asset registry SHA256 mismatch")

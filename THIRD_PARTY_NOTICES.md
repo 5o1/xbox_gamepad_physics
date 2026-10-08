@@ -6,9 +6,8 @@ forces, or controller revision have been verified.
 
 No license for the project's own source code is declared by this notice. The
 licenses below apply only to the identified third-party works and derivatives.
-The selected Xbox One S source GLB is stored under `archive/xbox_one_s/`;
-visual derivatives are under `src/xbox_gamepad_physics/resource_data/xbox_one_s/`.
-Other original archives, Blender files, HDR environments,
+The selected Xbox One S source GLB and visual derivatives are stored under
+`assets/xbox_one_s/`. Other original archives, Blender files, HDR environments,
 PDFs and large intermediates remain outside this Git repository.
 
 ## Xbox One S Controller/Gamepad (Animated)
@@ -16,12 +15,12 @@ PDFs and large intermediates remain outside this Git repository.
 - Creator: BatonyRobson
 - Source: <https://sketchfab.com/3d-models/xbox-one-s-controllergamepad-animated-a62cf7475b7d4ead9fbf1a86e5a2b6a4>
 - License: [Creative Commons Attribution 4.0](https://creativecommons.org/licenses/by/4.0/)
-- Distributed model files: the unchanged source GLB in `archive/xbox_one_s/`,
-  and the static GLB plus 16 geometry-only OBJ parts in `src/xbox_gamepad_physics/resource_data/xbox_one_s/visual/`.
+- Distributed model files: the unchanged source GLB in `assets/xbox_one_s/source/`,
+  and the static GLB plus 16 geometry-only OBJ parts in `assets/xbox_one_s/visual/`.
   The static derivatives evaluate source frame 0 and bake transforms into world
   coordinates without decimation or scale fitting. Materials and textures are
   embedded in the static GLB. Attribution accompanies the files in
-  `src/xbox_gamepad_physics/resource_data/xbox_one_s/README.md`.
+  `assets/xbox_one_s/README.md`.
 - Repository derivatives: rendered views and material/lighting comparisons in
   `results/xbox_one_s_batonyrobson_UNVERIFIED/`,
   `results/xbox_official_import_comparison/`, and

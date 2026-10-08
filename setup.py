@@ -19,8 +19,6 @@ setup(
     include_package_data=True,
     package_data={
         "xbox_gamepad_physics": [
-            "resource_data/*",
-            "resource_data/*/*",
             "resource_data/*/*/*",
             "resource_data/*/*/visual/*",
             "resource_data/*/*/visual/**/*",
