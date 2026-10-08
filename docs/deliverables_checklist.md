@@ -49,6 +49,11 @@
 已从 `e6aa505` 全新 clone 再次验证安装、Cycles 出图和左右摇杆越界返回；
 结果见该目录的 `clean_clone_browser.json` 和 `clean_clone.png`。
 
+实时交互评估：原生 Cycles 视口的小规模验证已完成，见
+`results/native_viewport_pilot/README.md`。资产外观可复用，左摇杆越界返回正常；
+本轮硬件显示路径下画面变化约 4.9 次/秒，仍不足以确认流畅实时交互。
+该阶段尚未扩展全部控件及真实手柄输入，不能据此勾选交互验收。
+
 验收：新 clone 的用户按命令获取资源后能显示完整手柄，无需知道开发环境的 GPU 私有目录。
 
 许可依据：仓库记录 BatonyRobson 的模型采用 CC BY 4.0，允许分发和修改。
