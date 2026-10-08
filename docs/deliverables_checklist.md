@@ -16,10 +16,25 @@
 
 - [ ] 完成并验收。
 
+- [x] 资源、来源与许可已归档并提交。
+- [x] 固定 Three.js 版本，提供 `npm ci` 和 `npm run viewer` 命令。
+- [x] 全新 clone 安装、启动及浏览器资源加载检查。
+- [ ] 用户视觉检查并确认。
+
 产物：已确认的 Xbox One S 分件网格、材质、贴图、装配变换、许可声明，以及明确的获取入口。
 2026-10-08 已将静态 GLB、16 个 OBJ、inventory 和原始 2K GLB 归档到
 `assets/xbox_one_s/`，附来源和许可说明。选定资源约 9 MiB，随 Git 分发。
-大型实验中间文件继续存放在 GPU 节点。完整的新 clone 显示验收仍待执行。
+大型实验中间文件继续存放在 GPU 节点。
+
+技术检查：2026-10-08 从提交 `c98e687` 创建独立 clone，使用 Node.js 22.23.2、npm 10.9.8
+及 Chrome 154 执行。Three.js 0.180.0 从 npm 官方 IP 直连下载，SHA-256 与既有来源记录一致；
+通过 npm 缓存执行 `npm ci --offline`，随后 `npm run viewer -- --port 18766` 启动成功。
+浏览器实际加载 16 个网格、5 张内嵌纹理，模型、配置和来源哈希一致。
+此次验证使用本地 Git clone；未将其写成从 GitHub 全新下载的验证。
+
+检查记录：[浏览器结果](../results/checklist1_clean_clone/browser_v0_harness.json)。
+待用户审阅：[查看器截图](../results/checklist1_clean_clone/estimated_v0_baseline.png)。
+记录中的 `passed` 表示程序检查通过，视觉验收仍待用户确认；真实手柄和动力学未在本项验收。
 
 验收：新 clone 的用户按命令获取资源后能显示完整手柄，无需知道开发环境的 GPU 私有目录。
 
