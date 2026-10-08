@@ -173,7 +173,10 @@ def _validated_description(profile: str) -> RoboTwinAssetDescription:
             raise RoboTwinManifestError(f"state_mapping.axes[{index}] must be an object")
         channel = raw.get("channel")
         joint = raw.get("joint")
-        if channel not in {"lx", "ly", "rx", "ry"} or channel in channels:
+        if (
+            channel not in {"left_x", "left_y", "right_x", "right_y"}
+            or channel in channels
+        ):
             raise RoboTwinManifestError(
                 f"state_mapping.axes[{index}] has invalid or duplicate channel"
             )

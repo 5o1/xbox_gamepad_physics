@@ -186,10 +186,18 @@ class XboxOneSArticulation:
             )
         setter(number)
 
-    def gamepad_state(self) -> GamepadState:
-        """Return normalized Standard Gamepad channels from articulation qpos."""
+    def gamepad_state(
+        self, task_channels: Iterable[str] | None = None
+    ) -> GamepadState:
+        """Return the canonical tensor state exposed by this partial asset.
 
-        values = GamepadState.neutral().as_dict()
+        Availability comes from the mappings actually present in the loaded
+        simulator profile.  This prevents an unfinished physical asset from
+        reporting unimplemented Xbox controls as valid neutral observations.
+        """
+
+        available_channels = tuple(mapping.channel for mapping in self._axis_mappings)
+        values = {channel: 0.0 for channel in available_channels}
         for mapping in self._axis_mappings:
             q = self.joint_position(mapping.joint)
             scale = -mapping.lower if q < 0 else mapping.upper
@@ -202,4 +210,8 @@ class XboxOneSArticulation:
                 factor = group.radius / radius
                 values[first] *= factor
                 values[second] *= factor
-        return GamepadState(**values)
+        return GamepadState.xbox_one_s(
+            values,
+            available_channels=available_channels,
+            task_channels=task_channels,
+        )

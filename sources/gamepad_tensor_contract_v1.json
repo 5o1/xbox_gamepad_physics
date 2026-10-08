@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "contract_id": "sdl3-gamepad-core-v1",
+  "recorded_at": "2026-10-09",
+  "sources": [
+    {
+      "claim": "The standard gamepad axis enum contains left X/Y, right X/Y, left trigger and right trigger in this order.",
+      "url": "https://wiki.libsdl.org/SDL3/SDL_GamepadAxis",
+      "authority": "SDL official documentation"
+    },
+    {
+      "claim": "The standard gamepad button enum contains 26 positional and extended button slots in the adopted order.",
+      "url": "https://wiki.libsdl.org/SDL3/SDL_GamepadButton",
+      "authority": "SDL official documentation"
+    },
+    {
+      "claim": "A zero axis value is also a valid centered value, so value zero cannot represent channel absence by itself.",
+      "url": "https://wiki.libsdl.org/SDL3/SDL_GetGamepadAxis",
+      "authority": "SDL official documentation"
+    },
+    {
+      "claim": "GR00T N1.7 uses fixed maximum state/action widths, an embodiment ID and an action mask; its action loss is multiplied by that mask.",
+      "url": "https://github.com/NVIDIA/Isaac-GR00T/blob/main/gr00t/model/gr00t_n1d7/gr00t_n1d7.py",
+      "authority": "NVIDIA official implementation"
+    }
+  ],
+  "adopted_design": {
+    "tensor_order": "six SDL3 axes followed by twenty-six SDL3 buttons",
+    "dimension": 32,
+    "missing_channel_value": 0.0,
+    "required_metadata": [
+      "available_mask",
+      "task_mask",
+      "device_id"
+    ],
+    "effective_action_mask": "available_mask AND task_mask",
+    "xbox_one_s_device_id": 1,
+    "pair_button": "excluded because it manages device connectivity rather than game control"
+  },
+  "project_local_choices": [
+    "SDL3 defines separate axis and button enums; concatenating axes before buttons is this project's versioned tensor layout.",
+    "Device IDs are stable only within this contract and are not SDL numeric identifiers.",
+    "Task masks are supplied by the consuming task and must be a subset of device or simulator availability."
+  ]
+}

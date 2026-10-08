@@ -24,7 +24,11 @@ from .state import (
     CHANNEL_COUNT,
     CHANNEL_NAMES,
     GAMEPAD_LAYOUT,
+    TENSOR_LAYOUT_ID,
+    W3C_STANDARD_TO_CANONICAL,
+    XBOX_ONE_S_CHANNELS,
     GamepadChannel,
+    GamepadDeviceId,
     GamepadState,
 )
 
@@ -38,7 +42,11 @@ __all__ = [
     "CHANNEL_COUNT",
     "CHANNEL_NAMES",
     "GAMEPAD_LAYOUT",
+    "TENSOR_LAYOUT_ID",
+    "W3C_STANDARD_TO_CANONICAL",
+    "XBOX_ONE_S_CHANNELS",
     "GamepadChannel",
+    "GamepadDeviceId",
     "GamepadState",
     "MissingBackendDependencyError",
     "MissingResourceError",

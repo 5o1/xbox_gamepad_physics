@@ -1,9 +1,9 @@
 """Audit the Xbox asset facts that are true today.
 
 This module deliberately does not define a future rigid-body or PhysX schema.
-Those checks belong next to the first implemented simulator asset. For now the
-canonical record says which controller is targeted, which standard gamepad
-channels are exposed, and which physical fields are still unresolved.
+Those checks belong next to the first implemented simulator asset. This record
+describes the browser inspection transport and unresolved physical fields; the
+Python learning interface is defined separately in ``state.py``.
 """
 
 from __future__ import annotations
@@ -25,7 +25,7 @@ REPORT_SCHEMA_VERSION = 3
 
 # Project transport order: W3C Standard Gamepad axes followed by buttons.
 # The W3C specification does not itself define a tensor layout.
-CHANNEL_DEFINITIONS = (
+W3C_BROWSER_CHANNEL_DEFINITIONS = (
     ("lx", "axis", 0, 0, (-1, 1)),
     ("ly", "axis", 1, 1, (-1, 1)),
     ("rx", "axis", 2, 2, (-1, 1)),
@@ -48,7 +48,7 @@ CHANNEL_DEFINITIONS = (
     ("dpad_right", "button", 19, 15, (0, 1)),
     ("guide", "button", 20, 16, (0, 1)),
 )
-CANONICAL_CHANNELS = tuple(item[0] for item in CHANNEL_DEFINITIONS)
+W3C_BROWSER_CHANNELS = tuple(item[0] for item in W3C_BROWSER_CHANNEL_DEFINITIONS)
 
 CONTROL_EFFECTS = {
     "shell": (),
@@ -97,7 +97,7 @@ def _load_registry(asset_registry=None):
 
 def _channel_schema():
     return {
-        "name": "w3c_standard_gamepad_axes_then_buttons",
+        "name": "w3c_browser_transport_axes_then_buttons",
         "evidence": ["w3c_gamepad_standard_mapping"],
         "channels": [
             {
@@ -108,7 +108,7 @@ def _channel_schema():
                 "range": list(value_range),
             }
             for name, kind, tensor_index, standard_index, value_range
-            in CHANNEL_DEFINITIONS
+            in W3C_BROWSER_CHANNEL_DEFINITIONS
         ],
         "note": (
             "This repository defines the tensor order; W3C defines the axis "
@@ -216,7 +216,7 @@ def _expected_channels():
             "range": list(value_range),
         }
         for name, kind, tensor_index, standard_index, value_range
-        in CHANNEL_DEFINITIONS
+        in W3C_BROWSER_CHANNEL_DEFINITIONS
     ]
 
 
@@ -307,7 +307,7 @@ def audit(spec, catalog, artifact_root=None, asset_registry=None):
         or input_schema.get("channels") != _expected_channels()
     ):
         errors.append("input schema must contain the canonical 21 channels")
-    if "share" in CANONICAL_CHANNELS or "pair" in CANONICAL_CHANNELS:
+    if "share" in W3C_BROWSER_CHANNELS or "pair" in W3C_BROWSER_CHANNELS:
         errors.append(
             "internal channel definitions contain a non-standard physical control"
         )

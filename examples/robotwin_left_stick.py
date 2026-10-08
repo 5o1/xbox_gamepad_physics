@@ -59,9 +59,11 @@ def main() -> None:
         state = gamepad.gamepad_state()
         samples[name] = {
             "qpos": list(qpos),
-            "lx": state.lx,
-            "ly": state.ly,
-            "signal_radius": math.hypot(state.lx, state.ly),
+            "left_x": state.channel("left_x"),
+            "left_y": state.channel("left_y"),
+            "signal_radius": math.hypot(
+                state.channel("left_x"), state.channel("left_y")
+            ),
         }
 
     articulation = gamepad.articulation
@@ -153,7 +155,9 @@ def main() -> None:
             )
             cv2.putText(
                 bgr,
-                f"gamepad: lx={state.lx:+.3f}  ly={state.ly:+.3f}",
+                "gamepad: "
+                f"left_x={state.channel('left_x'):+.3f}  "
+                f"left_y={state.channel('left_y'):+.3f}",
                 (22, 64),
                 cv2.FONT_HERSHEY_SIMPLEX,
                 0.68,

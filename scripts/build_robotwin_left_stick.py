@@ -363,10 +363,20 @@ def build(output: Path) -> None:
         ],
         "state_mapping": {
             "axes": [
-                {"channel": "lx", "joint": "left_stick_x", "lower": -k["half_sweep_rad"], "upper": k["half_sweep_rad"]},
-                {"channel": "ly", "joint": "left_stick_y", "lower": -k["half_sweep_rad"], "upper": k["half_sweep_rad"]},
+                {
+                    "channel": "left_x",
+                    "joint": "left_stick_x",
+                    "lower": -k["half_sweep_rad"],
+                    "upper": k["half_sweep_rad"],
+                },
+                {
+                    "channel": "left_y",
+                    "joint": "left_stick_y",
+                    "lower": -k["half_sweep_rad"],
+                    "upper": k["half_sweep_rad"],
+                },
             ],
-            "radial_groups": [{"channels": ["lx", "ly"], "radius": 1.0}],
+            "radial_groups": [{"channels": ["left_x", "left_y"], "radius": 1.0}],
             "deadzone": None,
         },
         "contact_material": contact,

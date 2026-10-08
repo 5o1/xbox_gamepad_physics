@@ -180,7 +180,7 @@ def ready_manifest():
         "state_mapping": {
             "axes": [
                 {
-                    "channel": "lx",
+                    "channel": "left_x",
                     "joint": "left_stick_x",
                     "lower": -0.4,
                     "upper": 0.4,
@@ -328,15 +328,23 @@ class RoboTwinRuntimeTest(unittest.TestCase):
             articulation,
             ["button_a", "left_stick_x"],
             [
-                AxisMapping("lx", "button_a", -0.4, 0.4),
-                AxisMapping("ly", "left_stick_x", -0.4, 0.4),
+                AxisMapping("left_x", "button_a", -0.4, 0.4),
+                AxisMapping("left_y", "left_stick_x", -0.4, 0.4),
             ],
-            [RadialGroup(("lx", "ly"), 1.0)],
+            [RadialGroup(("left_x", "left_y"), 1.0)],
         )
         state = wrapper.gamepad_state()
-        self.assertAlmostEqual(state.lx, 2 ** -0.5)
-        self.assertAlmostEqual(state.ly, 2 ** -0.5)
-        self.assertEqual(state.rx, 0.0)
+        self.assertAlmostEqual(state.channel("left_x"), 2 ** -0.5)
+        self.assertAlmostEqual(state.channel("left_y"), 2 ** -0.5)
+        self.assertTrue(state.is_available("left_x"))
+        self.assertTrue(state.is_available("left_y"))
+        self.assertFalse(state.is_available("right_x"))
+        self.assertEqual(sum(state.available_mask), 2)
+
+        task_state = wrapper.gamepad_state(task_channels=("left_x",))
+        self.assertEqual(sum(task_state.task_mask), 1)
+        self.assertTrue(task_state.is_task_channel("left_x"))
+        self.assertFalse(task_state.is_task_channel("left_y"))
 
     def test_profile_missing_required_joint_field_fails_closed_before_scene_load(self):
         temporary = tempfile.TemporaryDirectory()

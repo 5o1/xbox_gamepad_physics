@@ -77,7 +77,8 @@ gamepad = load_into_scene(
 )
 
 state = gamepad.gamepad_state()
-print(state.lx, state.ly)
+print(state.channel("left_x"), state.channel("left_y"))
+print(state.available_mask, state.task_mask, state.device_id)
 ```
 
 加载器执行以下门禁：

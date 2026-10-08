@@ -15,7 +15,7 @@ import math
 import os
 from pathlib import Path
 
-from asset_spec import CHANNEL_DEFINITIONS
+from asset_spec import W3C_BROWSER_CHANNEL_DEFINITIONS
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -135,7 +135,11 @@ def unknown(reason, unit_name=None):
 
 
 def channel_index(name):
-    return next(index for index, item in enumerate(CHANNEL_DEFINITIONS) if item[0] == name)
+    return next(
+        index
+        for index, item in enumerate(W3C_BROWSER_CHANNEL_DEFINITIONS)
+        if item[0] == name
+    )
 
 
 def build():
@@ -448,7 +452,8 @@ def build():
             "standard_index": standard_index,
             "range": list(value_range),
         }
-        for name, kind, tensor_index, standard_index, value_range in CHANNEL_DEFINITIONS
+        for name, kind, tensor_index, standard_index, value_range
+        in W3C_BROWSER_CHANNEL_DEFINITIONS
     ]
     nodes = []
     for item in inventory["objects"]:

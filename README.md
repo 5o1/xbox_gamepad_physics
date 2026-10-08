@@ -45,15 +45,22 @@ GPU 节点，存档位置见 `sources/switch_pro_candidates.json` 和 `assets/as
 - 演示结果需要人工查看错误轴向、错误轴心、脱离和穿插；
 - 交互通过不等于碰撞、摩擦、回弹或手指接触已经通过。
 
-本仓库的浏览器传输向量为 21 个浮点数：4 个标准轴，随后是 17 个标准按钮值。
-这是 W3C Standard Gamepad 状态的本地序列化方式，不是游戏/VLA 分支的 20 维
-`xinput-normalized-v1`。连接两者时必须显式处理字段重排、Guide 和摇杆 Y 轴符号，不能按下标直连。
+浏览器检查器仍按 Web Gamepad API 传输 21 个浮点数：4 个标准轴，随后是 17 个
+标准按钮值。这只是一种浏览器边界格式。
+
+Python 公共状态接口采用版本化的 `sdl3-gamepad-core-v1`：先放 SDL3 的 6 个标准轴，
+再放 26 个标准按钮，共 32 维。每个状态同时携带 `available_mask`、`task_mask` 和
+`device_id`；不可用通道必须补零，动作损失和执行使用两个 mask 的交集。Xbox One S
+设备能力占其中 21 个通道，Pair 键不属于游戏控制。当前 RoboTwin 左摇杆局部资产只把
+`left_x` 和 `left_y` 标为可用。浏览器、游戏或训练代码接入时必须按名称适配，不能按
+下标直连。
 
 ## 关键入口
 
 - [资产索引](assets/asset_index.json)：候选、派生版本、哈希和准入状态。
 - [目标物理规格](specs/xbox_v1.json)：部件、物理字段和未决项。
 - [交互验收规格](specs/interactive_acceptance.json)：浏览器双向交互的验收门禁。
+- [32 维张量契约来源](sources/gamepad_tensor_contract_v1.json)：通道顺序、mask 与设备标识的依据和项目选择。
 - [estimated-v0 来源](sources/appearance_matched_estimated_v0.json)：估计运动学的来源、推导和限制。
 - [estimated-v0 profile](assets/appearance_matched_estimated_v0/viewer_profile.json)：viewer 使用的运动配置。
 - [官方尺寸记录](sources/1708_dimensions.json)：整体尺寸及其适用边界。

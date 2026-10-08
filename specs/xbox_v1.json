@@ -3,7 +3,7 @@
   "catalog_sha256": "9c7f2892f2e477d7e81f90fc38e0a010fbacabfbcef0a5409d6649f8c45917e6",
   "asset_registry_binding": {
     "path": "assets/asset_index.json",
-    "sha256": "ee10738525b53fac47ced62ca5f1d742600f80ba47956d3a3866f4311397c52b",
+    "sha256": "37eee8d0808dcdc9c5d72c2a113f57fa24f5e4b6f684a396845e7b34c1565834",
     "registry_role": "canonical_status_authority"
   },
   "target_model": {
@@ -17,7 +17,7 @@
   },
   "status": "incomplete_not_for_dynamics_or_RL",
   "input_schema": {
-    "name": "w3c_standard_gamepad_axes_then_buttons",
+    "name": "w3c_browser_transport_axes_then_buttons",
     "evidence": [
       "w3c_gamepad_standard_mapping"
     ],

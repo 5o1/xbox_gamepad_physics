@@ -4,6 +4,11 @@ from pathlib import Path
 import sys
 import unittest
 
+try:
+    import torch
+except ImportError:
+    torch = None
+
 
 ROOT = Path(__file__).resolve().parents[2]
 SRC = ROOT / "src"
@@ -30,76 +35,171 @@ from xbox_gamepad_physics.state import (  # noqa: E402
     CHANNEL_COUNT,
     CHANNEL_NAMES,
     GAMEPAD_LAYOUT,
+    TENSOR_LAYOUT_ID,
+    W3C_STANDARD_TO_CANONICAL,
+    XBOX_ONE_S_CHANNELS,
+    GamepadDeviceId,
     GamepadState,
 )
 
 
 class GamepadStateTests(unittest.TestCase):
-    def test_layout_matches_w3c_axes_then_buttons_contract(self):
-        self.assertEqual(AXIS_NAMES, ("lx", "ly", "rx", "ry"))
+    def test_layout_matches_versioned_sdl3_axes_then_buttons_contract(self):
+        self.assertEqual(TENSOR_LAYOUT_ID, "sdl3-gamepad-core-v1")
+        self.assertEqual(
+            AXIS_NAMES,
+            (
+                "left_x",
+                "left_y",
+                "right_x",
+                "right_y",
+                "left_trigger",
+                "right_trigger",
+            ),
+        )
         self.assertEqual(
             BUTTON_NAMES,
             (
-                "a",
-                "b",
-                "x",
-                "y",
+                "south",
+                "east",
+                "west",
+                "north",
+                "back",
+                "guide",
+                "start",
+                "left_stick",
+                "right_stick",
                 "left_shoulder",
                 "right_shoulder",
-                "left_trigger",
-                "right_trigger",
-                "view",
-                "menu",
-                "left_stick_click",
-                "right_stick_click",
                 "dpad_up",
                 "dpad_down",
                 "dpad_left",
                 "dpad_right",
-                "guide",
+                "misc1",
+                "right_paddle1",
+                "left_paddle1",
+                "right_paddle2",
+                "left_paddle2",
+                "touchpad",
+                "misc2",
+                "misc3",
+                "misc4",
+                "misc5",
+                "misc6",
             ),
         )
-        self.assertEqual(CHANNEL_COUNT, 21)
+        self.assertEqual(CHANNEL_COUNT, 32)
         self.assertEqual(tuple(item.name for item in GAMEPAD_LAYOUT), CHANNEL_NAMES)
         self.assertEqual(
-            tuple(item.tensor_index for item in GAMEPAD_LAYOUT), tuple(range(21))
+            tuple(item.tensor_index for item in GAMEPAD_LAYOUT), tuple(range(32))
         )
         self.assertEqual(
-            tuple(item.standard_index for item in GAMEPAD_LAYOUT[:4]), tuple(range(4))
+            tuple(item.standard_index for item in GAMEPAD_LAYOUT[:6]), tuple(range(6))
         )
         self.assertEqual(
-            tuple(item.standard_index for item in GAMEPAD_LAYOUT[4:]), tuple(range(17))
+            tuple(item.standard_index for item in GAMEPAD_LAYOUT[6:]), tuple(range(26))
         )
 
-    def test_state_is_immutable_and_dependency_free(self):
-        state = GamepadState(lx=-0.5, right_trigger=0.75, a=1)
-        self.assertEqual(len(state), 21)
-        self.assertEqual(state.axes, (-0.5, 0.0, 0.0, 0.0))
-        self.assertEqual(state.buttons[0], 1.0)
-        self.assertEqual(state.buttons[7], 0.75)
-        self.assertIsInstance(state.as_tuple(), tuple)
+    def test_xbox_state_is_fixed_width_immutable_and_dependency_free(self):
+        state = GamepadState.xbox_one_s(
+            {"left_x": -0.5, "right_trigger": 0.75, "south": 1.0}
+        )
+        self.assertEqual(len(state), 32)
+        self.assertEqual(state.device_id, GamepadDeviceId.XBOX_ONE_S)
+        self.assertEqual(state.channel("left_x"), -0.5)
+        self.assertEqual(state.channel("right_trigger"), 0.75)
+        self.assertEqual(state.channel("south"), 1.0)
+        self.assertEqual(sum(state.available_mask), 21)
+        self.assertEqual(sum(state.task_mask), 21)
+        self.assertEqual(sum(state.action_mask), 21)
+        self.assertIsInstance(state.values, tuple)
         with self.assertRaises(FrozenInstanceError):
-            state.lx = 0.5
+            state.values = (0.0,) * 32
 
-    def test_sequence_and_mapping_round_trip(self):
-        values = (-1.0, -0.5, 0.5, 1.0) + tuple(
-            index / 16 for index in range(17)
+    def test_zero_value_and_unavailable_channel_are_distinguished_by_mask(self):
+        state = GamepadState.xbox_one_s()
+        self.assertEqual(state.channel("left_x"), 0.0)
+        self.assertTrue(state.is_available("left_x"))
+        self.assertEqual(state.channel("right_paddle1"), 0.0)
+        self.assertFalse(state.is_available("right_paddle1"))
+
+    def test_task_mask_is_a_subset_and_controls_action_mask(self):
+        state = GamepadState.xbox_one_s(
+            {"left_x": 0.25, "left_y": -0.5, "south": 1.0},
+            task_channels=("left_x", "left_y"),
         )
-        state = GamepadState.from_sequence(values)
-        self.assertEqual(state.as_tuple(), values)
-        self.assertEqual(GamepadState.from_mapping(state.as_dict()), state)
+        self.assertTrue(state.is_task_channel("left_x"))
+        self.assertFalse(state.is_task_channel("south"))
+        self.assertEqual(sum(state.action_mask), 2)
+        self.assertEqual(state.masked_action_values[0:2], (0.25, -0.5))
+        self.assertEqual(state.masked_action_values[6], 0.0)
+        self.assertEqual(state.action_mask_values[0:2], (1.0, 1.0))
+
+    def test_xbox_profile_contains_exactly_its_21_control_channels(self):
+        state = GamepadState.xbox_one_s()
+        available = tuple(
+            name
+            for name, enabled in zip(CHANNEL_NAMES, state.available_mask, strict=True)
+            if enabled
+        )
+        self.assertEqual(available, XBOX_ONE_S_CHANNELS)
+
+    def test_w3c_boundary_is_reordered_into_the_canonical_layout(self):
+        browser_values = [0.0] * 21
+        browser_values[0] = -0.25
+        browser_values[6] = 1.0  # W3C X button -> positional west button.
+        browser_values[10] = 0.75  # W3C left trigger button -> SDL trigger axis.
+        browser_available = [True] * 20 + [False]
+        state = GamepadState.from_w3c_standard(
+            browser_values,
+            browser_available,
+            device_id=GamepadDeviceId.XBOX_ONE_S,
+        )
+        self.assertEqual(len(W3C_STANDARD_TO_CANONICAL), 21)
+        self.assertEqual(state.channel("left_x"), -0.25)
+        self.assertEqual(state.channel("west"), 1.0)
+        self.assertEqual(state.channel("left_trigger"), 0.75)
+        self.assertFalse(state.is_available("guide"))
+        self.assertEqual(state.channel("guide"), 0.0)
+
+    @unittest.skipIf(torch is None, "Torch is an optional training dependency")
+    def test_numeric_action_mask_preserves_gradients_on_active_channels(self):
+        state = GamepadState.xbox_one_s(
+            task_channels=("left_x", "left_y", "south")
+        )
+        prediction = torch.ones(2, CHANNEL_COUNT, requires_grad=True)
+        mask = prediction.new_tensor(state.action_mask_values)
+        loss = (prediction.square() * mask).sum()
+        loss.backward()
+
+        expected = torch.zeros_like(prediction)
+        expected[:, 0] = 2.0
+        expected[:, 1] = 2.0
+        expected[:, 6] = 2.0
+        torch.testing.assert_close(prediction.grad, expected)
 
     def test_bad_shape_range_and_non_finite_values_are_rejected(self):
         with self.assertRaises(StateValidationError):
-            GamepadState.from_sequence([0.0] * 20)
+            GamepadState(
+                values=(0.0,) * 31,
+                available_mask=(False,) * 32,
+                task_mask=(False,) * 32,
+                device_id=0,
+            )
         with self.assertRaises(StateValidationError):
-            GamepadState(lx=1.01)
+            GamepadState.xbox_one_s({"left_x": 1.01})
         with self.assertRaises(StateValidationError):
-            GamepadState(a=-0.01)
+            GamepadState.xbox_one_s({"south": -0.01})
         with self.assertRaises(StateValidationError):
-            GamepadState(rx=math.nan)
+            GamepadState.xbox_one_s({"right_x": math.nan})
         with self.assertRaises(StateValidationError):
-            GamepadState(a=True)
+            GamepadState.xbox_one_s({"south": True})
+        with self.assertRaises(StateValidationError):
+            GamepadState.xbox_one_s(task_channels=("right_paddle1",))
+        with self.assertRaises(StateValidationError):
+            GamepadState.xbox_one_s(
+                {"left_x": 0.0}, available_channels=("left_y",)
+            )
 
 
 class ResourceAndProfileTests(unittest.TestCase):

@@ -40,13 +40,13 @@
   "state_mapping": {
     "axes": [
       {
-        "channel": "lx",
+        "channel": "left_x",
         "joint": "left_stick_x",
         "lower": -0.4014257279586958,
         "upper": 0.4014257279586958
       },
       {
-        "channel": "ly",
+        "channel": "left_y",
         "joint": "left_stick_y",
         "lower": -0.4014257279586958,
         "upper": 0.4014257279586958
@@ -55,8 +55,8 @@
     "radial_groups": [
       {
         "channels": [
-          "lx",
-          "ly"
+          "left_x",
+          "left_y"
         ],
         "radius": 1.0
       }

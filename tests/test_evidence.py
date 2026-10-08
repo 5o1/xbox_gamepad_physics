@@ -77,7 +77,7 @@ class EvidenceTests(unittest.TestCase):
         changed["target_model"]["value"] = "Xbox Series X|S"
         self.assertFalse(self.audit(changed)["schema_valid"])
 
-    def test_standard_interface_has_exactly_21_owned_channels(self):
+    def test_browser_transport_has_exactly_21_owned_channels(self):
         channels = self.spec["input_schema"]["channels"]
         self.assertEqual(len(channels), 21)
         self.assertEqual(
@@ -85,14 +85,14 @@ class EvidenceTests(unittest.TestCase):
         )
         self.assertEqual(
             [channel["name"] for channel in channels],
-            list(asset.CANONICAL_CHANNELS),
+            list(asset.W3C_BROWSER_CHANNELS),
         )
         represented = [
             channel
             for control in asset.CONTROL_EFFECTS.values()
             for channel in control
         ]
-        self.assertCountEqual(represented, asset.CANONICAL_CHANNELS)
+        self.assertCountEqual(represented, asset.W3C_BROWSER_CHANNELS)
         self.assertNotIn("share", self.spec["parts"])
 
     def test_visual_candidates_are_not_physics_approval(self):

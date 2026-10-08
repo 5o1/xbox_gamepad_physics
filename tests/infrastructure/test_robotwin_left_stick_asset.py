@@ -52,9 +52,11 @@ class RoboTwinLeftStickAssetTest(unittest.TestCase):
         )
         self.assertEqual(
             tuple(item.channel for item in description.axis_mappings),
-            ("lx", "ly"),
+            ("left_x", "left_y"),
         )
-        self.assertEqual(description.radial_groups[0].channels, ("lx", "ly"))
+        self.assertEqual(
+            description.radial_groups[0].channels, ("left_x", "left_y")
+        )
 
     def test_urdf_contains_explicit_physics_and_contact_geometry(self):
         root = ET.parse(PROFILE / "mobility.urdf").getroot()
