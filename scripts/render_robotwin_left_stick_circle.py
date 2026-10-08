@@ -17,6 +17,17 @@ def main() -> None:
     parser.add_argument("--trace", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--observed-trace", type=Path, required=True)
+    parser.add_argument(
+        "--renderer",
+        choices=("robotwin_rt", "sapien_raster"),
+        default="robotwin_rt",
+    )
+    parser.add_argument("--spp", type=int, default=32)
+    parser.add_argument(
+        "--denoiser",
+        choices=("none", "oidn", "optix"),
+        default="none",
+    )
     parser.add_argument("--max-frames", type=int)
     args = parser.parse_args()
 
@@ -31,7 +42,7 @@ def main() -> None:
     import sapien
     from transforms3d.quaternions import mat2quat
 
-    from envs._base_task import create_box, create_table
+    from envs._base_task import Base_Task, create_box, create_table
     from xbox_gamepad_physics.robotwin import load_into_scene
 
     trace = json.loads(args.trace.resolve().read_text(encoding="utf-8"))
@@ -49,13 +60,31 @@ def main() -> None:
             q=mat2quat(np.column_stack([forward, left, up])),
         )
 
-    scene = sapien.Scene()
-    scene.set_timestep(1.0 / 250.0)
-    scene.add_ground(0.0)
-    scene.default_physical_material = scene.create_physical_material(0.5, 0.5, 0.0)
-    scene.set_ambient_light([0.38, 0.38, 0.38])
-    scene.add_directional_light([0.4, 0.5, -1], [1.1, 1.1, 1.1], shadow=True)
-    scene.add_directional_light([-0.6, -0.2, -1], [0.45, 0.47, 0.5], shadow=False)
+    if args.renderer == "robotwin_rt":
+        task = Base_Task()
+        task.render_freq = 0
+        task.random_light = False
+        task.setup_scene()
+        # RoboTwin defaults to OIDN. On the four-GPU node the renderer must be
+        # launched with one CUDA_VISIBLE_DEVICES entry so RT and OIDN select the
+        # same device.
+        sapien.render.set_ray_tracing_denoiser(args.denoiser)
+        sapien.render.set_ray_tracing_samples_per_pixel(args.spp)
+        scene = task.scene
+    else:
+        scene = sapien.Scene()
+        scene.set_timestep(1.0 / 250.0)
+        scene.add_ground(0.0)
+        scene.default_physical_material = scene.create_physical_material(
+            0.5, 0.5, 0.0
+        )
+        scene.set_ambient_light([0.38, 0.38, 0.38])
+        scene.add_directional_light(
+            [0.4, 0.5, -1], [1.1, 1.1, 1.1], shadow=True
+        )
+        scene.add_directional_light(
+            [-0.6, -0.2, -1], [0.45, 0.47, 0.5], shadow=False
+        )
     create_box(
         scene,
         sapien.Pose(p=[0, 1, 1.5]),
@@ -181,7 +210,9 @@ def main() -> None:
                 "fps": trace["fps"],
                 "resolution": [1280, 720],
                 "sapien": sapien.__version__,
-                "renderer": "sapien_raster",
+                "renderer": args.renderer,
+                "samples_per_pixel": args.spp if args.renderer == "robotwin_rt" else None,
+                "denoiser": args.denoiser if args.renderer == "robotwin_rt" else None,
                 "observed_trace": str(observed_path),
                 "signal_source": observed_trace["signal_source"],
             }

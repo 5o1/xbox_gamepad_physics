@@ -65,6 +65,7 @@ class GamepadOverlayDemoTests(unittest.TestCase):
             "command_trace",
             "observed_trace",
             "review_frame",
+            "visual_review",
         ):
             artifact = directory / result[section]["path"]
             self.assertTrue(artifact.is_file())
