@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {configuredChannels,evaluateProfile,nodeSteps,sourceToGltfVector,stateWithJointCoordinate,validateProfile} from '../viewer/schema2_runtime.mjs';
 
-const profile=JSON.parse(await readFile(new URL('../assets/appearance_matched_estimated_v0/viewer_profile.json',import.meta.url)));
+const profile=JSON.parse(await readFile(new URL('../src/xbox_gamepad_physics/resource_data/appearance_matched_estimated_v0/viewer_profile.json',import.meta.url)));
 const evidence=JSON.parse(await readFile(new URL('../sources/appearance_matched_estimated_v0.json',import.meta.url)));
 const nodes=new Set(profile.nodes.map(node=>node.source_node));
 

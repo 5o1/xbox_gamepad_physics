@@ -4,6 +4,11 @@
 `xbox_gamepad_physics/resource_data/<backend>/<profile>/`，加载器通过包内绝对路径访问，
 调用者的当前工作目录不参与资源解析。
 
+共用视觉资源位于包内 `resource_data/xbox_one_s/visual/`，包含静态 GLB、16 个 OBJ
+和部件清单；查看器与安装包使用同一组文件。资产索引和预览配置也在 `resource_data/`。
+原始 GLB 单独保存在仓库的 `archive/xbox_one_s/`，不进入 wheel。
+索引中的历史报告和来源链接用于仓库内查阅；它们指向的研究记录不属于安装包运行资源。
+
 ## 安装与状态检查
 
 基础包不强制安装仿真器：

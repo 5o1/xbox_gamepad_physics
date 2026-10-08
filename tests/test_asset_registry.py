@@ -12,12 +12,12 @@ def load(relative_path):
 
 
 def resolve_from_assets(relative_path):
-    return (ROOT / "assets" / relative_path).resolve()
+    return (ROOT / "src/xbox_gamepad_physics/resource_data" / relative_path).resolve()
 
 
 class AssetRegistryTest(unittest.TestCase):
     def setUp(self):
-        self.index = load("assets/asset_index.json")
+        self.index = load("src/xbox_gamepad_physics/resource_data/asset_index.json")
 
     def test_registry_states_current_acceptance_boundary(self):
         self.assertEqual(self.index["registry_role"], "canonical_status_authority")

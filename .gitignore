@@ -54,9 +54,9 @@ lighting/
 *.tar.gz
 
 # Selected small Xbox One S assets shipped with the repository.
-!assets/xbox_one_s/visual/*.obj
-!assets/xbox_one_s/visual/Xbox_One_S_BatonyRobson_STATIC_VISUAL_UNCALIBRATED.glb
-!assets/xbox_one_s/source/xbox_one_s_controllergamepad_animated.glb
+!src/xbox_gamepad_physics/resource_data/xbox_one_s/visual/*.obj
+!src/xbox_gamepad_physics/resource_data/xbox_one_s/visual/Xbox_One_S_BatonyRobson_STATIC_VISUAL_UNCALIBRATED.glb
+!archive/xbox_one_s/xbox_one_s_controllergamepad_animated.glb
 
 # Third-party reference captures retained outside Git. Their URLs and hashes are
 # recorded under sources/; absence here is intentional, not lost evidence.

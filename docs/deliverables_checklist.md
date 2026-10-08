@@ -18,7 +18,8 @@
 
 产物：已确认的 Xbox One S 分件网格、材质、贴图、装配变换、许可声明，以及明确的获取入口。
 2026-10-08 已将静态 GLB、16 个 OBJ、inventory 和原始 2K GLB 归档到
-`assets/xbox_one_s/`，附来源和许可说明。选定资源约 9 MiB，随 Git 分发。
+`src/xbox_gamepad_physics/resource_data/xbox_one_s/`，原始 GLB 归档在 `archive/xbox_one_s/`，
+附来源和许可说明。选定资源约 9 MiB，随 Git 分发。
 大型实验中间文件继续存放在 GPU 节点。完整的新 clone 显示验收仍待执行。
 
 验收：新 clone 的用户按命令获取资源后能显示完整手柄，无需知道开发环境的 GPU 私有目录。
@@ -102,7 +103,7 @@
 
 ## 核对依据
 
-- [资产索引](../assets/asset_index.json)
+- [资产索引](../src/xbox_gamepad_physics/resource_data/asset_index.json)
 - [物理规格](../specs/xbox_v1.json)
 - [交互验收规格](../specs/interactive_acceptance.json)
 - [双后端导入接口](importing.md)

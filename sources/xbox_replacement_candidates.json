@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "target": "Xbox One S",
-  "status_authority": "../assets/asset_index.json",
+  "status_authority": "../src/xbox_gamepad_physics/resource_data/asset_index.json",
   "primary_appearance_candidate_id": "xbox_one_s_batonyrobson_a62cf747",
   "accepted_appearance_candidate_id": "xbox_one_s_batonyrobson_a62cf747",
   "accepted_metric_geometry_variant_id": null,

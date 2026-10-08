@@ -20,7 +20,7 @@ def load(relative_path):
 class EvidenceTests(unittest.TestCase):
     def setUp(self):
         self.catalog = load("sources/catalog.json")
-        self.registry = load("assets/asset_index.json")
+        self.registry = load("src/xbox_gamepad_physics/resource_data/asset_index.json")
         self.spec = load("specs/xbox_v1.json")
 
     def audit(self, specification=None, *, catalog=None, registry=None):
