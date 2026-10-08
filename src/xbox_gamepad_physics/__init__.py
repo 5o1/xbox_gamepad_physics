@@ -1,5 +1,10 @@
 """Public API for the Xbox One S physical asset package."""
 
+from .controller import (
+    AxisSignalMapping,
+    GamepadSignalController,
+    RadialSignalGroup,
+)
 from .errors import (
     AssetImportError,
     MissingBackendDependencyError,
@@ -35,6 +40,7 @@ from .state import (
 __all__ = [
     "AXIS_COUNT",
     "AXIS_NAMES",
+    "AxisSignalMapping",
     "AssetImportError",
     "BUTTON_COUNT",
     "BUTTON_NAMES",
@@ -47,6 +53,7 @@ __all__ = [
     "XBOX_ONE_S_CHANNELS",
     "GamepadChannel",
     "GamepadDeviceId",
+    "GamepadSignalController",
     "GamepadState",
     "MissingBackendDependencyError",
     "MissingResourceError",
@@ -56,6 +63,7 @@ __all__ = [
     "ResourceError",
     "ResourceFormatError",
     "ResourceNotFoundError",
+    "RadialSignalGroup",
     "StateValidationError",
     "UnsafeResourcePathError",
     "XboxGamepadPhysicsError",

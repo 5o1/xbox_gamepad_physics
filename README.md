@@ -55,6 +55,10 @@ Python 公共状态接口采用版本化的 `sdl3-gamepad-core-v1`：先放 SDL3
 `left_x` 和 `left_y` 标为可用。浏览器、游戏或训练代码接入时必须按名称适配，不能按
 下标直连。
 
+`GamepadSignalController` 是仿真后端之外的公共信号层。RoboTwin 只向它提供具名关节
+位置；归一化、饱和、摇杆圆形约束和状态 mask 都由该层生成。MuJoCo 后续接入相同控制器，
+不再各自实现一套摇杆信号公式。
+
 ## 关键入口
 
 - [资产索引](assets/asset_index.json)：候选、派生版本、哈希和准入状态。

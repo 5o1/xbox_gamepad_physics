@@ -15,11 +15,17 @@ import xml.etree.ElementTree as ET
 
 from xbox_gamepad_physics.profiles import require_physics_ready
 from xbox_gamepad_physics.resources import load_json_resource, resource_path
-from xbox_gamepad_physics.errors import MissingBackendDependencyError
+from xbox_gamepad_physics.controller import (
+    AxisSignalMapping,
+    GamepadSignalController,
+    RadialSignalGroup,
+)
+from xbox_gamepad_physics.errors import (
+    MissingBackendDependencyError,
+    StateValidationError,
+)
 
 from .articulation import (
-    AxisMapping,
-    RadialGroup,
     XboxOneSArticulation,
     joint_name,
 )
@@ -57,8 +63,7 @@ class JointDynamics:
 class RoboTwinAssetDescription:
     urdf_path: Path
     joint_dynamics: tuple[JointDynamics, ...]
-    axis_mappings: tuple[AxisMapping, ...]
-    radial_groups: tuple[RadialGroup, ...]
+    signal_controller: GamepadSignalController
     contact_material: "ContactMaterial"
     visual_binding: Mapping[str, Any]
 
@@ -166,7 +171,7 @@ def _validated_description(profile: str) -> RoboTwinAssetDescription:
     raw_axes = mapping.get("axes")
     if not isinstance(raw_axes, list) or not raw_axes:
         raise RoboTwinManifestError("state_mapping.axes must be a non-empty list")
-    axis_mappings: list[AxisMapping] = []
+    axis_mappings: list[AxisSignalMapping] = []
     channels: set[str] = set()
     for index, raw in enumerate(raw_axes):
         if not isinstance(raw, dict):
@@ -191,11 +196,11 @@ def _validated_description(profile: str) -> RoboTwinAssetDescription:
                 f"state_mapping.axes[{index}] limits must straddle zero"
             )
         channels.add(channel)
-        axis_mappings.append(AxisMapping(channel, joint, lower, upper))
+        axis_mappings.append(AxisSignalMapping(channel, joint, lower, upper))
     raw_groups = mapping.get("radial_groups", [])
     if not isinstance(raw_groups, list):
         raise RoboTwinManifestError("state_mapping.radial_groups must be a list")
-    radial_groups: list[RadialGroup] = []
+    radial_groups: list[RadialSignalGroup] = []
     for index, raw in enumerate(raw_groups):
         if not isinstance(raw, dict):
             raise RoboTwinManifestError(
@@ -217,7 +222,14 @@ def _validated_description(profile: str) -> RoboTwinAssetDescription:
             raise RoboTwinManifestError(
                 f"state_mapping.radial_groups[{index}].radius must be in (0, 1]"
             )
-        radial_groups.append(RadialGroup(tuple(group_channels), radius))
+        radial_groups.append(RadialSignalGroup(tuple(group_channels), radius))
+
+    try:
+        signal_controller = GamepadSignalController.xbox_one_s(
+            axis_mappings, radial_groups
+        )
+    except StateValidationError as error:
+        raise RoboTwinManifestError(f"invalid state_mapping: {error}") from error
 
     raw_contact = manifest.get("contact_material")
     if not isinstance(raw_contact, dict):
@@ -244,8 +256,7 @@ def _validated_description(profile: str) -> RoboTwinAssetDescription:
     description = RoboTwinAssetDescription(
         urdf_path,
         tuple(dynamics),
-        tuple(axis_mappings),
-        tuple(radial_groups),
+        signal_controller,
         contact,
         visual_binding,
     )
@@ -495,14 +506,12 @@ def _extract_one_articulation(load_result: Any) -> Any:
 def _configure_joints(
     articulation: Any,
     dynamics: tuple[JointDynamics, ...],
-    axis_mappings: tuple[AxisMapping, ...],
-    radial_groups: tuple[RadialGroup, ...],
+    signal_controller: GamepadSignalController,
 ) -> XboxOneSArticulation:
     wrapper = XboxOneSArticulation(
         articulation,
         (configuration.name for configuration in dynamics),
-        axis_mappings,
-        radial_groups,
+        signal_controller,
     )
     joints = {joint_name(joint): joint for joint in articulation.get_active_joints()}
     for configuration in dynamics:
@@ -600,6 +609,5 @@ def load_into_scene(
     return _configure_joints(
         articulation,
         description.joint_dynamics,
-        description.axis_mappings,
-        description.radial_groups,
+        description.signal_controller,
     )

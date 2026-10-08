@@ -21,6 +21,11 @@ from xbox_gamepad_physics.errors import (  # noqa: E402
     StateValidationError,
     UnsafeResourcePathError,
 )
+from xbox_gamepad_physics.controller import (  # noqa: E402
+    AxisSignalMapping,
+    GamepadSignalController,
+    RadialSignalGroup,
+)
 from xbox_gamepad_physics.profiles import (  # noqa: E402
     load_profile,
     require_physics_ready,
@@ -199,6 +204,36 @@ class GamepadStateTests(unittest.TestCase):
         with self.assertRaises(StateValidationError):
             GamepadState.xbox_one_s(
                 {"left_x": 0.0}, available_channels=("left_y",)
+            )
+
+
+class GamepadSignalControllerTests(unittest.TestCase):
+    def setUp(self):
+        self.controller = GamepadSignalController.xbox_one_s(
+            (
+                AxisSignalMapping("left_x", "stick_x", -0.4, 0.4),
+                AxisSignalMapping("left_y", "stick_y", -0.4, 0.4),
+            ),
+            (RadialSignalGroup(("left_x", "left_y"), 1.0),),
+        )
+
+    def test_controller_normalizes_saturates_and_projects_radially(self):
+        state = self.controller.encode({"stick_x": 0.4, "stick_y": 0.4})
+        self.assertAlmostEqual(state.channel("left_x"), 2**-0.5)
+        self.assertAlmostEqual(state.channel("left_y"), 2**-0.5)
+        self.assertEqual(sum(state.available_mask), 2)
+
+        saturated = self.controller.encode({"stick_x": -0.8, "stick_y": 0.0})
+        self.assertEqual(saturated.channel("left_x"), -1.0)
+
+    def test_controller_rejects_invalid_configuration_and_observations(self):
+        with self.assertRaisesRegex(StateValidationError, "missing mechanism"):
+            self.controller.encode({"stick_x": 0.0})
+        with self.assertRaisesRegex(StateValidationError, "must be finite"):
+            self.controller.encode({"stick_x": math.nan, "stick_y": 0.0})
+        with self.assertRaisesRegex(StateValidationError, "not a stick axis"):
+            GamepadSignalController.xbox_one_s(
+                (AxisSignalMapping("south", "button", -1.0, 1.0),)
             )
 
 

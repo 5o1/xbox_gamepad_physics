@@ -12,6 +12,7 @@ import math
 from typing import Any, Iterable, Mapping
 
 from .errors import JointConfigurationError
+from xbox_gamepad_physics.controller import GamepadSignalController
 from xbox_gamepad_physics.state import GamepadState
 
 
@@ -45,20 +46,6 @@ class _JointBinding:
     joint: Any
 
 
-@dataclass(frozen=True)
-class AxisMapping:
-    channel: str
-    joint: str
-    lower: float
-    upper: float
-
-
-@dataclass(frozen=True)
-class RadialGroup:
-    channels: tuple[str, str]
-    radius: float
-
-
 class XboxOneSArticulation:
     """A name-addressed handle around the underlying SAPIEN articulation."""
 
@@ -66,8 +53,7 @@ class XboxOneSArticulation:
         self,
         articulation: Any,
         expected_joint_names: Iterable[str],
-        axis_mappings: Iterable[AxisMapping] = (),
-        radial_groups: Iterable[RadialGroup] = (),
+        signal_controller: GamepadSignalController,
     ):
         self._articulation = articulation
         get_active_joints = getattr(articulation, "get_active_joints", None)
@@ -112,8 +98,9 @@ class XboxOneSArticulation:
                 f"qpos length {len(qpos)} does not match active-joint DOF total {offset}"
             )
         self._bindings = bindings
-        self._axis_mappings = tuple(axis_mappings)
-        self._radial_groups = tuple(radial_groups)
+        if not isinstance(signal_controller, GamepadSignalController):
+            raise TypeError("signal_controller must be a GamepadSignalController")
+        self._signal_controller = signal_controller
 
     @property
     def articulation(self) -> Any:
@@ -196,22 +183,6 @@ class XboxOneSArticulation:
         reporting unimplemented Xbox controls as valid neutral observations.
         """
 
-        available_channels = tuple(mapping.channel for mapping in self._axis_mappings)
-        values = {channel: 0.0 for channel in available_channels}
-        for mapping in self._axis_mappings:
-            q = self.joint_position(mapping.joint)
-            scale = -mapping.lower if q < 0 else mapping.upper
-            signal = q / scale
-            values[mapping.channel] = max(-1.0, min(1.0, signal))
-        for group in self._radial_groups:
-            first, second = group.channels
-            radius = math.hypot(values[first], values[second])
-            if radius > group.radius:
-                factor = group.radius / radius
-                values[first] *= factor
-                values[second] *= factor
-        return GamepadState.xbox_one_s(
-            values,
-            available_channels=available_channels,
-            task_channels=task_channels,
+        return self._signal_controller.encode(
+            self.joint_positions(), task_channels=task_channels
         )

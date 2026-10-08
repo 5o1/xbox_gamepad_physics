@@ -14,11 +14,12 @@ sys.path.insert(0, str(ROOT / "src"))
 
 from xbox_gamepad_physics.profiles import BackendProfile
 from xbox_gamepad_physics.errors import PhysicsNotReadyError
-from xbox_gamepad_physics.robotwin.articulation import (
-    AxisMapping,
-    RadialGroup,
-    XboxOneSArticulation,
+from xbox_gamepad_physics.controller import (
+    AxisSignalMapping,
+    GamepadSignalController,
+    RadialSignalGroup,
 )
+from xbox_gamepad_physics.robotwin.articulation import XboxOneSArticulation
 from xbox_gamepad_physics.robotwin.errors import (
     JointConfigurationError,
     RoboTwinManifestError,
@@ -324,14 +325,17 @@ class RoboTwinRuntimeTest(unittest.TestCase):
     def test_gamepad_state_normalizes_and_projects_stick_radius(self):
         articulation = FakeArticulation()
         articulation.qpos = [0.4, 0.4]
+        signal_controller = GamepadSignalController.xbox_one_s(
+            [
+                AxisSignalMapping("left_x", "button_a", -0.4, 0.4),
+                AxisSignalMapping("left_y", "left_stick_x", -0.4, 0.4),
+            ],
+            [RadialSignalGroup(("left_x", "left_y"), 1.0)],
+        )
         wrapper = XboxOneSArticulation(
             articulation,
             ["button_a", "left_stick_x"],
-            [
-                AxisMapping("left_x", "button_a", -0.4, 0.4),
-                AxisMapping("left_y", "left_stick_x", -0.4, 0.4),
-            ],
-            [RadialGroup(("left_x", "left_y"), 1.0)],
+            signal_controller,
         )
         state = wrapper.gamepad_state()
         self.assertAlmostEqual(state.channel("left_x"), 2 ** -0.5)
@@ -372,7 +376,11 @@ class RoboTwinRuntimeTest(unittest.TestCase):
 
     def test_articulation_joint_set_mismatch_fails_closed(self):
         with self.assertRaisesRegex(JointConfigurationError, "active-joint mismatch"):
-            XboxOneSArticulation(FakeArticulation(), ["button_a"])
+            XboxOneSArticulation(
+                FakeArticulation(),
+                ["button_a"],
+                GamepadSignalController.xbox_one_s(()),
+            )
 
     def test_urdf_missing_inertial_fails_before_scene_mutation(self):
         temporary = tempfile.TemporaryDirectory()
