@@ -3,7 +3,7 @@ import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {installSavedRender} from './saved_render.mjs';
 import {InputSession,AXES,BUTTONS,neutralState} from './gamepad_state.mjs';
-import {solveDrag2D} from './drag2d.mjs';
+import {solveDrag2D,projectUnitDisk} from './drag2d.mjs';
 import {configuredChannels,evaluateProfile,nodeSteps,validateProfile} from './schema2_runtime.mjs';
 
 const el=id=>document.getElementById(id),displayNames=[...AXES,...BUTTONS];
@@ -104,7 +104,7 @@ renderer.domElement.addEventListener('pointermove',event=>{
   if(!drag||event.pointerId!==drag.pointer)return;
   if(drag.kind==='two'){
     const state=Float32Array.from(session.frame.values),project=values=>{const trial=Float32Array.from(state);drag.channels.forEach((channel,index)=>trial[channel]=values[index]);return projectPickedPoint(drag.node,drag.local,trial);};
-    const result=solveDrag2D(project,drag.channels.map(channel=>state[channel]),[event.clientX,event.clientY]);drag.channels.forEach((channel,index)=>state[channel]=result.values[index]);updateMouseState(state);
+    const result=solveDrag2D(project,drag.channels.map(channel=>state[channel]),[event.clientX,event.clientY],{constrain:projectUnitDisk});drag.channels.forEach((channel,index)=>state[channel]=result.values[index]);updateMouseState(state);
     status(`二维拖动投影误差 ${result.errorPx.toFixed(2)} px；${lastEvaluation.projections.length?'当前状态已投影到运动边界':'未触发边界投影'}`);return;
   }
   const channel=drag.channel,[low,high]=profile.channels[channel].range,projection=oneAxisProjection(drag.node,drag.local,drag.base,channel),a=projection.low_screen,[dx,dy]=projection.screen_displacement_px,denominator=projection.denominator;
