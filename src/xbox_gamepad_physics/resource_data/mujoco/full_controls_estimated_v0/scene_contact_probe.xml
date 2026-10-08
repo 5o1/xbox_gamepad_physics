@@ -1,0 +1,213 @@
+<mujoco model="xbox_one_s_full_controls_estimated_v0">
+  <compiler angle="radian" autolimits="true" discardvisual="false" />
+  <option timestep="0.00416666666667" gravity="0 0 -9.81" integrator="discrete" />
+  <default>
+    <geom contype="1" conaffinity="1" friction="0.4 0.005 0.0001" solref="0.01 1" solimp="0.9 0.95 0.001" />
+  </default>
+  <asset>
+    <texture name="xbox_base_color" type="2d" file="../visual_v0/textures/base_color.png" colorspace="sRGB" vflip="true" />
+    <material name="xbox_surface" texture="xbox_base_color" rgba="1 1 1 1" specular=".5" shininess=".2" />
+    <mesh name="00_A_Button_VISUAL_UNCALIBRATED" file="../visual_v0/meshes/00_A_Button_VISUAL_UNCALIBRATED.obj" scale="0.0560472180107161 0.0560472180107161 0.0560472180107161" smoothnormal="false" />
+    <mesh name="01_B_Button_VISUAL_UNCALIBRATED" file="../visual_v0/meshes/01_B_Button_VISUAL_UNCALIBRATED.obj" scale="0.0560472180107161 0.0560472180107161 0.0560472180107161" smoothnormal="false" />
+    <mesh name="02_Bumper_L_VISUAL_UNCALIBRATED" file="../visual_v0/meshes/02_Bumper_L_VISUAL_UNCALIBRATED.obj" scale="0.0560472180107161 0.0560472180107161 0.0560472180107161" smoothnormal="false" />
+    <mesh name="03_Bumper_R_VISUAL_UNCALIBRATED" file="../visual_v0/meshes/03_Bumper_R_VISUAL_UNCALIBRATED.obj" scale="0.0560472180107161 0.0560472180107161 0.0560472180107161" smoothnormal="false" />
+    <mesh name="04_Connect_Button_VISUAL_UNCALIBRATED" file="../visual_v0/meshes/04_Connect_Button_VISUAL_UNCALIBRATED.obj" scale="0.0560472180107161 0.0560472180107161 0.0560472180107161" smoothnormal="false" />
+    <mesh name="05_Controller_Body_VISUAL_UNCALIBRATED" file="../visual_v0/meshes/05_Controller_Body_VISUAL_UNCALIBRATED.obj" scale="0.0560472180107161 0.0560472180107161 0.0560472180107161" smoothnormal="false" />
+    <mesh name="06_D-Pad_VISUAL_UNCALIBRATED" file="../visual_v0/meshes/06_D-Pad_VISUAL_UNCALIBRATED.obj" scale="0.0560472180107161 0.0560472180107161 0.0560472180107161" smoothnormal="false" />
+    <mesh name="07_Menu_L_VISUAL_UNCALIBRATED" file="../visual_v0/meshes/07_Menu_L_VISUAL_UNCALIBRATED.obj" scale="0.0560472180107161 0.0560472180107161 0.0560472180107161" smoothnormal="false" />
+    <mesh name="08_Menu_R_VISUAL_UNCALIBRATED" file="../visual_v0/meshes/08_Menu_R_VISUAL_UNCALIBRATED.obj" scale="0.0560472180107161 0.0560472180107161 0.0560472180107161" smoothnormal="false" />
+    <mesh name="09_Stick_L_VISUAL_UNCALIBRATED" file="../visual_v0/meshes/09_Stick_L_VISUAL_UNCALIBRATED.obj" scale="0.0560472180107161 0.0560472180107161 0.0560472180107161" smoothnormal="false" />
+    <mesh name="10_Stick_R_VISUAL_UNCALIBRATED" file="../visual_v0/meshes/10_Stick_R_VISUAL_UNCALIBRATED.obj" scale="0.0560472180107161 0.0560472180107161 0.0560472180107161" smoothnormal="false" />
+    <mesh name="11_Trigger_L_VISUAL_UNCALIBRATED" file="../visual_v0/meshes/11_Trigger_L_VISUAL_UNCALIBRATED.obj" scale="0.0560472180107161 0.0560472180107161 0.0560472180107161" smoothnormal="false" />
+    <mesh name="12_Trigger_R_VISUAL_UNCALIBRATED" file="../visual_v0/meshes/12_Trigger_R_VISUAL_UNCALIBRATED.obj" scale="0.0560472180107161 0.0560472180107161 0.0560472180107161" smoothnormal="false" />
+    <mesh name="13_X_Button_VISUAL_UNCALIBRATED" file="../visual_v0/meshes/13_X_Button_VISUAL_UNCALIBRATED.obj" scale="0.0560472180107161 0.0560472180107161 0.0560472180107161" smoothnormal="false" />
+    <mesh name="14_XboxButton_VISUAL_UNCALIBRATED" file="../visual_v0/meshes/14_XboxButton_VISUAL_UNCALIBRATED.obj" scale="0.0560472180107161 0.0560472180107161 0.0560472180107161" smoothnormal="false" />
+    <mesh name="15_Y_Button_VISUAL_UNCALIBRATED" file="../visual_v0/meshes/15_Y_Button_VISUAL_UNCALIBRATED.obj" scale="0.0560472180107161 0.0560472180107161 0.0560472180107161" smoothnormal="false" />
+  </asset>
+  <worldbody>
+    <body name="controller_body" pos="0 0 0">
+      <inertial pos="-0.00014 -0.00325 -0.00475" mass="0.260941319596" diaginertia="0.000308473190071 0.000594248108237 0.000787137581834" />
+      <geom name="collision_controller_body_00" type="box" pos="0 0 -0.018" rgba=".2 .55 .8 .15" group="0" density="0" size="0.06 0.0375 0.014" />
+      <geom name="collision_controller_body_01" type="box" pos="-0.0239853599917 0.0241336290442 0.0181238632209" rgba=".2 .55 .8 .15" group="0" density="0" size="0.00395 0.00200901491053 0.002" />
+      <geom name="collision_controller_body_02" type="box" pos="-0.02505485256 0.0295103312689 0.0181238632209" rgba=".2 .55 .8 .15" group="0" density="0" size="0.00395 0.00200901491053 0.002" euler="0 0 0.392699081699" />
+      <geom name="collision_controller_body_03" type="box" pos="-0.0281005097161 0.0340684793198 0.0181238632209" rgba=".2 .55 .8 .15" group="0" density="0" size="0.00395 0.00200901491053 0.002" euler="0 0 0.785398163397" />
+      <geom name="collision_controller_body_04" type="box" pos="-0.032658657767 0.0371141364759 0.0181238632209" rgba=".2 .55 .8 .15" group="0" density="0" size="0.00395 0.00200901491053 0.002" euler="0 0 1.1780972451" />
+      <geom name="collision_controller_body_05" type="box" pos="-0.0380353599917 0.0381836290442 0.0181238632209" rgba=".2 .55 .8 .15" group="0" density="0" size="0.00395 0.00200901491053 0.002" euler="0 0 1.57079632679" />
+      <geom name="collision_controller_body_06" type="box" pos="-0.0434120622165 0.0371141364759 0.0181238632209" rgba=".2 .55 .8 .15" group="0" density="0" size="0.00395 0.00200901491053 0.002" euler="0 0 1.96349540849" />
+      <geom name="collision_controller_body_07" type="box" pos="-0.0479702102674 0.0340684793198 0.0181238632209" rgba=".2 .55 .8 .15" group="0" density="0" size="0.00395 0.00200901491053 0.002" euler="0 0 2.35619449019" />
+      <geom name="collision_controller_body_08" type="box" pos="-0.0510158674235 0.0295103312689 0.0181238632209" rgba=".2 .55 .8 .15" group="0" density="0" size="0.00395 0.00200901491053 0.002" euler="0 0 2.74889357189" />
+      <geom name="collision_controller_body_09" type="box" pos="-0.0520853599917 0.0241336290442 0.0181238632209" rgba=".2 .55 .8 .15" group="0" density="0" size="0.00395 0.00200901491053 0.002" euler="0 0 3.14159265359" />
+      <geom name="collision_controller_body_10" type="box" pos="-0.0510158674235 0.0187569268194 0.0181238632209" rgba=".2 .55 .8 .15" group="0" density="0" size="0.00395 0.00200901491053 0.002" euler="0 0 3.53429173529" />
+      <geom name="collision_controller_body_11" type="box" pos="-0.0479702102674 0.0141987787685 0.0181238632209" rgba=".2 .55 .8 .15" group="0" density="0" size="0.00395 0.00200901491053 0.002" euler="0 0 3.92699081699" />
+      <geom name="collision_controller_body_12" type="box" pos="-0.0434120622165 0.0111531216124 0.0181238632209" rgba=".2 .55 .8 .15" group="0" density="0" size="0.00395 0.00200901491053 0.002" euler="0 0 4.31968989869" />
+      <geom name="collision_controller_body_13" type="box" pos="-0.0380353599917 0.0100836290442 0.0181238632209" rgba=".2 .55 .8 .15" group="0" density="0" size="0.00395 0.00200901491053 0.002" euler="0 0 4.71238898038" />
+      <geom name="collision_controller_body_14" type="box" pos="-0.032658657767 0.0111531216124 0.0181238632209" rgba=".2 .55 .8 .15" group="0" density="0" size="0.00395 0.00200901491053 0.002" euler="0 0 5.10508806208" />
+      <geom name="collision_controller_body_15" type="box" pos="-0.0281005097161 0.0141987787685 0.0181238632209" rgba=".2 .55 .8 .15" group="0" density="0" size="0.00395 0.00200901491053 0.002" euler="0 0 5.49778714378" />
+      <geom name="collision_controller_body_16" type="box" pos="-0.02505485256 0.0187569268194 0.0181238632209" rgba=".2 .55 .8 .15" group="0" density="0" size="0.00395 0.00200901491053 0.002" euler="0 0 5.89048622548" />
+      <geom name="collision_controller_body_17" type="box" pos="0.0346076975429 0.000489136030252 0.017667980578" rgba=".2 .55 .8 .15" group="0" density="0" size="0.00395 0.00200901491053 0.002" />
+      <geom name="collision_controller_body_18" type="box" pos="0.0335382049747 0.00586583825498 0.017667980578" rgba=".2 .55 .8 .15" group="0" density="0" size="0.00395 0.00200901491053 0.002" euler="0 0 0.392699081699" />
+      <geom name="collision_controller_body_19" type="box" pos="0.0304925478186 0.0104239863059 0.017667980578" rgba=".2 .55 .8 .15" group="0" density="0" size="0.00395 0.00200901491053 0.002" euler="0 0 0.785398163397" />
+      <geom name="collision_controller_body_20" type="box" pos="0.0259343997677 0.013469643462 0.017667980578" rgba=".2 .55 .8 .15" group="0" density="0" size="0.00395 0.00200901491053 0.002" euler="0 0 1.1780972451" />
+      <geom name="collision_controller_body_21" type="box" pos="0.0205576975429 0.0145391360303 0.017667980578" rgba=".2 .55 .8 .15" group="0" density="0" size="0.00395 0.00200901491053 0.002" euler="0 0 1.57079632679" />
+      <geom name="collision_controller_body_22" type="box" pos="0.0151809953182 0.013469643462 0.017667980578" rgba=".2 .55 .8 .15" group="0" density="0" size="0.00395 0.00200901491053 0.002" euler="0 0 1.96349540849" />
+      <geom name="collision_controller_body_23" type="box" pos="0.0106228472673 0.0104239863059 0.017667980578" rgba=".2 .55 .8 .15" group="0" density="0" size="0.00395 0.00200901491053 0.002" euler="0 0 2.35619449019" />
+      <geom name="collision_controller_body_24" type="box" pos="0.00757719011114 0.00586583825498 0.017667980578" rgba=".2 .55 .8 .15" group="0" density="0" size="0.00395 0.00200901491053 0.002" euler="0 0 2.74889357189" />
+      <geom name="collision_controller_body_25" type="box" pos="0.00650769754293 0.000489136030252 0.017667980578" rgba=".2 .55 .8 .15" group="0" density="0" size="0.00395 0.00200901491053 0.002" euler="0 0 3.14159265359" />
+      <geom name="collision_controller_body_26" type="box" pos="0.00757719011114 -0.00488756619448 0.017667980578" rgba=".2 .55 .8 .15" group="0" density="0" size="0.00395 0.00200901491053 0.002" euler="0 0 3.53429173529" />
+      <geom name="collision_controller_body_27" type="box" pos="0.0106228472673 -0.00944571424542 0.017667980578" rgba=".2 .55 .8 .15" group="0" density="0" size="0.00395 0.00200901491053 0.002" euler="0 0 3.92699081699" />
+      <geom name="collision_controller_body_28" type="box" pos="0.0151809953182 -0.0124913714015 0.017667980578" rgba=".2 .55 .8 .15" group="0" density="0" size="0.00395 0.00200901491053 0.002" euler="0 0 4.31968989869" />
+      <geom name="collision_controller_body_29" type="box" pos="0.0205576975429 -0.0135608639697 0.017667980578" rgba=".2 .55 .8 .15" group="0" density="0" size="0.00395 0.00200901491053 0.002" euler="0 0 4.71238898038" />
+      <geom name="collision_controller_body_30" type="box" pos="0.0259343997677 -0.0124913714015 0.017667980578" rgba=".2 .55 .8 .15" group="0" density="0" size="0.00395 0.00200901491053 0.002" euler="0 0 5.10508806208" />
+      <geom name="collision_controller_body_31" type="box" pos="0.0304925478186 -0.00944571424542 0.017667980578" rgba=".2 .55 .8 .15" group="0" density="0" size="0.00395 0.00200901491053 0.002" euler="0 0 5.49778714378" />
+      <geom name="collision_controller_body_32" type="box" pos="0.0335382049747 -0.00488756619448 0.017667980578" rgba=".2 .55 .8 .15" group="0" density="0" size="0.00395 0.00200901491053 0.002" euler="0 0 5.89048622548" />
+      <geom name="visual_05_Controller_Body_VISUAL_UNCALIBRATED" type="mesh" mesh="05_Controller_Body_VISUAL_UNCALIBRATED" material="xbox_surface" pos="-0 -0 -0" quat=".707106781186548 .707106781186548 0 0" contype="0" conaffinity="0" group="1" density="0" />
+      <body name="a" pos="0.0400242305673 0.0131265282603 0.0204562412577">
+        <inertial pos="6.68134904347e-09 4.59342746652e-09 -0.00349801110322" mass="0.000239385325372" diaginertia="1.85204957139e-09 1.85204957139e-09 2.12234779357e-09" />
+        <geom name="collision_a_00" type="cylinder" pos="6.68134904347e-09 4.59342746652e-09 -0.00349801110322" rgba=".2 .55 .8 .15" group="0" density="0" size="0.00421089597521 0.00314822652924" />
+        <geom name="visual_00_A_Button_VISUAL_UNCALIBRATED" type="mesh" mesh="00_A_Button_VISUAL_UNCALIBRATED" material="xbox_surface" pos="-0.0400242305673 -0.0131265282603 -0.0204562412577" quat=".707106781186548 .707106781186548 0 0" contype="0" conaffinity="0" group="1" density="0" />
+        <joint name="a_press" type="slide" axis="6.19181808726e-06 6.50369525478e-09 -0.999999999981" range="0 0.000896754278029" limited="true" stiffness="1750.75830522" damping="1.85242713169" frictionloss="0" springref="-1.34513141704e-05" />
+      </body>
+      <body name="b" pos="0.050771157114 0.0229672960083 0.0190348410409">
+        <inertial pos="-0.000256573825173 0.000157751661855 -0.0052171464312" mass="0.000388348937531" diaginertia="5.09814063368e-09 5.09814063368e-09 3.44302885963e-09" />
+        <geom name="collision_b_00" type="cylinder" pos="-0.000256573825173 0.000157751661855 -0.0052171464312" rgba=".2 .55 .8 .15" group="0" density="0" size="0.00421089360751 0.00510729636722" />
+        <geom name="visual_01_B_Button_VISUAL_UNCALIBRATED" type="mesh" mesh="01_B_Button_VISUAL_UNCALIBRATED" material="xbox_surface" pos="-0.050771157114 -0.0229672960083 -0.0190348410409" quat=".707106781186548 .707106781186548 0 0" contype="0" conaffinity="0" group="1" density="0" />
+        <joint name="b_press" type="slide" axis="4.15957549191e-06 -2.454064438e-07 -0.999999999991" range="0 0.00137676797012" limited="true" stiffness="1140.35192136" damping="1.49502166067" frictionloss="0" springref="-2.06515195518e-05" />
+      </body>
+      <body name="left_shoulder" pos="-0.0363017102681 0.0442425904822 0.00860021828688">
+        <inertial pos="-0.00186476869301 0.000761976121645 0.000498410421295" mass="0.0015687547393" diaginertia="4.13635277576e-08 1.19672056585e-07 1.14765935812e-07" />
+        <geom name="collision_left_shoulder_00" type="box" pos="-0.00186476869301 0.000761976121645 0.000498410421295" rgba=".2 .55 .8 .15" group="0" density="0" size="0.0135872173822 0.00590419907394 0.00665144806424" />
+        <geom name="visual_02_Bumper_L_VISUAL_UNCALIBRATED" type="mesh" mesh="02_Bumper_L_VISUAL_UNCALIBRATED" material="xbox_surface" pos="0.0363017102681 -0.0442425904822 -0.00860021828688" quat=".707106781186548 .707106781186548 0 0" contype="0" conaffinity="0" group="1" density="0" />
+        <joint name="left_shoulder_press" type="slide" axis="-1.12776219129e-06 -0.999999999999 8.13603971961e-07" range="0 0.00222832427902" limited="true" stiffness="704.565316092" damping="2.03539776423" frictionloss="0" springref="-3.34248641852e-05" />
+      </body>
+      <body name="right_shoulder" pos="0.0363017102681 0.0442425904822 0.00860021912205">
+        <inertial pos="0.00186475950615 0.000761984473331 0.000498426498291" mass="0.00156875456034" diaginertia="4.13635125797e-08 1.19672073799e-07 1.1476594548e-07" />
+        <geom name="collision_right_shoulder_00" type="box" pos="0.00186475950615 0.000761984473331 0.000498426498291" rgba=".2 .55 .8 .15" group="0" density="0" size="0.0135872196372 0.00590419757064 0.00665144789512" />
+        <geom name="visual_03_Bumper_R_VISUAL_UNCALIBRATED" type="mesh" mesh="03_Bumper_R_VISUAL_UNCALIBRATED" material="xbox_surface" pos="-0.0363017102681 -0.0442425904822 -0.00860021912205" quat=".707106781186548 .707106781186548 0 0" contype="0" conaffinity="0" group="1" density="0" />
+        <joint name="right_shoulder_press" type="slide" axis="1.87060822175e-06 -0.999999999998 4.41876631952e-07" range="0 0.0022283274109" limited="true" stiffness="704.564325835" damping="2.03539633386" frictionloss="0" springref="-3.34249111635e-05" />
+      </body>
+      <body name="pair" pos="-0.0134526657862 0.0488462804995 0.0125833654846">
+        <inertial pos="-1.002202356e-08 -0.00298072519231 5.01101178087e-09" mass="0.0002" diaginertia="7.56568022714e-10 6.01324658752e-10 8.19690500704e-10" />
+        <geom name="collision_pair_00" type="box" pos="-1.002202356e-08 -0.00298072519231 5.01101178087e-09" rgba=".2 .55 .8 .15" group="0" density="0" size="0.00223234260936 0.00270407174184 0.00200910834842" />
+        <geom name="visual_04_Connect_Button_VISUAL_UNCALIBRATED" type="mesh" mesh="04_Connect_Button_VISUAL_UNCALIBRATED" material="xbox_surface" pos="0.0134526657862 -0.0488462804995 -0.0125833654846" quat=".707106781186548 .707106781186548 0 0" contype="0" conaffinity="0" group="1" density="0" />
+        <joint name="pair_press" type="slide" axis="-1.74616897677e-07 1 7.20089820322e-07" range="0 0.0010423330439" limited="true" stiffness="1506.23642721" damping="1.21495337304" frictionloss="0" springref="-1.56349956584e-05" />
+      </body>
+      <body name="dpad_horizontal_frame" pos="-0.0203121195479 -0.00180825930437 0.0112094412637">
+        <inertial pos="0 0 0" mass="0.0005" diaginertia="2e-08 2e-08 2e-08" />
+        <body name="dpad" pos="0 0 0">
+          <inertial pos="1.07845325198e-05 1.36570950228e-06 0.00231234725421" mass="0.000958236731385" diaginertia="1.12045899364e-08 4.16512047325e-08 3.78693218546e-08" />
+          <geom name="collision_dpad_00" type="box" pos="1.07845325198e-05 1.36570950228e-06 0.00231234725421" rgba=".2 .55 .8 .15" group="0" density="0" size="0.0103411832943 0.00340871257658 0.00484349591141" />
+          <geom name="collision_dpad_01" type="box" pos="1.07845325198e-05 1.36570950228e-06 0.00231234725421" rgba=".2 .55 .8 .15" group="0" density="0" size="0.00340871257658 0.0103411832943 0.00484349591141" />
+          <geom name="visual_06_D-Pad_VISUAL_UNCALIBRATED" type="mesh" mesh="06_D-Pad_VISUAL_UNCALIBRATED" material="xbox_surface" pos="0.0203121195479 0.00180825930437 -0.0112094412637" quat=".707106781186548 .707106781186548 0 0" contype="0" conaffinity="0" group="1" density="0" />
+          <joint name="dpad_vertical" type="hinge" axis="1 0 0" range="-0.174532413483 0.174532413483" limited="true" stiffness="0.0899543738355" damping="0.000419893525453" frictionloss="0" springref="0" />
+        </body>
+        <joint name="dpad_horizontal" type="hinge" axis="0 1 0" range="-0.174532413483 0.174532413483" limited="true" stiffness="0.0899543738355" damping="0.000419893525453" frictionloss="0" springref="0" />
+      </body>
+      <body name="view" pos="-0.0113421604162 0.0238291967158 0.0205323067462">
+        <inertial pos="-8.76927061522e-09 -4.17584314696e-09 -0.00200441389896" mass="0.0002" diaginertia="5.33231502977e-10 5.33231502977e-10 6.32551204775e-10" />
+        <geom name="collision_view_00" type="cylinder" pos="-8.76927061522e-09 -4.17584314696e-09 -0.00200441389896" rgba=".2 .55 .8 .15" group="0" density="0" size="0.0025150570665 0.00180397852228" />
+        <geom name="visual_07_Menu_L_VISUAL_UNCALIBRATED" type="mesh" mesh="07_Menu_L_VISUAL_UNCALIBRATED" material="xbox_surface" pos="0.0113421604162 -0.0238291967158 -0.0205323067462" quat=".707106781186548 .707106781186548 0 0" contype="0" conaffinity="0" group="1" density="0" />
+        <joint name="view_press" type="slide" axis="-3.35689217015e-07 -1.61865205701e-07 -1" range="0 0.00126662196413" limited="true" stiffness="1239.51742861" damping="1.10214657829" frictionloss="0" springref="-1.89993294619e-05" />
+      </body>
+      <body name="menu" pos="0.0112549512727 0.0238179887528 0.0205323084166">
+        <inertial pos="-3.34067452e-09 -4.17584315043e-09 -0.00200440554728" mass="0.0002" diaginertia="5.33231417907e-10 5.33231417907e-10 6.32551034635e-10" />
+        <geom name="collision_menu_00" type="cylinder" pos="-3.34067452e-09 -4.17584315043e-09 -0.00200440554728" rgba=".2 .55 .8 .15" group="0" density="0" size="0.00251505672826 0.00180397852228" />
+        <geom name="visual_08_Menu_R_VISUAL_UNCALIBRATED" type="mesh" mesh="08_Menu_R_VISUAL_UNCALIBRATED" material="xbox_surface" pos="-0.0112549512727 -0.0238179887528 -0.0205323084166" quat=".707106781186548 .707106781186548 0 0" contype="0" conaffinity="0" group="1" density="0" />
+        <joint name="menu_press" type="slide" axis="-3.36589404763e-07 -9.1378285598e-07 -1" range="0 0.00126662259051" limited="true" stiffness="1239.51681564" damping="1.10214630577" frictionloss="0" springref="-1.89993388576e-05" />
+      </body>
+      <body name="left_stick_x_frame" pos="-0.0380353599917 0.0241336290442 0.0121238632209">
+        <inertial pos="0 0 0" mass="0.0005" diaginertia="2e-08 2e-08 2e-08" />
+        <body name="left_stick_y_frame" pos="0 0 0">
+          <inertial pos="0 0 0" mass="0.0005" diaginertia="2e-08 2e-08 2e-08" />
+          <body name="left_stick" pos="0 0 0">
+            <inertial pos="0 0 0.0103333333333" mass="0.00293581833478" diaginertia="4.86049190476e-08 4.86049190476e-08 6.58944425241e-08" />
+            <geom name="collision_left_stick_00" type="cylinder" pos="0 0 0.004" rgba=".2 .55 .8 .15" group="0" density="0" size="0.0067 0.004" />
+            <geom name="collision_left_stick_01" type="cylinder" pos="0 0 0.011" rgba=".2 .55 .8 .15" group="0" density="0" size="0.0052 0.003" />
+            <geom name="collision_left_stick_02" type="cylinder" pos="0 0 0.016" rgba=".2 .55 .8 .15" group="0" density="0" size="0.0096 0.002" />
+            <geom name="visual_09_Stick_L_VISUAL_UNCALIBRATED" type="mesh" mesh="09_Stick_L_VISUAL_UNCALIBRATED" material="xbox_surface" pos="0.0380353599917 -0.0241336290442 -0.0121238632209" quat=".707106781186548 .707106781186548 0 0" contype="0" conaffinity="0" group="1" density="0" />
+            <joint name="left_stick_click" type="slide" axis="0 0 -1" range="0 0.0004" limited="true" stiffness="18500" damping="12.0432553739" frictionloss="0" springref="-6e-06" />
+          </body>
+          <joint name="left_stick_y" type="hinge" axis="1 0 0" range="-0.401425727959 0.401425727959" limited="true" stiffness="0.0348756918775" damping="0.000233848422838" frictionloss="0" springref="0" />
+        </body>
+        <joint name="left_stick_x" type="hinge" axis="0 1 0" range="-0.401425727959 0.401425727959" limited="true" stiffness="0.0348756918775" damping="0.000233848422838" frictionloss="0" springref="0" />
+      </body>
+      <body name="right_stick_x_frame" pos="0.0205576975429 0.000489136030252 0.011667980578">
+        <inertial pos="0 0 0" mass="0.0005" diaginertia="2e-08 2e-08 2e-08" />
+        <body name="right_stick_y_frame" pos="0 0 0">
+          <inertial pos="0 0 0" mass="0.0005" diaginertia="2e-08 2e-08 2e-08" />
+          <body name="right_stick" pos="0 0 0">
+            <inertial pos="0 0 0.0103333333333" mass="0.00293581833478" diaginertia="4.86049190476e-08 4.86049190476e-08 6.58944425241e-08" />
+            <geom name="collision_right_stick_00" type="cylinder" pos="0 0 0.004" rgba=".2 .55 .8 .15" group="0" density="0" size="0.0067 0.004" />
+            <geom name="collision_right_stick_01" type="cylinder" pos="0 0 0.011" rgba=".2 .55 .8 .15" group="0" density="0" size="0.0052 0.003" />
+            <geom name="collision_right_stick_02" type="cylinder" pos="0 0 0.016" rgba=".2 .55 .8 .15" group="0" density="0" size="0.0096 0.002" />
+            <geom name="visual_10_Stick_R_VISUAL_UNCALIBRATED" type="mesh" mesh="10_Stick_R_VISUAL_UNCALIBRATED" material="xbox_surface" pos="-0.0205576975429 -0.000489136030252 -0.011667980578" quat=".707106781186548 .707106781186548 0 0" contype="0" conaffinity="0" group="1" density="0" />
+            <joint name="right_stick_click" type="slide" axis="0 0 -1" range="0 0.0004" limited="true" stiffness="18500" damping="12.0432553739" frictionloss="0" springref="-6e-06" />
+          </body>
+          <joint name="right_stick_y" type="hinge" axis="1 0 0" range="-0.401425727959 0.401425727959" limited="true" stiffness="0.0348756918775" damping="0.000233848422838" frictionloss="0" springref="0" />
+        </body>
+        <joint name="right_stick_x" type="hinge" axis="0 1 0" range="-0.401425727959 0.401425727959" limited="true" stiffness="0.0348756918775" damping="0.000233848422838" frictionloss="0" springref="0" />
+      </body>
+      <body name="left_trigger" pos="-0.045677991466 0.0360190958851 0.00209587196288">
+        <inertial pos="0.000943558485189 0.00757715759429 -0.0123356406886" mass="0.0023032091704" diaginertia="1.62465706109e-07 1.5953716358e-07 1.00105838311e-07" />
+        <geom name="collision_left_trigger_00" type="box" pos="0.000943558485189 0.00757715759429 -0.0123356406886" rgba=".2 .55 .8 .15" group="0" density="0" size="0.00795538759423 0.00819162422809 0.0120213899508" />
+        <geom name="visual_11_Trigger_L_VISUAL_UNCALIBRATED" type="mesh" mesh="11_Trigger_L_VISUAL_UNCALIBRATED" material="xbox_surface" pos="0.045677991466 -0.0360190958851 -0.00209587196288" quat=".707106781186548 .707106781186548 0 0" contype="0" conaffinity="0" group="1" density="0" />
+        <joint name="left_trigger_hinge" type="hinge" axis="-1 9.65386395709e-08 -6.98143395608e-08" range="0 0.295319408178" limited="true" stiffness="0.0474062984426" damping="0.00030482182492" frictionloss="0" springref="-0.00442979112267" />
+      </body>
+      <body name="right_trigger" pos="0.0456779981473 0.0360191025664 0.00209587196288">
+        <inertial pos="-0.000943553474177 0.00757716594598 -0.0123356127105" mass="0.00230321116089" diaginertia="1.6246584705e-07 1.59537300354e-07 1.0010603664e-07" />
+        <geom name="collision_right_trigger_00" type="box" pos="-0.000943553474177 0.00757716594598 -0.0123356127105" rgba=".2 .55 .8 .15" group="0" density="0" size="0.00795539210414 0.008191628738 0.0120213869067" />
+        <geom name="visual_12_Trigger_R_VISUAL_UNCALIBRATED" type="mesh" mesh="12_Trigger_R_VISUAL_UNCALIBRATED" material="xbox_surface" pos="-0.0456779981473 -0.0360191025664 -0.00209587196288" quat=".707106781186548 .707106781186548 0 0" contype="0" conaffinity="0" group="1" density="0" />
+        <joint name="right_trigger_hinge" type="hinge" axis="-0.999999999999 -1.10652714713e-06 4.12888458236e-08" range="0 0.295319408178" limited="true" stiffness="0.0474062984426" damping="0.00030482182492" frictionloss="0" springref="-0.00442979112267" />
+      </body>
+      <body name="x" pos="0.0293228340737 0.023827573148 0.0212409005594">
+        <inertial pos="2.98990369553e-07 6.43079845104e-08 -0.0043312087353" mass="0.000296404299875" diaginertia="2.81524104327e-09 2.81524104327e-09 2.62786578734e-09" />
+        <geom name="collision_x_00" type="cylinder" pos="2.98990369553e-07 6.43079845104e-08 -0.0043312087353" rgba=".2 .55 .8 .15" group="0" density="0" size="0.00421089428399 0.00389810289481" />
+        <geom name="visual_13_X_Button_VISUAL_UNCALIBRATED" type="mesh" mesh="13_X_Button_VISUAL_UNCALIBRATED" material="xbox_surface" pos="-0.0293228340737 -0.023827573148 -0.0212409005594" quat=".707106781186548 .707106781186548 0 0" contype="0" conaffinity="0" group="1" density="0" />
+        <joint name="x_press" type="slide" axis="3.09144117136e-06 2.38748841799e-06 -0.999999999992" range="0 0.000780960913959" limited="true" stiffness="2010.34388782" damping="1.9850123476" frictionloss="0" springref="-1.17144137094e-05" />
+      </body>
+      <body name="guide" pos="-1.23447208234e-08 0.0407101077937 0.0183215602614">
+        <inertial pos="-8.95207924268e-09 1.6703372574e-09 -0.000445649321666" mass="0.0002" diaginertia="8.42766969978e-10 8.42766969978e-10 1.63232691279e-09" />
+        <geom name="collision_guide_00" type="cylinder" pos="-8.95207924268e-09 1.6703372574e-09 -0.000445649321666" rgba=".2 .55 .8 .15" group="0" density="0" size="0.00404020656995 0.000631706184663" />
+        <geom name="visual_14_XboxButton_VISUAL_UNCALIBRATED" type="mesh" mesh="14_XboxButton_VISUAL_UNCALIBRATED" material="xbox_surface" pos="1.23447208234e-08 -0.0407101077937 -0.0183215602614" quat=".707106781186548 .707106781186548 0 0" contype="0" conaffinity="0" group="1" density="0" />
+        <joint name="guide_press" type="slide" axis="-1.67690631877e-08 -1.33650819893e-06 -0.999999999999" range="0 0.000725178539607" limited="true" stiffness="2164.98408909" damping="1.45660029085" frictionloss="0" springref="-1.08776780941e-05" />
+      </body>
+      <body name="y" pos="0.040127581015 0.0337748274018 0.020275846504">
+        <inertial pos="4.75043916769e-06 -2.7159683849e-06 -0.00372459151739" mass="0.000260738809126" diaginertia="2.17778898343e-09 2.17778898343e-09 2.31166436074e-09" />
+        <geom name="collision_y_00" type="cylinder" pos="4.75043916769e-06 -2.7159683849e-06 -0.00372459151739" rgba=".2 .55 .8 .15" group="0" density="0" size="0.00421089631345 0.00342905189758" />
+        <geom name="visual_15_Y_Button_VISUAL_UNCALIBRATED" type="mesh" mesh="15_Y_Button_VISUAL_UNCALIBRATED" material="xbox_surface" pos="-0.040127581015 -0.0337748274018 -0.020275846504" quat=".707106781186548 .707106781186548 0 0" contype="0" conaffinity="0" group="1" density="0" />
+        <joint name="y_press" type="slide" axis="3.50466638692e-06 2.70674197046e-06 -0.99999999999" range="0 0.0012284000542" limited="true" stiffness="1278.08525783" damping="1.58273406021" frictionloss="0" springref="-1.8426000813e-05" />
+      </body>
+    </body>
+    <body name="left_stick_contact_probe" mocap="true" pos="-0.0110353599917 0.0241336290442 0.0281238632209">
+      <geom name="left_stick_contact_probe_geom" type="sphere" size="0.006" rgba="1 .015 .015 1" friction="0.5 0.005 0.0001" contype="1" conaffinity="1" density="0" />
+    </body>
+  </worldbody>
+  <contact>
+    <exclude body1="controller_body" body2="left_trigger" />
+    <exclude body1="controller_body" body2="right_trigger" />
+  </contact>
+  <sensor>
+    <jointpos name="a_press_position" joint="a_press" />
+    <jointpos name="b_press_position" joint="b_press" />
+    <jointpos name="left_shoulder_press_position" joint="left_shoulder_press" />
+    <jointpos name="right_shoulder_press_position" joint="right_shoulder_press" />
+    <jointpos name="pair_press_position" joint="pair_press" />
+    <jointpos name="dpad_horizontal_position" joint="dpad_horizontal" />
+    <jointpos name="dpad_vertical_position" joint="dpad_vertical" />
+    <jointpos name="view_press_position" joint="view_press" />
+    <jointpos name="menu_press_position" joint="menu_press" />
+    <jointpos name="left_stick_x_position" joint="left_stick_x" />
+    <jointpos name="left_stick_y_position" joint="left_stick_y" />
+    <jointpos name="left_stick_click_position" joint="left_stick_click" />
+    <jointpos name="right_stick_x_position" joint="right_stick_x" />
+    <jointpos name="right_stick_y_position" joint="right_stick_y" />
+    <jointpos name="right_stick_click_position" joint="right_stick_click" />
+    <jointpos name="left_trigger_hinge_position" joint="left_trigger_hinge" />
+    <jointpos name="right_trigger_hinge_position" joint="right_trigger_hinge" />
+    <jointpos name="x_press_position" joint="x_press" />
+    <jointpos name="guide_press_position" joint="guide_press" />
+    <jointpos name="y_press_position" joint="y_press" />
+  </sensor>
+  <keyframe>
+    <key name="neutral" qpos="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" />
+  </keyframe>
+</mujoco>

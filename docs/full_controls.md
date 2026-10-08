@@ -1,0 +1,101 @@
+# 完整控件物理资产
+
+`full_controls_estimated_v0` 是 Xbox One S 的首版完整物理 profile，同时提供
+RoboTwin/SAPIEN 和 MuJoCo 资源。它覆盖 20 个活动关节、21 个游戏通道和一个 Pair
+物理事件。当前数值用于仿真与训练启动，尚未替代真实手柄测量。
+
+## 机构
+
+- 左右摇杆：每侧两个倾斜转轴和一个沿杆轴的按压关节；
+- D-pad：共享帽体的水平、垂直两级摇摆关节；
+- LT/RT：独立转轴；
+- ABXY、LB/RB、View、Menu、Guide、Pair：独立直线关节；
+- 手柄机身：固定根节点；
+- Pair：输出 `pair_bind_connect`，不占游戏张量通道。
+
+运动方向、轴心和行程来自已归档 artist animation profile。摇杆参考扭矩、摇杆点击、
+正面按钮和肩键参考值来自 `sources/catalog.json`。扳机、D-pad、质量分配、接触材料和
+1.5% 单向控件预紧均在 `sources/full_controls_estimated_v0.json` 中标明适用范围和
+替换条件。真实测量与统一人工检查项目记录在 `docs/pending_user_review.md`。
+
+## 生成
+
+```sh
+python scripts/build_robotwin_full_controls.py
+python scripts/build_mujoco_full_controls.py
+python -m xbox_gamepad_physics verify \
+  --backend all --profile full_controls_estimated_v0
+```
+
+## RoboTwin / SAPIEN
+
+```python
+from xbox_gamepad_physics.robotwin import load_into_scene
+
+gamepad = load_into_scene(
+    scene,
+    pose=sapien.Pose(),
+    fixed_root=True,
+    profile="full_controls_estimated_v0",
+)
+
+state = gamepad.gamepad_state()
+events = gamepad.physical_events()
+
+# 真实手柄或鼠标状态同步到仿真姿态
+gamepad.set_gamepad_state(state)
+gamepad.set_physical_events({"pair_bind_connect": 0.0})
+
+# 需要由 SAPIEN drive 追踪时
+gamepad.set_gamepad_targets(state)
+```
+
+非视觉运行脚本：
+
+```sh
+python examples/robotwin_full_controls_smoke.py \
+  --steps 2000 --output /tmp/robotwin-full-controls.json
+```
+
+## MuJoCo
+
+```python
+from xbox_gamepad_physics.mujoco import load_scene
+
+loaded = load_scene(profile="full_controls_estimated_v0", scene="fixed")
+state = loaded.gamepad.gamepad_state()
+loaded.gamepad.set_gamepad_state(state)
+loaded.gamepad.set_physical_events({"pair_bind_connect": 0.0})
+```
+
+非视觉运行脚本：
+
+```sh
+python examples/mujoco_full_controls_smoke.py \
+  --steps 2000 --output /tmp/mujoco-full-controls.json
+```
+
+自编译 MuJoCo 3.15 使用 Conda 环境内的新版 `libstdc++`。将仓库中的激活脚本安装到
+对应环境后，普通 `conda activate` 即可加载：
+
+```sh
+cp requirements/conda/activate.d/concon-mujoco-libstdcxx.sh \
+  "$CONDA_PREFIX/etc/conda/activate.d/"
+cp requirements/conda/deactivate.d/concon-mujoco-libstdcxx.sh \
+  "$CONDA_PREFIX/etc/conda/deactivate.d/"
+```
+
+构建产物的 `_specs.so` 需要 `CXXABI_1.3.15` 和 `GLIBCXX_3.4.32`；Ubuntu 22.04
+系统库不满足，环境内 `libstdc++.so.6.0.36` 满足。该问题已经定位为动态链接路径，
+不属于 MJCF 编译错误。
+
+## 自动运行记录
+
+- SAPIEN 3.0.0b1：20 关节、21 通道、Pair 事件、2000 步有限；并发命令回读最大误差
+  `2.02e-8`；
+- MuJoCo 3.15.0：20 关节、20 传感器、21 通道、Pair 事件、2000 步有限；并发命令
+  回读最大误差 `1.11e-16`；
+- MuJoCo 使用 `discrete` 积分器处理高刚度小质量按钮；只排除了实际诊断到的
+  `controller_body` 与 LT/RT 粗略碰撞 proxy 的内部重叠。
+
+这些记录证明资源可以加载、步进和读写信号，不代替用户视觉检查或真实手柄标定。

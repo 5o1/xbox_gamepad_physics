@@ -24,7 +24,10 @@ from xbox_gamepad_physics.errors import (  # noqa: E402
 from xbox_gamepad_physics.controller import (  # noqa: E402
     AxisSignalMapping,
     GamepadSignalController,
+    RadialSourceGroup,
     RadialSignalGroup,
+    ScalarSignalMapping,
+    SplitSignalMapping,
 )
 from xbox_gamepad_physics.profiles import (  # noqa: E402
     load_profile,
@@ -235,6 +238,64 @@ class GamepadSignalControllerTests(unittest.TestCase):
             GamepadSignalController.xbox_one_s(
                 (AxisSignalMapping("south", "button", -1.0, 1.0),)
             )
+
+    def test_scalar_and_split_controls_share_the_canonical_state(self):
+        controller = GamepadSignalController.xbox_one_s(
+            (),
+            scalar_mappings=(
+                ScalarSignalMapping("south", "a_press", 0.0, 0.001),
+                ScalarSignalMapping("left_trigger", "lt", 0.0, 0.3),
+            ),
+            split_mappings=(
+                SplitSignalMapping(
+                    "dpad_left", "dpad_right", "dpad_horizontal", -0.2, 0.2
+                ),
+                SplitSignalMapping(
+                    "dpad_up", "dpad_down", "dpad_vertical", -0.2, 0.2
+                ),
+            ),
+            radial_source_groups=(
+                RadialSourceGroup(("dpad_horizontal", "dpad_vertical"), 1.0),
+            ),
+        )
+        state = controller.encode(
+            {
+                "a_press": 0.00075,
+                "lt": 0.15,
+                "dpad_horizontal": -0.2,
+                "dpad_vertical": -0.2,
+            }
+        )
+        self.assertAlmostEqual(state.channel("south"), 0.75)
+        self.assertAlmostEqual(state.channel("left_trigger"), 0.5)
+        self.assertAlmostEqual(state.channel("dpad_left"), 2**-0.5)
+        self.assertAlmostEqual(state.channel("dpad_up"), 2**-0.5)
+        self.assertEqual(state.channel("dpad_right"), 0.0)
+        self.assertEqual(state.channel("dpad_down"), 0.0)
+        self.assertEqual(sum(state.available_mask), 6)
+
+        targets = controller.decode_joint_targets(state)
+        restored = controller.encode(targets)
+        for channel in controller.available_channels:
+            self.assertAlmostEqual(restored.channel(channel), state.channel(channel))
+
+    def test_physical_event_mapping_is_bidirectional(self):
+        from xbox_gamepad_physics.controller import PhysicalEventMapping
+
+        controller = GamepadSignalController.xbox_one_s(
+            (),
+            physical_event_mappings=(
+                PhysicalEventMapping("pair_bind_connect", "pair_press", 0.0, 0.001),
+            ),
+        )
+        targets = controller.decode_physical_event_targets(
+            {"pair_bind_connect": 0.4}
+        )
+        self.assertEqual(targets, {"pair_press": 0.0004})
+        self.assertEqual(
+            controller.encode_physical_events(targets),
+            {"pair_bind_connect": 0.4},
+        )
 
 
 class ResourceAndProfileTests(unittest.TestCase):

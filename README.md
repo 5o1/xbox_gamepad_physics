@@ -18,8 +18,8 @@ GPU 节点，存档位置见 `sources/switch_pro_candidates.json` 和 `assets/as
 | 物理几何标定 | 局部尺寸、内部结构和关节位置尚未实测 |
 | estimated-v0 | 可交互的估计运动学预览，不是可训练物理资产 |
 | 旧 Casper 候选 | 外观特征更接近 1914；模型在 GPU 节点存档，不分发 |
-| 动力学 | RoboTwin 左摇杆 estimated-v0 已可运行；完整手柄仍有空缺 |
-| 双后端基础设施 | RoboTwin 左摇杆纵向切片已通过自动接触检查；MuJoCo 物理 profile 仍被门禁阻断 |
+| 动力学 | `full_controls_estimated_v0` 已覆盖 20 个关节；参数仍待实测替换 |
+| 双后端基础设施 | RoboTwin/SAPIEN 与 MuJoCo 完整 profile 均可加载、步进和读写 21 个游戏通道 |
 | 真实手柄验收 | 尚未执行 |
 
 主候选的来源、许可和文件身份记录在
@@ -51,13 +51,13 @@ GPU 节点，存档位置见 `sources/switch_pro_candidates.json` 和 `assets/as
 Python 公共状态接口采用版本化的 `sdl3-gamepad-core-v1`：先放 SDL3 的 6 个标准轴，
 再放 26 个标准按钮，共 32 维。每个状态同时携带 `available_mask`、`task_mask` 和
 `device_id`；不可用通道必须补零，动作损失和执行使用两个 mask 的交集。Xbox One S
-设备能力占其中 21 个通道，Pair 键不属于游戏控制。当前 RoboTwin 左摇杆局部资产只把
-`left_x` 和 `left_y` 标为可用。浏览器、游戏或训练代码接入时必须按名称适配，不能按
-下标直连。
+设备能力占其中 21 个通道，Pair 键不属于游戏控制。左摇杆局部 profile 只把
+`left_x/left_y` 标为可用；完整 profile 提供全部 21 个设备通道。浏览器、游戏或训练
+代码接入时必须按名称适配，不能按下标直连。
 
-`GamepadSignalController` 是仿真后端之外的公共信号层。RoboTwin 只向它提供具名关节
-位置；归一化、饱和、摇杆圆形约束和状态 mask 都由该层生成。MuJoCo 后续接入相同控制器，
-不再各自实现一套摇杆信号公式。
+`GamepadSignalController` 是仿真后端之外的公共信号层。两个后端都向它提供具名关节
+位置；归一化、饱和、双摇杆圆形约束、D-pad 拆分和状态 mask 都由该层生成。反向接口把
+真实手柄或鼠标状态转换为同名关节目标。
 
 ## 虚拟手柄信号预览
 
@@ -88,6 +88,8 @@ http://127.0.0.1:8770/viewer/gamepad_overlay/index.html?source=canonical&trace=/
 - [交互验收规格](specs/interactive_acceptance.json)：浏览器双向交互的验收门禁。
 - [32 维张量契约来源](sources/gamepad_tensor_contract_v1.json)：通道顺序、mask 与设备标识的依据和项目选择。
 - [虚拟手柄适配器](viewer/gamepad_overlay/index.html)：将 canonical 状态交给现成 SVG 手柄渲染器。
+- [完整控件使用说明](docs/full_controls.md)：20-DOF 双后端资产、信号接口和运行记录。
+- [待统一确认与实测清单](docs/pending_user_review.md)：延后处理的视觉确认和硬件测量。
 - [estimated-v0 来源](sources/appearance_matched_estimated_v0.json)：估计运动学的来源、推导和限制。
 - [estimated-v0 profile](assets/appearance_matched_estimated_v0/viewer_profile.json)：viewer 使用的运动配置。
 - [官方尺寸记录](sources/1708_dimensions.json)：整体尺寸及其适用边界。
@@ -140,14 +142,15 @@ python3 scripts/run_regression.py fast
 
 ```sh
 python3 -m pip install -e .
-python3 -m xbox_gamepad_physics status
+python3 -m xbox_gamepad_physics verify \
+  --backend all --profile full_controls_estimated_v0
 ```
 
 离线的既有 RoboTwin 环境使用 `python3 -m pip install -e . --no-build-isolation`，仓库中的
 `setup.py` 兼容其 Python 3.10 / setuptools 59 安装链。
 
-完整手柄的两个 `estimated_v0` profile 都会报告 `blocked`。RoboTwin 的
-`left_stick_estimated_v0` 是独立的可运行局部 profile。完整导入接口见
+历史 `estimated_v0` profile 继续报告 `blocked`。可运行 profile 为双后端
+`full_controls_estimated_v0` 和 RoboTwin 局部 `left_stick_estimated_v0`。完整导入接口见
 [RoboTwin 与 MuJoCo 导入约定](docs/importing.md)。
 
 需要定位失败时，可直接运行底层测试：
@@ -213,9 +216,7 @@ python3 scripts/serve_viewer.py \
 
 ## 下一步
 
-1. 测量并登记目标手柄的局部尺寸、内部结构和可动部件坐标。
-2. 实现 canonical schema-v2 到 viewer 的 fail-closed 适配器，并验证双向映射。
-3. 按部件生成可检查的碰撞候选，避免用整机凸包堵住按钮和摇杆开口。
-4. 以有来源的估计值建立第一版被动关节；保留待推拉计和尺寸测量替换的字段。
-5. 完成鼠标双向检查和真实 Xbox One S 手柄录屏验收。
-6. 通过交互门禁后，再进入 PhysX/SAPIEN 接触验证和机器人训练。
+1. 按 `docs/pending_user_review.md` 测量并替换目标手柄参数。
+2. 统一检查完整控件的轴向、轴心、穿插和两个后端的外观。
+3. 用真实 Xbox One S 和鼠标分别驱动完整 profile，记录并发输入。
+4. 将完整 profile 接入机械臂任务与训练数据生成流程。

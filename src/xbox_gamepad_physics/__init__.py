@@ -3,7 +3,11 @@
 from .controller import (
     AxisSignalMapping,
     GamepadSignalController,
+    PhysicalEventMapping,
+    RadialSourceGroup,
     RadialSignalGroup,
+    ScalarSignalMapping,
+    SplitSignalMapping,
 )
 from .errors import (
     AssetImportError,
@@ -58,12 +62,16 @@ __all__ = [
     "MissingBackendDependencyError",
     "MissingResourceError",
     "PhysicsNotReadyError",
+    "PhysicalEventMapping",
     "ProfileError",
     "ProfileManifestError",
     "ResourceError",
     "ResourceFormatError",
     "ResourceNotFoundError",
+    "RadialSourceGroup",
     "RadialSignalGroup",
+    "ScalarSignalMapping",
+    "SplitSignalMapping",
     "StateValidationError",
     "UnsafeResourcePathError",
     "XboxGamepadPhysicsError",

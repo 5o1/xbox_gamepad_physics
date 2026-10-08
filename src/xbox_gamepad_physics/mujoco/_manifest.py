@@ -7,6 +7,15 @@ from pathlib import Path
 from types import MappingProxyType
 from typing import Any, Mapping
 
+from xbox_gamepad_physics.controller import (
+    AxisSignalMapping,
+    GamepadSignalController,
+    PhysicalEventMapping,
+    RadialSignalGroup,
+    RadialSourceGroup,
+    ScalarSignalMapping,
+    SplitSignalMapping,
+)
 from xbox_gamepad_physics.errors import AssetImportError, MissingResourceError
 from xbox_gamepad_physics.profiles import require_physics_ready
 from xbox_gamepad_physics.resources import load_json_resource, resource_path
@@ -21,6 +30,7 @@ class RuntimeManifest:
     scenes: Mapping[str, str]
     joints: Mapping[str, str]
     sensors: Mapping[str, str]
+    signal_controller: GamepadSignalController | None = None
 
 
 def load_runtime_manifest(profile: str) -> RuntimeManifest:
@@ -63,12 +73,98 @@ def load_runtime_manifest(profile: str) -> RuntimeManifest:
             f"MuJoCo profile {profile!r} has no named joint or sensor bindings."
         )
 
+    try:
+        signal_controller = _signal_controller(raw.get("state_mapping"), set(joints))
+    except (TypeError, ValueError) as exc:
+        raise AssetImportError(
+            f"MuJoCo profile {profile!r} has invalid state_mapping: {exc}"
+        ) from exc
+
     return RuntimeManifest(
         profile=profile,
         entrypoint=entrypoint,
         scenes=MappingProxyType(dict(scenes)),
         joints=MappingProxyType(dict(joints)),
         sensors=MappingProxyType(dict(sensors)),
+        signal_controller=signal_controller,
+    )
+
+
+def _signal_controller(value: Any, joints: set[str]) -> GamepadSignalController:
+    if not isinstance(value, Mapping):
+        raise TypeError("state_mapping must be an object")
+
+    def records(field: str) -> list[Mapping[str, Any]]:
+        raw = value.get(field, [])
+        if not isinstance(raw, list) or any(
+            not isinstance(item, Mapping) for item in raw
+        ):
+            raise TypeError(f"state_mapping.{field} must be a list of objects")
+        return raw
+
+    def source(item: Mapping[str, Any]) -> str:
+        name = item.get("joint")
+        if not isinstance(name, str) or name not in joints:
+            raise ValueError(f"unknown mapped joint {name!r}")
+        return name
+
+    def number(item: Mapping[str, Any], field: str) -> float:
+        raw = item.get(field)
+        if isinstance(raw, bool) or not isinstance(raw, (int, float)):
+            raise TypeError(f"{field} must be numeric")
+        return float(raw)
+
+    axes = tuple(
+        AxisSignalMapping(
+            str(item.get("channel")),
+            source(item),
+            number(item, "lower"),
+            number(item, "upper"),
+        )
+        for item in records("axes")
+    )
+    scalars = tuple(
+        ScalarSignalMapping(
+            str(item.get("channel")),
+            source(item),
+            number(item, "lower"),
+            number(item, "upper"),
+        )
+        for item in records("scalars")
+    )
+    splits = tuple(
+        SplitSignalMapping(
+            str(item.get("negative_channel")),
+            str(item.get("positive_channel")),
+            source(item),
+            number(item, "lower"),
+            number(item, "upper"),
+        )
+        for item in records("splits")
+    )
+    radial = tuple(
+        RadialSignalGroup(
+            tuple(item.get("channels", ())), number(item, "radius")
+        )
+        for item in records("radial_groups")
+    )
+    radial_sources = tuple(
+        RadialSourceGroup(
+            tuple(item.get("joints", ())), number(item, "radius")
+        )
+        for item in records("radial_source_groups")
+    )
+    events = tuple(
+        PhysicalEventMapping(
+            str(item.get("event")),
+            source(item),
+            number(item, "lower"),
+            number(item, "upper"),
+        )
+        for item in records("physical_events")
+    )
+    return GamepadSignalController.xbox_one_s(
+        axes, radial, scalars, splits, radial_sources, events
     )
 
 

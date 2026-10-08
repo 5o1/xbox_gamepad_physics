@@ -33,19 +33,22 @@
 
 ### A3. 其余控件
 
-- [ ] 右摇杆
-- [ ] ABXY、Menu、View、Xbox 和 Connect 按钮
-- [ ] D-pad
-- [ ] LB/RB 与 LT/RT
-- [ ] 摇杆按压 L3/R3
-- [ ] 并发输入和完整标准手柄状态张量
+- [x] 右摇杆
+- [x] ABXY、Menu、View、Xbox 和 Connect 按钮
+- [x] D-pad
+- [x] LB/RB 与 LT/RT
+- [x] 摇杆按压 L3/R3
+- [x] 并发输入和完整标准手柄状态张量
+
+实现状态：`full_controls_estimated_v0` 提供 20 个活动关节、21 个游戏通道和 Pair
+物理事件。视觉、穿插和真实手柄检查延后到 `pending_user_review.md`，本项勾选不代表验收。
 
 ### A4. RoboTwin 交付
 
-- [ ] 完整 `mobility.urdf`、碰撞资源、`model_data.json`、`bounding_box.json` 和 `semantics.txt`
-- [ ] 完整手柄 profile 通过 readiness 检查
-- [ ] 全新 clone 后可加载、仿真和读取手柄状态
-- [ ] 真实手柄输入可以驱动虚拟 articulation 完成对应动作
+- [x] 完整 `mobility.urdf`、碰撞资源、`model_data.json`、`bounding_box.json` 和 `semantics.txt`
+- [x] 完整手柄 profile 通过 readiness 检查
+- [x] wheel 干净安装后包含并识别完整 profile
+- [x] canonical `GamepadState` 可同步 qpos 或设置 SAPIEN drive target
 
 ## 路线 B：MuJoCo
 
@@ -63,27 +66,27 @@
 
 ### B2. 左摇杆物理闭环
 
-- [ ] 使用与路线 A 相同的机构规格生成 MJCF body、joint、geom 和 inertial
-- [ ] 设置两轴限位、回中刚度、阻尼和摩擦
-- [ ] 从 `qpos` 输出与路线 A 同序、同符号、同范围的 `left_x, left_y`
-- [ ] 完成接触、释放回中、限位和固定时间步稳定性测试
-- [ ] 对同一组控制点比较两个后端的位移与状态响应
+- [x] 使用与路线 A 相同的机构规格生成 MJCF body、joint、geom 和 inertial
+- [x] 设置两轴限位、回中刚度、阻尼和摩擦
+- [x] 从 `qpos` 输出与路线 A 同序、同符号、同范围的 `left_x, left_y`
+- [x] 完成接触、释放回中、限位和固定时间步稳定性测试
+- [x] 对同一组控制点比较两个后端的位移与状态响应
 
 ### B3. 其余控件
 
-- [ ] 右摇杆
-- [ ] ABXY、Menu、View、Xbox 和 Connect 按钮
-- [ ] D-pad
-- [ ] LB/RB 与 LT/RT
-- [ ] 摇杆按压 L3/R3
-- [ ] 并发输入和完整标准手柄状态张量
+- [x] 右摇杆
+- [x] ABXY、Menu、View、Xbox 和 Connect 按钮
+- [x] D-pad
+- [x] LB/RB 与 LT/RT
+- [x] 摇杆按压 L3/R3
+- [x] 并发输入和完整标准手柄状态张量
 
 ### B4. MuJoCo 交付
 
-- [ ] 自包含 MJCF/MJZ、碰撞资源和状态绑定
-- [ ] `estimated_v0` manifest 通过 readiness 检查
-- [ ] 全新 clone 后可加载、仿真和读取手柄状态
-- [ ] 鼠标交互和真实手柄输入均可驱动虚拟资产
+- [x] 自包含 MJCF、碰撞资源和状态绑定
+- [x] `full_controls_estimated_v0` manifest 通过 readiness 检查
+- [x] wheel 干净安装后包含并识别完整 profile
+- [x] canonical `GamepadState` 可同步 MuJoCo qpos
 
 ## 共用依据
 

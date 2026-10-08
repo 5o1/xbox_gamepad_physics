@@ -53,6 +53,7 @@ def load_scene(
         data,
         joints=manifest.joints,
         sensors=manifest.sensors,
+        signal_controller=manifest.signal_controller,
     )
     return LoadedScene(
         profile=profile,

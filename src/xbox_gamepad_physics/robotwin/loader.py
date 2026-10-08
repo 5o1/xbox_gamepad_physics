@@ -18,7 +18,11 @@ from xbox_gamepad_physics.resources import load_json_resource, resource_path
 from xbox_gamepad_physics.controller import (
     AxisSignalMapping,
     GamepadSignalController,
+    PhysicalEventMapping,
+    RadialSourceGroup,
     RadialSignalGroup,
+    ScalarSignalMapping,
+    SplitSignalMapping,
 )
 from xbox_gamepad_physics.errors import (
     MissingBackendDependencyError,
@@ -197,6 +201,73 @@ def _validated_description(profile: str) -> RoboTwinAssetDescription:
             )
         channels.add(channel)
         axis_mappings.append(AxisSignalMapping(channel, joint, lower, upper))
+
+    scalar_mappings: list[ScalarSignalMapping] = []
+    raw_scalars = mapping.get("scalars", [])
+    if not isinstance(raw_scalars, list):
+        raise RoboTwinManifestError("state_mapping.scalars must be a list")
+    for index, raw in enumerate(raw_scalars):
+        if not isinstance(raw, dict):
+            raise RoboTwinManifestError(
+                f"state_mapping.scalars[{index}] must be an object"
+            )
+        channel = raw.get("channel")
+        joint = raw.get("joint")
+        if not isinstance(channel, str) or channel in channels:
+            raise RoboTwinManifestError(
+                f"state_mapping.scalars[{index}] has invalid or duplicate channel"
+            )
+        if joint not in names:
+            raise RoboTwinManifestError(
+                f"state_mapping.scalars[{index}] references undeclared joint {joint!r}"
+            )
+        lower = _number(raw, "lower", f"state_mapping.scalars[{index}]")
+        upper = _number(raw, "upper", f"state_mapping.scalars[{index}]")
+        if not lower < upper:
+            raise RoboTwinManifestError(
+                f"state_mapping.scalars[{index}] lower must be below upper"
+            )
+        channels.add(channel)
+        scalar_mappings.append(ScalarSignalMapping(channel, joint, lower, upper))
+
+    split_mappings: list[SplitSignalMapping] = []
+    raw_splits = mapping.get("splits", [])
+    if not isinstance(raw_splits, list):
+        raise RoboTwinManifestError("state_mapping.splits must be a list")
+    split_sources: set[str] = set()
+    for index, raw in enumerate(raw_splits):
+        if not isinstance(raw, dict):
+            raise RoboTwinManifestError(
+                f"state_mapping.splits[{index}] must be an object"
+            )
+        negative = raw.get("negative_channel")
+        positive = raw.get("positive_channel")
+        joint = raw.get("joint")
+        if (
+            not isinstance(negative, str)
+            or not isinstance(positive, str)
+            or negative == positive
+            or negative in channels
+            or positive in channels
+        ):
+            raise RoboTwinManifestError(
+                f"state_mapping.splits[{index}] has invalid or duplicate channels"
+            )
+        if joint not in names or joint in split_sources:
+            raise RoboTwinManifestError(
+                f"state_mapping.splits[{index}] has invalid joint {joint!r}"
+            )
+        lower = _number(raw, "lower", f"state_mapping.splits[{index}]")
+        upper = _number(raw, "upper", f"state_mapping.splits[{index}]")
+        if not lower < 0 < upper:
+            raise RoboTwinManifestError(
+                f"state_mapping.splits[{index}] limits must straddle zero"
+            )
+        channels.update((negative, positive))
+        split_sources.add(joint)
+        split_mappings.append(
+            SplitSignalMapping(negative, positive, joint, lower, upper)
+        )
     raw_groups = mapping.get("radial_groups", [])
     if not isinstance(raw_groups, list):
         raise RoboTwinManifestError("state_mapping.radial_groups must be a list")
@@ -224,9 +295,75 @@ def _validated_description(profile: str) -> RoboTwinAssetDescription:
             )
         radial_groups.append(RadialSignalGroup(tuple(group_channels), radius))
 
+    radial_source_groups: list[RadialSourceGroup] = []
+    raw_source_groups = mapping.get("radial_source_groups", [])
+    if not isinstance(raw_source_groups, list):
+        raise RoboTwinManifestError(
+            "state_mapping.radial_source_groups must be a list"
+        )
+    for index, raw in enumerate(raw_source_groups):
+        if not isinstance(raw, dict):
+            raise RoboTwinManifestError(
+                f"state_mapping.radial_source_groups[{index}] must be an object"
+            )
+        group_joints = raw.get("joints")
+        if (
+            not isinstance(group_joints, list)
+            or len(group_joints) != 2
+            or group_joints[0] == group_joints[1]
+            or any(joint not in split_sources for joint in group_joints)
+        ):
+            raise RoboTwinManifestError(
+                f"state_mapping.radial_source_groups[{index}] needs two split joints"
+            )
+        radius = _number(
+            raw, "radius", f"state_mapping.radial_source_groups[{index}]"
+        )
+        if not 0 < radius <= 1:
+            raise RoboTwinManifestError(
+                f"state_mapping.radial_source_groups[{index}].radius must be in (0, 1]"
+            )
+        radial_source_groups.append(RadialSourceGroup(tuple(group_joints), radius))
+
+    physical_event_mappings: list[PhysicalEventMapping] = []
+    raw_events = mapping.get("physical_events", [])
+    if not isinstance(raw_events, list):
+        raise RoboTwinManifestError("state_mapping.physical_events must be a list")
+    event_names: set[str] = set()
+    for index, raw in enumerate(raw_events):
+        if not isinstance(raw, dict):
+            raise RoboTwinManifestError(
+                f"state_mapping.physical_events[{index}] must be an object"
+            )
+        event = raw.get("event")
+        joint = raw.get("joint")
+        if not isinstance(event, str) or not event or event in event_names:
+            raise RoboTwinManifestError(
+                f"state_mapping.physical_events[{index}] has invalid event"
+            )
+        if joint not in names:
+            raise RoboTwinManifestError(
+                f"state_mapping.physical_events[{index}] references undeclared joint {joint!r}"
+            )
+        lower = _number(raw, "lower", f"state_mapping.physical_events[{index}]")
+        upper = _number(raw, "upper", f"state_mapping.physical_events[{index}]")
+        if not lower < upper:
+            raise RoboTwinManifestError(
+                f"state_mapping.physical_events[{index}] lower must be below upper"
+            )
+        event_names.add(event)
+        physical_event_mappings.append(
+            PhysicalEventMapping(event, joint, lower, upper)
+        )
+
     try:
         signal_controller = GamepadSignalController.xbox_one_s(
-            axis_mappings, radial_groups
+            axis_mappings,
+            radial_groups,
+            scalar_mappings,
+            split_mappings,
+            radial_source_groups,
+            physical_event_mappings,
         )
     except StateValidationError as error:
         raise RoboTwinManifestError(f"invalid state_mapping: {error}") from error

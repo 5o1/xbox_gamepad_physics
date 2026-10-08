@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+if [[ -n "${CONCON_MUJOCO_OLD_LD_LIBRARY_PATH+x}" ]]; then
+  export LD_LIBRARY_PATH="${CONCON_MUJOCO_OLD_LD_LIBRARY_PATH}"
+  unset CONCON_MUJOCO_OLD_LD_LIBRARY_PATH
+else
+  unset LD_LIBRARY_PATH
+fi

@@ -186,3 +186,26 @@ class XboxOneSArticulation:
         return self._signal_controller.encode(
             self.joint_positions(), task_channels=task_channels
         )
+
+    def physical_events(self) -> dict[str, float]:
+        """Return normalized device-management events outside the game tensor."""
+
+        return self._signal_controller.encode_physical_events(self.joint_positions())
+
+    def set_gamepad_state(self, state: GamepadState) -> None:
+        """Synchronize articulation qpos from a canonical gamepad state."""
+
+        self.set_joint_positions(self._signal_controller.decode_joint_targets(state))
+
+    def set_gamepad_targets(self, state: GamepadState) -> None:
+        """Set SAPIEN drive targets from a canonical gamepad state."""
+
+        for name, target in self._signal_controller.decode_joint_targets(state).items():
+            self.set_joint_target(name, target)
+
+    def set_physical_events(self, events: Mapping[str, float]) -> None:
+        """Synchronize physical-only controls such as Pair/Bind."""
+
+        self.set_joint_positions(
+            self._signal_controller.decode_physical_event_targets(events)
+        )

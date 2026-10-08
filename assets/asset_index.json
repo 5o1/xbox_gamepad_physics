@@ -294,6 +294,36 @@
       ]
     }
   },
+  "simulation_profiles": {
+    "robotwin_full_controls_estimated_v0": {
+      "backend": "robotwin",
+      "profile": "full_controls_estimated_v0",
+      "scope": "20-DOF full controller, 21 game channels and Pair physical event",
+      "status": "implemented_pending_user_review_and_hardware_calibration",
+      "hardware_calibrated": false,
+      "source": "../sources/full_controls_estimated_v0.json",
+      "source_sha256": "c60ef860eb89ca012ec669e26bbfe2b2f8c3702a0619d859ae1dd6957aa746ee",
+      "manifest": "../src/xbox_gamepad_physics/resource_data/robotwin/full_controls_estimated_v0/manifest.json",
+      "manifest_sha256": "efa0ca1fc6159b9ae2cb2b5dbb7b85ae1cce97a17e5b59bdd4f98e984c79a4c7",
+      "nonvisual_result": "../results/robotwin_full_controls_estimated_v0/result.json",
+      "nonvisual_result_sha256": "b3d98840d3468b946017e524719bc599d1180fdc23773b9810d2bd13145079ea"
+    },
+    "mujoco_full_controls_estimated_v0": {
+      "backend": "mujoco",
+      "profile": "full_controls_estimated_v0",
+      "scope": "20-DOF full controller, 20 joint sensors, 21 game channels and Pair physical event",
+      "status": "implemented_pending_user_review_and_hardware_calibration",
+      "hardware_calibrated": false,
+      "source": "../sources/full_controls_estimated_v0.json",
+      "source_sha256": "c60ef860eb89ca012ec669e26bbfe2b2f8c3702a0619d859ae1dd6957aa746ee",
+      "manifest": "../src/xbox_gamepad_physics/resource_data/mujoco/full_controls_estimated_v0/manifest.json",
+      "manifest_sha256": "0226643c18e33dcf48a722c97c9ab364ff452fae3c0d6c3384ade16144286764",
+      "nonvisual_result": "../results/mujoco_full_controls_estimated_v0/result.json",
+      "nonvisual_result_sha256": "bbcd6b957517fed377613515917ed0c00bb5aaf247193ac12ec7956ea39b01c0",
+      "contact_result": "../results/mujoco_full_controls_estimated_v0/contact_result.json",
+      "contact_result_sha256": "4b88a4623985e13105dd1fbe20145c37d72e419947921d3c062ce1f263d2f080"
+    }
+  },
   "evidence": {
     "source_catalog": "../sources/catalog.json",
     "mechanical_structure": "../sources/mechanical_structure.json",

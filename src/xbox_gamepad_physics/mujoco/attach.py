@@ -46,6 +46,7 @@ class GamepadAttachment:
             sensors=self._manifest.sensors,
             prefix=self.prefix,
             suffix=self.suffix,
+            signal_controller=self._manifest.signal_controller,
         )
 
     def compile(self) -> CompiledAttachment:

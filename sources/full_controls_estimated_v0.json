@@ -1,0 +1,135 @@
+{
+  "schema_version": 1,
+  "profile": "full_controls_estimated_v0",
+  "scope": "RoboTwin and MuJoCo first-pass physics for every Xbox One S control represented by the licensed visual asset",
+  "status": "simulation_estimate_pending_owner_hardware_measurement",
+  "sources": {
+    "kinematics": "assets/appearance_matched_estimated_v0/viewer_profile.json",
+    "kinematic_derivation": "sources/appearance_matched_estimated_v0.json",
+    "reference_values": "sources/catalog.json",
+    "left_stick_physics": "sources/robotwin_left_stick_estimated_v0.json",
+    "target_structure": "sources/mechanical_structure.json",
+    "trigger_structure": "sources/1708_trigger_mechanism.json",
+    "dpad_structure": "sources/1708_dpad_assembly.json",
+    "whole_mass": "sources/1708_dimensions.json"
+  },
+  "control_groups": {
+    "face_buttons": {
+      "joints": ["a_press", "b_press", "x_press", "y_press"],
+      "reference_force_n": 1.57,
+      "reference_force_evidence": "catalog.reference_values.front_force",
+      "travel": "artist animation per joint",
+      "stiffness_method": "reference_force_n / artist_endpoint_travel_m",
+      "force_limit_n": 3.14,
+      "damping_ratio": 0.7
+    },
+    "small_buttons": {
+      "joints": ["view_press", "menu_press", "guide_press", "pair_press"],
+      "reference_force_n": 1.57,
+      "reference_force_evidence": "catalog.reference_values.front_force",
+      "applicability": "Numerical proxy only; no Xbox small-button force measurement is available.",
+      "stiffness_method": "reference_force_n / artist_endpoint_travel_m",
+      "force_limit_n": 3.14,
+      "damping_ratio": 0.7
+    },
+    "shoulders": {
+      "joints": ["left_shoulder_press", "right_shoulder_press"],
+      "reference_force_n": 1.57,
+      "reference_force_evidence": "catalog.reference_values.shoulder_force",
+      "travel": "artist cap travel; the reference switch travel is not substituted for lever travel",
+      "stiffness_method": "reference_force_n / artist_endpoint_travel_m",
+      "force_limit_n": 3.14,
+      "damping_ratio": 0.7
+    },
+    "triggers": {
+      "joints": ["left_trigger_hinge", "right_trigger_hinge"],
+      "endpoint_torque_nm": 0.014,
+      "endpoint_torque_range_nm": [0.004, 0.024],
+      "reference_scale_evidence": "catalog.reference_values.stick_operating_torque",
+      "applicability": "Cross-control torque scale used only as a simulation placeholder; it is not an Xbox trigger measurement.",
+      "angle": "artist animation per joint",
+      "stiffness_method": "endpoint_torque_nm / artist_endpoint_angle_rad",
+      "force_limit_nm": 0.024,
+      "damping_ratio": 0.7,
+      "unknown": ["torsion spring curve", "finger lever arm", "compliant stop curve"]
+    },
+    "sticks": {
+      "joint_prefixes": ["left_stick", "right_stick"],
+      "tilt_dynamics": "reuse sources/robotwin_left_stick_estimated_v0.json for both identical reference modules",
+      "click_force_n": 7.4,
+      "click_force_range_n": [4.4, 10.4],
+      "click_force_evidence": "catalog.reference_values.stick_click_force",
+      "click_travel_m": 0.0004,
+      "click_travel_evidence": "catalog.reference_values.stick_click_travel",
+      "click_stiffness_n_per_m": 18500.0,
+      "click_force_limit_n": 10.4,
+      "click_damping_ratio": 0.7
+    },
+    "dpad": {
+      "joints": ["dpad_horizontal", "dpad_vertical"],
+      "artist_limit_rad": 0.17453241348266602,
+      "reference_force_n": 1.57,
+      "reference_force_evidence": "catalog.reference_values.front_force",
+      "estimated_lever_arm_m": 0.01,
+      "lever_arm_basis": "rounded half-width of the metric-scaled D-pad visual",
+      "endpoint_torque_nm": 0.0157,
+      "stiffness_nm_per_rad": 0.08995437383553924,
+      "force_limit_nm": 0.0314,
+      "damping_ratio": 0.7,
+      "applicability": "First-pass rocker estimate; Xbox membrane force and cap lever ratio are unmeasured."
+    }
+  },
+  "collision_policy": {
+    "coordinate_conversion": "glTF source (x,y,z) to SAPIEN/URDF (x,-z,y)",
+    "buttons": "cylinder fitted inside converted visual AABB",
+    "sticks": "reuse axisymmetric three-cylinder proxy from the left-stick vertical slice",
+    "dpad": "two crossed boxes fitted inside converted visual AABB",
+    "bumpers_and_triggers": "box fitted to 90 percent of converted visual AABB",
+    "shell": "central support plus explicit stick gate rings; visual triangle mesh is not used as a dynamic collision mesh",
+    "fit_scale": 0.9,
+    "contact_material": "reuse sources/robotwin_left_stick_estimated_v0.json contact estimate"
+  },
+  "mass_policy": {
+    "whole_controller_mass_kg": 0.28,
+    "polymer_density_kg_m3": 1050.0,
+    "density_status": "simulation_assumption_not_material_identification",
+    "solid_fill_factors": {
+      "buttons": 0.65,
+      "dpad": 0.4,
+      "bumpers": 0.35,
+      "triggers": 0.35
+    },
+    "method": "primitive collision volume * density * group fill factor; body receives remaining whole mass",
+    "minimum_moving_mass_kg": 0.0002,
+    "minimum_diagonal_inertia_kg_m2": 1e-10
+  },
+  "passive_preload_policy": {
+    "one_sided_joint_spring_reference": "-0.015 * positive travel",
+    "preload_fraction": 0.015,
+    "applies_to": "buttons, shoulders, triggers, stick clicks and Pair",
+    "does_not_apply_to": "bidirectional stick tilt and D-pad rocker joints",
+    "derivation": "The no-preload MuJoCo trigger settled at 1.216% of travel under gravity; 1.5% adds a 0.284 percentage-point stop preload margin.",
+    "status": "simulation estimate derived from the no-preload run; replace with measured preload"
+  },
+  "signal_policy": {
+    "layout": "sdl3-gamepad-core-v1",
+    "axis_mappings": ["left_x", "left_y", "right_x", "right_y"],
+    "scalar_mappings": ["left_trigger", "right_trigger", "south", "east", "west", "north", "back", "guide", "start", "left_stick", "right_stick", "left_shoulder", "right_shoulder"],
+    "split_mappings": {
+      "dpad_horizontal": ["dpad_left", "dpad_right"],
+      "dpad_vertical": ["dpad_up", "dpad_down"]
+    },
+    "physical_only": ["pair_bind_connect"],
+    "button_output": "continuous [0,1] travel fraction; consuming task chooses a digital threshold",
+    "deadzone": null
+  },
+  "known_unknowns": [
+    "Target-controller component masses and inertias",
+    "All force-displacement hysteresis curves",
+    "Trigger torsion spring and compliant end-stop curves",
+    "D-pad membrane force and exact diagonal envelope",
+    "Cap-to-shell clearances and hidden guide geometry",
+    "Pair button has no canonical game action channel"
+  ],
+  "replacement_plan": "Replace estimated values with owner measurements listed in docs/pending_user_review.md without changing joint or channel names."
+}

@@ -6,7 +6,9 @@ from dataclasses import dataclass
 from types import MappingProxyType
 from typing import Any, Mapping
 
+from xbox_gamepad_physics.controller import GamepadSignalController
 from xbox_gamepad_physics.errors import AssetImportError
+from xbox_gamepad_physics.state import GamepadState
 
 
 @dataclass(frozen=True)
@@ -27,6 +29,7 @@ class MujocoGamepadHandle:
     _data_joints: Mapping[str, Any]
     _model_sensors: Mapping[str, Any]
     _data_sensors: Mapping[str, Any]
+    _signal_controller: GamepadSignalController | None = None
 
     def joint(self, logical_name: str) -> Any:
         """Return the compiled model's named joint view."""
@@ -78,6 +81,54 @@ class MujocoGamepadHandle:
             )
         return view.data
 
+    def joint_positions(self) -> dict[str, float]:
+        """Return all logical scalar joint coordinates by name."""
+
+        return {
+            name: float(self.joint_qpos(name)[0])
+            for name in self.joint_names
+        }
+
+    def gamepad_state(
+        self, task_channels: tuple[str, ...] | None = None
+    ) -> GamepadState:
+        """Map compiled MuJoCo joint state to the shared gamepad tensor."""
+
+        if self._signal_controller is None:
+            raise AssetImportError("MuJoCo handle has no gamepad signal controller")
+        return self._signal_controller.encode(
+            self.joint_positions(), task_channels=task_channels
+        )
+
+    def physical_events(self) -> dict[str, float]:
+        """Return device-management events outside the game tensor."""
+
+        if self._signal_controller is None:
+            raise AssetImportError("MuJoCo handle has no physical-event controller")
+        return self._signal_controller.encode_physical_events(self.joint_positions())
+
+    def set_joint_positions(self, positions: Mapping[str, float]) -> None:
+        """Synchronize selected scalar MuJoCo joint coordinates by logical name."""
+
+        for name, value in positions.items():
+            self.joint_data(name).qpos[0] = float(value)
+
+    def set_gamepad_state(self, state: GamepadState) -> None:
+        """Synchronize qpos from a canonical gamepad state."""
+
+        if self._signal_controller is None:
+            raise AssetImportError("MuJoCo handle has no gamepad signal controller")
+        self.set_joint_positions(self._signal_controller.decode_joint_targets(state))
+
+    def set_physical_events(self, events: Mapping[str, float]) -> None:
+        """Synchronize physical-only controls such as Pair/Bind."""
+
+        if self._signal_controller is None:
+            raise AssetImportError("MuJoCo handle has no physical-event controller")
+        self.set_joint_positions(
+            self._signal_controller.decode_physical_event_targets(events)
+        )
+
 
 def bind_handle(
     model: Any,
@@ -87,6 +138,7 @@ def bind_handle(
     sensors: Mapping[str, str],
     prefix: str = "",
     suffix: str = "",
+    signal_controller: GamepadSignalController | None = None,
 ) -> MujocoGamepadHandle:
     """Bind a handle after compilation using declared element names only."""
 
@@ -113,6 +165,7 @@ def bind_handle(
         _data_joints=MappingProxyType(data_joints),
         _model_sensors=MappingProxyType(model_sensors),
         _data_sensors=MappingProxyType(data_sensors),
+        _signal_controller=signal_controller,
     )
 
 

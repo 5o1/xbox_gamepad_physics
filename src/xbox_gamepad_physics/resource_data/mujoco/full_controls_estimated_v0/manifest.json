@@ -1,0 +1,231 @@
+{
+  "schema_version": 1,
+  "asset_id": "xbox_one_s",
+  "backend": "mujoco",
+  "profile": "full_controls_estimated_v0",
+  "available": true,
+  "dynamics_ready": true,
+  "entrypoint": "xbox_one_s.xml",
+  "required_files": [
+    "xbox_one_s.xml",
+    "scene_fixed.xml",
+    "scene_contact_probe.xml"
+  ],
+  "reason": null,
+  "scenes": {
+    "fixed": "scene_fixed.xml",
+    "contact_probe": "scene_contact_probe.xml"
+  },
+  "bindings": {
+    "joints": {
+      "a_press": "a_press",
+      "b_press": "b_press",
+      "left_shoulder_press": "left_shoulder_press",
+      "right_shoulder_press": "right_shoulder_press",
+      "pair_press": "pair_press",
+      "dpad_horizontal": "dpad_horizontal",
+      "dpad_vertical": "dpad_vertical",
+      "view_press": "view_press",
+      "menu_press": "menu_press",
+      "left_stick_x": "left_stick_x",
+      "left_stick_y": "left_stick_y",
+      "left_stick_click": "left_stick_click",
+      "right_stick_x": "right_stick_x",
+      "right_stick_y": "right_stick_y",
+      "right_stick_click": "right_stick_click",
+      "left_trigger_hinge": "left_trigger_hinge",
+      "right_trigger_hinge": "right_trigger_hinge",
+      "x_press": "x_press",
+      "guide_press": "guide_press",
+      "y_press": "y_press"
+    },
+    "sensors": {
+      "a_press": "a_press_position",
+      "b_press": "b_press_position",
+      "left_shoulder_press": "left_shoulder_press_position",
+      "right_shoulder_press": "right_shoulder_press_position",
+      "pair_press": "pair_press_position",
+      "dpad_horizontal": "dpad_horizontal_position",
+      "dpad_vertical": "dpad_vertical_position",
+      "view_press": "view_press_position",
+      "menu_press": "menu_press_position",
+      "left_stick_x": "left_stick_x_position",
+      "left_stick_y": "left_stick_y_position",
+      "left_stick_click": "left_stick_click_position",
+      "right_stick_x": "right_stick_x_position",
+      "right_stick_y": "right_stick_y_position",
+      "right_stick_click": "right_stick_click_position",
+      "left_trigger_hinge": "left_trigger_hinge_position",
+      "right_trigger_hinge": "right_trigger_hinge_position",
+      "x_press": "x_press_position",
+      "guide_press": "guide_press_position",
+      "y_press": "y_press_position"
+    }
+  },
+  "state_mapping": {
+    "axes": [
+      {
+        "channel": "left_x",
+        "joint": "left_stick_x",
+        "lower": -0.4014257279586958,
+        "upper": 0.4014257279586958
+      },
+      {
+        "channel": "left_y",
+        "joint": "left_stick_y",
+        "lower": -0.4014257279586958,
+        "upper": 0.4014257279586958
+      },
+      {
+        "channel": "right_x",
+        "joint": "right_stick_x",
+        "lower": -0.4014257279586958,
+        "upper": 0.4014257279586958
+      },
+      {
+        "channel": "right_y",
+        "joint": "right_stick_y",
+        "lower": -0.4014257279586958,
+        "upper": 0.4014257279586958
+      }
+    ],
+    "scalars": [
+      {
+        "channel": "south",
+        "joint": "a_press",
+        "lower": 0.0,
+        "upper": 0.0008967542780293029
+      },
+      {
+        "channel": "east",
+        "joint": "b_press",
+        "lower": 0.0,
+        "upper": 0.0013767679701224785
+      },
+      {
+        "channel": "west",
+        "joint": "x_press",
+        "lower": 0.0,
+        "upper": 0.0007809609139585009
+      },
+      {
+        "channel": "north",
+        "joint": "y_press",
+        "lower": 0.0,
+        "upper": 0.001228400054203025
+      },
+      {
+        "channel": "left_shoulder",
+        "joint": "left_shoulder_press",
+        "lower": 0.0,
+        "upper": 0.0022283242790158146
+      },
+      {
+        "channel": "right_shoulder",
+        "joint": "right_shoulder_press",
+        "lower": 0.0,
+        "upper": 0.002228327410900139
+      },
+      {
+        "channel": "back",
+        "joint": "view_press",
+        "lower": 0.0,
+        "upper": 0.0012666219641293659
+      },
+      {
+        "channel": "start",
+        "joint": "menu_press",
+        "lower": 0.0,
+        "upper": 0.001266622590506351
+      },
+      {
+        "channel": "guide",
+        "joint": "guide_press",
+        "lower": 0.0,
+        "upper": 0.0007251785396074228
+      },
+      {
+        "channel": "left_trigger",
+        "joint": "left_trigger_hinge",
+        "lower": 0.0,
+        "upper": 0.29531940817832947
+      },
+      {
+        "channel": "right_trigger",
+        "joint": "right_trigger_hinge",
+        "lower": 0.0,
+        "upper": 0.29531940817832947
+      },
+      {
+        "channel": "left_stick",
+        "joint": "left_stick_click",
+        "lower": 0.0,
+        "upper": 0.0004
+      },
+      {
+        "channel": "right_stick",
+        "joint": "right_stick_click",
+        "lower": 0.0,
+        "upper": 0.0004
+      }
+    ],
+    "splits": [
+      {
+        "negative_channel": "dpad_left",
+        "positive_channel": "dpad_right",
+        "joint": "dpad_horizontal",
+        "lower": -0.17453241348266602,
+        "upper": 0.17453241348266602
+      },
+      {
+        "negative_channel": "dpad_up",
+        "positive_channel": "dpad_down",
+        "joint": "dpad_vertical",
+        "lower": -0.17453241348266602,
+        "upper": 0.17453241348266602
+      }
+    ],
+    "radial_groups": [
+      {
+        "channels": [
+          "left_x",
+          "left_y"
+        ],
+        "radius": 1.0
+      },
+      {
+        "channels": [
+          "right_x",
+          "right_y"
+        ],
+        "radius": 1.0
+      }
+    ],
+    "radial_source_groups": [
+      {
+        "joints": [
+          "dpad_horizontal",
+          "dpad_vertical"
+        ],
+        "radius": 1.0
+      }
+    ],
+    "physical_events": [
+      {
+        "event": "pair_bind_connect",
+        "joint": "pair_press",
+        "lower": 0.0,
+        "upper": 0.0010423330438958324
+      }
+    ],
+    "deadzone": null
+  },
+  "source_record": "sources/full_controls_estimated_v0.json",
+  "source_sha256": "c60ef860eb89ca012ec669e26bbfe2b2f8c3702a0619d859ae1dd6957aa746ee",
+  "mechanism_source": "robotwin/full_controls_estimated_v0",
+  "mechanism_manifest_sha256": "efa0ca1fc6159b9ae2cb2b5dbb7b85ae1cce97a17e5b59bdd4f98e984c79a4c7",
+  "material_limitations": [
+    "MuJoCo sliding friction uses one coefficient; the shared dynamic coefficient 0.4 is used.",
+    "The shared restitution estimate has no direct MJCF scalar and remains unmodeled in this first pass."
+  ]
+}

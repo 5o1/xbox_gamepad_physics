@@ -77,6 +77,32 @@ class AssetRegistryTest(unittest.TestCase):
                         profile[hash_field],
                     )
 
+        for profile_id, profile in self.index.get("simulation_profiles", {}).items():
+            with self.subTest(simulation_profile=profile_id):
+                self.assertFalse(profile["hardware_calibrated"])
+                self.assertEqual(
+                    profile["status"],
+                    "implemented_pending_user_review_and_hardware_calibration",
+                )
+                for path_field, hash_field in (
+                    ("source", "source_sha256"),
+                    ("manifest", "manifest_sha256"),
+                    ("nonvisual_result", "nonvisual_result_sha256"),
+                ):
+                    path = resolve_from_assets(profile[path_field])
+                    self.assertTrue(path.is_file())
+                    self.assertEqual(
+                        hashlib.sha256(path.read_bytes()).hexdigest(),
+                        profile[hash_field],
+                    )
+                if "contact_result" in profile:
+                    path = resolve_from_assets(profile["contact_result"])
+                    self.assertTrue(path.is_file())
+                    self.assertEqual(
+                        hashlib.sha256(path.read_bytes()).hexdigest(),
+                        profile["contact_result_sha256"],
+                    )
+
     def test_legacy_1914_assets_cannot_become_xbox_one_s_physics(self):
         active_id = self.index["interactive_viewer"]["active_variant_id"]
         active = self.index["derived_variants"][active_id]
