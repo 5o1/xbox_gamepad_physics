@@ -7,6 +7,10 @@
     "node": ">=22.0.0 <23"
   },
   "scripts": {
+    "viewer": "python3 scripts/serve_viewer.py --assets assets/xbox_one_s/visual --vendor node_modules/three --variant-id xbox_one_s_batonyrobson_appearance_matched_estimated_v0",
     "test": "python3 scripts/run_regression.py fast"
+  },
+  "dependencies": {
+    "three": "0.180.0"
   }
 }

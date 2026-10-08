@@ -125,7 +125,20 @@ node --test tests/test_*.mjs
 
 ## 启动交互预览
 
-Xbox One S 视觉网格已归档到仓库的 `assets/xbox_one_s/visual/`；Three.js 依赖由外部目录提供：
+需要 Python 3.10 或更新版本、Node.js 22 和 npm。Xbox One S 网格、材质和贴图已在仓库中，
+Three.js 版本由 npm 锁文件固定。全新环境执行：
+
+```sh
+git clone https://github.com/5o1/xbox_gamepad_physics.git
+cd xbox_gamepad_physics
+npm ci
+npm run viewer
+```
+
+打开 `http://127.0.0.1:8766/v0.html`。无需连接 GPU 节点或提供额外的模型路径。
+视觉验收由用户检查并确认。需要指定端口时使用 `npm run viewer -- --port 8767`。
+
+手动指定资源目录的等价命令：
 
 ```sh
 python3 scripts/serve_viewer.py \
