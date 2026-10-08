@@ -48,6 +48,10 @@
         const adapter = installCanonicalSource();
         window.__gamepadOverlayAdapter = adapter;
         const query = new URLSearchParams(location.search);
+        if (query.get("view") === "overlay") {
+            document.documentElement.classList.add("overlay-only");
+            document.body.classList.add("overlay-only");
+        }
         if (!query.has("theme")) query.set("theme", "research");
         if (!query.has("source")) query.set("source", "canonical");
         history.replaceState(null, "", `${location.pathname}?${query}`);

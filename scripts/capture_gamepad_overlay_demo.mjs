@@ -16,6 +16,9 @@ const viewerUrl = process.argv[2] ?? 'http://127.0.0.1:8770/viewer/gamepad_overl
 const cdpUrl = process.argv[3] ?? 'http://127.0.0.1:9321';
 const tracePath = process.argv[4] ?? 'results/gamepad_overlay_left_stick_circle/trace.json';
 const outputDirectory = process.argv[5] ?? '/tmp/gamepad-overlay-circle-frames';
+const viewportWidth = Number.parseInt(process.argv[6] ?? '1280', 10);
+const viewportHeight = Number.parseInt(process.argv[7] ?? '720', 10);
+const transparent = process.argv[8] === 'transparent';
 const trace = JSON.parse(await readFile(tracePath, 'utf8'));
 await mkdir(outputDirectory, {recursive: true});
 
@@ -38,11 +41,16 @@ try {
   await client.call('Runtime.enable');
   await client.call('Page.enable');
   await client.call('Emulation.setDeviceMetricsOverride', {
-    width: 1280,
-    height: 720,
+    width: viewportWidth,
+    height: viewportHeight,
     deviceScaleFactor: 1,
     mobile: false,
   });
+  if (transparent) {
+    await client.call('Emulation.setDefaultBackgroundColorOverride', {
+      color: {r: 0, g: 0, b: 0, a: 0},
+    });
+  }
   const url = new URL(viewerUrl);
   url.searchParams.set('source', 'canonical');
   url.searchParams.set('theme', 'research');
@@ -76,6 +84,8 @@ try {
   process.stdout.write(`${JSON.stringify({
     frames: trace.frames.length,
     fps: trace.fps,
+    resolution: [viewportWidth, viewportHeight],
+    transparent,
     output: outputDirectory,
     runtime_failures: runtimeFailures,
   })}\n`);

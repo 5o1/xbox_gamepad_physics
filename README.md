@@ -75,6 +75,8 @@ http://127.0.0.1:8770/viewer/gamepad_overlay/index.html?source=canonical&trace=/
 
 页面同时显示关节角、`left_x/left_y`、信号半径和虚拟摇杆位置。项目适配器只接受
 `sdl3-gamepad-core-v1` 的 32 维值、两个 mask 和 `device_id`，不会按 W3C 下标猜测输入。
+正式演示视频以 RoboTwin/SAPIEN 手柄为主画面，并把透明虚拟手柄叠加在右下角：
+[左摇杆单位圆演示](results/gamepad_overlay_left_stick_circle/left_stick_circle_overlay.mp4)。
 
 ## 关键入口
 

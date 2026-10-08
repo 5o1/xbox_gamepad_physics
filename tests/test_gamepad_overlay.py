@@ -41,6 +41,9 @@ class GamepadOverlayDemoTests(unittest.TestCase):
         checked_trace = json.loads((directory / "trace.json").read_text())
         self.assertEqual(checked_trace, demo.build_trace(fps=30))
         result = json.loads((directory / "result.json").read_text())
+        self.assertEqual(result["composition"]["overlay_position"], "lower_right")
+        self.assertEqual(result["composition"]["overlay_global_alpha"], 0.72)
+        self.assertIn("RoboTwin/SAPIEN", result["composition"]["background"])
         for section in ("video", "trace", "review_frame"):
             artifact = directory / result[section]["path"]
             self.assertTrue(artifact.is_file())
