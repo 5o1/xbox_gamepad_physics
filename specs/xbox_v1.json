@@ -3,7 +3,7 @@
   "catalog_sha256": "9c7f2892f2e477d7e81f90fc38e0a010fbacabfbcef0a5409d6649f8c45917e6",
   "asset_registry_binding": {
     "path": "assets/asset_index.json",
-    "sha256": "6681687d0328f59ec0cdc3a2dad8c32523a1578df6e38a6c8da44b0cd230e89a",
+    "sha256": "ee10738525b53fac47ced62ca5f1d742600f80ba47956d3a3866f4311397c52b",
     "registry_role": "canonical_status_authority"
   },
   "target_model": {

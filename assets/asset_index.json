@@ -274,7 +274,7 @@
       "backend": "robotwin",
       "profile": "left_stick_estimated_v0",
       "scope": "left-stick contact and lx/ly signal vertical slice only",
-      "status": "automated_sapien_validation_passed_user_visual_review_pending",
+      "status": "automated_and_user_visual_validation_passed",
       "full_controller_ready": false,
       "hardware_calibrated": false,
       "source": "../sources/robotwin_left_stick_estimated_v0.json",
