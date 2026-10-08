@@ -77,6 +77,9 @@ http://127.0.0.1:8770/viewer/gamepad_overlay/index.html?source=canonical&trace=/
 `sdl3-gamepad-core-v1` 的 32 维值、两个 mask 和 `device_id`，不会按 W3C 下标猜测输入。
 正式演示视频以 RoboTwin/SAPIEN 手柄为主画面，并把透明虚拟手柄叠加在右下角：
 [左摇杆单位圆演示](results/gamepad_overlay_left_stick_circle/left_stick_circle_overlay.mp4)。
+圆周轨迹作为运动学测试输入写入 articulation；渲染循环随后读回实际 `qpos`，调用
+`GamepadSignalController` 生成 `observed_trace.json`，overlay 只消费该读回记录。该演示
+验证关节状态到信号的链路，不包含手指接触或动力学驱动声明。
 
 ## 关键入口
 

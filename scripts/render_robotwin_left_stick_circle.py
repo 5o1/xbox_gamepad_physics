@@ -16,6 +16,7 @@ def main() -> None:
     parser.add_argument("--package-root", type=Path, required=True)
     parser.add_argument("--trace", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--observed-trace", type=Path, required=True)
     parser.add_argument("--max-frames", type=int)
     args = parser.parse_args()
 
@@ -98,6 +99,7 @@ def main() -> None:
     output = args.output.resolve()
     output.mkdir(parents=True, exist_ok=True)
     articulation = gamepad.articulation
+    observed_frames = []
     frames = trace["frames"]
     if args.max_frames is not None:
         if args.max_frames <= 0:
@@ -112,6 +114,28 @@ def main() -> None:
             }
         )
         articulation.set_qvel(np.zeros(2))
+        observed_qpos = gamepad.joint_positions()
+        observed_state = gamepad.gamepad_state(
+            task_channels=("left_x", "left_y")
+        )
+        observed_frames.append(
+            {
+                "layout_id": observed_state.layout_id,
+                "values": list(observed_state.values),
+                "available_mask": list(observed_state.available_mask),
+                "task_mask": list(observed_state.task_mask),
+                "device_id": observed_state.device_id,
+                "telemetry": {
+                    "frame_index": frame_index,
+                    "phase": telemetry["phase"],
+                    "theta_deg": telemetry["theta_deg"],
+                    "left_stick_x_rad": observed_qpos["left_stick_x"],
+                    "left_stick_y_rad": observed_qpos["left_stick_y"],
+                    "commanded_left_stick_x_rad": telemetry["left_stick_x_rad"],
+                    "commanded_left_stick_y_rad": telemetry["left_stick_y_rad"],
+                },
+            }
+        )
         scene.update_render()
         camera.take_picture()
         rgba = camera.get_picture("Color")
@@ -131,6 +155,24 @@ def main() -> None:
         )
         cv2.imwrite(str(output / f"frame_{frame_index:04d}.png"), bgr)
 
+    observed_trace = {
+        "schema_version": 1,
+        "demo": "left_stick_unit_circle_observed",
+        "source_profile": "robotwin/left_stick_estimated_v0",
+        "signal_source": "sapien_articulation_qpos_readback",
+        "stimulus": "scripted_kinematic_qpos_sweep",
+        "fps": trace["fps"],
+        "frame_count": len(observed_frames),
+        "duration_seconds": len(observed_frames) / trace["fps"],
+        "frames": observed_frames,
+    }
+    observed_path = args.observed_trace.resolve()
+    observed_path.parent.mkdir(parents=True, exist_ok=True)
+    observed_path.write_text(
+        json.dumps(observed_trace, separators=(",", ":")) + "\n",
+        encoding="utf-8",
+    )
+
     print(
         json.dumps(
             {
@@ -140,6 +182,8 @@ def main() -> None:
                 "resolution": [1280, 720],
                 "sapien": sapien.__version__,
                 "renderer": "sapien_raster",
+                "observed_trace": str(observed_path),
+                "signal_source": observed_trace["signal_source"],
             }
         )
     )
