@@ -1,60 +1,89 @@
 # Xbox One S 资产交付清单
 
-范围：Xbox One S 资产及其 RoboTwin/SAPIEN、MuJoCo 接入。逐项完成后验收；实验过程保存在 `results/`。
+范围仅包括 Xbox One S 手柄资产及其两个仿真后端。RoboTwin/SAPIEN 与 MuJoCo
+分别推进、分别验收；共用同一份视觉来源、物理规格和手柄状态通道定义。
 
-## 1. 两平台视觉资产与流畅检查
+未知的机构或动力学参数继续留空并标注，不能由仿真器默认值静默补齐。
 
-- [x] RoboTwin/SAPIEN
-- [ ] MuJoCo
-- [ ] 用户确认外观与交互效果
+## 路线 A：RoboTwin / SAPIEN
 
-产物：带 UV、法线、2K 贴图和材质的分件资源；两平台原生检查入口与相机图像输出。
+### A1. 视觉资产
 
-验收：完整显示手柄；旋转、缩放流畅；没有错误遮挡、明显曝光或颜色问题；
-外观以用户认可的 [Boiler Room/Cycles 图](../results/xbox_official_import_comparison/official_import_4.5.9_LTS/reference_matched_cycles_probe/boiler_room_vertical_fov35_strength_1p0.png) 为参考，最终由用户确认。
-使用各平台原生显示能力，保持原资产与材质来源可追溯。
+- [x] 16 个分件、UV、法线和 2K PBR 贴图接入 SAPIEN
+- [x] 在 RoboTwin 实验台、默认灯光和 head camera 中渲染
+- [x] 用户确认外观通过
 
-当前：RoboTwin/SAPIEN 已由用户确认通过，见
-[RoboTwin 视觉验收记录](../results/robotwin_visual_stage/README.md)。MuJoCo 已完成模型接入、
-父场景附加接口、EGL 渲染与打包验证；参考渲染中的光照、阴影和材质效果仍在迁移，见
-[MuJoCo 视觉验证记录](../results/mujoco_visual_stage/README.md)。物理参数不属于本项。
+记录：[RoboTwin 视觉验收](../results/robotwin_visual_stage/README.md)。
 
-## 2. 共用运动学与手柄状态映射
+### A2. 左摇杆物理闭环（下一项）
 
-- [ ] 完成并验收
+- [ ] 确定左摇杆两自由度机构、关节轴、中心和限位；逐项记录来源或留空
+- [ ] 生成摇杆帽、杆体和机身的碰撞几何
+- [ ] 为相关 link 写入显式质量、COM 和正定惯量
+- [ ] 在 URDF 中加入两轴关节及估计的回中刚度、阻尼和摩擦
+- [ ] 通过 RoboTwin loader 载入 SAPIEN articulation，解除该切片的 readiness 门禁
+- [ ] 从关节 `qpos` 输出 `lx, ly ∈ [-1, 1]`，中立区、符号和饱和连续
+- [ ] 用鼠标探针或机械接触推动摇杆，释放后回中，信号随可见运动同步变化
+- [ ] 保存接触、限位、回中和固定时间步稳定性测试
 
-产物：部件和关节装配定义、轴向、限位、来源，以及两平台共用的状态映射。
+验收条件：外力能够通过 PhysX 接触推动左摇杆；状态输出覆盖中立、四个端点、
+对角和越界；释放后回中；无明显穿插、爆振或数值跳变。
 
-验收：中立、端点、对角和并发输入正确；越界返回连续；状态与可见部件运动一致。
-有来源的估计明确标注，无法推断的字段留空。
+### A3. 其余控件
 
-当前：已有估计运动学预览，正式规格与两平台尚未接通。
+- [ ] 右摇杆
+- [ ] ABXY、Menu、View、Xbox 和 Connect 按钮
+- [ ] D-pad
+- [ ] LB/RB 与 LT/RT
+- [ ] 摇杆按压 L3/R3
+- [ ] 并发输入和完整标准手柄状态张量
 
-## 3. 接触物理资产
+### A4. RoboTwin 交付
 
-- [ ] 左摇杆接触链路
-- [ ] 其余控件
-- [ ] 两平台验证
+- [ ] 完整 `mobility.urdf`、碰撞资源、`model_data.json`、`bounding_box.json` 和 `semantics.txt`
+- [ ] `estimated_v0` manifest 通过 readiness 检查
+- [ ] 全新 clone 后可加载、仿真和读取手柄状态
+- [ ] 真实手柄输入可以驱动虚拟 articulation 完成对应动作
 
-产物：碰撞体、惯量、回弹、阻尼、摩擦及 URDF/MJCF。先完成左摇杆，再扩展其余控件。
+## 路线 B：MuJoCo
 
-验收：接触能推动控件并产生对应信号；释放回位、限位、穿插和数值稳定性通过。
-运行所需参数有依据；缺项明确报告，不静默使用默认值补齐未知物理量。
+### B1. 视觉资产与 Filament 接入（当前项）
 
-当前：两个物理后端仍未就绪。
+- [x] 16 个分件和共用视觉资源转换为可加载的 MuJoCo 资产
+- [x] 独立场景与父 `MjSpec` 附加接口
+- [x] classic/EGL 基础加载与首帧验证
+- [ ] 完成带 opacity 修复的 MuJoCo 3.15 Filament wheel 构建
+- [ ] 用最小 opacity 场景验证官方版本与补丁版本的差异
+- [ ] 在 MuJoCo 原生场景生成最终对比图
+- [ ] 用户确认 MuJoCo 外观通过
 
-## 4. 分发与完整导入
+参考外观：[Boiler Room/Cycles 验收图](../results/xbox_official_import_comparison/official_import_4.5.9_LTS/reference_matched_cycles_probe/boiler_room_vertical_fov35_strength_1p0.png)。
 
-- [ ] 完成并验收
+### B2. 左摇杆物理闭环
 
-产物：自包含资源、加载接口、最小示例、许可和安装说明。
+- [ ] 使用与路线 A 相同的机构规格生成 MJCF body、joint、geom 和 inertial
+- [ ] 设置两轴限位、回中刚度、阻尼和摩擦
+- [ ] 从 `qpos` 输出与路线 A 同序、同符号、同范围的 `lx, ly`
+- [ ] 完成接触、释放回中、限位和固定时间步稳定性测试
+- [ ] 对同一组控制点比较两个后端的位移与状态响应
 
-验收：全新 clone 后按文档导入两平台，无需开发环境的私有资产目录；
-鼠标操作与真实 Xbox One S 输入可分别驱动资产，并完成失焦、断开和释放检查。
+### B3. 其余控件
 
-当前：基础加载接口已有；运行资产与完整验收待完成。
+- [ ] 右摇杆
+- [ ] ABXY、Menu、View、Xbox 和 Connect 按钮
+- [ ] D-pad
+- [ ] LB/RB 与 LT/RT
+- [ ] 摇杆按压 L3/R3
+- [ ] 并发输入和完整标准手柄状态张量
 
-## 项目依据
+### B4. MuJoCo 交付
+
+- [ ] 自包含 MJCF/MJZ、碰撞资源和状态绑定
+- [ ] `estimated_v0` manifest 通过 readiness 检查
+- [ ] 全新 clone 后可加载、仿真和读取手柄状态
+- [ ] 鼠标交互和真实手柄输入均可驱动虚拟资产
+
+## 共用依据
 
 [资产索引](../assets/asset_index.json) · [物理规格](../specs/xbox_v1.json) ·
 [导入接口](importing.md) · [许可声明](../THIRD_PARTY_NOTICES.md)
