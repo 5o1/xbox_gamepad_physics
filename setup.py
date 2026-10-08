@@ -32,7 +32,7 @@ setup(
         ]
     },
     extras_require={
-        "mujoco": ["mujoco==3.15.0"],
+        "mujoco": ["mujoco==3.15.0", "typing_extensions>=4.16"],
         "robotwin": ["sapien==3.0.0b1"],
     },
     entry_points={

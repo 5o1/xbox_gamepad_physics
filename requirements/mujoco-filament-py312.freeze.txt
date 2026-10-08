@@ -1,0 +1,19 @@
+# Verified dedicated MuJoCo/Filament environment on the GPU node.
+# Platform: Linux x86_64; Python 3.12.14; environment is isolated from RoboTwin.
+# Conda artifacts were resolved from SJTUG conda-forge repodata and installed
+# from a SHA-256-checked local cache. MuJoCo and Python glfw wheels were fetched
+# through the SJTUG -> TUNA mainland mirror chain and verified by index hashes.
+PyOpenGL==3.1.10
+absl-py==2.5.0
+etils==1.13.0
+glfw==2.10.0
+mujoco==3.15.0
+numpy==2.5.3
+packaging==26.3
+pillow==12.3.0
+pip==26.2.1
+setuptools==84.0.0
+typing_extensions==4.16.0
+websockets==17.1
+wheel==0.48.0
+xbox-gamepad-physics==0.1.0

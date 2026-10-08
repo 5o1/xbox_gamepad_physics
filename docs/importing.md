@@ -26,6 +26,18 @@ python -m pip install -e ".[mujoco]"
 python -m pip install -e ".[robotwin]"
 ```
 
+MuJoCo/Filament 开发使用独立 Python 3.12 环境。GPU 节点当前验证路径为：
+
+```text
+/path/to/gpu-data/<gpu-project>/envs/concon-xbox-py312
+```
+
+该环境不继承 RoboTwin/SAPIEN 环境。Python 3.12 是低层
+`mujoco.rendering.filament` 的最低实际可用版本，因为它使用 Python 3.12 新增的
+`collections.abc.Buffer`。已验证版本见
+`requirements/mujoco-filament-py312.freeze.txt`。官方 MuJoCo 3.15.0 wheel 的基础依赖
+元数据遗漏了 `typing_extensions`，本项目的 `mujoco` extra 显式补充该运行时依赖。
+
 `status` 只报告 manifest。`verify` 会检查 readiness 标志和所有必需文件，并在任何物理资源
 缺失时返回非零状态：
 
