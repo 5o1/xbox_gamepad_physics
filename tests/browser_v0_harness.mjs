@@ -93,6 +93,9 @@ try {
   )), 'runtime asset/profile/evidence hash mismatch');
   assert.equal(state.materialStats.mesh_count, 16);
   assert.ok(state.materialStats.unique_texture_count > 0, 'embedded textures were not instantiated');
+  assert.ok(state.verifiedBindings.material, 'original material source was not verified');
+  assert.ok(state.materialStats.used_texture_slots.includes('specularIntensityMap'), 'original specular intensity map was lost');
+  assert.ok(!state.materialStats.used_texture_slots.includes('specularColorMap'), 'static-export specular color substitution is still active');
 
   const actualNavigationUrl = await evaluate('location.href');
   const sourceBinding = await buildVerifiedSourceBinding({

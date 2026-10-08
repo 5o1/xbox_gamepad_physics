@@ -36,6 +36,10 @@
 待用户审阅：[查看器截图](../results/checklist1_clean_clone/estimated_v0_baseline.png)。
 记录中的 `passed` 表示程序检查通过，视觉验收仍待用户确认；真实手柄和动力学未在本项验收。
 
+用户随后指出显示错误；多角度截图确认存在透明排序伪影。修复版直接复用原始 GLB 的材质，
+并使用 MSAA alpha-to-coverage 处理透明区域。记录及四角度截图位于
+`results/viewer_material_repair/`。该修复尚未获得用户视觉确认，亦未声称复现旧 Blender 灯光效果。
+
 验收：新 clone 的用户按命令获取资源后能显示完整手柄，无需知道开发环境的 GPU 私有目录。
 
 许可依据：仓库记录 BatonyRobson 的模型采用 CC BY 4.0，允许分发和修改。

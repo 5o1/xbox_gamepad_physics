@@ -142,6 +142,21 @@ async function load(){
   if(profile.source_bindings.static_inventory_sha256!==inventoryHash)throw Error('profile 与外部清单绑定不一致');
   const glbResponse=await fetch('/assets/'+encodeURIComponent(profile.visual.file));if(!glbResponse.ok)throw Error(`GLB HTTP ${glbResponse.status}`);const glbBytes=await glbResponse.arrayBuffer(),glbHash=await digest(glbBytes);if(glbHash!==profile.visual.sha256)throw Error('GLB 哈希不匹配');
   const gltf=await new Promise((resolve,reject)=>new GLTFLoader().parse(glbBytes,'/assets/',resolve,reject));model=gltf.scene;model.rotation.x=profile.visual.gltf_to_viewer_rotation_x_rad;model.scale.setScalar(profile.visual.meters_per_native_unit);scene.add(model);model.updateMatrixWorld(true);
+  // Reuse the original, previously audited material. Blender's static export
+  // changed KHR_materials_specular from intensity-in-alpha to specular color.
+  const sourceUrl='/source/xbox_one_s_controllergamepad_animated.glb';
+  const sourceResponse=await fetch(sourceUrl);if(!sourceResponse.ok)throw Error(`Source GLB HTTP ${sourceResponse.status}`);
+  const sourceBytes=await sourceResponse.arrayBuffer(),sourceHash=await digest(sourceBytes);
+  if(sourceHash!==profile.source_bindings.source_glb_sha256)throw Error('原始材质 GLB 哈希不匹配');
+  const sourceGltf=await new GLTFLoader().parseAsync(sourceBytes,'/source/');
+  const sourceMaterial=await sourceGltf.parser.getDependency('material',0);
+  // Alpha-to-coverage preserves the texture alpha with MSAA depth testing,
+  // avoiding the per-object transparent sorting artifacts documented earlier.
+  sourceMaterial.transparent=false;sourceMaterial.alphaToCoverage=true;sourceMaterial.depthWrite=true;sourceMaterial.needsUpdate=true;
+  const exportedMaterials=new Set();
+  model.traverse(object=>{if(object.isMesh){exportedMaterials.add(object.material);object.material=sourceMaterial;}});
+  for(const material of exportedMaterials)material.dispose();
+  sourceGltf.scene.traverse(object=>{if(object.isMesh)object.geometry.dispose();});
   for(const record of profile.nodes){
     const node=model.getObjectByName(record.source_node);if(!node)throw Error(`GLB 缺少节点：${record.source_node}`);node.updateMatrix();restMatrices.set(record.source_node,node.matrix.clone());node.matrixAutoUpdate=false;
     node.traverse(object=>{if(object.isMesh)object.userData.profileNode=record.source_node;});parts.set(record.source_node,node);
@@ -151,6 +166,7 @@ async function load(){
     profile:{url:'/registry/'+binding.path,actual_sha256:profileHash,expected_sha256:binding.sha256},
     evidence:{url:'/evidence/'+evidenceRelative.slice('sources/'.length),actual_sha256:evidenceHash,expected_sha256:profile.parameter_source_sha256},
     visual:{url:'/assets/'+profile.visual.file,actual_sha256:glbHash,expected_sha256:profile.visual.sha256},
+    material:{url:sourceUrl,actual_sha256:sourceHash,expected_sha256:profile.source_bindings.source_glb_sha256},
   };
   validateProfile(profile,evidence,new Set(parts.keys()));ready=true;session.updateFromPartPose(neutralState(),performance.now(),configuredChannels(profile));applyPose();resetCamera();
   el('limits').textContent=JSON.stringify({acceptance:profile.acceptance,unknown_physical_parameters:evidence.unknown_physical_parameters,scale_fit:evidence.scale_fit},null,2);

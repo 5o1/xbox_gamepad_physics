@@ -137,7 +137,7 @@ class Handler(SimpleHTTPRequestHandler):
         route = next(
             (
                 prefix
-                for prefix in ("/assets/", "/vendor/", "/reference/", "/candidate-reference/", "/registry/", "/evidence/")
+                for prefix in ("/assets/", "/source/", "/vendor/", "/reference/", "/candidate-reference/", "/registry/", "/evidence/")
                 if path.startswith(prefix)
             ),
             "/",
@@ -176,6 +176,7 @@ if __name__ == "__main__":
     roots = {
         "/": project / "viewer",
         "/assets/": args.assets,
+        "/source/": project / "assets" / "xbox_one_s" / "source",
         "/vendor/": args.vendor,
         # Only expose the reviewed front-reference directory, not all results.
         "/reference/": project / "results" / "legacy_casper_1914_visual_parts",
