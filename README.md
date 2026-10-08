@@ -121,11 +121,11 @@ node --test tests/test_*.mjs
 
 ## 启动交互预览
 
-viewer 从仓库读取登记信息，但视觉网格和 Three.js 依赖由外部目录提供：
+Xbox One S 视觉网格已归档到仓库的 `assets/xbox_one_s/visual/`；Three.js 依赖由外部目录提供：
 
 ```sh
 python3 scripts/serve_viewer.py \
-  --assets <estimated-v0-visual-parts-directory> \
+  --assets assets/xbox_one_s/visual \
   --vendor <three.js-package-directory> \
   --variant-id xbox_one_s_batonyrobson_appearance_matched_estimated_v0 \
   --port 8766
