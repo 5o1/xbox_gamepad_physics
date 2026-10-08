@@ -54,7 +54,7 @@
       "display_identity": "Feature-inferred Xbox Series X|S / Model 1914 appearance candidate",
       "source": "../sources/geometry_review.json",
       "front_render": "../results/legacy_casper_1914_visual_parts/identity_front.png",
-      "status": "rejected_for_xbox_one_s_retained_for_legacy_visual_regression",
+      "status": "archived_on_gpu_not_distributed",
       "identity_basis": "inferred_from_rendered_features_not_manufacturer_verified",
       "controller_revision_verified": false,
       "dimensions_verified": false,
@@ -248,9 +248,7 @@
     "acceptance": "../specs/interactive_acceptance.json",
     "design_sources": "../sources/viewer_design.json",
     "active_variant_id": "xbox_one_s_batonyrobson_appearance_matched_estimated_v0",
-    "allowed_variant_ids": [
-      "legacy_casper_1914_width_scaled_proxy"
-    ],
+    "allowed_variant_ids": [],
     "verification_scope": "The active estimated-v0 viewer uses the approved Xbox One S appearance. Metric geometry, real-controller, contact and dynamics acceptance remain separate gates.",
     "target_rig": null,
     "real_controller_verified": false

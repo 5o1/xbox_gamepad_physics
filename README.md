@@ -3,6 +3,10 @@
 这个仓库维护 Xbox 手柄的视觉候选、交互预览、物理规格和来源记录。
 游戏强化学习、VLA 和机械臂控制不在这里实现。
 
+当前只分发 Xbox One S 的模型资产。Switch Pro 和旧 Xbox Series X|S 候选模型保存在
+GPU 节点，存档位置见 `sources/switch_pro_candidates.json` 和 `assets/asset_index.json`。
+仓库保留相关历史报告、图片和来源记录；旧型号已退出查看器可选入口。
+
 ## 当前状态
 
 运行状态以 [资产索引](assets/asset_index.json) 为准；README 只提供入口和边界说明。
@@ -13,7 +17,7 @@
 | 目标外观资产 | BatonyRobson 的 Xbox One S 模型；已选定 |
 | 物理几何标定 | 局部尺寸、内部结构和关节位置尚未实测 |
 | estimated-v0 | 可交互的估计运动学预览，不是可训练物理资产 |
-| 旧 Casper 候选 | 外观特征更接近 1914；只保留旧 viewer 回归用途 |
+| 旧 Casper 候选 | 外观特征更接近 1914；模型在 GPU 节点存档，不分发 |
 | 动力学 | 尚未完成；质量、惯量、碰撞和接触参数仍有空缺 |
 | 双后端基础设施 | Python 包、RoboTwin 场景加载器、MuJoCo `MjSpec` 附加器已建立；物理资源仍被 readiness 门禁阻断 |
 | 真实手柄验收 | 尚未执行 |

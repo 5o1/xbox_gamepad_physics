@@ -3,6 +3,7 @@
 核对日期：2026-10-08。核对基线：`91913d7`。
 
 范围：Xbox One S 手柄物理资产及其 RoboTwin／SAPIEN、MuJoCo 导入和交互验收。
+仅分发 Xbox One S 模型；其它型号在 GPU 节点存档，历史实验报告保留。
 
 已有产物包括已确认的外观资产、交互运动学预览、Python 包和双后端加载接口。
 两个后端的 manifest 目前均为 `available: false`、`dynamics_ready: false`，

@@ -12,10 +12,13 @@ future schema. Keep unsupported values null with an explanation; never silently
 fill them with simulator defaults.
 Distinguish geometry previews from dynamics/contact validation and RL results.
 
-Geometry identity is a prerequisite, not a deferred warning. The current Casper
-Xbox mesh was rejected only as a 1708 match. It remains an active Xbox Series
+Distribute only Xbox One S model assets. Other controller models remain archived
+on the GPU node. Preserve historical reports and provenance records in this repo.
+
+Geometry identity is a prerequisite, not a deferred warning. The archived Casper
+Xbox mesh was rejected only as a 1708 match. It remains an archived Xbox Series
 X|S / 1914 appearance candidate, inferred from rendered features, not a verified
-mechanical replica. Do not register 1708 mechanics to it. Evaluate the intact
+mechanical replica. Do not register 1708 mechanics to it. Its archive retains the intact
 44-part original for 1914; do not reuse the 1708-width/Share-removed derivative
 as a validated 1914 asset. Preserve both for provenance.
 For every proposed replacement, download the actual file, render its front view,
