@@ -60,6 +60,7 @@ lighting/
 !assets/xbox_one_s/render/Xbox_One_S_approved_cycles.blend
 !src/xbox_gamepad_physics/resource_data/common/xbox_one_s/visual/*.gltf
 !src/xbox_gamepad_physics/resource_data/common/xbox_one_s/visual/meshes.bin
+!src/xbox_gamepad_physics/resource_data/mujoco/visual_v0/meshes/*.obj
 
 # Third-party reference captures retained outside Git. Their URLs and hashes are
 # recorded under sources/; absence here is intentional, not lost evidence.

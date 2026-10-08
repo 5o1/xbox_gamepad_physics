@@ -5,7 +5,7 @@
 ## 1. 两平台视觉资产与流畅检查
 
 - [x] RoboTwin/SAPIEN
-- [ ] MuJoCo
+- [x] MuJoCo
 - [ ] 用户确认外观与交互效果
 
 产物：带 UV、法线、2K 贴图和材质的分件资源；两平台原生检查入口与相机图像输出。
@@ -15,7 +15,9 @@
 使用各平台原生显示能力，保持原资产与材质来源可追溯。
 
 当前：RoboTwin/SAPIEN 已由用户确认通过，见
-[视觉验收记录](../results/robotwin_visual_stage/README.md)；正在接入 MuJoCo。物理参数不属于本项。
+[RoboTwin 视觉验收记录](../results/robotwin_visual_stage/README.md)。MuJoCo 已完成原生场景、
+父场景附加接口、EGL 渲染与打包验证，见
+[MuJoCo 视觉验证记录](../results/mujoco_visual_stage/README.md)；用户视觉确认待完成。物理参数不属于本项。
 
 ## 2. 共用运动学与手柄状态映射
 

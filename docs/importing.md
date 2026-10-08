@@ -93,6 +93,40 @@ xbox-gamepad-physics install-robotwin \
 
 ## MuJoCo 独立场景
 
+视觉阶段可以直接加载实验台场景；返回前已经执行 `mj_forward`，因此固定相机和所有
+visual geom 的世界位姿可立即用于首帧渲染：
+
+```python
+from xbox_gamepad_physics.mujoco import load_visual_scene
+
+visual = load_visual_scene(scene="table")
+assert visual.physics_ready is False
+```
+
+完整原生渲染与交互示例见 `examples/mujoco_visual.py`。当前 MuJoCo 原生渲染器使用
+2K base-color 纹理和标量 specular/shininess；normal、occlusion、roughness、metallic、
+emissive 贴图保留在共用视觉资源中，原生渲染器不会解释这些 PBR 纹理角色。
+
+将纯视觉资产加入调用者自己的 `MjSpec`：
+
+```python
+import mujoco
+from xbox_gamepad_physics.mujoco import attach_visual_to_spec
+
+parent = mujoco.MjSpec.from_file("dual_hand_scene.xml")
+attachment = attach_visual_to_spec(
+    parent,
+    frame=parent.frame("gamepad_mount"),
+    prefix="xbox_visual_",
+)
+model, data = attachment.compile()
+```
+
+该入口只加入 16 个 `contype=0`、`conaffinity=0` 的视觉 geom。碰撞、质量、惯量、
+关节和接触参数将在物理资产阶段接入。
+
+### 物理场景接口
+
 `load_scene` 负责完整的 parse、compile、`MjData` 分配和命名绑定：
 
 ```python

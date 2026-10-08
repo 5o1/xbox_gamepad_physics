@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 import importlib
+import json
 from pathlib import Path
 import sys
 import tempfile
 from types import SimpleNamespace
 import unittest
 from unittest import mock
+import xml.etree.ElementTree as ET
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -26,6 +28,7 @@ from xbox_gamepad_physics.mujoco._manifest import RuntimeManifest  # noqa: E402
 backend_module = importlib.import_module("xbox_gamepad_physics.mujoco._backend")
 attach_module = importlib.import_module("xbox_gamepad_physics.mujoco.attach")
 loader_module = importlib.import_module("xbox_gamepad_physics.mujoco.loader")
+visual_module = importlib.import_module("xbox_gamepad_physics.mujoco.visual")
 
 
 class _JointModelView:
@@ -106,6 +109,11 @@ class _FakeMjSpecFactory:
 class _FakeMujoco:
     MjSpec = _FakeMjSpecFactory
     MjData = _FakeData
+    forward_calls = []
+
+    @classmethod
+    def mj_forward(cls, model, data):
+        cls.forward_calls.append((model, data))
 
 
 def _manifest(*, entrypoint="xbox_one_s.xml", scene_file="scene_fixed.xml"):
@@ -121,6 +129,7 @@ def _manifest(*, entrypoint="xbox_one_s.xml", scene_file="scene_fixed.xml"):
 class MujocoRuntimeTests(unittest.TestCase):
     def setUp(self):
         _FakeMjSpecFactory.calls = []
+        _FakeMujoco.forward_calls = []
 
     def test_backend_import_is_lazy_and_uses_project_error(self):
         # Importing the public package above did not import MuJoCo. The optional
@@ -293,6 +302,62 @@ class MujocoRuntimeTests(unittest.TestCase):
             ):
                 with self.assertRaisesRegex(AssetImportError, "left_stick_x_joint"):
                     loader_module.load_scene()
+
+    def test_visual_scene_runs_forward_before_first_render(self):
+        model = _FakeModel([], [])
+        _FakeMjSpecFactory.next_model = model
+        with mock.patch.object(
+            visual_module, "require_mujoco", return_value=_FakeMujoco
+        ):
+            loaded = visual_module.load_visual_scene(scene="table")
+
+        self.assertFalse(loaded.physics_ready)
+        self.assertEqual(len(_FakeMujoco.forward_calls), 1)
+        self.assertIs(_FakeMujoco.forward_calls[0][0], model)
+        self.assertEqual(_FakeMjSpecFactory.calls[0][0], "xml")
+
+    def test_visual_attachment_compiles_and_runs_forward(self):
+        model = _FakeModel([], [])
+        _FakeMjSpecFactory.next_model = _FakeModel([], [])
+        parent = _FakeParentSpec(model)
+        with mock.patch.object(
+            visual_module, "require_mujoco", return_value=_FakeMujoco
+        ):
+            attachment = visual_module.attach_visual_to_spec(
+                parent, frame="gamepad_mount", prefix="pad_"
+            )
+            compiled_model, data = attachment.compile()
+
+        self.assertFalse(attachment.physics_ready)
+        self.assertIs(compiled_model, model)
+        self.assertEqual(_FakeMujoco.forward_calls, [(model, data)])
+        self.assertEqual(parent.attach_calls[0]["prefix"], "pad_")
+
+    def test_visual_resources_are_complete_and_render_only(self):
+        root = (
+            SRC
+            / "xbox_gamepad_physics"
+            / "resource_data"
+            / "mujoco"
+            / "visual_v0"
+        )
+        manifest = json.loads(
+            (root / "visual_manifest.json").read_text(encoding="utf-8")
+        )
+        self.assertFalse(manifest["physics_ready"])
+        self.assertEqual(len(manifest["parts"]), 16)
+        self.assertTrue((root / manifest["entrypoint"]).is_file())
+        self.assertTrue((root / manifest["scenes"]["table"]).is_file())
+        for part in manifest["parts"]:
+            self.assertTrue((root / "meshes" / part["file"]).is_file())
+
+        tree = ET.parse(root / manifest["entrypoint"])
+        visual_geoms = tree.findall(".//geom")
+        self.assertEqual(len(visual_geoms), 16)
+        self.assertFalse(tree.findall(".//joint"))
+        for geom in visual_geoms:
+            self.assertEqual(geom.get("contype"), "0")
+            self.assertEqual(geom.get("conaffinity"), "0")
 
 
 class _FakeParentSpec:

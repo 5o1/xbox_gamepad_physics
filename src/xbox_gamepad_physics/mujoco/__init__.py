@@ -8,6 +8,12 @@ and with a readiness error while physical MJCF/MJZ resources remain ungenerated.
 from .attach import CompiledAttachment, GamepadAttachment, attach_to_spec
 from .handle import MujocoGamepadHandle
 from .loader import LoadedScene, load_scene
+from .visual import (
+    LoadedVisualScene,
+    VisualAttachment,
+    attach_visual_to_spec,
+    load_visual_scene,
+)
 
 __all__ = [
     "CompiledAttachment",
@@ -16,4 +22,8 @@ __all__ = [
     "MujocoGamepadHandle",
     "attach_to_spec",
     "load_scene",
+    "LoadedVisualScene",
+    "VisualAttachment",
+    "attach_visual_to_spec",
+    "load_visual_scene",
 ]

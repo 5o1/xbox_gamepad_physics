@@ -1,0 +1,121 @@
+{
+  "asset_id": "xbox_one_s",
+  "stage": "visual",
+  "backend": "mujoco",
+  "mujoco_version": "3.15.0",
+  "physics_ready": false,
+  "parts": [
+    {
+      "name": "00_A_Button_VISUAL_UNCALIBRATED",
+      "file": "00_A_Button_VISUAL_UNCALIBRATED.obj",
+      "vertices": 144,
+      "triangles": 146
+    },
+    {
+      "name": "01_B_Button_VISUAL_UNCALIBRATED",
+      "file": "01_B_Button_VISUAL_UNCALIBRATED.obj",
+      "vertices": 190,
+      "triangles": 190
+    },
+    {
+      "name": "02_Bumper_L_VISUAL_UNCALIBRATED",
+      "file": "02_Bumper_L_VISUAL_UNCALIBRATED.obj",
+      "vertices": 79,
+      "triangles": 62
+    },
+    {
+      "name": "03_Bumper_R_VISUAL_UNCALIBRATED",
+      "file": "03_Bumper_R_VISUAL_UNCALIBRATED.obj",
+      "vertices": 79,
+      "triangles": 62
+    },
+    {
+      "name": "04_Connect_Button_VISUAL_UNCALIBRATED",
+      "file": "04_Connect_Button_VISUAL_UNCALIBRATED.obj",
+      "vertices": 66,
+      "triangles": 78
+    },
+    {
+      "name": "05_Controller_Body_VISUAL_UNCALIBRATED",
+      "file": "05_Controller_Body_VISUAL_UNCALIBRATED.obj",
+      "vertices": 3414,
+      "triangles": 4348
+    },
+    {
+      "name": "06_D-Pad_VISUAL_UNCALIBRATED",
+      "file": "06_D-Pad_VISUAL_UNCALIBRATED.obj",
+      "vertices": 144,
+      "triangles": 162
+    },
+    {
+      "name": "07_Menu_L_VISUAL_UNCALIBRATED",
+      "file": "07_Menu_L_VISUAL_UNCALIBRATED.obj",
+      "vertices": 66,
+      "triangles": 60
+    },
+    {
+      "name": "08_Menu_R_VISUAL_UNCALIBRATED",
+      "file": "08_Menu_R_VISUAL_UNCALIBRATED.obj",
+      "vertices": 66,
+      "triangles": 60
+    },
+    {
+      "name": "09_Stick_L_VISUAL_UNCALIBRATED",
+      "file": "09_Stick_L_VISUAL_UNCALIBRATED.obj",
+      "vertices": 404,
+      "triangles": 606
+    },
+    {
+      "name": "10_Stick_R_VISUAL_UNCALIBRATED",
+      "file": "10_Stick_R_VISUAL_UNCALIBRATED.obj",
+      "vertices": 404,
+      "triangles": 606
+    },
+    {
+      "name": "11_Trigger_L_VISUAL_UNCALIBRATED",
+      "file": "11_Trigger_L_VISUAL_UNCALIBRATED.obj",
+      "vertices": 67,
+      "triangles": 65
+    },
+    {
+      "name": "12_Trigger_R_VISUAL_UNCALIBRATED",
+      "file": "12_Trigger_R_VISUAL_UNCALIBRATED.obj",
+      "vertices": 67,
+      "triangles": 65
+    },
+    {
+      "name": "13_X_Button_VISUAL_UNCALIBRATED",
+      "file": "13_X_Button_VISUAL_UNCALIBRATED.obj",
+      "vertices": 113,
+      "triangles": 112
+    },
+    {
+      "name": "14_XboxButton_VISUAL_UNCALIBRATED",
+      "file": "14_XboxButton_VISUAL_UNCALIBRATED.obj",
+      "vertices": 98,
+      "triangles": 118
+    },
+    {
+      "name": "15_Y_Button_VISUAL_UNCALIBRATED",
+      "file": "15_Y_Button_VISUAL_UNCALIBRATED.obj",
+      "vertices": 107,
+      "triangles": 106
+    }
+  ],
+  "scale": 0.0560472180107161,
+  "source_visual_manifest": "common/xbox_one_s/visual/manifest.json",
+  "entrypoint": "xbox_one_s_visual.xml",
+  "scenes": {
+    "table": "table_scene.xml"
+  },
+  "native_renderer_material": {
+    "texture": "base_color.png",
+    "vflip": true,
+    "specular": 0.5,
+    "shininess": 0.2,
+    "limitations": [
+      "MuJoCo native renderer uses the RGB texture and scalar specular/shininess.",
+      "Normal, occlusion, roughness, metallic and emissive maps remain in common visual resources for PBR renderers; native MuJoCo does not render PBR texture roles."
+    ]
+  }
+}

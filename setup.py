@@ -21,6 +21,9 @@ setup(
         "xbox_gamepad_physics": [
             "resource_data/common/xbox_one_s/visual/*",
             "resource_data/common/xbox_one_s/visual/textures/*",
+            "resource_data/mujoco/visual_v0/*",
+            "resource_data/mujoco/visual_v0/meshes/*",
+            "resource_data/mujoco/visual_v0/textures/*",
             "resource_data/*/*/*",
             "resource_data/*/*/visual/*",
             "resource_data/*/*/visual/**/*",
