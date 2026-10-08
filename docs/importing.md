@@ -39,6 +39,18 @@ python -m xbox_gamepad_physics verify --backend robotwin
 
 ## RoboTwin / SAPIEN
 
+视觉阶段可以在物理 URDF 就绪前加载 16 个 render-only 部件：
+
+```python
+from xbox_gamepad_physics.robotwin import load_visual_into_scene
+
+visual = load_visual_into_scene(self, pose=sapien.Pose([0, 0, 0.8]))
+assert visual.physics_ready is False
+```
+
+该入口保留 UV、法线和 2K PBR 贴图，不创建碰撞或惯量。完整实验台示例见
+`examples/robotwin_visual.py`。
+
 主入口把 URDF articulation 直接加入调用者提供的 SAPIEN scene：
 
 ```python

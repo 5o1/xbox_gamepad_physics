@@ -19,6 +19,8 @@ setup(
     include_package_data=True,
     package_data={
         "xbox_gamepad_physics": [
+            "resource_data/common/xbox_one_s/visual/*",
+            "resource_data/common/xbox_one_s/visual/textures/*",
             "resource_data/*/*/*",
             "resource_data/*/*/visual/*",
             "resource_data/*/*/visual/**/*",

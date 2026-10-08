@@ -1,0 +1,231 @@
+{
+  "asset_id": "xbox_one_s",
+  "stage": "visual",
+  "dynamics_ready": false,
+  "source_sha256": "5c5671c83a9cf15db4b8399e7010aa7d5cde915687ceb348b583eb00b0ed24e2",
+  "geometry_sha256": "7548b189051b48d8fded7de65079763c923fe0a48ad9e1e36b6e2b89e31fa7ee",
+  "coordinate_frame": "gltf_y_up",
+  "meters_per_native_unit": 0.0560472180107161,
+  "scale_status": "existing width-fit visual estimate; not measured local geometry",
+  "parts": [
+    {
+      "name": "00_A_Button_VISUAL_UNCALIBRATED",
+      "file": "00_A_Button_VISUAL_UNCALIBRATED.gltf",
+      "vertices": 144,
+      "triangles": 146
+    },
+    {
+      "name": "01_B_Button_VISUAL_UNCALIBRATED",
+      "file": "01_B_Button_VISUAL_UNCALIBRATED.gltf",
+      "vertices": 190,
+      "triangles": 190
+    },
+    {
+      "name": "02_Bumper_L_VISUAL_UNCALIBRATED",
+      "file": "02_Bumper_L_VISUAL_UNCALIBRATED.gltf",
+      "vertices": 79,
+      "triangles": 62
+    },
+    {
+      "name": "03_Bumper_R_VISUAL_UNCALIBRATED",
+      "file": "03_Bumper_R_VISUAL_UNCALIBRATED.gltf",
+      "vertices": 79,
+      "triangles": 62
+    },
+    {
+      "name": "04_Connect_Button_VISUAL_UNCALIBRATED",
+      "file": "04_Connect_Button_VISUAL_UNCALIBRATED.gltf",
+      "vertices": 66,
+      "triangles": 78
+    },
+    {
+      "name": "05_Controller_Body_VISUAL_UNCALIBRATED",
+      "file": "05_Controller_Body_VISUAL_UNCALIBRATED.gltf",
+      "vertices": 3414,
+      "triangles": 4348
+    },
+    {
+      "name": "06_D-Pad_VISUAL_UNCALIBRATED",
+      "file": "06_D-Pad_VISUAL_UNCALIBRATED.gltf",
+      "vertices": 144,
+      "triangles": 162
+    },
+    {
+      "name": "07_Menu_L_VISUAL_UNCALIBRATED",
+      "file": "07_Menu_L_VISUAL_UNCALIBRATED.gltf",
+      "vertices": 66,
+      "triangles": 60
+    },
+    {
+      "name": "08_Menu_R_VISUAL_UNCALIBRATED",
+      "file": "08_Menu_R_VISUAL_UNCALIBRATED.gltf",
+      "vertices": 66,
+      "triangles": 60
+    },
+    {
+      "name": "09_Stick_L_VISUAL_UNCALIBRATED",
+      "file": "09_Stick_L_VISUAL_UNCALIBRATED.gltf",
+      "vertices": 404,
+      "triangles": 606
+    },
+    {
+      "name": "10_Stick_R_VISUAL_UNCALIBRATED",
+      "file": "10_Stick_R_VISUAL_UNCALIBRATED.gltf",
+      "vertices": 404,
+      "triangles": 606
+    },
+    {
+      "name": "11_Trigger_L_VISUAL_UNCALIBRATED",
+      "file": "11_Trigger_L_VISUAL_UNCALIBRATED.gltf",
+      "vertices": 67,
+      "triangles": 65
+    },
+    {
+      "name": "12_Trigger_R_VISUAL_UNCALIBRATED",
+      "file": "12_Trigger_R_VISUAL_UNCALIBRATED.gltf",
+      "vertices": 67,
+      "triangles": 65
+    },
+    {
+      "name": "13_X_Button_VISUAL_UNCALIBRATED",
+      "file": "13_X_Button_VISUAL_UNCALIBRATED.gltf",
+      "vertices": 113,
+      "triangles": 112
+    },
+    {
+      "name": "14_XboxButton_VISUAL_UNCALIBRATED",
+      "file": "14_XboxButton_VISUAL_UNCALIBRATED.gltf",
+      "vertices": 98,
+      "triangles": 118
+    },
+    {
+      "name": "15_Y_Button_VISUAL_UNCALIBRATED",
+      "file": "15_Y_Button_VISUAL_UNCALIBRATED.gltf",
+      "vertices": 107,
+      "triangles": 106
+    }
+  ],
+  "source_material": {
+    "alphaMode": "BLEND",
+    "doubleSided": true,
+    "emissiveFactor": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "emissiveTexture": {
+      "index": 2
+    },
+    "extensions": {
+      "KHR_materials_emissive_strength": {
+        "emissiveStrength": 10.0
+      },
+      "KHR_materials_specular": {
+        "specularColorFactor": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "specularFactor": 1.0,
+        "specularTexture": {
+          "index": 4
+        }
+      }
+    },
+    "name": "XBox_Gamepad_by_Batony_Robson",
+    "normalTexture": {
+      "index": 3
+    },
+    "occlusionTexture": {
+      "index": 1,
+      "strength": 0.7406035171729057
+    },
+    "pbrMetallicRoughness": {
+      "baseColorTexture": {
+        "index": 0
+      },
+      "metallicRoughnessTexture": {
+        "index": 1
+      }
+    }
+  },
+  "source_textures": [
+    {
+      "file": "textures/base_color.png",
+      "sha256": "5c757ad7cd0b146c124b63dee2ffab32d4c1308a184ea77307a1dda2f28572e7",
+      "size": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "file": "textures/metallic_roughness.png",
+      "sha256": "30ac75ed95e4436c2618a37314ba433f74f34fb4ab658d095d097968df32b822",
+      "size": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "file": "textures/emissive.png",
+      "sha256": "9e4c90aa0e5525417028b0d0bf06c0d59756f26eccfe312e93f8503235eddb5e",
+      "size": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "file": "textures/normal.png",
+      "sha256": "82b5251f1c60c6c6dd85f24f8d9782f2c12c5876a95f5bd50c51c4fe63543902",
+      "size": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "file": "textures/specular_intensity.png",
+      "sha256": "78e505c46aa01565bdd539e1f8c3cca97df20b38eea41a30d038a0099ff20d63",
+      "size": [
+        2048,
+        2048
+      ]
+    }
+  ],
+  "sapien_material": {
+    "base_color": [
+      1,
+      1,
+      1,
+      1
+    ],
+    "emission": [
+      1,
+      1,
+      1,
+      10
+    ],
+    "roughness": 1,
+    "metallic": 1,
+    "specular": 0.5,
+    "ior": 1.5,
+    "textures": {
+      "base_color_texture": "textures/base_color.png",
+      "emission_texture": "textures/emissive.png",
+      "normal_texture": "textures/normal.png",
+      "roughness_texture": "textures/roughness.png",
+      "metallic_texture": "textures/metallic.png"
+    },
+    "limitations": [
+      "Authored specular-alpha texture is preserved. SAPIEN has a scalar specular slot only; 0.5 represents dielectric F0=0.04, and spatial variation needs visual review.",
+      "Authored occlusion texture is preserved but this SAPIEN material API has no AO texture slot."
+    ],
+    "authored_specular_alpha_range": [
+      16,
+      255
+    ]
+  },
+  "license": "CC-BY-4.0",
+  "author": "BatonyRobson",
+  "source_url": "https://sketchfab.com/3d-models/xbox-one-s-controllergamepad-animated-a62cf7475b7d4ead9fbf1a86e5a2b6a4",
+  "changes": "Geometry/UV/normals copied from existing static bake. Original material/images restored. Scalar channels separated without changing their values."
+}

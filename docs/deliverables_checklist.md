@@ -4,7 +4,7 @@
 
 ## 1. 两平台视觉资产与流畅检查
 
-- [ ] RoboTwin/SAPIEN
+- [x] RoboTwin/SAPIEN
 - [ ] MuJoCo
 - [ ] 用户确认外观与交互效果
 
@@ -14,7 +14,8 @@
 外观以用户认可的 [Boiler Room/Cycles 图](../results/xbox_official_import_comparison/official_import_4.5.9_LTS/reference_matched_cycles_probe/boiler_room_vertical_fov35_strength_1p0.png) 为参考，最终由用户确认。
 使用各平台原生显示能力，保持原资产与材质来源可追溯。
 
-当前：视觉源文件已归档；正在接入 RoboTwin/SAPIEN。物理参数不属于本项。
+当前：RoboTwin/SAPIEN 已由用户确认通过，见
+[视觉验收记录](../results/robotwin_visual_stage/README.md)；正在接入 MuJoCo。物理参数不属于本项。
 
 ## 2. 共用运动学与手柄状态映射
 
