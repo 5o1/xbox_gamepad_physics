@@ -59,12 +59,30 @@ Python 公共状态接口采用版本化的 `sdl3-gamepad-core-v1`：先放 SDL3
 位置；归一化、饱和、摇杆圆形约束和状态 mask 都由该层生成。MuJoCo 后续接入相同控制器，
 不再各自实现一套摇杆信号公式。
 
+## 虚拟手柄信号预览
+
+仓库内置了基于开源 `gamepad-overlay` SVG 渲染器的 32 维状态适配器。启动静态服务：
+
+```sh
+npm run gamepad-overlay
+```
+
+打开以下地址可循环播放左摇杆单位圆轨迹：
+
+```text
+http://127.0.0.1:8770/viewer/gamepad_overlay/index.html?source=canonical&trace=/results/gamepad_overlay_left_stick_circle/trace.json&autoplay=1
+```
+
+页面同时显示关节角、`left_x/left_y`、信号半径和虚拟摇杆位置。项目适配器只接受
+`sdl3-gamepad-core-v1` 的 32 维值、两个 mask 和 `device_id`，不会按 W3C 下标猜测输入。
+
 ## 关键入口
 
 - [资产索引](assets/asset_index.json)：候选、派生版本、哈希和准入状态。
 - [目标物理规格](specs/xbox_v1.json)：部件、物理字段和未决项。
 - [交互验收规格](specs/interactive_acceptance.json)：浏览器双向交互的验收门禁。
 - [32 维张量契约来源](sources/gamepad_tensor_contract_v1.json)：通道顺序、mask 与设备标识的依据和项目选择。
+- [虚拟手柄适配器](viewer/gamepad_overlay/index.html)：将 canonical 状态交给现成 SVG 手柄渲染器。
 - [estimated-v0 来源](sources/appearance_matched_estimated_v0.json)：估计运动学的来源、推导和限制。
 - [estimated-v0 profile](assets/appearance_matched_estimated_v0/viewer_profile.json)：viewer 使用的运动配置。
 - [官方尺寸记录](sources/1708_dimensions.json)：整体尺寸及其适用边界。

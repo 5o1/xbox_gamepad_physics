@@ -88,6 +88,19 @@ hash are recorded in `sources/boiler_room_hdri.json`.
 These environments are licensed approximations, not copies of Sketchfab's
 Industrial Room environment.
 
+## gamepad-overlay
+
+- Creator: Jacob McIntosh / sevaht
+- Source: <https://github.com/sevaht/gamepad-overlay>
+- Pinned revision: `31236cd6a029828c8b01966ddc1a92c31e5cd852`
+- License: [The Unlicense](https://unlicense.org/)
+- Distributed files: the SVG overlay core, renderer, Xbox layout and input
+  renderer under `viewer/gamepad_overlay/`; exact hashes are recorded in
+  `viewer/gamepad_overlay/upstream.json`.
+- Project changes: upstream rendering files remain byte-identical. The local
+  `canonical_adapter.mjs`, dashboard and research theme translate the project's
+  32-channel state into the upstream renderer input and add experiment telemetry.
+
 ## Reference-only sources
 
 iFixit photographs, FCC exhibits, manufacturer data sheets, Input Labs Alpakka

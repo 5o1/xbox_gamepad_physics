@@ -8,6 +8,7 @@
   },
   "scripts": {
     "viewer": "python3 scripts/serve_viewer.py --assets assets/xbox_one_s/visual --vendor node_modules/three --variant-id xbox_one_s_batonyrobson_appearance_matched_estimated_v0",
+    "gamepad-overlay": "python3 -m http.server 8770 --bind 127.0.0.1 --directory .",
     "test": "python3 scripts/run_regression.py fast"
   },
   "dependencies": {
