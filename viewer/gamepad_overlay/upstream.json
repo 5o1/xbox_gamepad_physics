@@ -5,12 +5,16 @@
   "license": "The Unlicense",
   "vendored_scope": "Browser overlay core, SVG renderer, Xbox layout and input-state renderer",
   "project_adapter": "canonical_adapter.mjs",
+  "local_modifications": [
+    "Preserve continuous button and D-pad values instead of applying digital thresholds.",
+    "Render every distinct upstream state without an epsilon change gate."
+  ],
   "files": {
     "overlay-core.js": "f26bd85d1a36dac77119a7b358d59384f2b66b6ee7053a4cfbab5a9eab810bf8",
     "overlay-spec.js": "917dc03505124fa07f956fc5a675eba4d9af3d7dc0f3a25707f19b5feaa5552d",
     "overlay-app.js": "83c0bdf1035b22d7e29a32215857616933ca982a660c00887a1685e06c64b340",
-    "gamepad-input-sources.js": "6890d1e693ad59a6193d73ef45001584b96f17430e3d974c4c78549e529023ee",
-    "overlay-renderer-svg.js": "54e2acf2d981adbd795726724dc4105e0b3ced64adae73630f8261d4881311cf",
+    "gamepad-input-sources.js": "4974ac13f1d9924574b799805d36fd341b71eac3d4d74a0246e5c46f0a050fef",
+    "overlay-renderer-svg.js": "fea164d18bc7e20d4e52c374eb490af8e4a8b75e580b886e19adc21bc653f0df",
     "overlay-shell.css": "2b930548d716e48c4fe7f2d055ef42c6662219d78e9db74071782b7d182a00ba",
     "overlay-layout-xbox.js": "f4fa2624c610bdb7f5d0cf854f9a82eea0a7f67f254f0c3714e0d4546a8e5bb6",
     "UPSTREAM_LICENSE": "6b0382b16279f26ff69014300541967a356a666eb0b91b422f6862f6b7dad17e"

@@ -405,6 +405,7 @@ def build(output: Path) -> None:
     split_mappings = []
     physical_events = []
     neutral_epsilon = float(source["signal_policy"]["device_neutral_epsilon"])
+    stick_neutral_epsilon = float(source["signal_policy"]["stick_neutral_epsilon"])
     for joint_id, joint in dynamics.items():
         driver = joint["driver"]
         if driver["kind"] == "linear_channel":
@@ -519,12 +520,12 @@ def build(output: Path) -> None:
                 {
                     "channels": ["left_x", "left_y"],
                     "radius": 1.0,
-                    "neutral_epsilon": neutral_epsilon,
+                    "neutral_epsilon": stick_neutral_epsilon,
                 },
                 {
                     "channels": ["right_x", "right_y"],
                     "radius": 1.0,
-                    "neutral_epsilon": neutral_epsilon,
+                    "neutral_epsilon": stick_neutral_epsilon,
                 },
             ],
             "radial_source_groups": [
@@ -536,9 +537,10 @@ def build(output: Path) -> None:
             ],
             "physical_events": physical_events,
             "neutral_policy": {
-                "epsilon": neutral_epsilon,
+                "stick_radial_epsilon": stick_neutral_epsilon,
+                "other_control_epsilon": neutral_epsilon,
                 "mode": source["signal_policy"]["device_neutral_mode"],
-                "status": "simulation_solver_tolerance_not_hardware_deadzone",
+                "status": "owner_selected_stick_deadzone_plus_solver_tolerance",
             },
         },
         "contact_material": left_stick["contact_material"],

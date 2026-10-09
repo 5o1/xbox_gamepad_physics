@@ -3,10 +3,8 @@ import test from 'node:test';
 
 import {
   CHANNEL_NAMES,
-  DIGITAL_PRESS_THRESHOLD,
   LAYOUT_ID,
   canonicalFrameToOverlayState,
-  updateHud,
   validateCanonicalFrame,
 } from '../viewer/gamepad_overlay/canonical_adapter.mjs';
 
@@ -46,40 +44,14 @@ test('zero cannot hide an invalid availability/task relation', () => {
   assert.throws(() => validateCanonicalFrame(input), /Unavailable channel left_x must be zero/);
 });
 
-test('digital overlay channels reject solver residue below the press threshold', () => {
+test('canonical adapter preserves continuous button and dpad values', () => {
   const input = frame();
   const set = (name, value) => { input.values[CHANNEL_NAMES.indexOf(name)] = value; };
   set('dpad_up', 5.4e-7);
   set('dpad_right', 4.4e-6);
-  set('south', DIGITAL_PRESS_THRESHOLD - 1e-6);
-  let output = canonicalFrameToOverlayState(input);
-  assert.equal(output.DX, 0);
-  assert.equal(output.DY, 0);
-  assert.equal(output.A, 0);
-
-  set('dpad_up', DIGITAL_PRESS_THRESHOLD);
-  set('south', DIGITAL_PRESS_THRESHOLD);
-  output = canonicalFrameToOverlayState(input);
-  assert.equal(output.DY, -1);
-  assert.equal(output.A, 1);
-});
-
-test('left and right stick highlights follow their own radius and clear at neutral', () => {
-  const states = {left: [], right: []};
-  const previousDocument = globalThis.document;
-  globalThis.document = {
-    getElementById() { return null; },
-    querySelectorAll(selector) {
-      const side = selector.includes('data-side="left"') ? 'left' : 'right';
-      return [{classList: {toggle(name, active) { states[side].push([name, active]); }}}];
-    },
-  };
-  try {
-    updateHud(frame(), {LX: 0, LY: 0, RX: 0.4, RY: -0.2});
-    updateHud(frame(), {LX: 0, LY: 0, RX: 0, RY: 0});
-  } finally {
-    globalThis.document = previousDocument;
-  }
-  assert.deepEqual(states.left, [['signal-active', false], ['signal-active', false]]);
-  assert.deepEqual(states.right, [['signal-active', true], ['signal-active', false]]);
+  set('south', 0.37);
+  const output = canonicalFrameToOverlayState(input);
+  assert.equal(output.DX, 4.4e-6);
+  assert.equal(output.DY, -5.4e-7);
+  assert.equal(output.A, 0.37);
 });

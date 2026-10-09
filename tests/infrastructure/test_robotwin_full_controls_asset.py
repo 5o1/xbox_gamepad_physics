@@ -70,6 +70,10 @@ class RoboTwinFullControlsAssetTest(unittest.TestCase):
         self.assertEqual(len(controller.available_channels), 21)
         self.assertEqual(len(set(controller.available_channels)), 21)
         self.assertEqual(len(controller.physical_event_mappings), 1)
+        self.assertEqual(
+            [group.neutral_epsilon for group in controller.radial_groups],
+            [0.01, 0.01],
+        )
 
     def test_isolated_joint_endpoints_produce_named_signals(self):
         description = _validated_description("full_controls")

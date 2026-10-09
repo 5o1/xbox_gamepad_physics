@@ -7,9 +7,3 @@
     --btn-analog-area-default-alpha: 0.96;
     --overlay-default-blur: 0;
 }
-
-#overlayRoot .signal-active,
-#overlayRoot .signal-active .gamepad-button {
-    fill: rgb(255, 210, 38) !important;
-    filter: drop-shadow(0 0 7px rgba(255, 210, 38, 0.78));
-}

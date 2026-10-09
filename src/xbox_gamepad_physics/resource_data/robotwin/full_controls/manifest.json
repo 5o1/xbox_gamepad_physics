@@ -325,7 +325,7 @@
           "left_y"
         ],
         "radius": 1.0,
-        "neutral_epsilon": 0.0001
+        "neutral_epsilon": 0.01
       },
       {
         "channels": [
@@ -333,7 +333,7 @@
           "right_y"
         ],
         "radius": 1.0,
-        "neutral_epsilon": 0.0001
+        "neutral_epsilon": 0.01
       }
     ],
     "radial_source_groups": [
@@ -355,9 +355,10 @@
       }
     ],
     "neutral_policy": {
-      "epsilon": 0.0001,
+      "stick_radial_epsilon": 0.01,
+      "other_control_epsilon": 0.0001,
       "mode": "zero_inside_without_rescaling_outside",
-      "status": "simulation_solver_tolerance_not_hardware_deadzone"
+      "status": "owner_selected_stick_deadzone_plus_solver_tolerance"
     }
   },
   "contact_material": {

@@ -122,15 +122,15 @@
     },
     "physical_only": ["pair_bind_connect"],
     "button_output": "continuous [0,1] travel fraction; consuming task chooses a digital threshold",
+    "stick_neutral_epsilon": 0.01,
     "device_neutral_epsilon": 0.0001,
     "device_neutral_mode": "zero_inside_without_rescaling_outside",
     "device_neutral_applies_to": [
-      "left and right stick radial magnitude",
       "left and right trigger normalized travel",
       "button normalized travel",
       "D-pad normalized rocker magnitude"
     ],
-    "derivation": "The largest neutral artifact observed in the generated review traces was dpad_right=4.36e-6. A 1e-4 numerical tolerance is 22.9 times that artifact and 0.01 percent of full scale. It is a simulation solver tolerance, not a measured Xbox hardware dead zone.",
+    "derivation": "The 0.01 radial stick deadzone is the owner-selected simulation/game-input threshold. Stick values inside it are zeroed and values outside are not rescaled. The remaining 1e-4 device epsilon only clears solver residue on triggers, buttons and D-pad; it is not a measured hardware deadzone.",
     "external_behavior_references": {
       "microsoft_xinput": {
         "url": "https://learn.microsoft.com/en-us/windows/win32/xinput/getting-started-with-xinput#dead-zone",
@@ -144,8 +144,7 @@
         "url": "https://w3c.github.io/gamepad/#remapping",
         "observation": "The Gamepad specification linearly normalizes logical axis values to [-1,1]; it does not define a gameplay dead-zone remap."
       }
-    },
-    "overlay_digital_press_threshold": 0.5
+    }
   },
   "known_unknowns": [
     "Target-controller component masses and inertias",

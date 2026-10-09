@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import copy
 import json
 from pathlib import Path
 import xml.etree.ElementTree as ET
@@ -117,6 +118,7 @@ def _base_document(model: str) -> tuple[ET.Element, ET.Element, ET.Element]:
 def build(output: Path) -> None:
     output.mkdir(parents=True, exist_ok=True)
     robotwin_manifest = _json(ROBOTWIN / "manifest.json")
+    source = _json(SOURCE)
     collision = _json(ROBOTWIN / "collision" / "manifest.json")
     visual_binding = _json(ROBOTWIN / "visual" / "manifest.json")
     visual_manifest = _json(VISUAL / "visual_manifest.json")
@@ -309,6 +311,18 @@ def build(output: Path) -> None:
         "joints": {name: name for name in joints},
         "sensors": {name: f"{name}_position" for name in joints},
     }
+    state_mapping = copy.deepcopy(robotwin_manifest["state_mapping"])
+    mujoco_neutral_epsilon = float(
+        source["signal_policy"]["device_neutral_epsilon"]
+    )
+    for group in state_mapping["radial_groups"]:
+        group["neutral_epsilon"] = mujoco_neutral_epsilon
+    state_mapping["neutral_policy"] = {
+        "epsilon": mujoco_neutral_epsilon,
+        "mode": source["signal_policy"]["device_neutral_mode"],
+        "status": "simulation_solver_tolerance_not_hardware_deadzone",
+    }
+
     manifest = {
         "schema_version": 1,
         "asset_id": "xbox_one_s",
@@ -328,7 +342,7 @@ def build(output: Path) -> None:
             "contact_probe": "scene_contact_probe.xml"
         },
         "bindings": bindings,
-        "state_mapping": robotwin_manifest["state_mapping"],
+        "state_mapping": state_mapping,
         "source_record": "references/full_controls.json",
         "mechanism_source": "robotwin/full_controls",
         "material_limitations": [

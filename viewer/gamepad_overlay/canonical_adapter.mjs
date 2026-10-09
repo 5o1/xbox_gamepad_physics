@@ -12,8 +12,6 @@ export const CHANNEL_NAMES = Object.freeze([
 const INDEX = Object.freeze(Object.fromEntries(
     CHANNEL_NAMES.map((name, index) => [name, index]),
 ));
-export const DIGITAL_PRESS_THRESHOLD = 0.5;
-
 function clamp(value, minimum, maximum) {
     return Math.max(minimum, Math.min(maximum, value));
 }
@@ -54,7 +52,7 @@ export function validateCanonicalFrame(frame) {
 export function canonicalFrameToOverlayState(frame) {
     validateCanonicalFrame(frame);
     const value = name => frame.values[INDEX[name]];
-    const digital = name => clamp(value(name), 0, 1) >= DIGITAL_PRESS_THRESHOLD ? 1 : 0;
+    const analog = name => clamp(value(name), 0, 1);
     return {
         LX: clamp(value("left_x"), -1, 1),
         LY: clamp(value("left_y"), -1, 1),
@@ -62,19 +60,19 @@ export function canonicalFrameToOverlayState(frame) {
         RY: clamp(value("right_y"), -1, 1),
         LT: clamp(value("left_trigger"), 0, 1),
         RT: clamp(value("right_trigger"), 0, 1),
-        A: digital("south"),
-        B: digital("east"),
-        X: digital("west"),
-        Y: digital("north"),
-        SELECT: digital("back"),
-        GUIDE: digital("guide"),
-        START: digital("start"),
-        LS: digital("left_stick"),
-        RS: digital("right_stick"),
-        LB: digital("left_shoulder"),
-        RB: digital("right_shoulder"),
-        DX: digital("dpad_right") - digital("dpad_left"),
-        DY: digital("dpad_down") - digital("dpad_up"),
+        A: analog("south"),
+        B: analog("east"),
+        X: analog("west"),
+        Y: analog("north"),
+        SELECT: analog("back"),
+        GUIDE: analog("guide"),
+        START: analog("start"),
+        LS: analog("left_stick"),
+        RS: analog("right_stick"),
+        LB: analog("left_shoulder"),
+        RB: analog("right_shoulder"),
+        DX: clamp(value("dpad_right") - value("dpad_left"), -1, 1),
+        DY: clamp(value("dpad_down") - value("dpad_up"), -1, 1),
     };
 }
 
@@ -110,17 +108,6 @@ export function updateHud(frame, overlayState) {
     const dot = document.getElementById("signalDot");
     if (dot) {
         dot.style.transform = `translate(${overlayState.LX * 60}px, ${overlayState.LY * 60}px)`;
-    }
-    for (const [side, x, y] of [
-        ["left", overlayState.LX, overlayState.LY],
-        ["right", overlayState.RX, overlayState.RY],
-    ]) {
-        const nodes = document.querySelectorAll(
-            `#overlayRoot [data-side="${side}"][data-role="analog-stick"], `
-            + `#overlayRoot [data-side="${side}"][data-role="analog-stick-ring"]`,
-        );
-        const active = Math.hypot(x, y) > 1e-4;
-        nodes.forEach(node => node.classList.toggle("signal-active", active));
     }
 }
 

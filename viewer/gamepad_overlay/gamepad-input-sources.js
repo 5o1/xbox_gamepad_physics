@@ -394,8 +394,6 @@ class GamepadOverlayRenderer {
         this.rightTrigger = overlay.entities.right.entities.rightTrigger;
 
         this.#digitalBindings = [
-            // Only triggers (LT/RT) and stick movement axes are analog.
-            // All button-like inputs, including LS/RS press states, are digital.
             [overlay.entities.right.entities.downButton, (state) => state.A],
             [overlay.entities.right.entities.rightButton, (state) => state.B],
             [overlay.entities.right.entities.leftButton, (state) => state.X],
@@ -406,10 +404,10 @@ class GamepadOverlayRenderer {
             [overlay.entities.right.entities.rightBumper, (state) => state.RB],
             [this.leftStickControl, (state) => state.LS],
             [this.rightStickControl, (state) => state.RS],
-            [overlay.entities.left.entities.leftButton, (state) => (state.DX < 0 ? 1 : 0)],
-            [overlay.entities.left.entities.rightButton, (state) => (state.DX > 0 ? 1 : 0)],
-            [overlay.entities.left.entities.upButton, (state) => (state.DY < 0 ? 1 : 0)],
-            [overlay.entities.left.entities.downButton, (state) => (state.DY > 0 ? 1 : 0)],
+            [overlay.entities.left.entities.leftButton, (state) => Math.max(0, -state.DX)],
+            [overlay.entities.left.entities.rightButton, (state) => Math.max(0, state.DX)],
+            [overlay.entities.left.entities.upButton, (state) => Math.max(0, -state.DY)],
+            [overlay.entities.left.entities.downButton, (state) => Math.max(0, state.DY)],
         ];
 
         this.leftStickControl?.bringLayersToFront?.();
@@ -463,7 +461,7 @@ class GamepadOverlayRenderer {
 
     #applyDigitalInputs(state) {
         for (const [entity, getValue] of this.#digitalBindings) {
-            entity?.setInputAmount(getValue(state));
+            entity?.setPressAmount(getValue(state));
         }
     }
 
@@ -471,9 +469,8 @@ class GamepadOverlayRenderer {
         if (this.#lastAppliedState == null) {
             return true;
         }
-        const EPSILON = 0.0005;
         for (const [key, value] of Object.entries(nextState)) {
-            if (Math.abs(value - this.#lastAppliedState[key]) > EPSILON) {
+            if (value !== this.#lastAppliedState[key]) {
                 return true;
             }
         }

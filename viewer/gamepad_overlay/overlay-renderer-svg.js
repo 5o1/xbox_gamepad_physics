@@ -689,6 +689,7 @@ class RenderableControl {
     get element() { return this.#entity.element; }
 
     setInputAmount(value) { this.#entity.setInputAmount(value); return this; }
+    setPressAmount(value) { this.#entity.setPressAmount(value); return this; }
     setTranslation(offset) { this.#entity.setTranslation(offset); return this; }
     setPressFillDirection(direction) { this.#entity.setPressFillDirection(direction); return this; }
     enablePressVisual(options) { this.#entity.enablePressVisual(options); return this; }
@@ -714,6 +715,12 @@ class CompositeControl {
     setInputAmount(value) {
         for (const target of this.#pressTargets) {
             target.setInputAmount(value);
+        }
+        return this;
+    }
+    setPressAmount(value) {
+        for (const target of this.#pressTargets) {
+            target.setPressAmount(value);
         }
         return this;
     }

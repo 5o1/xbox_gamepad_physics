@@ -36,7 +36,7 @@ class GamepadOverlayDemoTests(unittest.TestCase):
         self.assertAlmostEqual(circle[-1]["values"][0], 1.0)
         self.assertAlmostEqual(circle[-1]["values"][1], 0.0, places=12)
 
-    def test_vendored_overlay_files_match_pinned_upstream_hashes(self):
+    def test_distributed_overlay_files_match_recorded_hashes(self):
         directory = ROOT / "viewer" / "gamepad_overlay"
         provenance = json.loads((directory / "upstream.json").read_text())
         self.assertEqual(
