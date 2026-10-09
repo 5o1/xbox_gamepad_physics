@@ -13,6 +13,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "src"))
 
 from xbox_gamepad_physics.profiles import BackendProfile
+from xbox_gamepad_physics.motion import MotionJoint
 from xbox_gamepad_physics.errors import ResourceNotFoundError
 from xbox_gamepad_physics.controller import (
     AxisSignalMapping,
@@ -36,6 +37,10 @@ class FakeJoint:
         self.drive_calls = []
         self.friction_calls = []
         self.target_calls = []
+        self.limit_calls = []
+
+    def set_limits(self, limits):
+        self.limit_calls.append(limits)
 
     def set_drive_properties(self, stiffness, damping, *, force_limit):
         self.drive_calls.append((stiffness, damping, force_limit))
@@ -279,6 +284,23 @@ class RoboTwinRuntimeTest(unittest.TestCase):
         self.assertEqual(articulation.joints[0].friction_calls, [0.1])
         self.assertEqual(articulation.joints[0].target_calls, [0.0])
         self.assertEqual(articulation.mass_writes, [])
+
+    def test_common_motion_limits_are_applied_after_urdf_load(self):
+        articulation = FakeArticulation()
+        dynamics = (
+            loader_module.JointDynamics("button_a", 12.0, 0.4, 2.0, 0.1, 0.0),
+            loader_module.JointDynamics("left_stick_x", 3.0, 0.2, 1.0, 0.05, 0.0),
+        )
+        motion = (
+            MotionJoint("button_a", "prismatic", "shell", "a", (0.0, 0.0, 0.0), (0.0, 0.0, 1.0), 0.0, 0.002, "m"),
+            MotionJoint("left_stick_x", "revolute", "shell", "stick_x", (0.0, 0.0, 0.0), (1.0, 0.0, 0.0), -0.3, 0.3, "rad"),
+        )
+        controller = GamepadSignalController.xbox_one_s(
+            (AxisSignalMapping("left_x", "left_stick_x", -0.3, 0.3),)
+        )
+        loader_module._configure_joints(articulation, dynamics, motion, controller)
+        self.assertEqual(articulation.joints[0].limit_calls, [[[0.0, 0.002]]])
+        self.assertEqual(articulation.joints[1].limit_calls, [[[-0.3, 0.3]]])
 
     def test_robotwin_task_scene_and_single_load_fallback_are_supported(self):
         wrapper, _, fake_loader, _, _ = self._load(

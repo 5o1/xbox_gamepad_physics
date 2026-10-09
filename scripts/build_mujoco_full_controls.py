@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import argparse
-import copy
 import json
 from pathlib import Path
 import xml.etree.ElementTree as ET
@@ -26,7 +25,16 @@ VISUAL = (
     / "mujoco"
     / "visual_v0"
 )
-SOURCE = ROOT / "references" / "full_controls.json"
+COMMON_MOTION = (
+    ROOT
+    / "src"
+    / "xbox_gamepad_physics"
+    / "resource_data"
+    / "common"
+    / "xbox_one_s"
+    / "motion"
+    / "full_controls.json"
+)
 DEFAULT_OUTPUT = (
     ROOT
     / "src"
@@ -55,7 +63,7 @@ def _vec(values) -> str:
     return " ".join(_fmt(value) for value in values)
 
 
-def _urdf_records() -> tuple[dict, dict, dict]:
+def _mechanism_records(motion: dict) -> tuple[dict, dict, dict]:
     root = ET.parse(ROBOTWIN / "mobility.urdf").getroot()
     links = {}
     for link in root.findall("link"):
@@ -72,18 +80,15 @@ def _urdf_records() -> tuple[dict, dict, dict]:
         }
     joints = {}
     children = {}
-    for joint in root.findall("joint"):
+    for common in motion["joints"]:
         record = {
-            "name": joint.get("name"),
-            "type": joint.get("type"),
-            "parent": joint.find("parent").get("link"),
-            "child": joint.find("child").get("link"),
-            "pos": [float(value) for value in joint.find("origin").get("xyz").split()],
-            "axis": [float(value) for value in joint.find("axis").get("xyz").split()],
-            "range": [
-                float(joint.find("limit").get("lower")),
-                float(joint.find("limit").get("upper")),
-            ],
+            "name": common["name"],
+            "type": common["type"],
+            "parent": common["parent"],
+            "child": common["child"],
+            "pos": common["origin"],
+            "axis": common["axis"],
+            "range": [common["lower"], common["upper"]],
         }
         joints[record["name"]] = record
         children.setdefault(record["parent"], []).append(record)
@@ -124,11 +129,11 @@ def _base_document(model: str) -> tuple[ET.Element, ET.Element, ET.Element]:
 def build(output: Path) -> None:
     output.mkdir(parents=True, exist_ok=True)
     robotwin_manifest = _json(ROBOTWIN / "manifest.json")
-    source = _json(SOURCE)
+    motion = _json(COMMON_MOTION)
     collision = _json(ROBOTWIN / "collision" / "manifest.json")
     visual_binding = _json(ROBOTWIN / "visual" / "manifest.json")
     visual_manifest = _json(VISUAL / "visual_manifest.json")
-    links, joints, children = _urdf_records()
+    links, joints, children = _mechanism_records(motion)
     dynamics = {item["name"]: item for item in robotwin_manifest["joint_dynamics"]}
 
     root, asset, worldbody = _base_document("xbox_one_s_full_controls")
@@ -319,18 +324,6 @@ def build(output: Path) -> None:
         "joints": {name: name for name in joints},
         "sensors": {name: f"{name}_position" for name in joints},
     }
-    state_mapping = copy.deepcopy(robotwin_manifest["state_mapping"])
-    mujoco_neutral_epsilon = float(
-        source["signal_policy"]["device_neutral_epsilon"]
-    )
-    for group in state_mapping["radial_groups"]:
-        group["neutral_epsilon"] = mujoco_neutral_epsilon
-    state_mapping["neutral_policy"] = {
-        "epsilon": mujoco_neutral_epsilon,
-        "mode": source["signal_policy"]["device_neutral_mode"],
-        "status": "simulation_solver_tolerance_not_hardware_deadzone",
-    }
-
     manifest = {
         "schema_version": 1,
         "asset_id": "xbox_one_s",
@@ -350,9 +343,9 @@ def build(output: Path) -> None:
             "contact_probe": "scene_contact_probe.xml"
         },
         "bindings": bindings,
-        "state_mapping": state_mapping,
+        "motion_contract": "common/xbox_one_s/motion/full_controls.json",
         "source_record": "references/full_controls.json",
-        "mechanism_source": "robotwin/full_controls",
+        "mechanism_source": "common/xbox_one_s/motion/full_controls.json",
         "material_limitations": [
             "MuJoCo sliding friction uses one coefficient; the shared dynamic coefficient 0.4 is used.",
             "The shared restitution estimate has no direct MJCF scalar and remains unmodeled in this first pass."

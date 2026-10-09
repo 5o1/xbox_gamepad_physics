@@ -26,9 +26,15 @@ Gamepad 对轴做线性归一化。因此游戏侧 dead-zone 将作为独立策�
 RoboTwin 中四个摇杆倾斜关节的无量纲 PhysX 摩擦系数设为 `0.1`。这是用户指定的
 仿真参数，尚未由实物测量确认。
 
+关节拓扑、每轴运动范围、二维径向约束和信号绑定统一发布在
+`resource_data/common/xbox_one_s/motion/full_controls.json`。RoboTwin 运行时直接读取该
+公共契约，并在 URDF 加载后应用其中的关节限位；backend manifest 不再复制运动约束。
+MuJoCo 构建器和运行时信号控制器也读取同一份契约。
+
 ## 生成
 
 ```sh
+python scripts/build_common_motion.py
 python scripts/build_robotwin_full_controls.py
 python scripts/build_mujoco_full_controls.py
 python -m xbox_gamepad_physics verify \
@@ -38,7 +44,11 @@ python -m xbox_gamepad_physics verify \
 ## RoboTwin / SAPIEN
 
 ```python
+from xbox_gamepad_physics import load_motion_contract
 from xbox_gamepad_physics.robotwin import load_into_scene
+
+motion = load_motion_contract("full_controls")
+left_stick_x = motion.joint_by_name["left_stick_x"]
 
 gamepad = load_into_scene(
     scene,

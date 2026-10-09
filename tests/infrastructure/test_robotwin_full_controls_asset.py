@@ -51,6 +51,12 @@ class RoboTwinFullControlsAssetTest(unittest.TestCase):
                 )
 
     def test_joint_tree_and_controller_cover_all_device_controls(self):
+        manifest = json.loads((PROFILE / "manifest.json").read_text())
+        self.assertEqual(
+            manifest["motion_contract"],
+            "common/xbox_one_s/motion/full_controls.json",
+        )
+        self.assertNotIn("state_mapping", manifest)
         root = ET.parse(PROFILE / "mobility.urdf").getroot()
         links = root.findall("link")
         joints = root.findall("joint")
@@ -67,6 +73,7 @@ class RoboTwinFullControlsAssetTest(unittest.TestCase):
         description = _validated_description("full_controls")
         controller = description.signal_controller
         self.assertEqual(len(description.joint_dynamics), 20)
+        self.assertEqual(len(description.joint_motion), 20)
         self.assertEqual(len(controller.available_channels), 21)
         self.assertEqual(len(set(controller.available_channels)), 21)
         self.assertEqual(len(controller.physical_event_mappings), 1)

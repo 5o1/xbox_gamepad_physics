@@ -97,6 +97,7 @@ def main() -> None:
     from transforms3d.quaternions import mat2quat
 
     from envs._base_task import Base_Task, create_box, create_table
+    from xbox_gamepad_physics import load_motion_contract
     from xbox_gamepad_physics.resources import load_json_resource
     from xbox_gamepad_physics.robotwin import load_into_scene
 
@@ -173,7 +174,7 @@ def main() -> None:
             camera.entity.set_pose(look_at(position, target))
             cameras.append((name, camera))
 
-    manifest = load_json_resource("robotwin", "full_controls")
+    motion = load_motion_contract("full_controls")
     def link(name):
         result = gamepad.articulation.find_link_by_name(name)
         if result is None:
@@ -225,13 +226,13 @@ def main() -> None:
         center = np.asarray(geom["center"], dtype=float)
         if case.motion == "top_press":
             surface = center + np.array([0, 0, geom["length"] / 2])
-            travel = float(next(item for item in manifest["state_mapping"]["scalars"] if item["joint"] == case.joint)["upper"])
+            travel = motion.joint_by_name[case.joint].upper
             return to_world(case.link, surface + np.array([0, 0, probe_radius + 0.008])), to_world(case.link, surface + np.array([0, 0, probe_radius - travel - 0.001]))
         if case.motion == "side_press":
             direction = np.asarray(case.direction, dtype=float)
             support = np.dot(np.abs(direction), np.asarray(geom["size"], dtype=float) / 2)
             surface = center - direction * support
-            travel = float(next(item for item in manifest["state_mapping"]["scalars"] if item["joint"] == case.joint)["upper"])
+            travel = motion.joint_by_name[case.joint].upper
             return to_world(case.link, surface - direction * (probe_radius + 0.008)), to_world(case.link, surface - direction * (probe_radius - travel - 0.0015))
         if case.motion == "dpad_press":
             direction = np.asarray(case.direction, dtype=float)

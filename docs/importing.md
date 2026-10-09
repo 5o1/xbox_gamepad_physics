@@ -267,7 +267,9 @@ reason
 ```
 
 MuJoCo ready profile 还需要 `scenes` 和 `bindings`。RoboTwin ready profile 还需要逐关节
-`joint_dynamics`。格式约束见 `schemas/backend_manifest.schema.json`。
+`joint_dynamics`。完整控件的两个 backend manifest 通过 `motion_contract` 指向公共运动
+契约，关节范围和信号约束不在 backend manifest 中重复维护。格式约束见
+`schemas/backend_manifest.schema.json`。
 
 ## 验证
 

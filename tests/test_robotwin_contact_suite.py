@@ -25,8 +25,8 @@ class RobotwinContactSuiteTest(unittest.TestCase):
             {case.group for case in cases},
             {"sticks", "buttons", "dpad", "shoulders", "triggers"},
         )
-        manifest = json.loads(
-            (ROOT / "src/xbox_gamepad_physics/resource_data/robotwin/full_controls/manifest.json").read_text()
+        motion = json.loads(
+            (ROOT / "src/xbox_gamepad_physics/resource_data/common/xbox_one_s/motion/full_controls.json").read_text()
         )
         collision = json.loads(
             (ROOT / "src/xbox_gamepad_physics/resource_data/robotwin/full_controls/collision/manifest.json").read_text()
@@ -38,11 +38,11 @@ class RobotwinContactSuiteTest(unittest.TestCase):
         channels = {
             item["channel"]
             for group in ("axes", "scalars")
-            for item in manifest["state_mapping"][group]
+            for item in motion["bindings"][group]
         }
         channels.update(
             name
-            for item in manifest["state_mapping"]["splits"]
+            for item in motion["bindings"]["splits"]
             for name in (item["negative_channel"], item["positive_channel"])
         )
         for case in cases:

@@ -1,4 +1,5 @@
 from pathlib import Path
+import json
 import sys
 import tempfile
 import unittest
@@ -58,6 +59,12 @@ class MujocoFullControlsAssetTest(unittest.TestCase):
         self.assertEqual(len(root.findall(".//keyframe/key")), 1)
 
     def test_runtime_manifest_builds_shared_signal_controller(self):
+        raw = json.loads((PROFILE / "manifest.json").read_text())
+        self.assertEqual(
+            raw["motion_contract"],
+            "common/xbox_one_s/motion/full_controls.json",
+        )
+        self.assertNotIn("state_mapping", raw)
         manifest = load_runtime_manifest("full_controls")
         self.assertEqual(len(manifest.joints), 20)
         self.assertEqual(len(manifest.sensors), 20)

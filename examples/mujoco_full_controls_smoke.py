@@ -21,25 +21,25 @@ def main() -> None:
     import mujoco
     import numpy as np
 
+    from xbox_gamepad_physics import load_motion_contract
     from xbox_gamepad_physics.mujoco import load_scene
-    from xbox_gamepad_physics.resources import load_json_resource
     from xbox_gamepad_physics.state import GamepadState
 
     loaded = load_scene(profile="full_controls", scene="fixed")
     gamepad = loaded.gamepad
-    manifest = load_json_resource("mujoco", "full_controls")
+    state_mapping = load_motion_contract("full_controls").state_mapping
     neutral = gamepad.gamepad_state()
 
     endpoint_checks = {}
     for group in ("axes", "scalars"):
-        for mapping in manifest["state_mapping"][group]:
+        for mapping in state_mapping[group]:
             gamepad.joint_data(mapping["joint"]).qpos[0] = mapping["upper"]
             mujoco.mj_forward(loaded.model, loaded.data)
             endpoint_checks[mapping["channel"]] = gamepad.gamepad_state().channel(
                 mapping["channel"]
             )
             gamepad.joint_data(mapping["joint"]).qpos[0] = 0.0
-    for mapping in manifest["state_mapping"]["splits"]:
+    for mapping in state_mapping["splits"]:
         for side, position in (
             ("negative_channel", mapping["lower"]),
             ("positive_channel", mapping["upper"]),
@@ -51,7 +51,7 @@ def main() -> None:
             )
             gamepad.joint_data(mapping["joint"]).qpos[0] = 0.0
 
-    event = manifest["state_mapping"]["physical_events"][0]
+    event = state_mapping["physical_events"][0]
     gamepad.joint_data(event["joint"]).qpos[0] = event["upper"]
     mujoco.mj_forward(loaded.model, loaded.data)
     physical_events = gamepad.physical_events()

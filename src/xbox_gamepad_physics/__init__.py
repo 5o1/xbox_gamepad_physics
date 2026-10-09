@@ -24,6 +24,7 @@ from .errors import (
     XboxGamepadPhysicsError,
 )
 from .profiles import BackendProfile, load_profile, require_physics_ready
+from .motion import MotionContract, MotionJoint, load_motion_contract
 from .resources import load_json_resource, resource_path
 from .state import (
     AXIS_COUNT,
@@ -61,6 +62,8 @@ __all__ = [
     "GamepadState",
     "MissingBackendDependencyError",
     "MissingResourceError",
+    "MotionContract",
+    "MotionJoint",
     "PhysicsNotReadyError",
     "PhysicalEventMapping",
     "ProfileError",
@@ -76,6 +79,7 @@ __all__ = [
     "UnsafeResourcePathError",
     "XboxGamepadPhysicsError",
     "load_json_resource",
+    "load_motion_contract",
     "load_profile",
     "require_physics_ready",
     "resource_path",

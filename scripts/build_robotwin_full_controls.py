@@ -26,6 +26,16 @@ VISUAL_ROOT = (
     / "visual"
 )
 LEFT_STICK_SOURCE = ROOT / "references" / "left_stick.json"
+COMMON_MOTION = (
+    ROOT
+    / "src"
+    / "xbox_gamepad_physics"
+    / "resource_data"
+    / "common"
+    / "xbox_one_s"
+    / "motion"
+    / "full_controls.json"
+)
 DEFAULT_OUTPUT = (
     ROOT
     / "src"
@@ -53,17 +63,6 @@ PART_BY_CONTROL = {
     "guide": "14_XboxButton_VISUAL_UNCALIBRATED",
     "y": "15_Y_Button_VISUAL_UNCALIBRATED",
 }
-
-W3C_TO_CANONICAL = {
-    0: "left_x", 1: "left_y", 2: "right_x", 3: "right_y",
-    4: "south", 5: "east", 6: "west", 7: "north",
-    8: "left_shoulder", 9: "right_shoulder",
-    10: "left_trigger", 11: "right_trigger",
-    12: "back", 13: "start", 14: "left_stick", 15: "right_stick",
-    16: "dpad_up", 17: "dpad_down", 18: "dpad_left", 19: "dpad_right",
-    20: "guide",
-}
-
 
 def _json(path: Path) -> dict:
     value = json.loads(path.read_text(encoding="utf-8"))
@@ -167,13 +166,23 @@ def _critical_damping(stiffness: float, effective_mass: float, ratio: float) -> 
 def build(output: Path) -> None:
     source = _json(SOURCE)
     _, profile, _ = build_kinematics()
+    motion = _json(COMMON_MOTION)
     visual = _json(VISUAL_ROOT / "manifest.json")
     left_stick = _json(LEFT_STICK_SOURCE)
     output.mkdir(parents=True, exist_ok=True)
     (output / "collision").mkdir(exist_ok=True)
     (output / "visual").mkdir(exist_ok=True)
 
+    motion_joints = {joint["name"]: joint for joint in motion["joints"]}
     joints = {joint["id"]: dict(joint) for joint in profile["joints"]}
+    if set(joints) != set(motion_joints):
+        raise ValueError("common motion contract and kinematic profile joint names differ")
+    for name, joint in joints.items():
+        common = motion_joints[name]
+        joint["type"] = common["type"]
+        joint["axis_source"] = common["axis"]
+        joint["limits"] = [common["lower"], common["upper"]]
+        joint["unit"] = common["unit"]
     nodes = {node["control"]: node for node in profile["nodes"]}
     scale = float(visual["meters_per_native_unit"])
     bounds = {
@@ -252,23 +261,23 @@ def build(output: Path) -> None:
     primitive_records = {"controller_body": []}
     body_mass = float(source["mass_policy"]["whole_controller_mass_kg"])
 
-    # Create the link graph before assigning masses and collisions.
+    # The public motion contract owns the articulation topology.
     link_graph = {}
-    final_link_by_control = {}
-    for control, node in nodes.items():
-        if control == "shell":
-            continue
-        joint_ids = node["joint_ids"]
-        parent = "controller_body"
-        for index, joint_id in enumerate(joint_ids):
-            child = control if index == len(joint_ids) - 1 else f"{joint_id}_frame"
-            if child not in link_elements:
-                link_elements[child] = ET.SubElement(robot, "link", name=child)
-                primitive_records[child] = []
-            origin = dynamics[joint_id]["pivot_source_m"] if index == 0 else [0, 0, 0]
-            link_graph[joint_id] = (parent, child, origin)
-            parent = child
-        final_link_by_control[control] = parent
+    for joint in motion["joints"]:
+        child = joint["child"]
+        if child not in link_elements:
+            link_elements[child] = ET.SubElement(robot, "link", name=child)
+            primitive_records[child] = []
+        link_graph[joint["name"]] = (
+            joint["parent"],
+            child,
+            joint["origin"],
+        )
+    final_link_by_control = {
+        control: motion_joints[node["joint_ids"][-1]]["child"]
+        for control, node in nodes.items()
+        if control != "shell"
+    }
 
     # Collision primitives and estimated mass properties.
     moving_mass = {}
@@ -404,42 +413,6 @@ def build(output: Path) -> None:
         output / "mobility.urdf", encoding="utf-8", xml_declaration=True
     )
 
-    axis_mappings = []
-    scalar_mappings = []
-    split_mappings = []
-    physical_events = []
-    neutral_epsilon = float(source["signal_policy"]["device_neutral_epsilon"])
-    stick_neutral_epsilon = float(source["signal_policy"]["stick_neutral_epsilon"])
-    for joint_id, joint in dynamics.items():
-        driver = joint["driver"]
-        if driver["kind"] == "linear_channel":
-            channel = W3C_TO_CANONICAL[int(driver["channel"])]
-            item = {
-                "channel": channel,
-                "joint": joint_id,
-                "lower": joint["limits"][0],
-                "upper": joint["limits"][1],
-            }
-            (axis_mappings if channel in {"left_x", "left_y", "right_x", "right_y"}
-             else scalar_mappings).append(item)
-            if channel not in {"left_x", "left_y", "right_x", "right_y"}:
-                item["neutral_epsilon"] = neutral_epsilon
-        elif driver["kind"] == "difference_channels":
-            split_mappings.append({
-                "negative_channel": W3C_TO_CANONICAL[int(driver["negative_channel"])],
-                "positive_channel": W3C_TO_CANONICAL[int(driver["positive_channel"])],
-                "joint": joint_id,
-                "lower": joint["limits"][0],
-                "upper": joint["limits"][1],
-            })
-        elif driver["kind"] == "physical_event":
-            physical_events.append({
-                "event": driver["event"],
-                "joint": joint_id,
-                "lower": joint["limits"][0],
-                "upper": joint["limits"][1],
-            })
-
     visual_binding = {
         "schema_version": 1,
         "source": "common/xbox_one_s/visual/manifest.json",
@@ -505,6 +478,7 @@ def build(output: Path) -> None:
         "parameter_status": source["parameter_status"],
         "hardware_calibrated": source["hardware_calibrated"],
         "source_record": "references/full_controls.json",
+        "motion_contract": "common/xbox_one_s/motion/full_controls.json",
         "joint_dynamics": [
             {
                 "name": name,
@@ -516,37 +490,6 @@ def build(output: Path) -> None:
             }
             for name, joint in dynamics.items()
         ],
-        "state_mapping": {
-            "axes": axis_mappings,
-            "scalars": scalar_mappings,
-            "splits": split_mappings,
-            "radial_groups": [
-                {
-                    "channels": ["left_x", "left_y"],
-                    "radius": 1.0,
-                    "neutral_epsilon": stick_neutral_epsilon,
-                },
-                {
-                    "channels": ["right_x", "right_y"],
-                    "radius": 1.0,
-                    "neutral_epsilon": stick_neutral_epsilon,
-                },
-            ],
-            "radial_source_groups": [
-                {
-                    "joints": ["dpad_horizontal", "dpad_vertical"],
-                    "radius": 1.0,
-                    "neutral_epsilon": neutral_epsilon,
-                }
-            ],
-            "physical_events": physical_events,
-            "neutral_policy": {
-                "stick_radial_epsilon": stick_neutral_epsilon,
-                "other_control_epsilon": neutral_epsilon,
-                "mode": source["signal_policy"]["device_neutral_mode"],
-                "status": "owner_selected_stick_deadzone_plus_solver_tolerance",
-            },
-        },
         "contact_material": left_stick["contact_material"],
         "visual_binding": visual_binding,
     }
@@ -556,8 +499,8 @@ def build(output: Path) -> None:
     print(json.dumps({
         "output": str(output),
         "joints": len(dynamics),
-        "game_channels": len(axis_mappings) + len(scalar_mappings) + 2 * len(split_mappings),
-        "physical_events": len(physical_events),
+        "game_channels": len(motion["bindings"]["axes"]) + len(motion["bindings"]["scalars"]) + 2 * len(motion["bindings"]["splits"]),
+        "physical_events": len(motion["bindings"]["physical_events"]),
         "body_mass_kg": body_mass,
     }))
 

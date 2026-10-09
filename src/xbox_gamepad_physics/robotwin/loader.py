@@ -28,6 +28,7 @@ from xbox_gamepad_physics.errors import (
     MissingBackendDependencyError,
     StateValidationError,
 )
+from xbox_gamepad_physics.motion import MotionJoint, load_motion_contract
 
 from .articulation import (
     XboxOneSArticulation,
@@ -67,6 +68,7 @@ class JointDynamics:
 class RoboTwinAssetDescription:
     urdf_path: Path
     joint_dynamics: tuple[JointDynamics, ...]
+    joint_motion: tuple[MotionJoint, ...]
     signal_controller: GamepadSignalController
     contact_material: "ContactMaterial"
     visual_binding: Mapping[str, Any]
@@ -179,8 +181,27 @@ def _validated_description(profile: str) -> RoboTwinAssetDescription:
                 f"joint {name!r} force_limit must be positive"
             )
         dynamics.append(item)
-    mapping = manifest.get("state_mapping")
-    if not isinstance(mapping, dict):
+    raw_motion_contract = manifest.get("motion_contract")
+    joint_motion: tuple[MotionJoint, ...] = ()
+    if raw_motion_contract is not None:
+        expected_motion_contract = f"common/xbox_one_s/motion/{profile}.json"
+        if raw_motion_contract != expected_motion_contract:
+            raise RoboTwinManifestError(
+                f"motion_contract must be {expected_motion_contract!r}"
+            )
+        motion_contract = load_motion_contract(profile)
+        joint_motion = motion_contract.joints
+        motion_names = set(motion_contract.joint_by_name)
+        if motion_names != names:
+            raise RoboTwinManifestError(
+                "common motion/joint_dynamics name mismatch: "
+                f"motion-only={sorted(motion_names - names)}, "
+                f"profile-only={sorted(names - motion_names)}"
+            )
+        mapping = motion_contract.state_mapping
+    else:
+        mapping = manifest.get("state_mapping")
+    if not isinstance(mapping, Mapping):
         raise RoboTwinManifestError("ready RoboTwin profile needs state_mapping")
     raw_axes = mapping.get("axes")
     if not isinstance(raw_axes, list) or not raw_axes:
@@ -425,6 +446,7 @@ def _validated_description(profile: str) -> RoboTwinAssetDescription:
     description = RoboTwinAssetDescription(
         urdf_path,
         tuple(dynamics),
+        joint_motion,
         signal_controller,
         contact,
         visual_binding,
@@ -675,6 +697,7 @@ def _extract_one_articulation(load_result: Any) -> Any:
 def _configure_joints(
     articulation: Any,
     dynamics: tuple[JointDynamics, ...],
+    joint_motion: tuple[MotionJoint, ...],
     signal_controller: GamepadSignalController,
 ) -> XboxOneSArticulation:
     wrapper = XboxOneSArticulation(
@@ -683,8 +706,17 @@ def _configure_joints(
         signal_controller,
     )
     joints = {joint_name(joint): joint for joint in articulation.get_active_joints()}
+    motion_by_name = {item.name: item for item in joint_motion}
     for configuration in dynamics:
         joint = joints[configuration.name]
+        motion = motion_by_name.get(configuration.name)
+        if motion is not None:
+            set_limits = getattr(joint, "set_limits", None)
+            if not callable(set_limits):
+                raise JointConfigurationError(
+                    f"joint {configuration.name!r} cannot apply common motion limits"
+                )
+            set_limits([[motion.lower, motion.upper]])
         set_drive = getattr(joint, "set_drive_properties", None)
         set_friction = getattr(joint, "set_friction", None)
         set_target = getattr(joint, "set_drive_target", None)
@@ -737,8 +769,9 @@ def load_into_scene(
     ``fixed_root`` is forwarded to the SAPIEN URDF loader.
 
     Loading bypasses RoboTwin's asset-directory helpers and articulation
-    wrapper. Consequently the mass, center of mass, inertia, joint dynamics,
-    state mapping and visual binding remain owned by this backend package.
+    wrapper. Mass, center of mass, inertia, joint dynamics and visual binding
+    remain backend resources; joint limits and signal constraints come from
+    the public common motion contract.
     """
 
     if type(fixed_root) is not bool:
@@ -784,5 +817,6 @@ def load_into_scene(
     return _configure_joints(
         articulation,
         description.joint_dynamics,
+        description.joint_motion,
         description.signal_controller,
     )

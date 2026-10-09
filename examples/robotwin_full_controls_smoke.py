@@ -21,7 +21,8 @@ def main() -> None:
     import numpy as np
     import sapien
 
-    from xbox_gamepad_physics.resources import resource_path
+    from xbox_gamepad_physics import load_motion_contract
+    from xbox_gamepad_physics.resources import load_json_resource, resource_path
     from xbox_gamepad_physics.robotwin import load_into_scene
     from xbox_gamepad_physics.state import GamepadState
 
@@ -34,11 +35,9 @@ def main() -> None:
         profile="full_controls",
         attach_visual=False,
     )
-    manifest = json.loads(
-        resource_path(
-            "robotwin", "full_controls", "manifest.json"
-        ).read_text()
-    )
+    manifest = load_json_resource("robotwin", "full_controls")
+    motion = load_motion_contract("full_controls")
+    state_mapping = motion.state_mapping
     joint_limits = _joint_limits(resource_path(
         "robotwin", "full_controls", "mobility.urdf"
     ))
@@ -46,12 +45,12 @@ def main() -> None:
     neutral = gamepad.gamepad_state()
     endpoint_checks = {}
     for mapping_group in ("axes", "scalars"):
-        for mapping in manifest["state_mapping"][mapping_group]:
+        for mapping in state_mapping[mapping_group]:
             gamepad.set_joint_positions({mapping["joint"]: mapping["upper"]})
             state = gamepad.gamepad_state()
             endpoint_checks[mapping["channel"]] = state.channel(mapping["channel"])
             gamepad.set_joint_positions({mapping["joint"]: 0.0})
-    for mapping in manifest["state_mapping"]["splits"]:
+    for mapping in state_mapping["splits"]:
         for side, position in (
             ("negative_channel", mapping["lower"]),
             ("positive_channel", mapping["upper"]),
@@ -61,7 +60,7 @@ def main() -> None:
             endpoint_checks[mapping[side]] = state.channel(mapping[side])
             gamepad.set_joint_positions({mapping["joint"]: 0.0})
 
-    event = manifest["state_mapping"]["physical_events"][0]
+    event = state_mapping["physical_events"][0]
     gamepad.set_joint_positions({event["joint"]: event["upper"]})
     physical_events = gamepad.physical_events()
     gamepad.set_joint_positions({event["joint"]: 0.0})

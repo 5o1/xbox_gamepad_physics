@@ -48,6 +48,10 @@
     "reason": {
       "type": ["string", "null"]
     },
+    "motion_contract": {
+      "type": "string",
+      "pattern": "^common/xbox_one_s/motion/[A-Za-z0-9._-]+\\.json$"
+    },
     "joint_dynamics": {
       "type": "array",
       "items": {

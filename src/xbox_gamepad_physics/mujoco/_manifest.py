@@ -17,6 +17,7 @@ from xbox_gamepad_physics.controller import (
     SplitSignalMapping,
 )
 from xbox_gamepad_physics.errors import AssetImportError, MissingResourceError
+from xbox_gamepad_physics.motion import load_motion_contract
 from xbox_gamepad_physics.profiles import require_physics_ready
 from xbox_gamepad_physics.resources import load_json_resource, resource_path
 
@@ -73,12 +74,26 @@ def load_runtime_manifest(profile: str) -> RuntimeManifest:
             f"MuJoCo profile {profile!r} has no named joint or sensor bindings."
         )
 
-    try:
-        signal_controller = _signal_controller(raw.get("state_mapping"), set(joints))
-    except (TypeError, ValueError) as exc:
-        raise AssetImportError(
-            f"MuJoCo profile {profile!r} has invalid state_mapping: {exc}"
-        ) from exc
+    motion_reference = raw.get("motion_contract")
+    if motion_reference is not None:
+        expected = f"common/xbox_one_s/motion/{profile}.json"
+        if motion_reference != expected:
+            raise AssetImportError(
+                f"MuJoCo profile {profile!r} motion_contract must be {expected!r}."
+            )
+        motion = load_motion_contract(profile)
+        if set(motion.joint_by_name) != set(joints):
+            raise AssetImportError(
+                f"MuJoCo profile {profile!r} bindings do not match common motion joints."
+            )
+        signal_controller = motion.signal_controller
+    else:
+        try:
+            signal_controller = _signal_controller(raw.get("state_mapping"), set(joints))
+        except (TypeError, ValueError) as exc:
+            raise AssetImportError(
+                f"MuJoCo profile {profile!r} has invalid state_mapping: {exc}"
+            ) from exc
 
     return RuntimeManifest(
         profile=profile,
