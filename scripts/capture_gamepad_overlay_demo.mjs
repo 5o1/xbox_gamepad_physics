@@ -54,6 +54,7 @@ try {
   const url = new URL(viewerUrl);
   url.searchParams.set('source', 'canonical');
   url.searchParams.set('theme', 'research');
+  if (transparent) url.searchParams.set('view', 'overlay');
   const navigation = await client.call('Page.navigate', {url: url.href});
   assert.equal(navigation.errorText, undefined);
 
