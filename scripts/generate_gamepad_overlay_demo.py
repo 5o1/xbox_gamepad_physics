@@ -22,7 +22,7 @@ from xbox_gamepad_physics.controller import (  # noqa: E402
 from xbox_gamepad_physics.resources import load_json_resource  # noqa: E402
 
 
-DEFAULT_OUTPUT = ROOT / "results" / "gamepad_overlay_left_stick_circle" / "trace.json"
+DEFAULT_OUTPUT = ROOT / "build" / "experiments" / "gamepad_overlay_left_stick_circle" / "trace.json"
 
 
 def _smoothstep(value: float) -> float:

@@ -48,7 +48,7 @@ scene_path = (
 )
 hdri_record_path = root / hdri_record["source_record"]
 model_record_path = root / "references/xbox_one_s_material_validation.json"
-scene_audit_path = root / "results/xbox_official_import_comparison/official_import_4.5.9_LTS/audit.json"
+scene_audit_path = root / "build/experiments/xbox_official_import_comparison/official_import_4.5.9_LTS/audit.json"
 reference_record_path = root / "references/sketchfab_render_pipeline_audit.json"
 
 

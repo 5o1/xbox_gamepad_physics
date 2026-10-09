@@ -14,7 +14,7 @@ import {
 
 const viewerUrl = process.argv[2] ?? 'http://127.0.0.1:8770/viewer/gamepad_overlay/index.html';
 const cdpUrl = process.argv[3] ?? 'http://127.0.0.1:9321';
-const tracePath = process.argv[4] ?? 'results/gamepad_overlay_left_stick_circle/trace.json';
+const tracePath = process.argv[4] ?? 'build/experiments/gamepad_overlay_left_stick_circle/trace.json';
 const outputDirectory = process.argv[5] ?? '/tmp/gamepad-overlay-circle-frames';
 const viewportWidth = Number.parseInt(process.argv[6] ?? '1280', 10);
 const viewportHeight = Number.parseInt(process.argv[7] ?? '720', 10);

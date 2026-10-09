@@ -1,6 +1,6 @@
 {
   "status": "tested_not_adopted_as_mechanical_pivot",
-  "input": "results/legacy_casper_1914_width_scaled_1708_proxy/inventory.json and its SHA256-pinned meshes",
+  "input": "build/experiments/legacy_casper_1914_width_scaled_1708_proxy/inventory.json and its SHA256-pinned meshes",
   "algorithm_reference": "https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.least_squares.html",
   "algorithm_scope": "Nonlinear least-squares solver, not evidence of Xbox hinge construction",
   "derivation": "Sphere: squared distance to center equals radius squared. Algebraic linear least squares initializes center/radius; geometric residual is norm(point-center)-radius. Center and scale data before solving.",
@@ -8,7 +8,7 @@
   "validation": "Evaluate vertex radial residuals plus triangle-centroid radial residuals. Centroids are a geometric discretization check, not independent measured validation data.",
   "numerical_controls": "Normalized solver ftol/xtol/gtol 1e-12; numerical convergence only, not a physical acceptance tolerance",
   "harness": ["scripts/fit_stick_geometry.py", "tests/test_sphere_fit.py"],
-  "result": "results/stick_sphere_fit.json",
+  "result": "build/experiments/stick_sphere_fit.json",
   "decision": "Do not choose the best-looking center: components produce very different centers and small residual alone does not identify a hinge. Retain target pivot null.",
   "next_evidence": "1708 mechanical drawing or calibrated multi-pose geometry/photographs from the same stick; force measurements alone do not locate its pivot.",
   "physical_pivot": null,

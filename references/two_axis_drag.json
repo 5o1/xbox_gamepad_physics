@@ -18,6 +18,6 @@
   },
   "limits": "No circular mechanical envelope inferred, no force/contact or spring behavior; exact physical constraints still require source-backed target configuration. Local solver may stop short at a singular view or signal limit.",
   "harness": ["tests/test_drag2d.mjs", "tests/browser_harness.mjs"],
-  "browser_result": "results/browser_harness.json: one actual pointer movement changes both configured stick channels; releasing resets both. Explicit synthetic mechanism only, not real-device acceptance.",
+  "browser_result": "build/experiments/browser_harness.json: one actual pointer movement changes both configured stick channels; releasing resets both. Explicit synthetic mechanism only, not real-device acceptance.",
   "target_parameter_changes": []
 }

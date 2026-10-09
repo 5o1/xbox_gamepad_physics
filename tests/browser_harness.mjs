@@ -41,7 +41,7 @@ const cdpUrl=process.env.XBOX_VIEWER_CDP_URL ?? 'http://127.0.0.1:9227';
 const viewerUrl=process.env.XBOX_VIEWER_URL ?? 'http://127.0.0.1:9876/';
 const navigation=makeCacheBustedNavigationUrl(viewerUrl);
 const requestedNavigationUrl=navigation.url;
-const output=await artifactOutput({publish,publishUrl:new URL('../results/',import.meta.url),temporaryPrefix:'xbox-viewer-harness-'});
+const output=await artifactOutput({publish,publishUrl:new URL('../build/experiments/',import.meta.url),temporaryPrefix:'xbox-viewer-harness-'});
 const normalizedViewerPage=raw=>{
   try{
     const url=new URL(raw);
@@ -108,7 +108,6 @@ try{
   const registryVariant=registry.derived_variants?.[variantId];
   assert.ok(registryVariant,`Variant absent from canonical asset registry: ${variantId}`);
   assert.equal(registryVariant.source_candidate_id,expectedVariant.source_candidate_id,'Variant source candidate does not match expected identity');
-  assert.equal(registryVariant.inventory,'../results/legacy_casper_1914_width_scaled_1708_proxy/inventory.json','Variant registry points at an unexpected inventory');
   assert.equal(registry.primary_appearance_candidate_id==='xbox_one_s_batonyrobson_a62cf747',true,'Unexpected primary appearance candidate');
   assert.notEqual(registry.primary_appearance_candidate_id,registryVariant.source_candidate_id,'Legacy viewer fixture must not be presented as the primary candidate');
   const inventoryResponse=await fetch(new URL('/assets/inventory.json',viewerUrl),{signal:AbortSignal.timeout(20000)});

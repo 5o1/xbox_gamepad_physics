@@ -3,11 +3,11 @@
   "profile_id": "xbox_one_s_batonyrobson_appearance_matched_estimated_v0",
   "status": "appearance_matched_estimated_kinematics_not_physics",
   "source_bindings": {
-    "static_inventory": "results/xbox_one_s_batonyrobson_UNVERIFIED/static_visual_parts_inventory_UNCALIBRATED.json",
+    "static_inventory": "assets/xbox_one_s/visual/inventory.json",
     "source_glb_sha256": "5c5671c83a9cf15db4b8399e7010aa7d5cde915687ceb348b583eb00b0ed24e2",
     "static_glb": "Xbox_One_S_BatonyRobson_STATIC_VISUAL_UNCALIBRATED.glb",
     "static_glb_sha256": "7548b189051b48d8fded7de65079763c923fe0a48ad9e1e36b6e2b89e31fa7ee",
-    "artist_motion_summary": "results/xbox_one_s_batonyrobson_UNVERIFIED/artist_animation_summary_UNCALIBRATED.json",
+    "artist_motion_summary": "references/xbox_one_s_artist_animation_summary.json",
     "full_artist_motion_audit_sha256": "4c97d513d66f008e5cbc2b375d3c98692cfb495ecf32178c42d399304b31e6df",
     "full_artist_motion_audit_gpu_path": "/path/to/gpu-data/<gpu-project>/controller-candidates/xbox_one_s_batonyrobson_UNVERIFIED/harness_repo/results/artist_animation_audit_relative_to_frame0_UNCALIBRATED.json",
     "dimension_evidence": "references/1708_dimensions.json",

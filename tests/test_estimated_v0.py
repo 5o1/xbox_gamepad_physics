@@ -116,8 +116,8 @@ class EstimatedV0Test(unittest.TestCase):
 
     def test_checked_in_generated_outputs_are_fresh(self):
         for path, value in zip(
-            (builder.EVIDENCE_OUTPUT, builder.PROFILE_OUTPUT, builder.AUDIT_OUTPUT),
-            (self.evidence, self.profile, self.audit),
+            (builder.EVIDENCE_OUTPUT, builder.PROFILE_OUTPUT),
+            (self.evidence, self.profile),
         ):
             self.assertEqual(path.read_bytes(), builder.encoded(value), f"stale generated output: {path}")
 

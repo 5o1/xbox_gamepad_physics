@@ -21,7 +21,7 @@
       "title": "Xbox One S Controller/Gamepad (Animated)",
       "author": "BatonyRobson",
       "source": "../references/xbox_replacement_candidates.json",
-      "front_render": "../results/xbox_one_s_batonyrobson_UNVERIFIED/pos_z.png",
+      "front_render": "xbox_one_s/render/boiler_room_vertical_fov35_strength_1p0.png",
       "status": "target_appearance_approved_physical_calibration_pending",
       "user_appearance_acknowledged": true,
       "target_product_match_confirmed_by_user": true,
@@ -42,7 +42,7 @@
       },
       "mesh_objects": 16,
       "visual_manifest": {
-        "path": "results/xbox_one_s_batonyrobson_UNVERIFIED/inventory.json",
+        "path": "assets/xbox_one_s/visual/inventory.json",
         "artifacts": {}
       },
       "gpu_root": "/path/to/gpu-data/<gpu-project>/controller-candidates/xbox_one_s_batonyrobson_UNVERIFIED"
@@ -52,7 +52,6 @@
       "upstream_model_label": "CasperH2O/3DControllerModels Microsoft Xbox One.blend",
       "display_identity": "Feature-inferred Xbox Series X|S / Model 1914 appearance candidate",
       "source": "../references/geometry_review.json",
-      "front_render": "../results/legacy_casper_1914_visual_parts/identity_front.png",
       "status": "archived_on_gpu_not_distributed",
       "identity_basis": "inferred_from_rendered_features_not_manufacturer_verified",
       "controller_revision_verified": false,
@@ -70,32 +69,15 @@
         "reason": "This legacy visual asset has no target metric registration."
       },
       "original_part_count": 44,
-      "visual_manifest": {
-        "path": "results/legacy_casper_1914_visual_parts/inventory.json",
-        "artifacts": {
-          "visual_obj": {
-            "mode": "object_files",
-            "manifest_entry": "objects",
-            "metric_scale": {
-              "value": null,
-              "unit": "m/native_unit",
-              "status": "unknown",
-              "evidence": [],
-              "harness": "audit_spec",
-              "reason": "Upstream declares the model non-dimensional; no metric scale with quantified uncertainty is established."
-            }
-          }
-        }
-      },
       "gpu_root": "/path/to/gpu-data/<gpu-project>/xbox-physics-v1/Xbox_Series_XS_1914_candidate_original_44parts_UNCALIBRATED"
     }
   },
   "derived_variants": {
     "xbox_one_s_batonyrobson_appearance_matched_estimated_v0": {
       "source_candidate_id": "xbox_one_s_batonyrobson_a62cf747",
-      "inventory": "../results/xbox_one_s_batonyrobson_UNVERIFIED/static_visual_parts_inventory_UNCALIBRATED.json",
+      "inventory": "xbox_one_s/visual/inventory.json",
       "visual_manifest": {
-        "path": "results/xbox_one_s_batonyrobson_UNVERIFIED/static_visual_parts_inventory_UNCALIBRATED.json",
+        "path": "assets/xbox_one_s/visual/inventory.json",
         "artifacts": {
           "static_visual_parts": {
             "mode": "object_files",
@@ -199,24 +181,6 @@
     },
     "legacy_casper_1914_width_scaled_proxy": {
       "source_candidate_id": "xbox_series_1914_casperh2o_visual",
-      "inventory": "../results/legacy_casper_1914_width_scaled_1708_proxy/inventory.json",
-      "visual_manifest": {
-        "path": "results/legacy_casper_1914_width_scaled_1708_proxy/inventory.json",
-        "artifacts": {
-          "width_scaled_obj": {
-            "mode": "object_files",
-            "manifest_entry": "objects",
-            "metric_scale": {
-              "value": null,
-              "unit": "m/native_unit",
-              "status": "unknown",
-              "evidence": [],
-              "harness": "audit_spec",
-              "reason": "The proxy is width-fitted, but the manufacturer publishes no dimensional tolerance and the source shape is a rejected revision; target metric-scale uncertainty is unresolved."
-            }
-          }
-        }
-      },
       "gpu_directory": "/path/to/gpu-data/<gpu-project>/xbox-physics-v1/LEGACY_1914_shape_scaled_to_1708_width_NO_SHARE_NOT_VALIDATED",
       "purpose": "viewer software regression only",
       "viewer_entry": "../viewer/index.html",
@@ -271,9 +235,6 @@
       "hardware_calibrated": false,
       "source": "../references/robotwin_left_stick_estimated_v0.json",
       "manifest": "../src/xbox_gamepad_physics/resource_data/robotwin/left_stick_estimated_v0/manifest.json",
-      "validation_result": "../results/robotwin_left_stick_estimated_v0/result.json",
-      "sensitivity_result": "../results/robotwin_left_stick_estimated_v0/sensitivity.json",
-      "review_video": "../results/robotwin_left_stick_estimated_v0/render/left_stick_contact_probe.mp4",
       "limitations": [
         "Mass, damping and contact material include explicitly labeled simulation estimates.",
         "The reference stick component has not been identified as the installed Xbox part.",
@@ -289,8 +250,7 @@
       "status": "implemented_pending_user_review_and_hardware_calibration",
       "hardware_calibrated": false,
       "source": "../references/full_controls_estimated_v0.json",
-      "manifest": "../src/xbox_gamepad_physics/resource_data/robotwin/full_controls_estimated_v0/manifest.json",
-      "nonvisual_result": "../results/robotwin_full_controls_estimated_v0/result.json"
+      "manifest": "../src/xbox_gamepad_physics/resource_data/robotwin/full_controls_estimated_v0/manifest.json"
     },
     "mujoco_full_controls_estimated_v0": {
       "backend": "mujoco",
@@ -299,17 +259,13 @@
       "status": "implemented_pending_user_review_and_hardware_calibration",
       "hardware_calibrated": false,
       "source": "../references/full_controls_estimated_v0.json",
-      "manifest": "../src/xbox_gamepad_physics/resource_data/mujoco/full_controls_estimated_v0/manifest.json",
-      "nonvisual_result": "../results/mujoco_full_controls_estimated_v0/result.json",
-      "contact_result": "../results/mujoco_full_controls_estimated_v0/contact_result.json"
+      "manifest": "../src/xbox_gamepad_physics/resource_data/mujoco/full_controls_estimated_v0/manifest.json"
     }
   },
   "evidence": {
     "source_catalog": "../references/catalog.json",
     "mechanical_structure": "../references/mechanical_structure.json",
     "geometry_review": "../references/geometry_review.json",
-    "legacy_visual_inventory": "../results/legacy_casper_1914_visual_parts/inventory.json",
-    "legacy_geometry_audit": "../results/legacy_casper_1914_visual_parts/mesh_audit.json",
     "whole_controller_dimensions": "../references/1708_dimensions.json",
     "target_model": {
       "document": "../references/catalog.json",
@@ -319,7 +275,6 @@
   },
   "reference_stick_envelope": {
     "specification": "../references/stick_envelope.json",
-    "harness_result": "../results/stick_envelope.json",
     "scope": "RKJXV122400R angular upper-envelope only; not installed Xbox motion or dynamics"
   },
   "unapproved_collision_candidates": {
@@ -328,8 +283,6 @@
     "shape_revision_match": false,
     "scope": "ABXY only; not a replacement for full controller",
     "gpu_directory": "/path/to/gpu-data/<gpu-project>/xbox-physics-v1/LEGACY_1914_native_unit_button_collision_candidates_NOT_VALIDATED",
-    "audit": "../results/legacy_casper_1914_native_unit_button_collision_candidates/collision_audit.json",
-    "assembly_diagnostic": "../results/legacy_casper_1914_native_unit_button_collision_candidates/assembly_audit.json",
     "method": "../references/collision_method.json",
     "approved_for_simulation": false
   },

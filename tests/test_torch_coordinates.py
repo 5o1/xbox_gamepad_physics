@@ -34,7 +34,7 @@ class CoordinateTests(unittest.TestCase):
         torch.testing.assert_close(self.x.grad, expected)
 
     def test_viewer_reference(self):
-        path = Path(__file__).resolve().parents[1] / 'results/coordinate_reference.json'
+        path = Path(__file__).resolve().parent / 'fixtures/coordinate_reference.json'
         data = json.loads(path.read_text())
         model = CoordinateMap(data['joints'])
         x = torch.tensor(data['states'], dtype=torch.float64)

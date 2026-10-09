@@ -69,7 +69,7 @@ export async function artifactOutput({publish, publishUrl, temporaryPrefix}) {
           if (error.code !== 'ENOENT') throw error;
         }
       }
-      // Nothing under results/ changes until every staged file has a complete
+      // Nothing under build/experiments/ changes until every staged file has a complete
       // same-filesystem temporary copy.
       for (const item of prepared) {
         try {

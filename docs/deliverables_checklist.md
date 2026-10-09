@@ -13,7 +13,7 @@
 - [x] 在 RoboTwin 实验台、默认灯光和 head camera 中渲染
 - [x] 用户确认外观通过
 
-记录：[RoboTwin 视觉验收](../results/robotwin_visual_stage/README.md)。
+记录：本地实验材料生成在 `build/experiments/robotwin_visual_stage/`，不进入 Git。
 
 ### A2. 左摇杆物理闭环（第一版已通过）
 
@@ -62,7 +62,7 @@
 - [ ] 在 MuJoCo 原生场景生成最终对比图
 - [ ] 用户确认 MuJoCo 外观通过
 
-参考外观：[Boiler Room/Cycles 验收图](../results/xbox_official_import_comparison/official_import_4.5.9_LTS/reference_matched_cycles_probe/boiler_room_vertical_fov35_strength_1p0.png)。
+参考外观：[Boiler Room/Cycles 验收图](../assets/xbox_one_s/render/boiler_room_vertical_fov35_strength_1p0.png)。
 
 ### B2. 左摇杆物理闭环
 

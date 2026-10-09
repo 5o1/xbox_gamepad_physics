@@ -3,8 +3,7 @@
 本文件只收集需要用户视觉确认、实物测量或硬件对照的项目。实现工作继续推进，
 不会因本清单停下。自动测试结果不在这里冒充用户验收。
 
-逐项视频已经整理到
-[`results/full_controls_user_review/README.md`](../results/full_controls_user_review/README.md)。
+逐项视频生成到 `build/experiments/full_controls_user_review/`，不进入 Git。
 其中包含六组双后端运动视频和一组实体球接触视频；以下复选框仍由用户确认。
 
 ## 实物参数

@@ -27,7 +27,7 @@
     "allowed_use": "geometry inspection only; no mass, contact material or simulator default assignments"
   },
   "assembly_diagnostic": {
-    "source": "results/legacy_casper_1914_visual_parts/inventory.json and its pinned Blender source hash",
+    "source": "build/experiments/legacy_casper_1914_visual_parts/inventory.json and its pinned Blender source hash",
     "algorithm_url": "https://trimesh.org/trimesh.proximity.html#trimesh.proximity.closest_point_naive",
     "version_scope": "Online API documentation currently 5.1.1; executed implementation version is recorded in results and tested on synthetic geometry",
     "grouping": "For each ABXY, compare Button-only hull to named letter, Button, Interior and Interior2 objects together. This grouping is diagnostic, not approved mechanical connectivity.",

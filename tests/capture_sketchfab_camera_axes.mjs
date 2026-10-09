@@ -38,7 +38,7 @@ try {
     new URL(navigation.url).origin,
     sourceSpecifications,
   ));
-  output=await artifactOutput({publish,publishUrl:new URL('../results/xbox_sketchfab_viewer_reference/camera_axes/',import.meta.url),temporaryPrefix:'xbox-sketchfab-camera-axes-'});
+  output=await artifactOutput({publish,publishUrl:new URL('../build/experiments/xbox_sketchfab_viewer_reference/camera_axes/',import.meta.url),temporaryPrefix:'xbox-sketchfab-camera-axes-'});
   const cache=await prepareUncachedNetwork(call);
   await call('Runtime.enable');
   await call('Page.enable');

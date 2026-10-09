@@ -32,7 +32,7 @@
     "scripts/render_color_management_ablation.py",
     "scripts/render_licensed_ibl_sweep.py"
   ],
-  "local_review": "../results/xbox_official_import_comparison/review.html",
+  "local_review": "../build/experiments/xbox_official_import_comparison/review.html",
   "gpu_blend": "/path/to/gpu-data/<gpu-project>/controller-candidates/xbox_one_s_batonyrobson_UNVERIFIED/official_import_4.5.9_LTS/Xbox_One_S_BatonyRobson_MATERIAL_REVIEW_UNCALIBRATED.blend",
   "verified": ["same original file hash", "16 source mesh objects", "no vertex colors", "same geometry and UV hashes across importers", "4.5 specular intensity texture reaches Principled shader", "base color / alpha / normal / roughness / metallic texture paths present", "official Sketchfab Viewer API renders the source model with the expected colors without material edits", "public viewer environment state returned enabled=true, exposure=1.543276048228761, lightIntensity=3, rotation=0, shadowEnabled=false", "official animation paused and sought to t=0 before capture", "stable front camera request and returned camera agree after waiting for the end-animation callback", "Blender vertical-FoV probe and official screenshot have the same thresholded bright-shell bounding box: 906x652+359+194"],
   "not_verified": ["website pixel equivalence", "exact HDRI/background/postprocess reproduction", "equivalence of glTF baked AO to Cycles lighting"],
@@ -46,8 +46,8 @@
     "licensed_ibl_test": "Poly Haven Boiler Room CC0 changes white balance and surface contrast substantially, confirming the lighting hypothesis, but its warm/high-dynamic response does not match Industrial Room and remains diagnostic only."
   },
   "official_viewer_reference": {
-    "file": "results/xbox_sketchfab_viewer_reference/front.png",
-    "runtime": "results/xbox_sketchfab_viewer_reference/runtime.json",
+    "file": "build/experiments/xbox_sketchfab_viewer_reference/front.png",
+    "runtime": "build/experiments/xbox_sketchfab_viewer_reference/runtime.json",
     "source": "Sketchfab Viewer API 1.12.1, public model, no material edits",
     "camera_position": [-0.03751669638838109, -0.5597505647492922, 4.206621134931694],
     "camera_target": [-0.03751669638838028, 0.24024943525070927, -0.2933788650683066],

@@ -70,13 +70,13 @@ npm run gamepad-overlay
 打开以下地址可循环播放左摇杆单位圆轨迹：
 
 ```text
-http://127.0.0.1:8770/viewer/gamepad_overlay/index.html?source=canonical&trace=/results/gamepad_overlay_left_stick_circle/trace.json&autoplay=1
+http://127.0.0.1:8770/viewer/gamepad_overlay/index.html?source=canonical&trace=/build/experiments/gamepad_overlay_left_stick_circle/trace.json&autoplay=1
 ```
 
 页面同时显示关节角、`left_x/left_y`、信号半径和虚拟摇杆位置。项目适配器只接受
 `sdl3-gamepad-core-v1` 的 32 维值、两个 mask 和 `device_id`，不会按 W3C 下标猜测输入。
-正式演示视频以 RoboTwin/SAPIEN 手柄为主画面，并把透明虚拟手柄叠加在右下角：
-[左摇杆单位圆演示](results/gamepad_overlay_left_stick_circle/left_stick_circle_overlay.mp4)。
+正式演示视频以 RoboTwin/SAPIEN 手柄为主画面，并把透明虚拟手柄叠加在右下角。
+视频生成到 `build/experiments/gamepad_overlay_left_stick_circle/`，不进入 Git。
 圆周轨迹作为运动学测试输入写入 articulation；渲染循环随后读回实际 `qpos`，调用
 `GamepadSignalController` 生成 `observed_trace.json`，overlay 只消费该读回记录。该演示
 验证关节状态到信号的链路，不包含手指接触或动力学驱动声明。
@@ -91,7 +91,7 @@ http://127.0.0.1:8770/viewer/gamepad_overlay/index.html?source=canonical&trace=/
 - [完整控件使用说明](docs/full_controls.md)：20-DOF 双后端资产、信号接口和运行记录。
 - [MuBlE 适配器](src/xbox_gamepad_physics/muble/)：从公共 MuJoCo 接口导出 body pose，并驱动已验收 Blender 对象。
 - [待统一确认与实测清单](docs/pending_user_review.md)：延后处理的视觉确认和硬件测量。
-- [完整控件逐项验收视频](results/full_controls_user_review/README.md)：六组双后端运动对照和实体球接触材料。
+- 完整控件逐项验收材料：生成到 `build/experiments/full_controls_user_review/`，不进入 Git。
 - [estimated-v0 来源](references/appearance_matched_estimated_v0.json)：估计运动学的来源、推导和限制。
 - [estimated-v0 profile](assets/appearance_matched_estimated_v0/viewer_profile.json)：viewer 使用的运动配置。
 - [官方尺寸记录](references/1708_dimensions.json)：整体尺寸及其适用边界。
@@ -111,9 +111,9 @@ http://127.0.0.1:8770/viewer/gamepad_overlay/index.html?source=canonical&trace=/
 - `viewer/` 保存浏览器检查器；
 - `scripts/` 保存构建、转换和审计程序；
 - `tests/` 保存当前行为的回归测试；
-- `results/` 保存已审阅结果和历史实验报告。
+- `build/experiments/` 保存本地实验构建产物，不进入 Git。
 
-`results/` 中的实验报告保留其生成时的提交和环境含义，不自动代表当前 HEAD 已通过。
+`build/experiments/` 中的材料只代表对应运行，不自动代表当前 HEAD 已通过。
 
 ## 快速检查
 

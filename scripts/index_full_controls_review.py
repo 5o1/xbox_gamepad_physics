@@ -8,7 +8,7 @@ import subprocess
 
 
 ROOT = Path(__file__).resolve().parents[1]
-RESULTS = ROOT / "results" / "full_controls_user_review"
+RESULTS = ROOT / "build" / "experiments" / "full_controls_user_review"
 GROUPS = (
     "sticks",
     "face_buttons",

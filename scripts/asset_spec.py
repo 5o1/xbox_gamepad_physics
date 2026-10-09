@@ -438,11 +438,6 @@ def main():
     report = audit(current, catalog)
     if args.output is not None:
         output = args.output.resolve()
-        results_root = (ROOT / "results").resolve()
-        if output == results_root or results_root in output.parents:
-            parser.error(
-                "experiment reports are protected; choose an output outside results/"
-            )
         _atomic_json(output, report)
     print(json.dumps({
         "schema_valid": report["schema_valid"],

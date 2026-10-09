@@ -31,7 +31,7 @@ try{
   recordSourceResponse(sourceResponses,message,new URL(navigation.url).origin,sourceSpecifications);
   if(['Network.loadingFailed','Runtime.consoleAPICalled','Runtime.exceptionThrown'].includes(message.method))events.push(message);
  });
- output=await artifactOutput({publish,publishUrl:new URL('../results/xbox_sketchfab_viewer_reference/',import.meta.url),temporaryPrefix:'xbox-sketchfab-reference-'});
+ output=await artifactOutput({publish,publishUrl:new URL('../build/experiments/xbox_sketchfab_viewer_reference/',import.meta.url),temporaryPrefix:'xbox-sketchfab-reference-'});
  const cache=await prepareUncachedNetwork(call);
  await call('Runtime.enable');await call('Page.enable');
  await call('Emulation.setDeviceMetricsOverride',{width:1600,height:900,deviceScaleFactor:1,mobile:false});

@@ -20,6 +20,7 @@ Thumbs.db
 build/
 dist/
 *.egg-info/
+/results/
 cache/
 downloads/
 input/
@@ -58,12 +59,13 @@ lighting/
 !assets/xbox_one_s/visual/Xbox_One_S_BatonyRobson_STATIC_VISUAL_UNCALIBRATED.glb
 !assets/xbox_one_s/source/xbox_one_s_controllergamepad_animated.glb
 !assets/xbox_one_s/render/Xbox_One_S_approved_cycles.blend
+!assets/xbox_one_s/render/boiler_room_vertical_fov35_strength_1p0.png
 !src/xbox_gamepad_physics/resource_data/common/xbox_one_s/visual/*.gltf
 !src/xbox_gamepad_physics/resource_data/common/xbox_one_s/visual/meshes.bin
 !src/xbox_gamepad_physics/resource_data/mujoco/visual_v0/meshes/*.obj
 
 # Third-party reference captures retained outside Git. Their URLs and hashes are
-# recorded under sources/; absence here is intentional, not lost evidence.
+# recorded under references/; absence here is intentional, not lost evidence.
 results/1708_ifixit_front.jpg
 results/xbox_official_import_comparison/sketchfab_public_embed.html
 results/xbox_official_import_comparison/sketchfab_official_thumbnail.jpeg

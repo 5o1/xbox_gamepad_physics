@@ -113,22 +113,5 @@ class RoboTwinFullControlsAssetTest(unittest.TestCase):
         collision = json.loads((PROFILE / "collision" / "manifest.json").read_text())
         self.assertAlmostEqual(sum(collision["mass_kg"].values()), 0.28, places=12)
 
-    def test_recorded_nonvisual_sapien_run_covers_full_interface(self):
-        result = json.loads(
-            (
-                ROOT / "results" / "robotwin_full_controls_estimated_v0" / "result.json"
-            ).read_text()
-        )
-        self.assertEqual(result["joint_count"], 20)
-        self.assertEqual(result["available_game_channels"], 21)
-        self.assertEqual(len(result["endpoint_checks"]), 21)
-        self.assertGreater(min(result["endpoint_checks"].values()), 0.9999999)
-        self.assertEqual(result["physical_events"], {"pair_bind_connect": 1.0})
-        self.assertLess(result["command_roundtrip_max_error"], 1e-6)
-        self.assertLess(result["pair_roundtrip_error"], 1e-6)
-        self.assertLess(result["return_final_l1"], 1e-4)
-        self.assertTrue(result["finite"])
-
-
 if __name__ == "__main__":
     unittest.main()

@@ -35,7 +35,7 @@ client.onEvent(message=>recordSourceResponse(
  new URL(navigation.url).origin,
  sourceSpecifications,
 ));
-output=await artifactOutput({publish,publishUrl:new URL('../results/xbox_native_gltf_materials/',import.meta.url),temporaryPrefix:'xbox-material-browser-'});
+output=await artifactOutput({publish,publishUrl:new URL('../build/experiments/xbox_native_gltf_materials/',import.meta.url),temporaryPrefix:'xbox-material-browser-'});
 const cache=await prepareUncachedNetwork(call);
 await call('Runtime.enable');await call('Page.enable');
 await call('Emulation.setDeviceMetricsOverride',{width:1400,height:1000,deviceScaleFactor:1,mobile:false});

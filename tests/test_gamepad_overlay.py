@@ -36,40 +36,6 @@ class GamepadOverlayDemoTests(unittest.TestCase):
         self.assertAlmostEqual(circle[-1]["values"][0], 1.0)
         self.assertAlmostEqual(circle[-1]["values"][1], 0.0, places=12)
 
-    def test_checked_in_trace_and_review_artifacts_exist(self):
-        directory = ROOT / "results" / "gamepad_overlay_left_stick_circle"
-        checked_trace = json.loads((directory / "trace.json").read_text())
-        self.assertEqual(checked_trace, demo.build_trace(fps=30))
-        observed_trace = json.loads((directory / "observed_trace.json").read_text())
-        self.assertEqual(
-            observed_trace["signal_source"], "sapien_articulation_qpos_readback"
-        )
-        controller, mapping = demo._controller_from_manifest()
-        for frame in observed_trace["frames"]:
-            telemetry = frame["telemetry"]
-            recomputed = controller.encode(
-                {
-                    mapping["left_x"].source: telemetry["left_stick_x_rad"],
-                    mapping["left_y"].source: telemetry["left_stick_y_rad"],
-                },
-                task_channels=("left_x", "left_y"),
-            )
-            self.assertEqual(frame["values"], list(recomputed.values))
-        result = json.loads((directory / "result.json").read_text())
-        self.assertEqual(result["composition"]["overlay_position"], "lower_right")
-        self.assertEqual(result["composition"]["overlay_global_alpha"], 0.72)
-        self.assertIn("RoboTwin/SAPIEN", result["composition"]["background"])
-        self.assertIn("no contact", result["causal_scope"])
-        for section in (
-            "video",
-            "command_trace",
-            "observed_trace",
-            "review_frame",
-            "visual_review",
-        ):
-            artifact = directory / result[section]["path"]
-            self.assertTrue(artifact.is_file())
-
     def test_vendored_overlay_files_match_pinned_upstream_hashes(self):
         directory = ROOT / "viewer" / "gamepad_overlay"
         provenance = json.loads((directory / "upstream.json").read_text())

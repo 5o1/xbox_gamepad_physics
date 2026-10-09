@@ -8,9 +8,9 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-ROBOTWIN = ROOT / "results" / "robotwin_full_controls_estimated_v0" / "result.json"
-MUJOCO = ROOT / "results" / "mujoco_full_controls_estimated_v0" / "result.json"
-DEFAULT_OUTPUT = ROOT / "results" / "full_controls_backend_comparison.json"
+ROBOTWIN = ROOT / "build" / "experiments" / "robotwin_full_controls_estimated_v0" / "result.json"
+MUJOCO = ROOT / "build" / "experiments" / "mujoco_full_controls_estimated_v0" / "result.json"
+DEFAULT_OUTPUT = ROOT / "build" / "experiments" / "full_controls_backend_comparison.json"
 
 
 def build() -> dict:

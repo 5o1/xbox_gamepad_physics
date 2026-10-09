@@ -20,14 +20,14 @@
     "script": "scripts/register_pcb.py",
     "method_reference": "https://docs.opencv.org/4.x/d1/de0/tutorial_py_feature_homography.html",
     "settings": "SIFT, exact BF L2 matching, tutorial ratio 0.7 and RANSAC threshold 5 px; seed 0. Unique destination matches; every third source-x-sorted match withheld before fitting. These are diagnostic algorithm settings, not mechanical tolerances.",
-    "normal_result": "results/pcb_registration_v1.json: 17 correspondences, 11 training, 6 held out, 6 training inliers; held-out median error 315.726 px",
-    "mirror_result": "results/pcb_registration_mirrored.json: only 7 correspondences, no fit attempted",
+    "normal_result": "build/experiments/pcb_registration_v1.json: 17 correspondences, 11 training, 6 held out, 6 training inliers; held-out median error 315.726 px",
+    "mirror_result": "build/experiments/pcb_registration_mirrored.json: only 7 correspondences, no fit attempted",
     "decision": "Neither orientation supports a usable registration. Do not use the fitted normal-orientation matrix to transfer dimensions or joint coordinates. No calibration promoted."
   },
   "manual_registration": {
     "annotations": "references/pcb_hole_correspondences.json",
     "script": "scripts/fit_pcb_holes.py",
-    "result": "results/pcb_holes_v1.json",
+    "result": "build/experiments/pcb_holes_v1.json",
     "fit": "Four outer mounting holes; direct homography without robust rejection",
     "held_out": "Two inner holes and SW3 contact center, errors approximately 1.80, 5.97, 1.77 photo pixels",
     "interpretation": "Supports coarse planar layout correspondence, not exact board revision identity or metrology. Larger right-inner-hole error remains unresolved. No absolute scale or shaft height follows."

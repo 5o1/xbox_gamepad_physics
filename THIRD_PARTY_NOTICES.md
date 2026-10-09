@@ -22,9 +22,9 @@ PDFs and large intermediates remain outside this Git repository.
   embedded in the static GLB. Attribution accompanies the files in
   `assets/xbox_one_s/README.md`.
 - Repository derivatives: rendered views and material/lighting comparisons in
-  `results/xbox_one_s_batonyrobson_UNVERIFIED/`,
-  `results/xbox_official_import_comparison/`, and
-  `results/xbox_sketchfab_viewer_reference/`
+  `build/experiments/xbox_one_s_batonyrobson_UNVERIFIED/`,
+  `build/experiments/xbox_official_import_comparison/`, and
+  `build/experiments/xbox_sketchfab_viewer_reference/`
 - Changes: imported from the creator's FBX/glTF downloads, rendered from fixed
   cameras, tested under alternative lighting and color-management settings,
   and used to produce masks, difference images, and comparison composites.
@@ -36,8 +36,8 @@ PDFs and large intermediates remain outside this Git repository.
 - Source: <https://sketchfab.com/3d-models/nintendo-switch-pro-controller-7b739b6bde5445e3ba4b861ed84fdfdf>
 - License: [Creative Commons Attribution 4.0](https://creativecommons.org/licenses/by/4.0/)
 - Repository derivatives: rendered views in
-  `results/switch_pro_lucasmunillaclavero_UNVERIFIED/` and the comparison page
-  `results/controller_review.html`
+  `build/experiments/switch_pro_lucasmunillaclavero_UNVERIFIED/` and the comparison page
+  `build/experiments/controller_review.html`
 - Changes: imported from the creator's FBX/glTF download and rendered from
   diagnostic camera directions. No mechanical part boundaries were inferred
   from the converted glTF splits.
@@ -48,8 +48,8 @@ PDFs and large intermediates remain outside this Git repository.
 - Source revision: <https://github.com/CasperH2O/3DControllerModels/tree/f0d985618e7c74ca35d4c428228cb5263e3d471e>
 - Repository license declaration: [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/)
 - Repository derivatives: the retained Xbox 1914 appearance-candidate renders
-  under `results/legacy_casper_1914_visual_parts/` and
-  `results/legacy_casper_1914_width_scaled_1708_proxy_historical_ui_mislabeled_1708.png`
+  under `build/experiments/legacy_casper_1914_visual_parts/` and
+  `build/experiments/legacy_casper_1914_width_scaled_1708_proxy_historical_ui_mislabeled_1708.png`
 - Changes: the visual model was inspected, decomposed for diagnostic rendering,
   and width-scaled for comparison. It was rejected as the Xbox 1708 target. The
   latter retained screenshot is historical evidence of that rejection process;
@@ -65,7 +65,7 @@ PDFs and large intermediates remain outside this Git repository.
 - License statement: <https://bitbuilt.net/forums/threads/wesks-3d-scans-license.5444/>
 - License: [The Unlicense](https://unlicense.org/)
 - Repository derivatives: clay diagnostic renders in
-  `results/switch_pro_wesk/`
+  `build/experiments/switch_pro_wesk/`
 - Changes: the large STL scan was rendered from fixed diagnostic directions.
   The source scan remains outside this repository.
 

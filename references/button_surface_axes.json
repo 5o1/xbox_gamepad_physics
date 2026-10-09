@@ -8,7 +8,7 @@
   "scope": "All four named visual layers of each ABXY button in the existing width-scaled candidate. Every mesh SHA256 is checked against the inventory.",
   "script": "scripts/button_surface_axes.py",
   "harness": "tests/test_button_surface_axes.py: analytic rectangle covariance, subdivision invariance, rigid transform covariance, degenerate/nonfinite rejection; 3 tests passed in existing GPU environment",
-  "result": "results/button_surface_axes.json",
+  "result": "build/experiments/button_surface_axes.json",
   "observations": [
     "Outer Button and Interior minimum-variance directions differ by approximately 1.34 to 3.81 degrees across ABXY; Interior2 differs by 0.18 to 1.15 degrees.",
     "Letter meshes differ from their outer Button direction by approximately 5.84 to 27.61 degrees, showing why a decorative letter is not a reliable source of button axis.",

@@ -82,13 +82,13 @@
   },
   "captured_reference_artifacts": {
     "runtime": {
-      "path": "results/xbox_sketchfab_viewer_reference/runtime.json",
+      "path": "build/experiments/xbox_sketchfab_viewer_reference/runtime.json",
       "sha256": "5f1705e3290f0603a46f9d84c6f574054c225b8063ea2a1fb4a6dae348a29be0",
       "status": "historical_capture_missing_confirmed_fov",
       "limitation": "The original capture records the returned camera pose but predates recording the setFov callback result. It may support the historical screenshot, but a new reference-matched render must use a recaptured runtime containing a finite confirmed fov value."
     },
     "front": {
-      "path": "results/xbox_sketchfab_viewer_reference/front.png",
+      "path": "build/experiments/xbox_sketchfab_viewer_reference/front.png",
       "sha256": "db837e1238267b22c7d641a0990e826b5d5d4a6df83025d2f9f33c1c17dbd8ec",
       "status": "historical_official_viewer_screenshot"
     }

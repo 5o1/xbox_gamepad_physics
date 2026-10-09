@@ -1,4 +1,3 @@
-import json
 from pathlib import Path
 import sys
 import tempfile
@@ -65,41 +64,6 @@ class MujocoFullControlsAssetTest(unittest.TestCase):
         self.assertIsNotNone(manifest.signal_controller)
         self.assertEqual(len(manifest.signal_controller.available_channels), 21)
         self.assertEqual(len(manifest.signal_controller.physical_event_mappings), 1)
-
-    def test_recorded_nonvisual_mujoco_run_covers_full_interface(self):
-        result = json.loads(
-            (
-                ROOT / "results" / "mujoco_full_controls_estimated_v0" / "result.json"
-            ).read_text()
-        )
-        self.assertEqual(result["joint_count"], 20)
-        self.assertEqual(result["sensor_count"], 20)
-        self.assertEqual(result["available_game_channels"], 21)
-        self.assertEqual(len(result["endpoint_checks"]), 21)
-        self.assertEqual(min(result["endpoint_checks"].values()), 1.0)
-        self.assertEqual(result["physical_events"], {"pair_bind_connect": 1.0})
-        self.assertLess(result["command_roundtrip_max_error"], 1e-12)
-        self.assertLess(result["pair_roundtrip_error"], 1e-12)
-        self.assertEqual(result["initial_contacts"], [])
-        self.assertLess(result["return_final_l1"], 1e-3)
-        self.assertTrue(result["finite"])
-
-    def test_recorded_left_stick_contact_moves_and_releases(self):
-        result = json.loads(
-            (
-                ROOT
-                / "results"
-                / "mujoco_full_controls_estimated_v0"
-                / "contact_result.json"
-            ).read_text()
-        )
-        self.assertGreater(result["contact_frames"], 0)
-        self.assertGreater(result["peak_abs_left_x"], 0.5)
-        self.assertGreater(result["peak_abs_left_stick_x_rad"], 0.2)
-        self.assertLess(abs(result["released_left_stick_x_rad"]), 1e-6)
-        self.assertLess(abs(result["released_left_stick_y_rad"]), 1e-6)
-        self.assertTrue(result["finite"])
-
 
 if __name__ == "__main__":
     unittest.main()

@@ -18,14 +18,14 @@ from asset_spec import W3C_BROWSER_CHANNEL_DEFINITIONS
 
 
 ROOT = Path(__file__).resolve().parents[1]
-STATIC_INVENTORY = ROOT / "results/xbox_one_s_batonyrobson_UNVERIFIED/static_visual_parts_inventory_UNCALIBRATED.json"
-MOTION_SUMMARY = ROOT / "results/xbox_one_s_batonyrobson_UNVERIFIED/artist_animation_summary_UNCALIBRATED.json"
+STATIC_INVENTORY = ROOT / "assets/xbox_one_s/visual/inventory.json"
+MOTION_SUMMARY = ROOT / "references/xbox_one_s_artist_animation_summary.json"
 DIMENSIONS = ROOT / "references/1708_dimensions.json"
 STICK_REFERENCE = ROOT / "references/stick_envelope.json"
 CATALOG = ROOT / "references/catalog.json"
 EVIDENCE_OUTPUT = ROOT / "references/appearance_matched_estimated_v0.json"
 PROFILE_OUTPUT = ROOT / "assets/appearance_matched_estimated_v0/viewer_profile.json"
-AUDIT_OUTPUT = ROOT / "results/xbox_one_s_batonyrobson_UNVERIFIED/estimated_v0_build_audit.json"
+AUDIT_OUTPUT = ROOT / "build/experiments/xbox_one_s_batonyrobson_UNVERIFIED/estimated_v0_build_audit.json"
 
 PROFILE_ID = "xbox_one_s_batonyrobson_appearance_matched_estimated_v0"
 VARIANT_ID = PROFILE_ID
@@ -777,9 +777,10 @@ def main():
     mode.add_argument("--check", action="store_true")
     args = parser.parse_args()
     values = build()
-    outputs = (EVIDENCE_OUTPUT, PROFILE_OUTPUT, AUDIT_OUTPUT)
+    outputs = (EVIDENCE_OUTPUT, PROFILE_OUTPUT)
+    values_to_write = (values[0], values[1])
     mismatches = []
-    for path, value in zip(outputs, values):
+    for path, value in zip(outputs, values_to_write):
         data = encoded(value)
         if args.write:
             atomic_write(path, data)
@@ -787,7 +788,10 @@ def main():
             mismatches.append(str(path.relative_to(ROOT)))
     if mismatches:
         raise SystemExit("stale or missing generated files: " + ", ".join(mismatches))
-    print(json.dumps({"profile_id": PROFILE_ID, "mode": "write" if args.write else "check", "outputs": [str(path.relative_to(ROOT)) for path in outputs]}))
+    if args.write:
+        atomic_write(AUDIT_OUTPUT, encoded(values[2]))
+    reported = (*outputs, *((AUDIT_OUTPUT,) if args.write else ()))
+    print(json.dumps({"profile_id": PROFILE_ID, "mode": "write" if args.write else "check", "outputs": [str(path.relative_to(ROOT)) for path in reported]}))
 
 
 if __name__ == "__main__":

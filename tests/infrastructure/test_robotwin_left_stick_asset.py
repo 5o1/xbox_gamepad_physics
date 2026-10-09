@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import json
 from pathlib import Path
 import sys
 import tempfile
@@ -80,34 +79,6 @@ class RoboTwinLeftStickAssetTest(unittest.TestCase):
             self.assertAlmostEqual(float(limit.get("lower")), -0.401425727959)
             self.assertAlmostEqual(float(limit.get("upper")), 0.401425727959)
             self.assertIsNotNone(joint.find("dynamics"))
-
-    def test_recorded_sapien_contact_run_moves_and_releases_stick(self):
-        result = json.loads(
-            (ROOT / "results" / "robotwin_left_stick_estimated_v0" / "result.json").read_text()
-        )
-        self.assertEqual(result["sapien"], "3.0.0b1")
-        self.assertAlmostEqual(
-            result["samples"]["diagonal_joint_corner"]["signal_radius"], 1.0
-        )
-        probe = result["contact_probe"]
-        self.assertGreater(probe["contact_frames"], 0)
-        self.assertGreater(probe["peak_abs_left_stick_x_rad"], 0.25)
-        self.assertLess(abs(probe["released_qpos"]["left_stick_x"]), 1e-6)
-        sensitivity = json.loads(
-            (ROOT / "results" / "robotwin_left_stick_estimated_v0" / "sensitivity.json").read_text()
-        )
-        self.assertEqual(sensitivity["case_count"], 27)
-        self.assertTrue(sensitivity["passed"])
-        self.assertTrue(all(item["passed"] for item in sensitivity["cases"]))
-        video = (
-            ROOT
-            / "results"
-            / "robotwin_left_stick_estimated_v0"
-            / "render"
-            / "left_stick_contact_probe.mp4"
-        )
-        self.assertGreater(video.stat().st_size, 0)
-
 
 if __name__ == "__main__":
     unittest.main()

@@ -13,6 +13,6 @@
     "Transforms affecting other meshes are excluded",
     "Neutral state leaves the joint frame unchanged"
   ],
-  "browser_harness": "tests/browser_harness.mjs; actual mouse events on LeftThumb/Joystick-Left-Ring synthetic group, held-axis isolation, independent closed-form Rx Ry-equivalent ordered rotation matrix and pivot-translation comparison. Results: results/browser_harness.json. Fixture specifically uses Rx(y)Rz(x).",
+  "browser_harness": "tests/browser_harness.mjs; actual mouse events on LeftThumb/Joystick-Left-Ring synthetic group, held-axis isolation, independent closed-form Rx Ry-equivalent ordered rotation matrix and pivot-translation comparison. Results: build/experiments/browser_harness.json. Fixture specifically uses Rx(y)Rz(x).",
   "limits": "Numerical and synthetic browser tests, not actual controller calibration. Browser test verifies noncommuting sequential-axis interaction and pose composition, not arbitrary camera angles or simultaneous 2D dragging. No physical pivot or motion range is inferred."
 }

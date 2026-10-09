@@ -189,11 +189,11 @@ if __name__ == "__main__":
         "/assets/": args.assets,
         "/source/": project / "assets" / "xbox_one_s" / "source",
         "/approved/": project / "assets" / "xbox_one_s",
-        "/accepted-reference/": project / "results/xbox_official_import_comparison/official_import_4.5.9_LTS/reference_matched_cycles_probe",
+        "/accepted-reference/": project / "assets/xbox_one_s/render",
         "/vendor/": args.vendor,
         # Only expose the reviewed front-reference directory, not all results.
-        "/reference/": project / "results" / "legacy_casper_1914_visual_parts",
-        "/candidate-reference/": project / "results" / "xbox_one_s_batonyrobson_UNVERIFIED",
+        "/reference/": project / "build" / "experiments" / "legacy_casper_1914_visual_parts",
+        "/candidate-reference/": project / "build" / "experiments" / "xbox_one_s_batonyrobson_UNVERIFIED",
         # Canonical IDs used to prove which asset variant the viewer received.
         "/registry/": project / "assets",
         "/evidence/": project / "references",
