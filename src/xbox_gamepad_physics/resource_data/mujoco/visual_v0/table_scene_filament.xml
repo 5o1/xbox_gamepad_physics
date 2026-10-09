@@ -1,0 +1,71 @@
+<mujoco model="xbox_one_s_filament_table_visual">
+  <compiler angle="radian" autolimits="true" discardvisual="false" />
+  <option gravity="0 0 -9.81" />
+  <visual>
+    <global offwidth="1600" offheight="900" />
+    <quality shadowsize="4096" />
+    <headlight ambient=".25 .25 .25" diffuse=".7 .7 .7" specular=".2 .2 .2" />
+    <rgba haze=".15 .15 .15 1" />
+  </visual>
+  <asset>
+    <texture name="xbox_rgb" type="2d" file="textures/base_color.png" nchannel="3" colorspace="sRGB" vflip="true" />
+    <texture name="xbox_normal" type="2d" file="textures/normal.png" nchannel="3" colorspace="linear" vflip="true" />
+    <texture name="xbox_occlusion" type="2d" file="textures/occlusion.png" nchannel="1" colorspace="linear" vflip="true" />
+    <texture name="xbox_roughness" type="2d" file="textures/roughness.png" nchannel="1" colorspace="linear" vflip="true" />
+    <texture name="xbox_metallic" type="2d" file="textures/metallic.png" nchannel="1" colorspace="linear" vflip="true" />
+    <texture name="xbox_opacity" type="2d" file="textures/opacity.png" nchannel="1" colorspace="linear" vflip="true" />
+    <texture name="xbox_emissive" type="2d" file="textures/emissive_rgba.png" nchannel="4" colorspace="sRGB" vflip="true" />
+    <material name="xbox_surface" rgba="1 1 1 1" emission="10" specular="1" metallic="1" roughness="1" reflectance="0">
+      <layer texture="xbox_rgb" role="rgb" />
+      <layer texture="xbox_normal" role="normal" />
+      <layer texture="xbox_occlusion" role="occlusion" />
+      <layer texture="xbox_roughness" role="roughness" />
+      <layer texture="xbox_metallic" role="metallic" />
+      <layer texture="xbox_opacity" role="opacity" />
+      <layer texture="xbox_emissive" role="emissive" />
+    </material>
+    <material name="table_gray" rgba=".24 .28 .32 1" specular=".15" shininess=".1" reflectance="0" />
+    <material name="wall_pink" rgba="1 .9 .9 1" specular=".1" shininess=".05" reflectance="0" />
+    <mesh name="00_A_Button_VISUAL_UNCALIBRATED" file="meshes/00_A_Button_VISUAL_UNCALIBRATED.obj" scale="0.0560472180107161 0.0560472180107161 0.0560472180107161" smoothnormal="false" />
+    <mesh name="01_B_Button_VISUAL_UNCALIBRATED" file="meshes/01_B_Button_VISUAL_UNCALIBRATED.obj" scale="0.0560472180107161 0.0560472180107161 0.0560472180107161" smoothnormal="false" />
+    <mesh name="02_Bumper_L_VISUAL_UNCALIBRATED" file="meshes/02_Bumper_L_VISUAL_UNCALIBRATED.obj" scale="0.0560472180107161 0.0560472180107161 0.0560472180107161" smoothnormal="false" />
+    <mesh name="03_Bumper_R_VISUAL_UNCALIBRATED" file="meshes/03_Bumper_R_VISUAL_UNCALIBRATED.obj" scale="0.0560472180107161 0.0560472180107161 0.0560472180107161" smoothnormal="false" />
+    <mesh name="04_Connect_Button_VISUAL_UNCALIBRATED" file="meshes/04_Connect_Button_VISUAL_UNCALIBRATED.obj" scale="0.0560472180107161 0.0560472180107161 0.0560472180107161" smoothnormal="false" />
+    <mesh name="05_Controller_Body_VISUAL_UNCALIBRATED" file="meshes/05_Controller_Body_VISUAL_UNCALIBRATED.obj" scale="0.0560472180107161 0.0560472180107161 0.0560472180107161" smoothnormal="false" />
+    <mesh name="06_D-Pad_VISUAL_UNCALIBRATED" file="meshes/06_D-Pad_VISUAL_UNCALIBRATED.obj" scale="0.0560472180107161 0.0560472180107161 0.0560472180107161" smoothnormal="false" />
+    <mesh name="07_Menu_L_VISUAL_UNCALIBRATED" file="meshes/07_Menu_L_VISUAL_UNCALIBRATED.obj" scale="0.0560472180107161 0.0560472180107161 0.0560472180107161" smoothnormal="false" />
+    <mesh name="08_Menu_R_VISUAL_UNCALIBRATED" file="meshes/08_Menu_R_VISUAL_UNCALIBRATED.obj" scale="0.0560472180107161 0.0560472180107161 0.0560472180107161" smoothnormal="false" />
+    <mesh name="09_Stick_L_VISUAL_UNCALIBRATED" file="meshes/09_Stick_L_VISUAL_UNCALIBRATED.obj" scale="0.0560472180107161 0.0560472180107161 0.0560472180107161" smoothnormal="false" />
+    <mesh name="10_Stick_R_VISUAL_UNCALIBRATED" file="meshes/10_Stick_R_VISUAL_UNCALIBRATED.obj" scale="0.0560472180107161 0.0560472180107161 0.0560472180107161" smoothnormal="false" />
+    <mesh name="11_Trigger_L_VISUAL_UNCALIBRATED" file="meshes/11_Trigger_L_VISUAL_UNCALIBRATED.obj" scale="0.0560472180107161 0.0560472180107161 0.0560472180107161" smoothnormal="false" />
+    <mesh name="12_Trigger_R_VISUAL_UNCALIBRATED" file="meshes/12_Trigger_R_VISUAL_UNCALIBRATED.obj" scale="0.0560472180107161 0.0560472180107161 0.0560472180107161" smoothnormal="false" />
+    <mesh name="13_X_Button_VISUAL_UNCALIBRATED" file="meshes/13_X_Button_VISUAL_UNCALIBRATED.obj" scale="0.0560472180107161 0.0560472180107161 0.0560472180107161" smoothnormal="false" />
+    <mesh name="14_XboxButton_VISUAL_UNCALIBRATED" file="meshes/14_XboxButton_VISUAL_UNCALIBRATED.obj" scale="0.0560472180107161 0.0560472180107161 0.0560472180107161" smoothnormal="false" />
+    <mesh name="15_Y_Button_VISUAL_UNCALIBRATED" file="meshes/15_Y_Button_VISUAL_UNCALIBRATED.obj" scale="0.0560472180107161 0.0560472180107161 0.0560472180107161" smoothnormal="false" />
+  </asset>
+  <worldbody>
+    <geom name="ground" type="plane" size="3 3 .1" rgba=".12 .13 .14 1" contype="0" conaffinity="0" />
+    <geom name="table" type="box" pos="0 0 .715" size=".6 .35 .025" material="table_gray" contype="0" conaffinity="0" />
+    <geom name="wall" type="box" pos="0 1 1.5" size="3 .6 1.5" material="wall_pink" contype="0" conaffinity="0" />
+    <body name="xbox_root" pos="0 0 .8" quat=".707106781186548 .707106781186548 0 0">
+      <geom name="visual_00_A_Button_VISUAL_UNCALIBRATED" type="mesh" mesh="00_A_Button_VISUAL_UNCALIBRATED" material="xbox_surface" contype="0" conaffinity="0" group="1" />
+      <geom name="visual_01_B_Button_VISUAL_UNCALIBRATED" type="mesh" mesh="01_B_Button_VISUAL_UNCALIBRATED" material="xbox_surface" contype="0" conaffinity="0" group="1" />
+      <geom name="visual_02_Bumper_L_VISUAL_UNCALIBRATED" type="mesh" mesh="02_Bumper_L_VISUAL_UNCALIBRATED" material="xbox_surface" contype="0" conaffinity="0" group="1" />
+      <geom name="visual_03_Bumper_R_VISUAL_UNCALIBRATED" type="mesh" mesh="03_Bumper_R_VISUAL_UNCALIBRATED" material="xbox_surface" contype="0" conaffinity="0" group="1" />
+      <geom name="visual_04_Connect_Button_VISUAL_UNCALIBRATED" type="mesh" mesh="04_Connect_Button_VISUAL_UNCALIBRATED" material="xbox_surface" contype="0" conaffinity="0" group="1" />
+      <geom name="visual_05_Controller_Body_VISUAL_UNCALIBRATED" type="mesh" mesh="05_Controller_Body_VISUAL_UNCALIBRATED" material="xbox_surface" contype="0" conaffinity="0" group="1" />
+      <geom name="visual_06_D-Pad_VISUAL_UNCALIBRATED" type="mesh" mesh="06_D-Pad_VISUAL_UNCALIBRATED" material="xbox_surface" contype="0" conaffinity="0" group="1" />
+      <geom name="visual_07_Menu_L_VISUAL_UNCALIBRATED" type="mesh" mesh="07_Menu_L_VISUAL_UNCALIBRATED" material="xbox_surface" contype="0" conaffinity="0" group="1" />
+      <geom name="visual_08_Menu_R_VISUAL_UNCALIBRATED" type="mesh" mesh="08_Menu_R_VISUAL_UNCALIBRATED" material="xbox_surface" contype="0" conaffinity="0" group="1" />
+      <geom name="visual_09_Stick_L_VISUAL_UNCALIBRATED" type="mesh" mesh="09_Stick_L_VISUAL_UNCALIBRATED" material="xbox_surface" contype="0" conaffinity="0" group="1" />
+      <geom name="visual_10_Stick_R_VISUAL_UNCALIBRATED" type="mesh" mesh="10_Stick_R_VISUAL_UNCALIBRATED" material="xbox_surface" contype="0" conaffinity="0" group="1" />
+      <geom name="visual_11_Trigger_L_VISUAL_UNCALIBRATED" type="mesh" mesh="11_Trigger_L_VISUAL_UNCALIBRATED" material="xbox_surface" contype="0" conaffinity="0" group="1" />
+      <geom name="visual_12_Trigger_R_VISUAL_UNCALIBRATED" type="mesh" mesh="12_Trigger_R_VISUAL_UNCALIBRATED" material="xbox_surface" contype="0" conaffinity="0" group="1" />
+      <geom name="visual_13_X_Button_VISUAL_UNCALIBRATED" type="mesh" mesh="13_X_Button_VISUAL_UNCALIBRATED" material="xbox_surface" contype="0" conaffinity="0" group="1" />
+      <geom name="visual_14_XboxButton_VISUAL_UNCALIBRATED" type="mesh" mesh="14_XboxButton_VISUAL_UNCALIBRATED" material="xbox_surface" contype="0" conaffinity="0" group="1" />
+      <geom name="visual_15_Y_Button_VISUAL_UNCALIBRATED" type="mesh" mesh="15_Y_Button_VISUAL_UNCALIBRATED" material="xbox_surface" contype="0" conaffinity="0" group="1" />
+    </body>
+    <camera name="head_camera" pos="-.032 -.45 1.35" xyaxes="1 0 0 0 .8 .6" fovy="37" />
+    <camera name="review_oblique" pos=".45 -.55 1.15" xyaxes=".773 .633 0 -.283 .346 .894" fovy="37" />
+  </worldbody>
+</mujoco>

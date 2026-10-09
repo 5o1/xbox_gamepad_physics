@@ -1,4 +1,4 @@
-<mujoco model="xbox_one_s_visual">
+<mujoco model="xbox_one_s_classic_visual">
   <compiler angle="radian" autolimits="true" discardvisual="false" />
   <option gravity="0 0 -9.81" />
   <visual>

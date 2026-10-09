@@ -108,6 +108,46 @@
   "scenes": {
     "table": "table_scene.xml"
   },
+  "renderers": {
+    "classic": {
+      "entrypoint": "xbox_one_s_visual.xml",
+      "scenes": {
+        "table": "table_scene.xml"
+      }
+    },
+    "filament": {
+      "entrypoint": "xbox_one_s_filament.xml",
+      "scenes": {
+        "table": "table_scene_filament.xml",
+        "reference": "reference_scene_filament.xml"
+      }
+    }
+  },
+  "reference_camera": {
+    "source_position": [
+      -0.037516698241233826,
+      -0.5597505569458008,
+      4.206621170043945
+    ],
+    "source_target": [
+      -0.037516698241233826,
+      0.24024944007396698,
+      -0.2933788597583771
+    ],
+    "position_m": [
+      -0.0021027065653686813,
+      -0.03137246149676105,
+      0.23576941380594663
+    ],
+    "target_m": [
+      -0.0021027065653686813,
+      0.0134653127447781,
+      -0.016443068912613063
+    ],
+    "fovy_degrees": 35,
+    "source": "assets/xbox_one_s/approved_render.json",
+    "transform": "Blender Z-up camera coordinates multiplied by visual scale"
+  },
   "native_renderer_material": {
     "texture": "base_color.png",
     "vflip": true,
@@ -116,6 +156,36 @@
     "limitations": [
       "MuJoCo native renderer uses the RGB texture and scalar specular/shininess.",
       "Normal, occlusion, roughness, metallic and emissive maps remain in common visual resources for PBR renderers; native MuJoCo does not render PBR texture roles."
+    ]
+  },
+  "filament_material": {
+    "renderer_requirement": {
+      "repository": "https://github.com/5o1/mujoco.git",
+      "branch": "concon/filament-opacity-texture",
+      "opacity_fix_commit": "fbeb31381564ae71e9efcdf3189d1ffbf5033269",
+      "reason": "MuJoCo 3.15.0 ModelRenderables omits mjTEXROLE_OPACITY when translating mjModel materials to Filament."
+    },
+    "source_roles": [
+      "rgb",
+      "opacity",
+      "normal",
+      "occlusion",
+      "roughness",
+      "metallic",
+      "emissive"
+    ],
+    "source_factors": {
+      "metallic": 1.0,
+      "roughness": 1.0,
+      "emissive_strength": 10.0,
+      "specular_factor": 1.0
+    },
+    "derived_textures": {
+      "opacity.png": "alpha channel copied from source base_color.png",
+      "emissive_rgba.png": "source grayscale emissive replicated to RGB; alpha exposure weight set to 1"
+    },
+    "limitations": [
+      "MuJoCo 3.15 has no texture role for KHR_materials_specular; the source scalar specularFactor=1 is retained, while spatial variation from the specular texture remains unsupported."
     ]
   }
 }

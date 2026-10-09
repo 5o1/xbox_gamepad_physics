@@ -90,6 +90,7 @@ http://127.0.0.1:8770/viewer/gamepad_overlay/index.html?source=canonical&trace=/
 - [虚拟手柄适配器](viewer/gamepad_overlay/index.html)：将 canonical 状态交给现成 SVG 手柄渲染器。
 - [完整控件使用说明](docs/full_controls.md)：20-DOF 双后端资产、信号接口和运行记录。
 - [待统一确认与实测清单](docs/pending_user_review.md)：延后处理的视觉确认和硬件测量。
+- [完整控件逐项验收视频](results/full_controls_user_review/README.md)：六组双后端运动对照和实体球接触材料。
 - [estimated-v0 来源](sources/appearance_matched_estimated_v0.json)：估计运动学的来源、推导和限制。
 - [estimated-v0 profile](assets/appearance_matched_estimated_v0/viewer_profile.json)：viewer 使用的运动配置。
 - [官方尺寸记录](sources/1708_dimensions.json)：整体尺寸及其适用边界。

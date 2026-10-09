@@ -23,6 +23,7 @@ class LoadedVisualScene:
     """Compiled standalone visual scene with initialized MuJoCo data."""
 
     scene: str
+    renderer: str
     source_path: Path
     manifest: dict[str, Any]
     spec: Any
@@ -42,6 +43,7 @@ class VisualAttachment:
     child_spec: Any
     attached_frame: Any
     source_path: Path
+    renderer: str
     prefix: str
     suffix: str
 
@@ -68,18 +70,37 @@ def _visual_root() -> tuple[Path, dict[str, Any]]:
     return manifest_path.parent, json.loads(manifest_path.read_text(encoding="utf-8"))
 
 
-def load_visual_scene(*, scene: str = "table") -> LoadedVisualScene:
+def _renderer_record(manifest: dict[str, Any], renderer: str) -> dict[str, Any]:
+    records = manifest.get("renderers")
+    if records is None and renderer == "classic":
+        return {
+            "entrypoint": manifest["entrypoint"],
+            "scenes": manifest.get("scenes", {}),
+        }
+    if renderer not in (records or {}):
+        expected = ", ".join(sorted(records or {"classic": None}))
+        raise ValueError(
+            f"unknown MuJoCo visual renderer {renderer!r}; expected {expected}"
+        )
+    return records[renderer]
+
+
+def load_visual_scene(
+    *, scene: str = "table", renderer: str = "classic"
+) -> LoadedVisualScene:
     """Load the table review scene or the standalone visual asset."""
 
     root, manifest = _visual_root()
+    record = _renderer_record(manifest, renderer)
     relative = (
-        manifest["entrypoint"]
+        record["entrypoint"]
         if scene == "asset"
-        else manifest.get("scenes", {}).get(scene)
+        else record.get("scenes", {}).get(scene)
     )
     if not relative:
+        expected = ", ".join(["asset", *sorted(record.get("scenes", {}))])
         raise ValueError(
-            f"unknown MuJoCo visual scene {scene!r}; expected 'table' or 'asset'"
+            f"unknown {renderer} MuJoCo visual scene {scene!r}; expected {expected}"
         )
 
     source = (root / relative).resolve(strict=True)
@@ -91,7 +112,7 @@ def load_visual_scene(*, scene: str = "table") -> LoadedVisualScene:
     # first forward pass. Omitting this call produced an all-black first frame
     # in the native EGL verification run.
     mujoco.mj_forward(model, data)
-    return LoadedVisualScene(scene, source, manifest, spec, model, data)
+    return LoadedVisualScene(scene, renderer, source, manifest, spec, model, data)
 
 
 def attach_visual_to_spec(
@@ -101,6 +122,7 @@ def attach_visual_to_spec(
     site: Any | None = None,
     prefix: str = "xbox_visual_",
     suffix: str = "",
+    renderer: str = "classic",
 ) -> VisualAttachment:
     """Attach the render-only asset to exactly one parent frame or site."""
 
@@ -116,7 +138,8 @@ def attach_visual_to_spec(
         raise TypeError("parent_spec must expose the MuJoCo MjSpec.attach API.")
 
     root, manifest = _visual_root()
-    source = (root / manifest["entrypoint"]).resolve(strict=True)
+    record = _renderer_record(manifest, renderer)
+    source = (root / record["entrypoint"]).resolve(strict=True)
     child = load_spec(require_mujoco(), source)
     kwargs: dict[str, Any] = {"prefix": prefix, "suffix": suffix}
     kwargs["frame" if frame is not None else "site"] = (
@@ -135,6 +158,7 @@ def attach_visual_to_spec(
         child_spec=child,
         attached_frame=attached,
         source_path=source,
+        renderer=renderer,
         prefix=prefix,
         suffix=suffix,
     )

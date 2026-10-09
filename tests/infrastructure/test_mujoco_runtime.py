@@ -312,9 +312,24 @@ class MujocoRuntimeTests(unittest.TestCase):
             loaded = visual_module.load_visual_scene(scene="table")
 
         self.assertFalse(loaded.physics_ready)
+        self.assertEqual(loaded.renderer, "classic")
         self.assertEqual(len(_FakeMujoco.forward_calls), 1)
         self.assertIs(_FakeMujoco.forward_calls[0][0], model)
         self.assertEqual(_FakeMjSpecFactory.calls[0][0], "xml")
+
+    def test_filament_reference_scene_uses_declared_renderer_resource(self):
+        _FakeMjSpecFactory.next_model = _FakeModel([], [])
+        with mock.patch.object(
+            visual_module, "require_mujoco", return_value=_FakeMujoco
+        ):
+            loaded = visual_module.load_visual_scene(
+                scene="reference", renderer="filament"
+            )
+
+        self.assertEqual(loaded.renderer, "filament")
+        self.assertEqual(loaded.source_path.name, "reference_scene_filament.xml")
+        with self.assertRaisesRegex(ValueError, "unknown MuJoCo visual renderer"):
+            visual_module.load_visual_scene(renderer="does-not-exist")
 
     def test_visual_attachment_compiles_and_runs_forward(self):
         model = _FakeModel([], [])
@@ -348,6 +363,11 @@ class MujocoRuntimeTests(unittest.TestCase):
         self.assertEqual(len(manifest["parts"]), 16)
         self.assertTrue((root / manifest["entrypoint"]).is_file())
         self.assertTrue((root / manifest["scenes"]["table"]).is_file())
+        self.assertEqual(set(manifest["renderers"]), {"classic", "filament"})
+        for renderer in manifest["renderers"].values():
+            self.assertTrue((root / renderer["entrypoint"]).is_file())
+            for scene in renderer["scenes"].values():
+                self.assertTrue((root / scene).is_file())
         for part in manifest["parts"]:
             self.assertTrue((root / "meshes" / part["file"]).is_file())
 
@@ -358,6 +378,28 @@ class MujocoRuntimeTests(unittest.TestCase):
         for geom in visual_geoms:
             self.assertEqual(geom.get("contype"), "0")
             self.assertEqual(geom.get("conaffinity"), "0")
+
+        filament = ET.parse(root / manifest["renderers"]["filament"]["entrypoint"])
+        roles = {
+            layer.get("role")
+            for layer in filament.findall(
+                ".//material[@name='xbox_surface']/layer"
+            )
+        }
+        self.assertEqual(
+            roles,
+            {
+                "rgb",
+                "opacity",
+                "normal",
+                "occlusion",
+                "roughness",
+                "metallic",
+                "emissive",
+            },
+        )
+        requirement = manifest["filament_material"]["renderer_requirement"]
+        self.assertEqual(requirement["branch"], "concon/filament-opacity-texture")
 
 
 class _FakeParentSpec:

@@ -126,6 +126,30 @@ assert visual.physics_ready is False
 2K base-color 纹理和标量 specular/shininess；normal、occlusion、roughness、metallic、
 emissive 贴图保留在共用视觉资源中，原生渲染器不会解释这些 PBR 纹理角色。
 
+Filament PBR 入口使用原 GLB 的 RGB、alpha、normal、occlusion、roughness、metallic 和
+emissive 语义：
+
+```python
+from xbox_gamepad_physics.mujoco import load_visual_scene
+
+reference = load_visual_scene(scene="reference", renderer="filament")
+table = load_visual_scene(scene="table", renderer="filament")
+```
+
+MuJoCo 3.15.0 的 `ModelRenderables` 没有把 `mjTEXROLE_OPACITY` 传给 Filament material，
+因此官方 wheel 会把 Xbox One S 的透明 ABXY 外壳画成不透明白色。当前 Filament 入口要求
+使用 [5o1/mujoco 的 `concon/filament-opacity-texture` 分支](https://github.com/5o1/mujoco/tree/concon/filament-opacity-texture)，
+修复提交为 `fbeb31381564ae71e9efcdf3189d1ffbf5033269`。该补丁只补齐通用 opacity role
+映射，不包含 Xbox 专用材质或颜色。
+
+离屏示例见 `examples/mujoco_filament_visual.py`：
+
+```sh
+python examples/mujoco_filament_visual.py \
+  --scene reference \
+  --output /tmp/xbox-filament
+```
+
 将纯视觉资产加入调用者自己的 `MjSpec`：
 
 ```python
