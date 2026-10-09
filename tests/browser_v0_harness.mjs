@@ -112,7 +112,7 @@ try {
   const baseline = await call('Page.captureScreenshot', {format: 'png'});
   await writeFile(join(output, 'estimated_v0_baseline.png'), Buffer.from(baseline.data, 'base64'));
   const profile = JSON.parse(await readFile(
-    new URL('../assets/appearance_matched_estimated_v0/viewer_profile.json', import.meta.url),
+    new URL('../build/generated/kinematics/xbox_one_s_estimated_v0.json', import.meta.url),
     'utf8',
   ));
 

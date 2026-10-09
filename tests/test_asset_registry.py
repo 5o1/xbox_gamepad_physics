@@ -48,8 +48,10 @@ class AssetRegistryTest(unittest.TestCase):
                     self.assertTrue(inventory.is_file())
                 profile_binding = variant.get("viewer_profile")
                 if profile_binding is not None:
-                    profile = resolve_from_assets(profile_binding["path"])
-                    self.assertTrue(profile.is_file())
+                    self.assertEqual(
+                        profile_binding,
+                        {"route": "/generated/kinematics/xbox_one_s_estimated_v0.json"},
+                    )
 
         for profile_id, profile in self.index.get(
             "partial_physics_profiles", {}

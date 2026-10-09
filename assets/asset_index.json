@@ -165,7 +165,7 @@
       "approved_for_contact_or_training": false,
       "viewer_entry": "../viewer/v0.html",
       "viewer_profile": {
-        "path": "appearance_matched_estimated_v0/viewer_profile.json"
+        "route": "/generated/kinematics/xbox_one_s_estimated_v0.json"
       },
       "target_appearance_approval": {
         "approved": true,

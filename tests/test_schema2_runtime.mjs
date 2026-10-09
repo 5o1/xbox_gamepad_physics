@@ -1,9 +1,13 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import {execFileSync} from 'node:child_process';
 import {readFile} from 'node:fs/promises';
+import {fileURLToPath} from 'node:url';
 import {configuredChannels,evaluateProfile,nodeSteps,sourceToGltfVector,stateWithJointCoordinate,validateProfile} from '../viewer/schema2_runtime.mjs';
 
-const profile=JSON.parse(await readFile(new URL('../assets/appearance_matched_estimated_v0/viewer_profile.json',import.meta.url)));
+const root=fileURLToPath(new URL('../',import.meta.url));
+execFileSync('python3',['scripts/build_estimated_v0.py','--write'],{cwd:root,stdio:'ignore'});
+const profile=JSON.parse(await readFile(new URL('../build/generated/kinematics/xbox_one_s_estimated_v0.json',import.meta.url)));
 const evidence=JSON.parse(await readFile(new URL('../references/appearance_matched_estimated_v0.json',import.meta.url)));
 const nodes=new Set(profile.nodes.map(node=>node.source_node));
 

@@ -8,10 +8,11 @@ import math
 from pathlib import Path
 import xml.etree.ElementTree as ET
 
+from build_estimated_v0 import build as build_estimated_v0
+
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "references" / "robotwin_left_stick_estimated_v0.json"
-KINEMATICS = ROOT / "assets" / "appearance_matched_estimated_v0" / "viewer_profile.json"
 VISUAL_MANIFEST = (
     ROOT
     / "src"
@@ -136,7 +137,7 @@ def _find_joint(profile: dict, joint_id: str) -> dict:
 
 def build(output: Path) -> None:
     source = _json(SOURCE)
-    kinematics = _json(KINEMATICS)
+    _, kinematics, _ = build_estimated_v0()
     visual = _json(VISUAL_MANIFEST)
     output.mkdir(parents=True, exist_ok=True)
     (output / "collision").mkdir(exist_ok=True)

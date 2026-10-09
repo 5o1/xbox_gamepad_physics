@@ -24,7 +24,7 @@ DIMENSIONS = ROOT / "references/1708_dimensions.json"
 STICK_REFERENCE = ROOT / "references/stick_envelope.json"
 CATALOG = ROOT / "references/catalog.json"
 EVIDENCE_OUTPUT = ROOT / "references/appearance_matched_estimated_v0.json"
-PROFILE_OUTPUT = ROOT / "assets/appearance_matched_estimated_v0/viewer_profile.json"
+PROFILE_OUTPUT = ROOT / "build/generated/kinematics/xbox_one_s_estimated_v0.json"
 AUDIT_OUTPUT = ROOT / "build/experiments/xbox_one_s_batonyrobson_UNVERIFIED/estimated_v0_build_audit.json"
 
 PROFILE_ID = "xbox_one_s_batonyrobson_appearance_matched_estimated_v0"

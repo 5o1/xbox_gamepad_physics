@@ -4,7 +4,7 @@
   "scope": "RoboTwin and MuJoCo first-pass physics for every Xbox One S control represented by the licensed visual asset",
   "status": "simulation_estimate_pending_owner_hardware_measurement",
   "sources": {
-    "kinematics": "assets/appearance_matched_estimated_v0/viewer_profile.json",
+    "kinematics_generator": "scripts/build_estimated_v0.py",
     "kinematic_derivation": "references/appearance_matched_estimated_v0.json",
     "reference_values": "references/catalog.json",
     "left_stick_physics": "references/robotwin_left_stick_estimated_v0.json",

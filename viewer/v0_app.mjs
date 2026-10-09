@@ -138,7 +138,7 @@ async function load(){
   if(!registryResponse.ok||!inventoryResponse.ok)throw Error('资产注册表或外部清单不可用');
   const registry=await registryResponse.json();await inventoryResponse.json();activeVariantId=registry.interactive_viewer?.active_variant_id;
   const variant=registry.derived_variants?.[activeVariantId],binding=variant?.viewer_profile;if(!binding)throw Error('当前 variant 没有 schema-2 viewer profile');
-  const profileResponse=await fetch('/registry/'+binding.path);if(!profileResponse.ok)throw Error(`viewer profile HTTP ${profileResponse.status}`);profile=await profileResponse.json();
+  const profileResponse=await fetch(binding.route);if(!profileResponse.ok)throw Error(`viewer profile HTTP ${profileResponse.status}`);profile=await profileResponse.json();
   const evidenceRelative=profile.parameter_source;if(!evidenceRelative.startsWith('references/'))throw Error('参数证据路径不安全');const evidenceResponse=await fetch('/evidence/'+evidenceRelative.slice('references/'.length));if(!evidenceResponse.ok)throw Error(`参数证据 HTTP ${evidenceResponse.status}`);evidence=await evidenceResponse.json();
   const glbResponse=await fetch('/assets/'+encodeURIComponent(profile.visual.file));if(!glbResponse.ok)throw Error(`GLB HTTP ${glbResponse.status}`);const glbBytes=await glbResponse.arrayBuffer(),glbHash=await digest(glbBytes);if(glbHash!==profile.visual.sha256)throw Error('GLB 哈希不匹配');
   const gltf=await new Promise((resolve,reject)=>new GLTFLoader().parse(glbBytes,'/assets/',resolve,reject));model=gltf.scene;model.rotation.x=profile.visual.gltf_to_viewer_rotation_x_rad;model.scale.setScalar(profile.visual.meters_per_native_unit);scene.add(model);model.updateMatrixWorld(true);
@@ -162,7 +162,7 @@ async function load(){
   }
   verifiedBindings={
     inventory:{url:'/assets/inventory.json'},
-    profile:{url:'/registry/'+binding.path},
+    profile:{url:binding.route},
     evidence:{url:'/evidence/'+evidenceRelative.slice('references/'.length)},
     visual:{url:'/assets/'+profile.visual.file,actual_sha256:glbHash,expected_sha256:profile.visual.sha256},
     material:{url:sourceUrl,actual_sha256:sourceHash,expected_sha256:profile.source_bindings.source_glb_sha256},

@@ -18,26 +18,26 @@ class ViewerServerTest(unittest.TestCase):
         handler.roots = {
             "/": base / "viewer",
             "/assets/": base / "assets",
+            "/generated/": base / "generated",
             "/vendor/": base / "vendor",
-            "/reference/": base / "reference",
-            "/candidate-reference/": base / "candidate-reference",
             "/registry/": base / "registry",
             "/evidence/": base / "evidence",
         }
         self.assertEqual(
-            Path(handler.translate_path("/reference/identity_front.png")),
-            (base / "reference" / "identity_front.png").resolve(),
+            Path(handler.translate_path("/generated/kinematics/profile.json")),
+            (base / "generated" / "kinematics" / "profile.json").resolve(),
         )
         self.assertEqual(
-            Path(handler.translate_path("/reference/../secret.png")),
-            (base / "reference" / "__denied__").resolve(),
+            Path(handler.translate_path("/generated/../secret.json")),
+            (base / "generated" / "__denied__").resolve(),
         )
 
     def test_variant_profile_paths_and_visual_container_are_validated(self):
         with tempfile.TemporaryDirectory() as directory:
             project = Path(directory) / "project"
             external = Path(directory) / "external"
-            (project / "assets/profile").mkdir(parents=True)
+            (project / "assets").mkdir(parents=True)
+            (project / "build/generated/kinematics").mkdir(parents=True)
             (project / "viewer").mkdir()
             (project / "references").mkdir()
             external.mkdir()
@@ -65,13 +65,13 @@ class ViewerServerTest(unittest.TestCase):
                     "estimated_v0": {
                         "viewer_entry": "../viewer/v0.html",
                         "viewer_profile": {
-                            "path": "profile/viewer_profile.json",
+                            "route": "/generated/kinematics/viewer_profile.json",
                         },
                     }
                 },
             }
             (project / "assets/asset_index.json").write_text(json.dumps(registry))
-            (project / "assets/profile/viewer_profile.json").write_bytes(profile_bytes)
+            (project / "build/generated/kinematics/viewer_profile.json").write_bytes(profile_bytes)
             (project / "viewer/v0.html").write_text("test")
             (project / "references/parameters.json").write_bytes(parameters)
             (external / "inventory.json").write_bytes(inventory)
@@ -79,6 +79,10 @@ class ViewerServerTest(unittest.TestCase):
 
             _, variant = validate_asset_variant(project, external, "estimated_v0")
             self.assertEqual(variant["_validated_viewer_url"], "/v0.html")
+            self.assertEqual(
+                variant["_validated_profile_url"],
+                "/generated/kinematics/viewer_profile.json",
+            )
             (external / "model.glb").write_bytes(b"tampered")
             with self.assertRaisesRegex(ValueError, "visual container SHA-256"):
                 validate_asset_variant(project, external, "estimated_v0")

@@ -115,11 +115,12 @@ class EstimatedV0Test(unittest.TestCase):
             self.assertLessEqual(set(record["evidence"]), available, name)
 
     def test_checked_in_generated_outputs_are_fresh(self):
-        for path, value in zip(
-            (builder.EVIDENCE_OUTPUT, builder.PROFILE_OUTPUT),
-            (self.evidence, self.profile),
-        ):
-            self.assertEqual(path.read_bytes(), builder.encoded(value), f"stale generated output: {path}")
+        self.assertEqual(
+            builder.EVIDENCE_OUTPUT.read_bytes(),
+            builder.encoded(self.evidence),
+            f"stale generated output: {builder.EVIDENCE_OUTPUT}",
+        )
+        self.assertTrue(builder.PROFILE_OUTPUT.is_relative_to(builder.ROOT / "build"))
 
 
 if __name__ == "__main__":

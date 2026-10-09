@@ -11,10 +11,11 @@ import xml.etree.ElementTree as ET
 import numpy as np
 import trimesh
 
+from build_estimated_v0 import build as build_estimated_v0
+
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "references" / "full_controls_estimated_v0.json"
-PROFILE = ROOT / "assets" / "appearance_matched_estimated_v0" / "viewer_profile.json"
 VISUAL_ROOT = (
     ROOT
     / "src"
@@ -165,7 +166,7 @@ def _critical_damping(stiffness: float, effective_mass: float, ratio: float) -> 
 
 def build(output: Path) -> None:
     source = _json(SOURCE)
-    profile = _json(PROFILE)
+    _, profile, _ = build_estimated_v0()
     visual = _json(VISUAL_ROOT / "manifest.json")
     left_stick = _json(LEFT_STICK_SOURCE)
     output.mkdir(parents=True, exist_ok=True)

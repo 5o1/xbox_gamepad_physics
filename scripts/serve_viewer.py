@@ -9,6 +9,18 @@ from pathlib import Path
 from urllib.parse import unquote, urlsplit
 
 
+def generate_viewer_profile(project):
+    """Generate the runtime-only kinematic profile under ignored build/."""
+
+    from build_estimated_v0 import PROFILE_OUTPUT, atomic_write, build, encoded
+
+    if PROFILE_OUTPUT.resolve().parents[2] != (project / "build").resolve():
+        raise ValueError("viewer profile output must remain under build/")
+    _, profile, _ = build()
+    atomic_write(PROFILE_OUTPUT, encoded(profile))
+    return PROFILE_OUTPUT
+
+
 def validate_asset_variant(project, assets, variant_id):
     registry_path = project / "assets" / "asset_index.json"
     registry = json.loads(registry_path.read_text(encoding="utf-8"))
@@ -30,18 +42,19 @@ def validate_asset_variant(project, assets, variant_id):
         raise ValueError(f"missing fixture inventory: {inventory}")
     profile_binding = variant.get("viewer_profile")
     if profile_binding is not None:
-        if not isinstance(profile_binding, dict) or set(profile_binding) != {"path"}:
-            raise ValueError(f"{variant_id}: viewer_profile must contain exactly one path")
-        relative = profile_binding.get("path")
+        if not isinstance(profile_binding, dict) or set(profile_binding) != {"route"}:
+            raise ValueError(f"{variant_id}: viewer_profile must contain exactly one route")
+        route = profile_binding.get("route")
         if (
-            not isinstance(relative, str)
-            or not relative
-            or "\\" in relative
-            or Path(relative).is_absolute()
-            or any(part in {"", ".", ".."} for part in Path(relative).parts)
+            not isinstance(route, str)
+            or not route.startswith("/generated/")
+            or "\\" in route
         ):
-            raise ValueError(f"{variant_id}: unsafe viewer profile path")
-        profile_root = (project / "assets").resolve()
+            raise ValueError(f"{variant_id}: unsafe viewer profile route")
+        relative = route.removeprefix("/generated/")
+        if any(part in {"", ".", ".."} for part in Path(relative).parts):
+            raise ValueError(f"{variant_id}: unsafe viewer profile route")
+        profile_root = (project / "build" / "generated").resolve()
         profile_path = (profile_root / relative).resolve()
         if not profile_path.is_relative_to(profile_root) or not profile_path.is_file():
             raise ValueError(f"{variant_id}: missing viewer profile")
@@ -75,6 +88,7 @@ def validate_asset_variant(project, assets, variant_id):
         parameter_path = (project.resolve() / parameter_source).resolve()
         if not parameter_path.is_relative_to((project / "references").resolve()) or not parameter_path.is_file():
             raise ValueError(f"{variant_id}: missing parameter source")
+        variant["_validated_profile_url"] = route
     viewer_entry = variant.get("viewer_entry", viewer.get("entry"))
     if not isinstance(viewer_entry, str) or not viewer_entry:
         raise ValueError(f"{variant_id}: missing viewer entry")
@@ -146,7 +160,7 @@ class Handler(SimpleHTTPRequestHandler):
         route = next(
             (
                 prefix
-                for prefix in ("/assets/", "/source/", "/approved/", "/accepted-reference/", "/vendor/", "/reference/", "/candidate-reference/", "/registry/", "/evidence/")
+                for prefix in ("/assets/", "/source/", "/approved/", "/accepted-reference/", "/generated/", "/vendor/", "/registry/", "/evidence/")
                 if path.startswith(prefix)
             ),
             "/",
@@ -180,6 +194,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     project = Path(__file__).resolve().parents[1]
     try:
+        generate_viewer_profile(project)
         _, variant = validate_asset_variant(project, args.assets, args.variant_id)
         validate_vendor(project, args.vendor)
     except (OSError, ValueError, json.JSONDecodeError) as error:
@@ -190,10 +205,8 @@ if __name__ == "__main__":
         "/source/": project / "assets" / "xbox_one_s" / "source",
         "/approved/": project / "assets" / "xbox_one_s",
         "/accepted-reference/": project / "assets/xbox_one_s/render",
+        "/generated/": project / "build" / "generated",
         "/vendor/": args.vendor,
-        # Only expose the reviewed front-reference directory, not all results.
-        "/reference/": project / "build" / "experiments" / "legacy_casper_1914_visual_parts",
-        "/candidate-reference/": project / "build" / "experiments" / "xbox_one_s_batonyrobson_UNVERIFIED",
         # Canonical IDs used to prove which asset variant the viewer received.
         "/registry/": project / "assets",
         "/evidence/": project / "references",

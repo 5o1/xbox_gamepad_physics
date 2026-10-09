@@ -93,7 +93,7 @@ http://127.0.0.1:8770/viewer/gamepad_overlay/index.html?source=canonical&trace=/
 - [待统一确认与实测清单](docs/pending_user_review.md)：延后处理的视觉确认和硬件测量。
 - 完整控件逐项验收材料：生成到 `build/experiments/full_controls_user_review/`，不进入 Git。
 - [estimated-v0 来源](references/appearance_matched_estimated_v0.json)：估计运动学的来源、推导和限制。
-- [estimated-v0 profile](assets/appearance_matched_estimated_v0/viewer_profile.json)：viewer 使用的运动配置。
+- estimated-v0 profile：由 `scripts/build_estimated_v0.py` 生成到 `build/generated/kinematics/`。
 - [官方尺寸记录](references/1708_dimensions.json)：整体尺寸及其适用边界。
 - [方向键记录](references/1708_dpad_assembly.json)：十字键整体结构证据。
 - [扳机记录](references/1708_trigger_mechanism.json)：外帽、内部组件和缓冲接触证据。
