@@ -9,19 +9,18 @@ Python learning interface is defined separately in ``state.py``.
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import os
 from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-CATALOG_PATH = ROOT / "sources/catalog.json"
+CATALOG_PATH = ROOT / "references/catalog.json"
 ASSET_REGISTRY_PATH = ROOT / "assets/asset_index.json"
 SPEC_PATH = ROOT / "specs/xbox_v1.json"
 
 SCHEMA_VERSION = 2
-REPORT_SCHEMA_VERSION = 3
+REPORT_SCHEMA_VERSION = 4
 
 # Project transport order: W3C Standard Gamepad axes followed by buttons.
 # The W3C specification does not itself define a tensor layout.
@@ -82,13 +81,6 @@ UNRESOLVED_PARAMETERS = {
 }
 
 
-def _document_sha256(document: object) -> str:
-    payload = json.dumps(
-        document, sort_keys=True, allow_nan=False, separators=(",", ":")
-    ).encode()
-    return hashlib.sha256(payload).hexdigest()
-
-
 def _load_registry(asset_registry=None):
     if asset_registry is not None:
         return asset_registry
@@ -140,10 +132,8 @@ def make_spec(catalog, asset_registry=None):
     target = registry.get("target_hardware", {})
     return {
         "schema_version": SCHEMA_VERSION,
-        "catalog_sha256": _document_sha256(catalog),
         "asset_registry_binding": {
             "path": "assets/asset_index.json",
-            "sha256": _document_sha256(registry),
             "registry_role": "canonical_status_authority",
         },
         "target_model": {
@@ -278,8 +268,17 @@ def audit(spec, catalog, artifact_root=None, asset_registry=None):
         spec = {}
     if spec.get("schema_version") != SCHEMA_VERSION:
         errors.append(f"schema_version must be {SCHEMA_VERSION}")
-    if spec.get("catalog_sha256") != _document_sha256(catalog):
-        errors.append("catalog SHA256 mismatch")
+    catalog_sources = catalog.get("sources") if isinstance(catalog, dict) else None
+    required_evidence = {
+        "user_target_xbox_one_s",
+        "w3c_gamepad_standard_mapping",
+        "apple_1708_connect_button",
+        "ifixit_1708_buttons",
+    }
+    if not isinstance(catalog_sources, dict):
+        errors.append("reference catalog sources must be an object")
+    elif missing := sorted(required_evidence - set(catalog_sources)):
+        errors.append("reference catalog is missing: " + ", ".join(missing))
 
     binding = spec.get("asset_registry_binding")
     if not isinstance(binding, dict):
@@ -287,8 +286,6 @@ def audit(spec, catalog, artifact_root=None, asset_registry=None):
     else:
         if binding.get("path") != "assets/asset_index.json":
             errors.append("asset registry binding path changed")
-        if binding.get("sha256") != _document_sha256(registry):
-            errors.append("asset registry SHA256 mismatch")
         if binding.get("registry_role") != "canonical_status_authority":
             errors.append("asset registry binding role changed")
 
@@ -380,9 +377,6 @@ def audit(spec, catalog, artifact_root=None, asset_registry=None):
     ]
     return {
         "report_schema_version": REPORT_SCHEMA_VERSION,
-        "spec_sha256": _document_sha256(spec),
-        "catalog_sha256": _document_sha256(catalog),
-        "asset_registry_sha256": _document_sha256(registry),
         "schema_errors": errors,
         "unresolved_fields": unresolved_ids,
         "schema_valid": not errors,

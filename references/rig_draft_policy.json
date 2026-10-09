@@ -6,7 +6,7 @@
   "generator": "scripts/make_rig_draft.mjs",
   "rules": [
     "Active joints retain strict schema 1 validation and assembly constraints.",
-    "Separate pending entries preserve channel identity and reason; geometry and range fields must explicitly be null. Partial source observations remain in sources/specs rather than masquerading as an active joint.",
+    "Separate pending entries preserve channel identity and reason; geometry and range fields must explicitly be null. Partial source observations remain in references/specs rather than masquerading as an active joint.",
     "Active and pending channel identities cannot overlap. Promoting an entry requires removal from pending and a complete explicit active joint.",
     "Pending entries never reach coordinate mapping or rendering transforms. No physical defaults are created.",
     "The draft has 21 pending input channels, not a claim that the controller has 21 independent mechanical degrees of freedom."

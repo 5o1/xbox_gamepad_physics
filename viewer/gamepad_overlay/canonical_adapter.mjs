@@ -12,6 +12,7 @@ export const CHANNEL_NAMES = Object.freeze([
 const INDEX = Object.freeze(Object.fromEntries(
     CHANNEL_NAMES.map((name, index) => [name, index]),
 ));
+export const DIGITAL_PRESS_THRESHOLD = 0.5;
 
 function clamp(value, minimum, maximum) {
     return Math.max(minimum, Math.min(maximum, value));
@@ -53,6 +54,7 @@ export function validateCanonicalFrame(frame) {
 export function canonicalFrameToOverlayState(frame) {
     validateCanonicalFrame(frame);
     const value = name => frame.values[INDEX[name]];
+    const digital = name => clamp(value(name), 0, 1) >= DIGITAL_PRESS_THRESHOLD ? 1 : 0;
     return {
         LX: clamp(value("left_x"), -1, 1),
         LY: clamp(value("left_y"), -1, 1),
@@ -60,19 +62,19 @@ export function canonicalFrameToOverlayState(frame) {
         RY: clamp(value("right_y"), -1, 1),
         LT: clamp(value("left_trigger"), 0, 1),
         RT: clamp(value("right_trigger"), 0, 1),
-        A: clamp(value("south"), 0, 1),
-        B: clamp(value("east"), 0, 1),
-        X: clamp(value("west"), 0, 1),
-        Y: clamp(value("north"), 0, 1),
-        SELECT: clamp(value("back"), 0, 1),
-        GUIDE: clamp(value("guide"), 0, 1),
-        START: clamp(value("start"), 0, 1),
-        LS: clamp(value("left_stick"), 0, 1),
-        RS: clamp(value("right_stick"), 0, 1),
-        LB: clamp(value("left_shoulder"), 0, 1),
-        RB: clamp(value("right_shoulder"), 0, 1),
-        DX: clamp(value("dpad_right") - value("dpad_left"), -1, 1),
-        DY: clamp(value("dpad_down") - value("dpad_up"), -1, 1),
+        A: digital("south"),
+        B: digital("east"),
+        X: digital("west"),
+        Y: digital("north"),
+        SELECT: digital("back"),
+        GUIDE: digital("guide"),
+        START: digital("start"),
+        LS: digital("left_stick"),
+        RS: digital("right_stick"),
+        LB: digital("left_shoulder"),
+        RB: digital("right_shoulder"),
+        DX: digital("dpad_right") - digital("dpad_left"),
+        DY: digital("dpad_down") - digital("dpad_up"),
     };
 }
 
@@ -87,7 +89,7 @@ function setText(id, value) {
     if (element) element.textContent = value;
 }
 
-function updateHud(frame, overlayState) {
+export function updateHud(frame, overlayState) {
     const telemetry = frame.telemetry ?? {};
     const radius = Math.hypot(overlayState.LX, overlayState.LY);
     setText("phase", telemetry.phase ?? "sample");
@@ -109,12 +111,17 @@ function updateHud(frame, overlayState) {
     if (dot) {
         dot.style.transform = `translate(${overlayState.LX * 60}px, ${overlayState.LY * 60}px)`;
     }
-    const leftStickNodes = document.querySelectorAll(
-        '#overlayRoot [data-side="left"][data-role="analog-stick"], '
-        + '#overlayRoot [data-side="left"][data-role="analog-stick-ring"]',
-    );
-    const active = radius > 1e-4;
-    leftStickNodes.forEach(node => node.classList.toggle("signal-active", active));
+    for (const [side, x, y] of [
+        ["left", overlayState.LX, overlayState.LY],
+        ["right", overlayState.RX, overlayState.RY],
+    ]) {
+        const nodes = document.querySelectorAll(
+            `#overlayRoot [data-side="${side}"][data-role="analog-stick"], `
+            + `#overlayRoot [data-side="${side}"][data-role="analog-stick-ring"]`,
+        );
+        const active = Math.hypot(x, y) > 1e-4;
+        nodes.forEach(node => node.classList.toggle("signal-active", active));
+    }
 }
 
 export function installCanonicalSource() {

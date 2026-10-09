@@ -380,11 +380,15 @@ class MujocoRuntimeTests(unittest.TestCase):
             self.assertEqual(geom.get("conaffinity"), "0")
 
         filament = ET.parse(root / manifest["renderers"]["filament"]["entrypoint"])
+        xbox_materials = {
+            material.get("name"): material
+            for material in filament.findall(".//material")
+            if material.get("name", "").startswith("xbox_surface")
+        }
         roles = {
             layer.get("role")
-            for layer in filament.findall(
-                ".//material[@name='xbox_surface']/layer"
-            )
+            for material in xbox_materials.values()
+            for layer in material.findall("layer")
         }
         self.assertEqual(
             roles,
@@ -397,6 +401,14 @@ class MujocoRuntimeTests(unittest.TestCase):
                 "metallic",
                 "emissive",
             },
+        )
+        self.assertNotIn(
+            "opacity",
+            {layer.get("role") for layer in xbox_materials["xbox_surface_opaque"].findall("layer")},
+        )
+        self.assertIn(
+            "opacity",
+            {layer.get("role") for layer in xbox_materials["xbox_surface_transparent"].findall("layer")},
         )
         requirement = manifest["filament_material"]["renderer_requirement"]
         self.assertEqual(requirement["branch"], "concon/filament-opacity-texture")

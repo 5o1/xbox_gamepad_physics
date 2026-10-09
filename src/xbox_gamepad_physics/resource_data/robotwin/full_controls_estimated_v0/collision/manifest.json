@@ -8,7 +8,7 @@
     "bumpers_and_triggers": "box fitted to 90 percent of converted visual AABB",
     "shell": "central support plus explicit stick gate rings; visual triangle mesh is not used as a dynamic collision mesh",
     "fit_scale": 0.9,
-    "contact_material": "reuse sources/robotwin_left_stick_estimated_v0.json contact estimate"
+    "contact_material": "reuse references/robotwin_left_stick_estimated_v0.json contact estimate"
   },
   "links": {
     "controller_body": [
@@ -762,5 +762,5 @@
     "right_stick_x_frame": 0.0005,
     "right_stick_y_frame": 0.0005
   },
-  "source": "sources/full_controls_estimated_v0.json"
+  "source": "references/full_controls_estimated_v0.json"
 }

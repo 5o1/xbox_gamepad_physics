@@ -17,8 +17,7 @@
   "reason": null,
   "scope": "RoboTwin/SAPIEN left-stick contact and signal vertical slice",
   "evidence_status": "simulation_estimate_pending_owner_hardware_measurement",
-  "source_record": "sources/robotwin_left_stick_estimated_v0.json",
-  "source_sha256": "2a4b0ba61eecaa273457f7bb6adc48785fc3345c5756297f58f74aa2b36658f5",
+  "source_record": "references/robotwin_left_stick_estimated_v0.json",
   "joint_dynamics": [
     {
       "name": "left_stick_x",
@@ -88,7 +87,6 @@
   "visual_binding": {
     "schema_version": 1,
     "source": "common/xbox_one_s/visual/manifest.json",
-    "source_sha256": "4949463388206258ab23a513eefad1254ea9f99cac0beb79fa03646c2ab0fcae",
     "root_link": "controller_body",
     "moving_parts": {
       "09_Stick_L_VISUAL_UNCALIBRATED": {

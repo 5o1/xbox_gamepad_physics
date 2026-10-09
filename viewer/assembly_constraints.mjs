@@ -1,5 +1,5 @@
 // Target topology requirement, not certification of candidate mesh dimensions.
-// Source and inspected photograph: sources/1708_dpad_assembly.json.
+// Source and inspected photograph: references/1708_dpad_assembly.json.
 export const RIGID_VISUAL_GROUPS = [{
   id: 'dpad_cap',
   meshes: ['DPadDown', 'DPadLeft', 'DPadRight', 'DPadUp'],

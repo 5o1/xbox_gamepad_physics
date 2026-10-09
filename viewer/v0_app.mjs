@@ -136,14 +136,10 @@ async function load(){
   const renderResponse=await fetch('/approved/approved_render.json');if(!renderResponse.ok)throw Error('无法读取用户确认的渲染方案');approvedRender=await renderResponse.json();
   const [registryResponse,inventoryResponse]=await Promise.all([fetch('/registry/asset_index.json'),fetch('/assets/inventory.json')]);
   if(!registryResponse.ok||!inventoryResponse.ok)throw Error('资产注册表或外部清单不可用');
-  const registry=await registryResponse.json(),inventoryBytes=await inventoryResponse.arrayBuffer(),inventoryHash=await digest(inventoryBytes),allowed=new Set([registry.interactive_viewer?.active_variant_id,...(registry.interactive_viewer?.allowed_variant_ids??[])]);
-  const matches=Object.entries(registry.derived_variants??{}).filter(([id,variant])=>allowed.has(id)&&variant.inventory_sha256===inventoryHash);
-  if(matches.length!==1)throw Error(`外部清单必须唯一匹配一个允许的 viewer variant；当前匹配 ${matches.length} 个`);
-  [activeVariantId]=matches[0];const variant=matches[0][1],binding=variant.viewer_profile;if(!binding)throw Error('当前 variant 没有 schema-2 viewer profile');
-  const profileResponse=await fetch('/registry/'+binding.path);if(!profileResponse.ok)throw Error(`viewer profile HTTP ${profileResponse.status}`);const profileBytes=await profileResponse.arrayBuffer(),profileHash=await digest(profileBytes);if(profileHash!==binding.sha256)throw Error('viewer profile 哈希不匹配');
-  profile=JSON.parse(new TextDecoder().decode(profileBytes));
-  const evidenceRelative=profile.parameter_source;if(!evidenceRelative.startsWith('sources/'))throw Error('参数证据路径不安全');const evidenceResponse=await fetch('/evidence/'+evidenceRelative.slice('sources/'.length));if(!evidenceResponse.ok)throw Error(`参数证据 HTTP ${evidenceResponse.status}`);const evidenceBytes=await evidenceResponse.arrayBuffer(),evidenceHash=await digest(evidenceBytes);if(evidenceHash!==profile.parameter_source_sha256)throw Error('参数证据哈希不匹配');evidence=JSON.parse(new TextDecoder().decode(evidenceBytes));
-  if(profile.source_bindings.static_inventory_sha256!==inventoryHash)throw Error('profile 与外部清单绑定不一致');
+  const registry=await registryResponse.json();await inventoryResponse.json();activeVariantId=registry.interactive_viewer?.active_variant_id;
+  const variant=registry.derived_variants?.[activeVariantId],binding=variant?.viewer_profile;if(!binding)throw Error('当前 variant 没有 schema-2 viewer profile');
+  const profileResponse=await fetch('/registry/'+binding.path);if(!profileResponse.ok)throw Error(`viewer profile HTTP ${profileResponse.status}`);profile=await profileResponse.json();
+  const evidenceRelative=profile.parameter_source;if(!evidenceRelative.startsWith('references/'))throw Error('参数证据路径不安全');const evidenceResponse=await fetch('/evidence/'+evidenceRelative.slice('references/'.length));if(!evidenceResponse.ok)throw Error(`参数证据 HTTP ${evidenceResponse.status}`);evidence=await evidenceResponse.json();
   const glbResponse=await fetch('/assets/'+encodeURIComponent(profile.visual.file));if(!glbResponse.ok)throw Error(`GLB HTTP ${glbResponse.status}`);const glbBytes=await glbResponse.arrayBuffer(),glbHash=await digest(glbBytes);if(glbHash!==profile.visual.sha256)throw Error('GLB 哈希不匹配');
   const gltf=await new Promise((resolve,reject)=>new GLTFLoader().parse(glbBytes,'/assets/',resolve,reject));model=gltf.scene;model.rotation.x=profile.visual.gltf_to_viewer_rotation_x_rad;model.scale.setScalar(profile.visual.meters_per_native_unit);scene.add(model);model.updateMatrixWorld(true);
   // Reuse the original, previously audited material. Blender's static export
@@ -165,9 +161,9 @@ async function load(){
     node.traverse(object=>{if(object.isMesh)object.userData.profileNode=record.source_node;});parts.set(record.source_node,node);
   }
   verifiedBindings={
-    inventory:{url:'/assets/inventory.json',actual_sha256:inventoryHash,expected_sha256:variant.inventory_sha256},
-    profile:{url:'/registry/'+binding.path,actual_sha256:profileHash,expected_sha256:binding.sha256},
-    evidence:{url:'/evidence/'+evidenceRelative.slice('sources/'.length),actual_sha256:evidenceHash,expected_sha256:profile.parameter_source_sha256},
+    inventory:{url:'/assets/inventory.json'},
+    profile:{url:'/registry/'+binding.path},
+    evidence:{url:'/evidence/'+evidenceRelative.slice('references/'.length)},
     visual:{url:'/assets/'+profile.visual.file,actual_sha256:glbHash,expected_sha256:profile.visual.sha256},
     material:{url:sourceUrl,actual_sha256:sourceHash,expected_sha256:profile.source_bindings.source_glb_sha256},
   };

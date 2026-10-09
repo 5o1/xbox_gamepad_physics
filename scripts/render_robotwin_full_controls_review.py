@@ -153,6 +153,7 @@ def main() -> None:
 
     from envs._base_task import Base_Task, create_box, create_table
     from xbox_gamepad_physics.robotwin import load_into_scene
+    from xbox_gamepad_physics.resources import load_json_resource
     from xbox_gamepad_physics.state import (
         GamepadDeviceId,
         GamepadState,
@@ -201,24 +202,25 @@ def main() -> None:
         profile="full_controls_estimated_v0",
     )
     camera = scene.add_camera(
-        "full_controls_review", 1280, 720, math.radians(36), 0.001, 10
+        "full_controls_review", 1280, 720, math.radians(35), 0.001, 10
     )
-    camera_positions = {
-        "sticks": ([0.08, -0.30, 1.04], [0.0, 0.01, 0.79]),
-        "face_buttons": ([0.14, -0.25, 1.00], [0.035, 0.02, 0.80]),
-        "center_buttons": ([0.02, -0.27, 1.00], [0.0, 0.015, 0.80]),
-        "shoulders_triggers": ([0.24, -0.27, 1.04], [0.0, 0.02, 0.80]),
-        "dpad": ([-0.13, -0.25, 1.00], [-0.035, 0.01, 0.80]),
-        "concurrent": ([0.10, -0.34, 1.06], [0.0, 0.01, 0.79]),
-    }
+    visual_scale = load_json_resource(
+        "common", "xbox_one_s", "visual/manifest.json"
+    )["meters_per_native_unit"]
+    root_position = np.array([0.0, 0.0, 0.8])
+    front_position = root_position + visual_scale * np.array(
+        [-0.037516698241233826, -0.5597505569458008, 4.206621170043945]
+    )
+    front_target = root_position + visual_scale * np.array(
+        [-0.037516698241233826, 0.24024944007396698, -0.2933788597583771]
+    )
+    camera.entity.set_pose(look_at(front_position, front_target))
 
     substeps = args.physics_hz // args.fps
     reports = []
     for group in args.groups:
         directory = output / group
         directory.mkdir(parents=True, exist_ok=True)
-        position, target = camera_positions[group]
-        camera.entity.set_pose(look_at(position, target))
         gamepad.set_joint_positions({name: 0.0 for name in gamepad.joint_names})
         gamepad.articulation.set_qvel(np.zeros(len(gamepad.joint_names)))
         observed_frames = []
@@ -339,6 +341,12 @@ def main() -> None:
         "gpu_visible": os.environ.get("CUDA_VISIBLE_DEVICES"),
         "fps": args.fps,
         "physics_hz": args.physics_hz,
+        "camera": {
+            "name": "approved_front",
+            "position_m": front_position.tolist(),
+            "target_m": front_target.tolist(),
+            "vertical_fov_degrees": 35,
+        },
         "groups": reports,
         "acceptance": "pending_user_review",
     }

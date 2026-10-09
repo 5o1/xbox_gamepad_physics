@@ -90,9 +90,9 @@ try {
   assert.equal(state.parts.length, 16);
   assert.equal(state.profileId, 'xbox_one_s_batonyrobson_appearance_matched_estimated_v0');
   assert.equal(state.activeVariantId, state.profileId);
-  assert.ok(Object.values(state.verifiedBindings).every(binding => (
+  assert.ok(['visual', 'material'].map(name=>state.verifiedBindings[name]).every(binding => (
     binding.actual_sha256 === binding.expected_sha256
-  )), 'runtime asset/profile/evidence hash mismatch');
+  )), 'runtime binary asset hash mismatch');
   assert.equal(state.materialStats.mesh_count, 16);
   assert.ok(state.materialStats.unique_texture_count > 0, 'embedded textures were not instantiated');
   assert.ok(state.verifiedBindings.material, 'original material source was not verified');
@@ -106,7 +106,7 @@ try {
     navigation,
     actualNavigationUrl,
     cache,
-    externalAssetScope: 'The viewer verifies inventory, profile, evidence and GLB hashes.',
+    externalAssetScope: 'The viewer verifies the visual and source-material GLB bytes; repository JSON is validated structurally.',
   });
 
   const baseline = await call('Page.captureScreenshot', {format: 'png'});

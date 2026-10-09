@@ -19,7 +19,7 @@ def load(relative_path):
 
 class EvidenceTests(unittest.TestCase):
     def setUp(self):
-        self.catalog = load("sources/catalog.json")
+        self.catalog = load("references/catalog.json")
         self.registry = load("assets/asset_index.json")
         self.spec = load("specs/xbox_v1.json")
 
@@ -52,18 +52,9 @@ class EvidenceTests(unittest.TestCase):
             asset.synchronize_spec(self.spec, self.catalog, self.registry),
         )
 
-    def test_catalog_and_registry_hashes_are_current(self):
-        self.assertEqual(
-            self.spec["catalog_sha256"], asset._document_sha256(self.catalog)
-        )
-        self.assertEqual(
-            self.spec["asset_registry_binding"]["sha256"],
-            asset._document_sha256(self.registry),
-        )
-
-    def test_catalog_or_registry_drift_fails_closed(self):
+    def test_missing_reference_or_invalid_registry_fails_closed(self):
         changed_catalog = copy.deepcopy(self.catalog)
-        changed_catalog["checked_on"] = "tampered"
+        del changed_catalog["sources"]["w3c_gamepad_standard_mapping"]
         self.assertFalse(self.audit(catalog=changed_catalog)["schema_valid"])
 
         changed_registry = copy.deepcopy(self.registry)

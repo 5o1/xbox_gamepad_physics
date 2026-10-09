@@ -4,7 +4,7 @@
 游戏强化学习、VLA 和机械臂控制不在这里实现。
 
 当前只分发 Xbox One S 的模型资产。Switch Pro 和旧 Xbox Series X|S 候选模型保存在
-GPU 节点，存档位置见 `sources/switch_pro_candidates.json` 和 `assets/asset_index.json`。
+GPU 节点，存档位置见 `references/switch_pro_candidates.json` 和 `assets/asset_index.json`。
 仓库保留相关历史报告、图片和来源记录；旧型号已退出查看器可选入口。
 
 ## 当前状态
@@ -23,11 +23,11 @@ GPU 节点，存档位置见 `sources/switch_pro_candidates.json` 和 `assets/as
 | 真实手柄验收 | 尚未执行 |
 
 主候选的来源、许可和文件身份记录在
-[候选清单](sources/xbox_replacement_candidates.json)。它使用 16 个视觉节点和作者动画信息
+[候选清单](references/xbox_replacement_candidates.json)。它使用 16 个视觉节点和作者动画信息
 生成 estimated-v0；统一尺度来自候选整体宽度与微软公布宽度之比。
 目标产品与外观资产已确认。尺度拟合用于交互预览；真实轴心、行程和受力保持待标定状态。
 
-旧 Casper 资产的型号判断见 [几何复核](sources/geometry_review.json)。它的 Share 键、圆盘方向键
+旧 Casper 资产的型号判断见 [几何复核](references/geometry_review.json)。它的 Share 键、圆盘方向键
 和接口外形与目标 Xbox One S 不符；宽度缩放派生物只用于历史 viewer 回归。
 
 ## 第一阶段验收
@@ -83,20 +83,21 @@ http://127.0.0.1:8770/viewer/gamepad_overlay/index.html?source=canonical&trace=/
 
 ## 关键入口
 
-- [资产索引](assets/asset_index.json)：候选、派生版本、哈希和准入状态。
+- [资产索引](assets/asset_index.json)：候选、派生版本和准入状态。
 - [目标物理规格](specs/xbox_v1.json)：部件、物理字段和未决项。
 - [交互验收规格](specs/interactive_acceptance.json)：浏览器双向交互的验收门禁。
-- [32 维张量契约来源](sources/gamepad_tensor_contract_v1.json)：通道顺序、mask 与设备标识的依据和项目选择。
+- [32 维张量契约来源](references/gamepad_tensor_contract_v1.json)：通道顺序、mask 与设备标识的依据和项目选择。
 - [虚拟手柄适配器](viewer/gamepad_overlay/index.html)：将 canonical 状态交给现成 SVG 手柄渲染器。
 - [完整控件使用说明](docs/full_controls.md)：20-DOF 双后端资产、信号接口和运行记录。
+- [MuBlE 适配器](src/xbox_gamepad_physics/muble/)：从公共 MuJoCo 接口导出 body pose，并驱动已验收 Blender 对象。
 - [待统一确认与实测清单](docs/pending_user_review.md)：延后处理的视觉确认和硬件测量。
 - [完整控件逐项验收视频](results/full_controls_user_review/README.md)：六组双后端运动对照和实体球接触材料。
-- [estimated-v0 来源](sources/appearance_matched_estimated_v0.json)：估计运动学的来源、推导和限制。
+- [estimated-v0 来源](references/appearance_matched_estimated_v0.json)：估计运动学的来源、推导和限制。
 - [estimated-v0 profile](assets/appearance_matched_estimated_v0/viewer_profile.json)：viewer 使用的运动配置。
-- [官方尺寸记录](sources/1708_dimensions.json)：整体尺寸及其适用边界。
-- [方向键记录](sources/1708_dpad_assembly.json)：十字键整体结构证据。
-- [扳机记录](sources/1708_trigger_mechanism.json)：外帽、内部组件和缓冲接触证据。
-- [FCC 照片记录](sources/1708_fcc_internal.json)：内部照片来源与限制。
+- [官方尺寸记录](references/1708_dimensions.json)：整体尺寸及其适用边界。
+- [方向键记录](references/1708_dpad_assembly.json)：十字键整体结构证据。
+- [扳机记录](references/1708_trigger_mechanism.json)：外帽、内部组件和缓冲接触证据。
+- [FCC 照片记录](references/1708_fcc_internal.json)：内部照片来源与限制。
 - [第三方声明](THIRD_PARTY_NOTICES.md)：进入 Git 的第三方内容及许可证。
 
 目录分工：
@@ -105,7 +106,7 @@ http://127.0.0.1:8770/viewer/gamepad_overlay/index.html?source=canonical&trace=/
 - `src/xbox_gamepad_physics/` 保存公共状态接口和双后端运行时；
 - `schemas/` 保存可发布资源的 manifest 格式；
 - `docs/` 保存导入与维护约定；
-- `sources/` 保存来源、推导和适用范围；
+- `references/` 保存来源、推导和适用范围；
 - `specs/` 保存当前规格和明确的未知项；
 - `viewer/` 保存浏览器检查器；
 - `scripts/` 保存构建、转换和审计程序；
@@ -200,7 +201,7 @@ python3 scripts/serve_viewer.py \
 通过 `navigator.getGamepads()` 读取，不需要把 USB 设备转发到计算节点。
 
 当前页面是运动学检查器。鼠标或 Gamepad 能驱动网格，只说明输入、映射和显示链路工作；
-在 canonical schema-v2 到 viewer 的适配器完成并通过哈希绑定前，不计作物理验收。
+在 canonical schema-v2 到 viewer 的适配器完成并通过结构与语义验证前，不计作物理验收。
 
 ## 建模原则
 

@@ -34,6 +34,8 @@ def main():
     args=parser.parse_args()
     source=ROOT/'assets/xbox_one_s/source/xbox_one_s_controllergamepad_animated.glb'
     static=ROOT/'assets/xbox_one_s/visual/Xbox_One_S_BatonyRobson_STATIC_VISUAL_UNCALIBRATED.glb'
+    inventory=json.loads((ROOT/'assets/xbox_one_s/visual/inventory.json').read_text())
+    inventory_by_stem={Path(item['file']).stem:item for item in inventory['objects']}
     profile=json.loads((ROOT/'assets/appearance_matched_estimated_v0/viewer_profile.json').read_text())
     assert hashlib.sha256(source.read_bytes()).hexdigest()==profile['source_bindings']['source_glb_sha256']
     assert hashlib.sha256(static.read_bytes()).hexdigest()==profile['visual']['sha256']
@@ -94,9 +96,13 @@ def main():
             'scenes':[{'nodes':[0]}],'scene':0,
         }
         filename=node['name']+'.gltf'
+        source_record=inventory_by_stem[node['name']]
         (output/filename).write_text(json.dumps(document,separators=(',',':'))+'\n')
         primitive=mesh['primitives'][0]
         parts.append({'name':node['name'],'file':filename,
+                      'source_name':source_record['name'],
+                      'source_object':source_record['source_object'],
+                      'source_matrix_world':source_record['source_matrix_world'],
                       'vertices':geometry['accessors'][primitive['attributes']['POSITION']]['count'],
                       'triangles':geometry['accessors'][primitive['indices']]['count']//3})
     assert len(parts)==16
@@ -105,6 +111,7 @@ def main():
         'source_sha256':profile['source_bindings']['source_glb_sha256'],
         'geometry_sha256':profile['visual']['sha256'],
         'coordinate_frame':'gltf_y_up','meters_per_native_unit':profile['visual']['meters_per_native_unit'],
+        'blender_source_to_simulation_rotation_x_rad':profile['visual']['gltf_to_viewer_rotation_x_rad'],
         'scale_status':'existing width-fit visual estimate; not measured local geometry',
         'parts':parts,'source_material':material,'source_textures':texture_files,
         'sapien_material':{

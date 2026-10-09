@@ -1,8 +1,7 @@
-"""Build a hash-bound index for the full-controls user review videos."""
+"""Build an index for the full-controls user review videos."""
 
 from __future__ import annotations
 
-import hashlib
 import json
 from pathlib import Path
 import subprocess
@@ -18,10 +17,6 @@ GROUPS = (
     "dpad",
     "concurrent",
 )
-
-
-def digest(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
 def video_record(path: Path) -> dict:
@@ -48,7 +43,6 @@ def video_record(path: Path) -> dict:
     stream = probe["streams"][0]
     return {
         "path": str(path.relative_to(ROOT)),
-        "sha256": digest(path),
         "bytes": int(probe["format"]["size"]),
         "duration_seconds": float(probe["format"]["duration"]),
         "resolution": [int(stream["width"]), int(stream["height"])],
@@ -61,7 +55,6 @@ def trace_record(path: Path) -> dict:
     trace = json.loads(path.read_text(encoding="utf-8"))
     record = {
         "path": str(path.relative_to(ROOT)),
-        "sha256": digest(path),
         "frames": trace["frame_count"],
         "stimulus": trace["stimulus"],
         "signal_source": trace["signal_source"],

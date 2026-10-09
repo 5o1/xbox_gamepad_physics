@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 from pathlib import Path
 import xml.etree.ElementTree as ET
@@ -26,7 +25,7 @@ VISUAL = (
     / "mujoco"
     / "visual_v0"
 )
-SOURCE = ROOT / "sources" / "full_controls_estimated_v0.json"
+SOURCE = ROOT / "references" / "full_controls_estimated_v0.json"
 DEFAULT_OUTPUT = (
     ROOT
     / "src"
@@ -39,10 +38,6 @@ DEFAULT_OUTPUT = (
 
 def _json(path: Path) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
-
-
-def _sha256(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
 def _fmt(value: float) -> str:
@@ -332,10 +327,8 @@ def build(output: Path) -> None:
         },
         "bindings": bindings,
         "state_mapping": robotwin_manifest["state_mapping"],
-        "source_record": "sources/full_controls_estimated_v0.json",
-        "source_sha256": _sha256(SOURCE),
+        "source_record": "references/full_controls_estimated_v0.json",
         "mechanism_source": "robotwin/full_controls_estimated_v0",
-        "mechanism_manifest_sha256": _sha256(ROBOTWIN / "manifest.json"),
         "material_limitations": [
             "MuJoCo sliding friction uses one coefficient; the shared dynamic coefficient 0.4 is used.",
             "The shared restitution estimate has no direct MJCF scalar and remains unmodeled in this first pass."

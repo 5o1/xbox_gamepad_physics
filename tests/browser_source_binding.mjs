@@ -4,9 +4,9 @@ import {randomUUID} from 'node:crypto';
 export const CACHE_BUSTER_PARAMETER = '__xbox_regression_nonce';
 
 // Browser acceptance checks only the external HTTP boundaries it relies on.
-// scripts/serve_viewer.py and the pages themselves verify the asset, profile,
-// evidence, inventory and vendor hashes; hashing every served JS module again
-// here would only test the test harness.
+// scripts/serve_viewer.py and the pages validate repository JSON structurally
+// and verify external binary assets where identity matters. Hashing every served
+// repository file again would only duplicate Git and test the test harness.
 export const CRITICAL_SOURCE_RESOURCES = Object.freeze([
   {request_path: '/'},
   {request_path: '/registry/asset_index.json'},

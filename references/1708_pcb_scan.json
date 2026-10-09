@@ -25,7 +25,7 @@
     "decision": "Neither orientation supports a usable registration. Do not use the fitted normal-orientation matrix to transfer dimensions or joint coordinates. No calibration promoted."
   },
   "manual_registration": {
-    "annotations": "sources/pcb_hole_correspondences.json",
+    "annotations": "references/pcb_hole_correspondences.json",
     "script": "scripts/fit_pcb_holes.py",
     "result": "results/pcb_holes_v1.json",
     "fit": "Four outer mounting holes; direct homography without robust rejection",

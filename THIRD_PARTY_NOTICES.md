@@ -79,11 +79,11 @@ The following environments were used in the rendering work:
 
 Poly Haven publishes these assets under
 [CC0 1.0](https://polyhaven.com/license). Standalone HDR/EXR files are not included;
-download hashes and acquisition records are kept in `sources/*_hdri.json`.
+download hashes and acquisition records are kept in `references/*_hdri.json`.
 The user-selected Boiler Room environment is also packed unchanged in
 `assets/xbox_one_s/render/Xbox_One_S_approved_cycles.blend` for the Cycles viewer.
 It is by Oliksiy Yakovlyev, distributed by Poly Haven under CC0; its source and
-hash are recorded in `sources/boiler_room_hdri.json`.
+hash are recorded in `references/boiler_room_hdri.json`.
 
 These environments are licensed approximations, not copies of Sketchfab's
 Industrial Room environment.
@@ -105,7 +105,7 @@ Industrial Room environment.
 
 iFixit photographs, FCC exhibits, manufacturer data sheets, Input Labs Alpakka
 documents, and other research references are represented by URLs, locators, and
-where available hashes in `sources/`. They are not relicensed or redistributed
+where available hashes in `references/`. They are not relicensed or redistributed
 by this repository. Raw Sketchfab API responses, embedded platform pages, and
 platform-UI screenshots are likewise excluded; only the licensed model-derived
 render used as a visual oracle is retained.

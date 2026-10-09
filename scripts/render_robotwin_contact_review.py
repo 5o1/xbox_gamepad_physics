@@ -38,6 +38,7 @@ def main() -> None:
 
     from envs._base_task import Base_Task, create_box, create_table
     from xbox_gamepad_physics.robotwin import load_into_scene
+    from xbox_gamepad_physics.resources import load_json_resource
 
     def look_at(position, target):
         forward = np.asarray(target) - np.asarray(position)
@@ -100,11 +101,18 @@ def main() -> None:
     builder.set_initial_pose(sapien.Pose(start))
     probe = builder.build_kinematic(name="left_stick_contact_probe")
     camera = scene.add_camera(
-        "contact_review", 1280, 720, math.radians(36), 0.001, 10
+        "contact_review", 1280, 720, math.radians(35), 0.001, 10
     )
-    camera.entity.set_pose(
-        look_at([0.08, -0.30, 1.04], [0.0, 0.01, 0.79])
+    visual_scale = load_json_resource(
+        "common", "xbox_one_s", "visual/manifest.json"
+    )["meters_per_native_unit"]
+    front_position = root_position + visual_scale * np.array(
+        [-0.037516698241233826, -0.5597505569458008, 4.206621170043945]
     )
+    front_target = root_position + visual_scale * np.array(
+        [-0.037516698241233826, 0.24024944007396698, -0.2933788597583771]
+    )
+    camera.entity.set_pose(look_at(front_position, front_target))
 
     gamepad.set_joint_positions({name: 0.0 for name in gamepad.joint_names})
     gamepad.articulation.set_qvel(np.zeros(len(gamepad.joint_names)))
@@ -216,6 +224,12 @@ def main() -> None:
         "final_left_x": trace_frames[-1]["values"][0],
         "frames": trace_frames,
         "acceptance": "pending_user_review",
+        "camera": {
+            "name": "approved_front",
+            "position_m": front_position.tolist(),
+            "target_m": front_target.tolist(),
+            "vertical_fov_degrees": 35,
+        },
     }
     (output / "observed_trace.json").write_text(
         json.dumps(trace, separators=(",", ":")) + "\n", encoding="utf-8"

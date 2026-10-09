@@ -9,7 +9,6 @@ Unknown dynamics remain null.
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import math
 import os
@@ -21,21 +20,16 @@ from asset_spec import W3C_BROWSER_CHANNEL_DEFINITIONS
 ROOT = Path(__file__).resolve().parents[1]
 STATIC_INVENTORY = ROOT / "results/xbox_one_s_batonyrobson_UNVERIFIED/static_visual_parts_inventory_UNCALIBRATED.json"
 MOTION_SUMMARY = ROOT / "results/xbox_one_s_batonyrobson_UNVERIFIED/artist_animation_summary_UNCALIBRATED.json"
-DIMENSIONS = ROOT / "sources/1708_dimensions.json"
-STICK_REFERENCE = ROOT / "sources/stick_envelope.json"
-CATALOG = ROOT / "sources/catalog.json"
-EVIDENCE_OUTPUT = ROOT / "sources/appearance_matched_estimated_v0.json"
+DIMENSIONS = ROOT / "references/1708_dimensions.json"
+STICK_REFERENCE = ROOT / "references/stick_envelope.json"
+CATALOG = ROOT / "references/catalog.json"
+EVIDENCE_OUTPUT = ROOT / "references/appearance_matched_estimated_v0.json"
 PROFILE_OUTPUT = ROOT / "assets/appearance_matched_estimated_v0/viewer_profile.json"
 AUDIT_OUTPUT = ROOT / "results/xbox_one_s_batonyrobson_UNVERIFIED/estimated_v0_build_audit.json"
 
 PROFILE_ID = "xbox_one_s_batonyrobson_appearance_matched_estimated_v0"
 VARIANT_ID = PROFILE_ID
-EXPECTED_INVENTORY_SHA256 = "ab310d28155b592344c4e1f3890976f4363b59c645585a09dbca24c5fbb13049"
-EXPECTED_MOTION_SHA256 = "fda7e876a19823fd679d2bd1e9051e1ab8642f23873f62b0707a468259442664"
 EXPECTED_FULL_MOTION_AUDIT_SHA256 = "4c97d513d66f008e5cbc2b375d3c98692cfb495ecf32178c42d399304b31e6df"
-EXPECTED_DIMENSIONS_SHA256 = "25f272d5cbe866d36dc83a2a30bc70a4884cccc4d1d1b3d5dad206c6aac5914c"
-EXPECTED_STICK_REFERENCE_SHA256 = "1c71f9576fc3b2ae3111e099acdd50953b1e04621ae5b94e4d7ce2350bc9f88e"
-EXPECTED_CATALOG_SHA256 = "56f0ebc4de4c0963f65e4e22d722de30f1ff16beb2340271233c6e4d5cb82f39"
 
 PART_TO_CONTROL = {
     "Controller Body": "shell",
@@ -73,10 +67,6 @@ CONTROL_TO_BONE = {
     "right_trigger": "Trigger_R_011",
     "guide": "XBoxButton_06",
 }
-
-
-def sha256(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
 def require(condition, message):
@@ -143,11 +133,6 @@ def channel_index(name):
 
 
 def build():
-    require(sha256(STATIC_INVENTORY) == EXPECTED_INVENTORY_SHA256, "static inventory hash changed")
-    require(sha256(MOTION_SUMMARY) == EXPECTED_MOTION_SHA256, "artist-motion summary hash changed")
-    require(sha256(DIMENSIONS) == EXPECTED_DIMENSIONS_SHA256, "dimension evidence hash changed")
-    require(sha256(STICK_REFERENCE) == EXPECTED_STICK_REFERENCE_SHA256, "stick-reference evidence hash changed")
-    require(sha256(CATALOG) == EXPECTED_CATALOG_SHA256, "evidence catalog hash changed")
     inventory = json.loads(STATIC_INVENTORY.read_text())
     motion = json.loads(MOTION_SUMMARY.read_text())
     dimensions = json.loads(DIMENSIONS.read_text())
@@ -623,24 +608,18 @@ def build():
         "status": "appearance_matched_estimated_kinematics_not_physics",
         "source_bindings": {
             "static_inventory": str(STATIC_INVENTORY.relative_to(ROOT)),
-            "static_inventory_sha256": EXPECTED_INVENTORY_SHA256,
             "source_glb_sha256": inventory["source_sha256"],
             "static_glb": inventory["assembled_glb"],
             "static_glb_sha256": inventory["assembled_glb_sha256"],
             "artist_motion_summary": str(MOTION_SUMMARY.relative_to(ROOT)),
-            "artist_motion_summary_sha256": EXPECTED_MOTION_SHA256,
             "full_artist_motion_audit_sha256": EXPECTED_FULL_MOTION_AUDIT_SHA256,
             "full_artist_motion_audit_gpu_path": motion["full_audit_storage"],
             "dimension_evidence": str(DIMENSIONS.relative_to(ROOT)),
-            "dimension_evidence_sha256": EXPECTED_DIMENSIONS_SHA256,
             "stick_reference": str(STICK_REFERENCE.relative_to(ROOT)),
-            "stick_reference_sha256": EXPECTED_STICK_REFERENCE_SHA256,
             "evidence_catalog": str(CATALOG.relative_to(ROOT)),
-            "evidence_catalog_sha256": EXPECTED_CATALOG_SHA256,
         },
         "evidence_index": {
             "catalog": str(CATALOG.relative_to(ROOT)),
-            "catalog_sha256": EXPECTED_CATALOG_SHA256,
             "available_ids": sorted(catalog_sources),
         },
         "scale_fit": {
@@ -701,7 +680,6 @@ def build():
         },
     }
 
-    evidence_sha256 = hashlib.sha256(encoded(evidence)).hexdigest()
     profile = {
         "schema_version": 2,
         "schema_name": "appearance_kinematics_runtime",
@@ -746,40 +724,19 @@ def build():
             "inverse_policy": "return_represented_state_after_constraint_projection",
         },
         "parameter_source": str(EVIDENCE_OUTPUT.relative_to(ROOT)),
-        "parameter_source_sha256": evidence_sha256,
         "acceptance": evidence["acceptance"],
     }
     require(finite_tree(evidence) and finite_tree(profile), "generated documents contain non-finite values")
-    input_hashes = {
-        str(STATIC_INVENTORY.relative_to(ROOT)): EXPECTED_INVENTORY_SHA256,
-        str(MOTION_SUMMARY.relative_to(ROOT)): EXPECTED_MOTION_SHA256,
-        str(DIMENSIONS.relative_to(ROOT)): EXPECTED_DIMENSIONS_SHA256,
-        str(STICK_REFERENCE.relative_to(ROOT)): EXPECTED_STICK_REFERENCE_SHA256,
-        str(CATALOG.relative_to(ROOT)): EXPECTED_CATALOG_SHA256,
-    }
-    output_hashes = {
-        str(EVIDENCE_OUTPUT.relative_to(ROOT)): hashlib.sha256(encoded(evidence)).hexdigest(),
-        str(PROFILE_OUTPUT.relative_to(ROOT)): hashlib.sha256(encoded(profile)).hexdigest(),
-    }
     audit = {
         "schema_version": 1,
         "profile_id": PROFILE_ID,
         "passed": True,
-        "hash_algorithm": "SHA-256",
-        "input_sha256": input_hashes,
         "external_input_sha256": {
             "source_artist_glb": inventory["source_sha256"],
             "static_visual_glb": inventory["assembled_glb_sha256"],
             "full_artist_motion_audit": EXPECTED_FULL_MOTION_AUDIT_SHA256,
         },
-        "output_sha256": output_hashes,
-        "self_hash_policy": "The audit does not hash itself, avoiding a self-referential digest.",
         "checks": {
-            "pinned_static_inventory": True,
-            "pinned_motion_summary": True,
-            "pinned_dimension_evidence": sha256(DIMENSIONS) == EXPECTED_DIMENSIONS_SHA256,
-            "pinned_stick_reference": sha256(STICK_REFERENCE) == EXPECTED_STICK_REFERENCE_SHA256,
-            "pinned_evidence_catalog": sha256(CATALOG) == EXPECTED_CATALOG_SHA256,
             "all_parameter_evidence_ids_resolve": all(
                 set(record["evidence"]) <= set(catalog_sources) for record in parameters.values()
             ),

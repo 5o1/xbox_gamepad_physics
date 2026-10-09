@@ -5,13 +5,13 @@
   "status": "simulation_estimate_pending_owner_hardware_measurement",
   "sources": {
     "kinematics": "assets/appearance_matched_estimated_v0/viewer_profile.json",
-    "kinematic_derivation": "sources/appearance_matched_estimated_v0.json",
-    "reference_values": "sources/catalog.json",
-    "left_stick_physics": "sources/robotwin_left_stick_estimated_v0.json",
-    "target_structure": "sources/mechanical_structure.json",
-    "trigger_structure": "sources/1708_trigger_mechanism.json",
-    "dpad_structure": "sources/1708_dpad_assembly.json",
-    "whole_mass": "sources/1708_dimensions.json"
+    "kinematic_derivation": "references/appearance_matched_estimated_v0.json",
+    "reference_values": "references/catalog.json",
+    "left_stick_physics": "references/robotwin_left_stick_estimated_v0.json",
+    "target_structure": "references/mechanical_structure.json",
+    "trigger_structure": "references/1708_trigger_mechanism.json",
+    "dpad_structure": "references/1708_dpad_assembly.json",
+    "whole_mass": "references/1708_dimensions.json"
   },
   "control_groups": {
     "face_buttons": {
@@ -55,7 +55,7 @@
     },
     "sticks": {
       "joint_prefixes": ["left_stick", "right_stick"],
-      "tilt_dynamics": "reuse sources/robotwin_left_stick_estimated_v0.json for both identical reference modules",
+      "tilt_dynamics": "reuse references/robotwin_left_stick_estimated_v0.json for both identical reference modules",
       "click_force_n": 7.4,
       "click_force_range_n": [4.4, 10.4],
       "click_force_evidence": "catalog.reference_values.stick_click_force",
@@ -87,7 +87,7 @@
     "bumpers_and_triggers": "box fitted to 90 percent of converted visual AABB",
     "shell": "central support plus explicit stick gate rings; visual triangle mesh is not used as a dynamic collision mesh",
     "fit_scale": 0.9,
-    "contact_material": "reuse sources/robotwin_left_stick_estimated_v0.json contact estimate"
+    "contact_material": "reuse references/robotwin_left_stick_estimated_v0.json contact estimate"
   },
   "mass_policy": {
     "whole_controller_mass_kg": 0.28,
@@ -121,7 +121,30 @@
     },
     "physical_only": ["pair_bind_connect"],
     "button_output": "continuous [0,1] travel fraction; consuming task chooses a digital threshold",
-    "deadzone": null
+    "device_neutral_epsilon": 0.0001,
+    "device_neutral_mode": "zero_inside_without_rescaling_outside",
+    "device_neutral_applies_to": [
+      "left and right stick radial magnitude",
+      "left and right trigger normalized travel",
+      "button normalized travel",
+      "D-pad normalized rocker magnitude"
+    ],
+    "derivation": "The largest neutral artifact observed in the generated review traces was dpad_right=4.36e-6. A 1e-4 numerical tolerance is 22.9 times that artifact and 0.01 percent of full scale. It is a simulation solver tolerance, not a measured Xbox hardware dead zone.",
+    "external_behavior_references": {
+      "microsoft_xinput": {
+        "url": "https://learn.microsoft.com/en-us/windows/win32/xinput/getting-started-with-xinput#dead-zone",
+        "observation": "Microsoft assigns dead-zone filtering to the application and calls post-dead-zone normalization optional."
+      },
+      "sdl3": {
+        "url": "https://wiki.libsdl.org/SDL3/SDL_GetGamepadAxis",
+        "observation": "SDL_GetGamepadAxis returns the current signed 16-bit axis state and documents zero as a valid centered value; it does not specify an automatic dead-zone transform."
+      },
+      "w3c_gamepad": {
+        "url": "https://w3c.github.io/gamepad/#remapping",
+        "observation": "The Gamepad specification linearly normalizes logical axis values to [-1,1]; it does not define a gameplay dead-zone remap."
+      }
+    },
+    "overlay_digital_press_threshold": 0.5
   },
   "known_unknowns": [
     "Target-controller component masses and inertias",

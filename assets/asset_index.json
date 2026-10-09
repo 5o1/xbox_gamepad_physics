@@ -20,7 +20,7 @@
     "xbox_one_s_batonyrobson_a62cf747": {
       "title": "Xbox One S Controller/Gamepad (Animated)",
       "author": "BatonyRobson",
-      "source": "../sources/xbox_replacement_candidates.json",
+      "source": "../references/xbox_replacement_candidates.json",
       "front_render": "../results/xbox_one_s_batonyrobson_UNVERIFIED/pos_z.png",
       "status": "target_appearance_approved_physical_calibration_pending",
       "user_appearance_acknowledged": true,
@@ -43,7 +43,6 @@
       "mesh_objects": 16,
       "visual_manifest": {
         "path": "results/xbox_one_s_batonyrobson_UNVERIFIED/inventory.json",
-        "sha256": "7e59de07af261481dea21bf96c3bb07045c09b84fb3bd47bf19eeeec9b48e1bd",
         "artifacts": {}
       },
       "gpu_root": "/path/to/gpu-data/<gpu-project>/controller-candidates/xbox_one_s_batonyrobson_UNVERIFIED"
@@ -52,7 +51,7 @@
       "title": "CasperH2O Microsoft Xbox One visual model",
       "upstream_model_label": "CasperH2O/3DControllerModels Microsoft Xbox One.blend",
       "display_identity": "Feature-inferred Xbox Series X|S / Model 1914 appearance candidate",
-      "source": "../sources/geometry_review.json",
+      "source": "../references/geometry_review.json",
       "front_render": "../results/legacy_casper_1914_visual_parts/identity_front.png",
       "status": "archived_on_gpu_not_distributed",
       "identity_basis": "inferred_from_rendered_features_not_manufacturer_verified",
@@ -73,7 +72,6 @@
       "original_part_count": 44,
       "visual_manifest": {
         "path": "results/legacy_casper_1914_visual_parts/inventory.json",
-        "sha256": "1430fc227cac9c27c1b480e38b603650fa794b3fac21f04a18ebe1123378678a",
         "artifacts": {
           "visual_obj": {
             "mode": "object_files",
@@ -96,10 +94,8 @@
     "xbox_one_s_batonyrobson_appearance_matched_estimated_v0": {
       "source_candidate_id": "xbox_one_s_batonyrobson_a62cf747",
       "inventory": "../results/xbox_one_s_batonyrobson_UNVERIFIED/static_visual_parts_inventory_UNCALIBRATED.json",
-      "inventory_sha256": "ab310d28155b592344c4e1f3890976f4363b59c645585a09dbca24c5fbb13049",
       "visual_manifest": {
         "path": "results/xbox_one_s_batonyrobson_UNVERIFIED/static_visual_parts_inventory_UNCALIBRATED.json",
-        "sha256": "ab310d28155b592344c4e1f3890976f4363b59c645585a09dbca24c5fbb13049",
         "artifacts": {
           "static_visual_parts": {
             "mode": "object_files",
@@ -187,8 +183,7 @@
       "approved_for_contact_or_training": false,
       "viewer_entry": "../viewer/v0.html",
       "viewer_profile": {
-        "path": "appearance_matched_estimated_v0/viewer_profile.json",
-        "sha256": "ef204cfcc34dedcac72832223591d60fcf159121c5bea684a44409c797108691"
+        "path": "appearance_matched_estimated_v0/viewer_profile.json"
       },
       "target_appearance_approval": {
         "approved": true,
@@ -205,10 +200,8 @@
     "legacy_casper_1914_width_scaled_proxy": {
       "source_candidate_id": "xbox_series_1914_casperh2o_visual",
       "inventory": "../results/legacy_casper_1914_width_scaled_1708_proxy/inventory.json",
-      "inventory_sha256": "c565dd92a5ca6f7a241258b693b9d5120af78cbf5717c89202a51e99d86b50df",
       "visual_manifest": {
         "path": "results/legacy_casper_1914_width_scaled_1708_proxy/inventory.json",
-        "sha256": "c565dd92a5ca6f7a241258b693b9d5120af78cbf5717c89202a51e99d86b50df",
         "artifacts": {
           "width_scaled_obj": {
             "mode": "object_files",
@@ -246,7 +239,7 @@
   "interactive_viewer": {
     "entry": "../viewer/v0.html",
     "acceptance": "../specs/interactive_acceptance.json",
-    "design_sources": "../sources/viewer_design.json",
+    "design_sources": "../references/viewer_design.json",
     "active_variant_id": "xbox_one_s_batonyrobson_appearance_matched_estimated_v0",
     "allowed_variant_ids": [],
     "verification_scope": "The active estimated-v0 viewer uses the approved Xbox One S appearance. Metric geometry, real-controller, contact and dynamics acceptance remain separate gates.",
@@ -265,8 +258,7 @@
       "viewer_schema_version": 1,
       "implementation": null,
       "physical_acceptance_allowed": false,
-      "interactive_acceptance": "specs/interactive_acceptance.json",
-      "interactive_acceptance_sha256": "feddf5cea382263721454dacc5ff7dd5a6298c979e0645b38b2d6b60dc102dd8"
+      "interactive_acceptance": "specs/interactive_acceptance.json"
     }
   },
   "partial_physics_profiles": {
@@ -277,16 +269,11 @@
       "status": "automated_and_user_visual_validation_passed",
       "full_controller_ready": false,
       "hardware_calibrated": false,
-      "source": "../sources/robotwin_left_stick_estimated_v0.json",
-      "source_sha256": "2a4b0ba61eecaa273457f7bb6adc48785fc3345c5756297f58f74aa2b36658f5",
+      "source": "../references/robotwin_left_stick_estimated_v0.json",
       "manifest": "../src/xbox_gamepad_physics/resource_data/robotwin/left_stick_estimated_v0/manifest.json",
-      "manifest_sha256": "3875facddd2a01c332226efc735430b3308dc7c2a72209c22013569c4fa7c3d7",
       "validation_result": "../results/robotwin_left_stick_estimated_v0/result.json",
-      "validation_result_sha256": "2b2ceb3323b29cf239c98c57201f6a53318399dafcdd4c965845a81c6d893c45",
       "sensitivity_result": "../results/robotwin_left_stick_estimated_v0/sensitivity.json",
-      "sensitivity_result_sha256": "d5e931c672ea0fcebb73dc6da7fa48c5e3634f35d8694cc307bbe3622c8d0e15",
       "review_video": "../results/robotwin_left_stick_estimated_v0/render/left_stick_contact_probe.mp4",
-      "review_video_sha256": "8a9293c7ce6417273712ad70d5a6f706dcc37ffb74328c5cd3d4189879ba9ab7",
       "limitations": [
         "Mass, damping and contact material include explicitly labeled simulation estimates.",
         "The reference stick component has not been identified as the installed Xbox part.",
@@ -301,12 +288,9 @@
       "scope": "20-DOF full controller, 21 game channels and Pair physical event",
       "status": "implemented_pending_user_review_and_hardware_calibration",
       "hardware_calibrated": false,
-      "source": "../sources/full_controls_estimated_v0.json",
-      "source_sha256": "c60ef860eb89ca012ec669e26bbfe2b2f8c3702a0619d859ae1dd6957aa746ee",
+      "source": "../references/full_controls_estimated_v0.json",
       "manifest": "../src/xbox_gamepad_physics/resource_data/robotwin/full_controls_estimated_v0/manifest.json",
-      "manifest_sha256": "efa0ca1fc6159b9ae2cb2b5dbb7b85ae1cce97a17e5b59bdd4f98e984c79a4c7",
-      "nonvisual_result": "../results/robotwin_full_controls_estimated_v0/result.json",
-      "nonvisual_result_sha256": "b3d98840d3468b946017e524719bc599d1180fdc23773b9810d2bd13145079ea"
+      "nonvisual_result": "../results/robotwin_full_controls_estimated_v0/result.json"
     },
     "mujoco_full_controls_estimated_v0": {
       "backend": "mujoco",
@@ -314,44 +298,39 @@
       "scope": "20-DOF full controller, 20 joint sensors, 21 game channels and Pair physical event",
       "status": "implemented_pending_user_review_and_hardware_calibration",
       "hardware_calibrated": false,
-      "source": "../sources/full_controls_estimated_v0.json",
-      "source_sha256": "c60ef860eb89ca012ec669e26bbfe2b2f8c3702a0619d859ae1dd6957aa746ee",
+      "source": "../references/full_controls_estimated_v0.json",
       "manifest": "../src/xbox_gamepad_physics/resource_data/mujoco/full_controls_estimated_v0/manifest.json",
-      "manifest_sha256": "0226643c18e33dcf48a722c97c9ab364ff452fae3c0d6c3384ade16144286764",
       "nonvisual_result": "../results/mujoco_full_controls_estimated_v0/result.json",
-      "nonvisual_result_sha256": "bbcd6b957517fed377613515917ed0c00bb5aaf247193ac12ec7956ea39b01c0",
-      "contact_result": "../results/mujoco_full_controls_estimated_v0/contact_result.json",
-      "contact_result_sha256": "4b88a4623985e13105dd1fbe20145c37d72e419947921d3c062ce1f263d2f080"
+      "contact_result": "../results/mujoco_full_controls_estimated_v0/contact_result.json"
     }
   },
   "evidence": {
-    "source_catalog": "../sources/catalog.json",
-    "mechanical_structure": "../sources/mechanical_structure.json",
-    "geometry_review": "../sources/geometry_review.json",
+    "source_catalog": "../references/catalog.json",
+    "mechanical_structure": "../references/mechanical_structure.json",
+    "geometry_review": "../references/geometry_review.json",
     "legacy_visual_inventory": "../results/legacy_casper_1914_visual_parts/inventory.json",
     "legacy_geometry_audit": "../results/legacy_casper_1914_visual_parts/mesh_audit.json",
-    "whole_controller_dimensions": "../sources/1708_dimensions.json",
+    "whole_controller_dimensions": "../references/1708_dimensions.json",
     "target_model": {
-      "document": "../sources/catalog.json",
+      "document": "../references/catalog.json",
       "entry": "sources.user_target_xbox_one_s"
     },
     "legacy_source_copy_on_gpu": "/path/to/gpu-data/<gpu-project>/xbox-physics-v1/input"
   },
   "reference_stick_envelope": {
-    "specification": "../sources/stick_envelope.json",
+    "specification": "../references/stick_envelope.json",
     "harness_result": "../results/stick_envelope.json",
     "scope": "RKJXV122400R angular upper-envelope only; not installed Xbox motion or dynamics"
   },
   "unapproved_collision_candidates": {
     "source_candidate_id": "xbox_series_1914_casperh2o_visual",
-    "source_inventory_sha256": "1430fc227cac9c27c1b480e38b603650fa794b3fac21f04a18ebe1123378678a",
     "target_model": "Xbox One S",
     "shape_revision_match": false,
     "scope": "ABXY only; not a replacement for full controller",
     "gpu_directory": "/path/to/gpu-data/<gpu-project>/xbox-physics-v1/LEGACY_1914_native_unit_button_collision_candidates_NOT_VALIDATED",
     "audit": "../results/legacy_casper_1914_native_unit_button_collision_candidates/collision_audit.json",
     "assembly_diagnostic": "../results/legacy_casper_1914_native_unit_button_collision_candidates/assembly_audit.json",
-    "method": "../sources/collision_method.json",
+    "method": "../references/collision_method.json",
     "approved_for_simulation": false
   },
   "reasons_not_yet_approved": {

@@ -17,8 +17,7 @@
   "reason": null,
   "scope": "RoboTwin and MuJoCo first-pass physics for every Xbox One S control represented by the licensed visual asset",
   "evidence_status": "simulation_estimate_pending_owner_hardware_measurement",
-  "source_record": "sources/full_controls_estimated_v0.json",
-  "source_sha256": "c60ef860eb89ca012ec669e26bbfe2b2f8c3702a0619d859ae1dd6957aa746ee",
+  "source_record": "references/full_controls_estimated_v0.json",
   "joint_dynamics": [
     {
       "name": "a_press",
@@ -213,79 +212,92 @@
         "channel": "south",
         "joint": "a_press",
         "lower": 0.0,
-        "upper": 0.0008967542780293029
+        "upper": 0.0008967542780293029,
+        "neutral_epsilon": 0.0001
       },
       {
         "channel": "east",
         "joint": "b_press",
         "lower": 0.0,
-        "upper": 0.0013767679701224785
+        "upper": 0.0013767679701224785,
+        "neutral_epsilon": 0.0001
       },
       {
         "channel": "west",
         "joint": "x_press",
         "lower": 0.0,
-        "upper": 0.0007809609139585009
+        "upper": 0.0007809609139585009,
+        "neutral_epsilon": 0.0001
       },
       {
         "channel": "north",
         "joint": "y_press",
         "lower": 0.0,
-        "upper": 0.001228400054203025
+        "upper": 0.001228400054203025,
+        "neutral_epsilon": 0.0001
       },
       {
         "channel": "left_shoulder",
         "joint": "left_shoulder_press",
         "lower": 0.0,
-        "upper": 0.0022283242790158146
+        "upper": 0.0022283242790158146,
+        "neutral_epsilon": 0.0001
       },
       {
         "channel": "right_shoulder",
         "joint": "right_shoulder_press",
         "lower": 0.0,
-        "upper": 0.002228327410900139
+        "upper": 0.002228327410900139,
+        "neutral_epsilon": 0.0001
       },
       {
         "channel": "back",
         "joint": "view_press",
         "lower": 0.0,
-        "upper": 0.0012666219641293659
+        "upper": 0.0012666219641293659,
+        "neutral_epsilon": 0.0001
       },
       {
         "channel": "start",
         "joint": "menu_press",
         "lower": 0.0,
-        "upper": 0.001266622590506351
+        "upper": 0.001266622590506351,
+        "neutral_epsilon": 0.0001
       },
       {
         "channel": "guide",
         "joint": "guide_press",
         "lower": 0.0,
-        "upper": 0.0007251785396074228
+        "upper": 0.0007251785396074228,
+        "neutral_epsilon": 0.0001
       },
       {
         "channel": "left_trigger",
         "joint": "left_trigger_hinge",
         "lower": 0.0,
-        "upper": 0.29531940817832947
+        "upper": 0.29531940817832947,
+        "neutral_epsilon": 0.0001
       },
       {
         "channel": "right_trigger",
         "joint": "right_trigger_hinge",
         "lower": 0.0,
-        "upper": 0.29531940817832947
+        "upper": 0.29531940817832947,
+        "neutral_epsilon": 0.0001
       },
       {
         "channel": "left_stick",
         "joint": "left_stick_click",
         "lower": 0.0,
-        "upper": 0.0004
+        "upper": 0.0004,
+        "neutral_epsilon": 0.0001
       },
       {
         "channel": "right_stick",
         "joint": "right_stick_click",
         "lower": 0.0,
-        "upper": 0.0004
+        "upper": 0.0004,
+        "neutral_epsilon": 0.0001
       }
     ],
     "splits": [
@@ -310,14 +322,16 @@
           "left_x",
           "left_y"
         ],
-        "radius": 1.0
+        "radius": 1.0,
+        "neutral_epsilon": 0.0001
       },
       {
         "channels": [
           "right_x",
           "right_y"
         ],
-        "radius": 1.0
+        "radius": 1.0,
+        "neutral_epsilon": 0.0001
       }
     ],
     "radial_source_groups": [
@@ -326,7 +340,8 @@
           "dpad_horizontal",
           "dpad_vertical"
         ],
-        "radius": 1.0
+        "radius": 1.0,
+        "neutral_epsilon": 0.0001
       }
     ],
     "physical_events": [
@@ -337,7 +352,11 @@
         "upper": 0.0010423330438958324
       }
     ],
-    "deadzone": null
+    "neutral_policy": {
+      "epsilon": 0.0001,
+      "mode": "zero_inside_without_rescaling_outside",
+      "status": "simulation_solver_tolerance_not_hardware_deadzone"
+    }
   },
   "contact_material": {
     "static_friction": 0.5,
@@ -364,7 +383,6 @@
   "visual_binding": {
     "schema_version": 1,
     "source": "common/xbox_one_s/visual/manifest.json",
-    "source_sha256": "4949463388206258ab23a513eefad1254ea9f99cac0beb79fa03646c2ab0fcae",
     "root_link": "controller_body",
     "moving_parts": {
       "00_A_Button_VISUAL_UNCALIBRATED": {

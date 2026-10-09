@@ -33,13 +33,13 @@ class ViewerServerTest(unittest.TestCase):
             (base / "reference" / "__denied__").resolve(),
         )
 
-    def test_variant_profile_and_container_are_hash_bound(self):
+    def test_variant_profile_paths_and_visual_container_are_validated(self):
         with tempfile.TemporaryDirectory() as directory:
             project = Path(directory) / "project"
             external = Path(directory) / "external"
             (project / "assets/profile").mkdir(parents=True)
             (project / "viewer").mkdir()
-            (project / "sources").mkdir()
+            (project / "references").mkdir()
             external.mkdir()
 
             inventory = b'{"objects":[]}'
@@ -52,8 +52,7 @@ class ViewerServerTest(unittest.TestCase):
                     "file": "model.glb",
                     "sha256": hashlib.sha256(container).hexdigest(),
                 },
-                "parameter_source": "sources/parameters.json",
-                "parameter_source_sha256": hashlib.sha256(parameters).hexdigest(),
+                "parameter_source": "references/parameters.json",
             }
             profile_bytes = (json.dumps(profile) + "\n").encode()
             registry = {
@@ -64,11 +63,9 @@ class ViewerServerTest(unittest.TestCase):
                 },
                 "derived_variants": {
                     "estimated_v0": {
-                        "inventory_sha256": hashlib.sha256(inventory).hexdigest(),
                         "viewer_entry": "../viewer/v0.html",
                         "viewer_profile": {
                             "path": "profile/viewer_profile.json",
-                            "sha256": hashlib.sha256(profile_bytes).hexdigest(),
                         },
                     }
                 },
@@ -76,7 +73,7 @@ class ViewerServerTest(unittest.TestCase):
             (project / "assets/asset_index.json").write_text(json.dumps(registry))
             (project / "assets/profile/viewer_profile.json").write_bytes(profile_bytes)
             (project / "viewer/v0.html").write_text("test")
-            (project / "sources/parameters.json").write_bytes(parameters)
+            (project / "references/parameters.json").write_bytes(parameters)
             (external / "inventory.json").write_bytes(inventory)
             (external / "model.glb").write_bytes(container)
 
@@ -90,7 +87,7 @@ class ViewerServerTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             project = Path(directory) / "project"
             vendor = Path(directory) / "vendor"
-            (project / "sources").mkdir(parents=True)
+            (project / "references").mkdir(parents=True)
             (vendor / "build").mkdir(parents=True)
             package = b'{"name":"three","version":"0.180.0"}'
             module = b'export const REVISION = "180";'
@@ -103,7 +100,7 @@ class ViewerServerTest(unittest.TestCase):
                     },
                 }
             }
-            (project / "sources/viewer_design.json").write_text(json.dumps(record))
+            (project / "references/viewer_design.json").write_text(json.dumps(record))
             (vendor / "package.json").write_bytes(package)
             (vendor / "build/three.module.js").write_bytes(module)
             self.assertEqual(validate_vendor(project, vendor), "0.180.0")

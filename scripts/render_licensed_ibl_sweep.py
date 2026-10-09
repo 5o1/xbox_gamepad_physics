@@ -13,8 +13,8 @@ from pathlib import Path
 
 arguments = sys.argv[sys.argv.index("--") + 1 :]
 root = Path(__file__).resolve().parents[1]
-hdri_record_path = root / "sources/boiler_room_hdri.json"
-model_record_path = root / "sources/xbox_one_s_material_validation.json"
+hdri_record_path = root / "references/boiler_room_hdri.json"
+model_record_path = root / "references/xbox_one_s_material_validation.json"
 scene_audit_path = root / "results/xbox_official_import_comparison/official_import_4.5.9_LTS/audit.json"
 
 
@@ -193,7 +193,7 @@ manifest = {
         "file": str(hdri),
         "sha256": actual_hdri_hash,
         "license": hdri_record["license"]["spdx_like_label"],
-        "source_record": "sources/boiler_room_hdri.json",
+        "source_record": "references/boiler_room_hdri.json",
         "blender_colorspace": environment.image.colorspace_settings.name,
     },
     "camera": {

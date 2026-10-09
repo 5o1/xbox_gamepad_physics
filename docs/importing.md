@@ -47,8 +47,9 @@ python -m xbox_gamepad_physics verify --backend robotwin
 python -m xbox_gamepad_physics verify --backend robotwin --profile left_stick_estimated_v0
 ```
 
-完整手柄的 `estimated_v0` 在两个后端都处于 blocked 状态。RoboTwin 另有一个可运行的
-`left_stick_estimated_v0` profile，只覆盖左摇杆物理闭环；它不代表完整手柄已经就绪。
+历史 `estimated_v0` 在两个后端都处于 blocked 状态。完整仿真资产使用可运行的
+`full_controls_estimated_v0`；其结构已满足仿真加载要求，但物理参数仍是未完成硬件校准的
+估计值。RoboTwin 另有 `left_stick_estimated_v0`，只覆盖左摇杆物理闭环。
 
 ## RoboTwin / SAPIEN
 
@@ -216,6 +217,35 @@ gamepad = attachment.bind(model, data)
 
 `prefix` 使同一场景可以附加多个实例。joint 与 sensor 都通过编译后的名称绑定，父场景中
 body 的排列变化不会改变公共访问方式。
+
+## MuBlE
+
+MuBlE 是 MuJoCo 资产的消费者，不维护第三份 Xbox 物理资产。适配代码位于
+`xbox_gamepad_physics.muble`：它通过公开的 `MujocoGamepadHandle` 写入标准
+`GamepadState`，从编译后的 visual geom/body 名称推导 16 个部件的所属关系，并输出
+`muble/body-pose-trace-v1`。
+
+生成一个最小 pose probe：
+
+```sh
+python examples/muble_pose_probe.py --output /tmp/xbox_muble_trace.json
+```
+
+Blender 端直接打开已经验收的场景，并从包内共用视觉 manifest 读取原 Blender 对象名称、
+初始矩阵、尺度和坐标变换：
+
+```sh
+PYTHONPATH="$PWD/src" blender --background --python-use-system-env \
+  --python examples/muble_visual.py -- \
+  --approved-blend assets/xbox_one_s/render/Xbox_One_S_approved_cycles.blend \
+  --trace /tmp/xbox_muble_trace.json \
+  --frame 1 \
+  --save /tmp/xbox_muble_frame.blend
+```
+
+MuBlE 的桌面、机器人和灯光仍由 MuBlE 自己提供。调用者先打开 approved Xbox scene，
+再使用 MuBlE 的通用场景组合能力追加或链接所需环境；本仓库不复制
+`base_scene_panda.blend`，也不维护额外的 Xbox `blender_binding.json`。
 
 ## Backend manifest
 

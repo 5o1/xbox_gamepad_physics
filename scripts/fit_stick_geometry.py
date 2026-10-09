@@ -105,7 +105,6 @@ def main():
                 result.update(error=str(e), mechanical_pivot=None)
             results.append(result)
     report = {
-        "inventory_sha256": hashlib.sha256(manifest_path.read_bytes()).hexdigest(),
         "numpy": np.__version__,
         "scipy": scipy.__version__,
         "trimesh": trimesh.__version__,

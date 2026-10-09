@@ -1,6 +1,6 @@
 {
   "status": "manual_image_annotation_not_3d_calibration",
-  "source_record": "sources/1708_fcc_internal.json",
+  "source_record": "references/1708_fcc_internal.json",
   "image_sha256": "241f3742ea82dd4557bf788b164336f524ff42d0215098e61f2564f057d82787",
   "image_gpu_path": "/path/to/gpu-data/<gpu-project>/xbox-physics-v1/reference_drawings/fcc1708-p7-1400.png",
   "page_one_based": 7,

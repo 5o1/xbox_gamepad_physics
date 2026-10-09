@@ -1,6 +1,6 @@
 """Reference lever angular envelope, not Xbox dynamics or HID calibration.
 
-Derivation and manufacturer evidence: sources/stick_envelope.json.
+Derivation and manufacturer evidence: references/stick_envelope.json.
 All function angles are radians. Rx then Ry denotes matrix product Rx @ Ry.
 No mechanical joint frames, stiffness, click axis or HID values are inferred.
 """
@@ -46,7 +46,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("output", type=Path)
     args = parser.parse_args()
-    path = Path(__file__).resolve().parents[1] / "sources/stick_envelope.json"
+    path = Path(__file__).resolve().parents[1] / "references/stick_envelope.json"
     raw = path.read_bytes()
     source = json.loads(raw)
     limit = math.radians(source["half_sweep_max_deg"])

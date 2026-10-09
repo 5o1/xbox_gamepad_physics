@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import math
 from pathlib import Path
@@ -11,7 +10,7 @@ import xml.etree.ElementTree as ET
 
 
 ROOT = Path(__file__).resolve().parents[1]
-SOURCE = ROOT / "sources" / "robotwin_left_stick_estimated_v0.json"
+SOURCE = ROOT / "references" / "robotwin_left_stick_estimated_v0.json"
 KINEMATICS = ROOT / "assets" / "appearance_matched_estimated_v0" / "viewer_profile.json"
 VISUAL_MANIFEST = (
     ROOT
@@ -46,10 +45,6 @@ def _json(path: Path) -> dict:
     if not isinstance(value, dict):
         raise ValueError(f"expected a JSON object: {path}")
     return value
-
-
-def _sha256(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
 def _origin(parent: ET.Element, xyz: tuple[float, float, float], rpy=(0.0, 0.0, 0.0)) -> None:
@@ -301,8 +296,7 @@ def build(output: Path) -> None:
         "mass_properties": mass,
         "passive_dynamics": dynamics,
         "contact_material": contact,
-        "source_record": "sources/robotwin_left_stick_estimated_v0.json",
-        "source_sha256": _sha256(SOURCE),
+        "source_record": "references/robotwin_left_stick_estimated_v0.json",
     }
     (output / "collision" / "manifest.json").write_text(
         json.dumps(collision_manifest, indent=2) + "\n", encoding="utf-8"
@@ -310,7 +304,6 @@ def build(output: Path) -> None:
     visual_binding = {
         "schema_version": 1,
         "source": "common/xbox_one_s/visual/manifest.json",
-        "source_sha256": _sha256(VISUAL_MANIFEST),
         "root_link": "controller_body",
         "moving_parts": {
             "09_Stick_L_VISUAL_UNCALIBRATED": {
@@ -348,8 +341,7 @@ def build(output: Path) -> None:
         "reason": None,
         "scope": source["scope"],
         "evidence_status": source["status"],
-        "source_record": "sources/robotwin_left_stick_estimated_v0.json",
-        "source_sha256": _sha256(SOURCE),
+        "source_record": "references/robotwin_left_stick_estimated_v0.json",
         "joint_dynamics": [
             {
                 "name": name,

@@ -14,9 +14,15 @@ RoboTwin/SAPIEN 和 MuJoCo 资源。它覆盖 20 个活动关节、21 个游戏�
 - Pair：输出 `pair_bind_connect`，不占游戏张量通道。
 
 运动方向、轴心和行程来自已归档 artist animation profile。摇杆参考扭矩、摇杆点击、
-正面按钮和肩键参考值来自 `sources/catalog.json`。扳机、D-pad、质量分配、接触材料和
-1.5% 单向控件预紧均在 `sources/full_controls_estimated_v0.json` 中标明适用范围和
+正面按钮和肩键参考值来自 `references/catalog.json`。扳机、D-pad、质量分配、接触材料和
+1.5% 单向控件预紧均在 `references/full_controls_estimated_v0.json` 中标明适用范围和
 替换条件。真实测量与统一人工检查项目记录在 `docs/pending_user_review.md`。
+
+设备状态层使用 `1e-4` 的归一化中立容差，覆盖双摇杆径向幅值、双扳机、按钮和
+D-pad 摇摆残差。容差以内归零，容差以外保持原值，不重新缩放。它来自当前仿真记录中
+最大中立残差 `4.36e-6`，属于求解器数值清理，不是 Xbox 硬件死区。Microsoft XInput
+把实际 dead-zone 交给应用处理，并把死区外归一化列为可选；SDL3 返回轴状态，W3C
+Gamepad 对轴做线性归一化。因此游戏侧 dead-zone 将作为独立策略配置，不写进原始设备层。
 
 ## 生成
 

@@ -117,11 +117,10 @@ def main():
         )
     report = {
         "status": "collision_candidates_not_approved",
-        "inventory_sha256": hashlib.sha256(manifest_path.read_bytes()).hexdigest(),
         "numpy": np.__version__,
         "scipy": scipy.__version__,
         "trimesh": trimesh.__version__,
-        "method_record": "sources/collision_method.json",
+        "method_record": "references/collision_method.json",
         "candidates": results,
     }
     (args.output / "collision_audit.json").write_text(json.dumps(report, indent=2))

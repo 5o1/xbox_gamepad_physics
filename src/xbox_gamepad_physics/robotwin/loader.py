@@ -95,6 +95,16 @@ def _number(record: Mapping[str, Any], field: str, joint: str) -> float:
     return number
 
 
+def _neutral_epsilon(record: Mapping[str, Any], context: str) -> float:
+    value = record.get("neutral_epsilon", 0.0)
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        raise RoboTwinManifestError(f"{context}.neutral_epsilon must be numeric")
+    value = float(value)
+    if not math.isfinite(value):
+        raise RoboTwinManifestError(f"{context}.neutral_epsilon must be finite")
+    return value
+
+
 def _validated_description(profile: str) -> RoboTwinAssetDescription:
     """Gate readiness first, then validate every RoboTwin-specific field."""
 
@@ -228,7 +238,15 @@ def _validated_description(profile: str) -> RoboTwinAssetDescription:
                 f"state_mapping.scalars[{index}] lower must be below upper"
             )
         channels.add(channel)
-        scalar_mappings.append(ScalarSignalMapping(channel, joint, lower, upper))
+        scalar_mappings.append(
+            ScalarSignalMapping(
+                channel,
+                joint,
+                lower,
+                upper,
+                _neutral_epsilon(raw, f"state_mapping.scalars[{index}]"),
+            )
+        )
 
     split_mappings: list[SplitSignalMapping] = []
     raw_splits = mapping.get("splits", [])
@@ -293,7 +311,13 @@ def _validated_description(profile: str) -> RoboTwinAssetDescription:
             raise RoboTwinManifestError(
                 f"state_mapping.radial_groups[{index}].radius must be in (0, 1]"
             )
-        radial_groups.append(RadialSignalGroup(tuple(group_channels), radius))
+        radial_groups.append(
+            RadialSignalGroup(
+                tuple(group_channels),
+                radius,
+                _neutral_epsilon(raw, f"state_mapping.radial_groups[{index}]"),
+            )
+        )
 
     radial_source_groups: list[RadialSourceGroup] = []
     raw_source_groups = mapping.get("radial_source_groups", [])
@@ -323,7 +347,15 @@ def _validated_description(profile: str) -> RoboTwinAssetDescription:
             raise RoboTwinManifestError(
                 f"state_mapping.radial_source_groups[{index}].radius must be in (0, 1]"
             )
-        radial_source_groups.append(RadialSourceGroup(tuple(group_joints), radius))
+        radial_source_groups.append(
+            RadialSourceGroup(
+                tuple(group_joints),
+                radius,
+                _neutral_epsilon(
+                    raw, f"state_mapping.radial_source_groups[{index}]"
+                ),
+            )
+        )
 
     physical_event_mappings: list[PhysicalEventMapping] = []
     raw_events = mapping.get("physical_events", [])

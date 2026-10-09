@@ -1,9 +1,7 @@
 {
   "schema_version": 2,
-  "catalog_sha256": "9c7f2892f2e477d7e81f90fc38e0a010fbacabfbcef0a5409d6649f8c45917e6",
   "asset_registry_binding": {
     "path": "assets/asset_index.json",
-    "sha256": "e57a4069b7bab84367bcdc4679a5c9070a0d69a4f4bf40185e462e236b7f9017",
     "registry_role": "canonical_status_authority"
   },
   "target_model": {

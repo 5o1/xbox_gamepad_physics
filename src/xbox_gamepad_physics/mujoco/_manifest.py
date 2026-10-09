@@ -114,6 +114,12 @@ def _signal_controller(value: Any, joints: set[str]) -> GamepadSignalController:
             raise TypeError(f"{field} must be numeric")
         return float(raw)
 
+    def neutral_epsilon(item: Mapping[str, Any]) -> float:
+        raw = item.get("neutral_epsilon", 0.0)
+        if isinstance(raw, bool) or not isinstance(raw, (int, float)):
+            raise TypeError("neutral_epsilon must be numeric")
+        return float(raw)
+
     axes = tuple(
         AxisSignalMapping(
             str(item.get("channel")),
@@ -129,6 +135,7 @@ def _signal_controller(value: Any, joints: set[str]) -> GamepadSignalController:
             source(item),
             number(item, "lower"),
             number(item, "upper"),
+            neutral_epsilon(item),
         )
         for item in records("scalars")
     )
@@ -144,13 +151,17 @@ def _signal_controller(value: Any, joints: set[str]) -> GamepadSignalController:
     )
     radial = tuple(
         RadialSignalGroup(
-            tuple(item.get("channels", ())), number(item, "radius")
+            tuple(item.get("channels", ())),
+            number(item, "radius"),
+            neutral_epsilon(item),
         )
         for item in records("radial_groups")
     )
     radial_sources = tuple(
         RadialSourceGroup(
-            tuple(item.get("joints", ())), number(item, "radius")
+            tuple(item.get("joints", ())),
+            number(item, "radius"),
+            neutral_epsilon(item),
         )
         for item in records("radial_source_groups")
     )

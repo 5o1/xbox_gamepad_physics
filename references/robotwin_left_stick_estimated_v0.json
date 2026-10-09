@@ -5,10 +5,10 @@
   "status": "simulation_estimate_pending_owner_hardware_measurement",
   "evidence": {
     "visual_and_artist_animation": "assets/xbox_one_s/source/xbox_one_s_controllergamepad_animated.glb",
-    "derived_kinematics": "sources/appearance_matched_estimated_v0.json",
-    "whole_controller_dimensions_and_mass": "sources/1708_dimensions.json",
-    "same_generation_internal_photos": "sources/1708_fcc_internal.json",
-    "reference_stick_component": "sources/stick_envelope.json",
+    "derived_kinematics": "references/appearance_matched_estimated_v0.json",
+    "whole_controller_dimensions_and_mass": "references/1708_dimensions.json",
+    "same_generation_internal_photos": "references/1708_fcc_internal.json",
+    "reference_stick_component": "references/stick_envelope.json",
     "state_layout": "specs/xbox_v1.json"
   },
   "kinematics": {

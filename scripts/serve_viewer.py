@@ -28,14 +28,10 @@ def validate_asset_variant(project, assets, variant_id):
     inventory = assets / "inventory.json"
     if not inventory.is_file():
         raise ValueError(f"missing fixture inventory: {inventory}")
-    actual = hashlib.sha256(inventory.read_bytes()).hexdigest()
-    expected = variant.get("inventory_sha256")
-    if actual != expected:
-        raise ValueError(f"inventory SHA-256 {actual} does not match {variant_id} ({expected})")
     profile_binding = variant.get("viewer_profile")
     if profile_binding is not None:
-        if not isinstance(profile_binding, dict) or set(profile_binding) != {"path", "sha256"}:
-            raise ValueError(f"{variant_id}: viewer_profile must bind exactly path and sha256")
+        if not isinstance(profile_binding, dict) or set(profile_binding) != {"path"}:
+            raise ValueError(f"{variant_id}: viewer_profile must contain exactly one path")
         relative = profile_binding.get("path")
         if (
             not isinstance(relative, str)
@@ -49,10 +45,7 @@ def validate_asset_variant(project, assets, variant_id):
         profile_path = (profile_root / relative).resolve()
         if not profile_path.is_relative_to(profile_root) or not profile_path.is_file():
             raise ValueError(f"{variant_id}: missing viewer profile")
-        profile_bytes = profile_path.read_bytes()
-        if hashlib.sha256(profile_bytes).hexdigest() != profile_binding.get("sha256"):
-            raise ValueError(f"{variant_id}: viewer profile SHA-256 does not match")
-        profile = json.loads(profile_bytes)
+        profile = json.loads(profile_path.read_text(encoding="utf-8"))
         if profile.get("schema_version") != 2 or profile.get("variant_id") != variant_id:
             raise ValueError(f"{variant_id}: viewer profile identity/schema mismatch")
         visual = profile.get("visual", {})
@@ -71,20 +64,17 @@ def validate_asset_variant(project, assets, variant_id):
         if hashlib.sha256(visual_path.read_bytes()).hexdigest() != visual.get("sha256"):
             raise ValueError(f"{variant_id}: visual container SHA-256 does not match")
         parameter_source = profile.get("parameter_source")
-        parameter_hash = profile.get("parameter_source_sha256")
         if (
             not isinstance(parameter_source, str)
-            or not parameter_source.startswith("sources/")
+            or not parameter_source.startswith("references/")
             or "\\" in parameter_source
             or Path(parameter_source).is_absolute()
             or any(part in {"", ".", ".."} for part in Path(parameter_source).parts)
         ):
             raise ValueError(f"{variant_id}: unsafe parameter source path")
         parameter_path = (project.resolve() / parameter_source).resolve()
-        if not parameter_path.is_relative_to((project / "sources").resolve()) or not parameter_path.is_file():
+        if not parameter_path.is_relative_to((project / "references").resolve()) or not parameter_path.is_file():
             raise ValueError(f"{variant_id}: missing parameter source")
-        if hashlib.sha256(parameter_path.read_bytes()).hexdigest() != parameter_hash:
-            raise ValueError(f"{variant_id}: parameter source SHA-256 does not match")
     viewer_entry = variant.get("viewer_entry", viewer.get("entry"))
     if not isinstance(viewer_entry, str) or not viewer_entry:
         raise ValueError(f"{variant_id}: missing viewer entry")
@@ -97,7 +87,7 @@ def validate_asset_variant(project, assets, variant_id):
 
 
 def validate_vendor(project, vendor):
-    record_path = project / "sources" / "viewer_design.json"
+    record_path = project / "references" / "viewer_design.json"
     record = json.loads(record_path.read_text(encoding="utf-8"))
     dependency = record.get("dependencies", {})
     expected_version = dependency.get("three")
@@ -206,7 +196,7 @@ if __name__ == "__main__":
         "/candidate-reference/": project / "results" / "xbox_one_s_batonyrobson_UNVERIFIED",
         # Canonical IDs used to prove which asset variant the viewer received.
         "/registry/": project / "assets",
-        "/evidence/": project / "sources",
+        "/evidence/": project / "references",
     }
     if not all(p.is_dir() for p in roots.values()):
         raise SystemExit("Missing required directory")

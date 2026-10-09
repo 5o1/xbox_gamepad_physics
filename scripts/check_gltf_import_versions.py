@@ -17,7 +17,7 @@ def require(condition, message):
 
 
 project_root = Path(__file__).resolve().parents[1]
-source_record_path = project_root / 'sources/xbox_one_s_material_validation.json'
+source_record_path = project_root / 'references/xbox_one_s_material_validation.json'
 source_record = json.loads(source_record_path.read_text())
 expected_source_hash = source_record.get('source_glb_sha256')
 require(isinstance(expected_source_hash, str) and len(expected_source_hash) == 64,

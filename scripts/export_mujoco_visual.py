@@ -24,6 +24,12 @@ COMMON = (
     / "visual"
 )
 APPROVED_RENDER = ROOT / "assets" / "xbox_one_s" / "approved_render.json"
+TRANSPARENT_PARTS = {
+    "00_A_Button_VISUAL_UNCALIBRATED",
+    "01_B_Button_VISUAL_UNCALIBRATED",
+    "13_X_Button_VISUAL_UNCALIBRATED",
+    "15_Y_Button_VISUAL_UNCALIBRATED",
+}
 
 
 def accessor(document: dict[str, Any], binary: bytes, index: int) -> np.ndarray:
@@ -82,6 +88,17 @@ def add_assets(
             reflectance="0",
         )
     elif renderer == "filament":
+        ET.SubElement(
+            asset,
+            "texture",
+            name="review_skybox",
+            type="skybox",
+            builtin="flat",
+            rgb1=".82 .84 .87",
+            rgb2=".82 .84 .87",
+            width="32",
+            height="32",
+        )
         texture_specs = (
             ("xbox_rgb", "base_color.png", "3", "sRGB", "rgb"),
             ("xbox_normal", "normal.png", "3", "linear", "normal"),
@@ -108,19 +125,24 @@ def add_assets(
                 colorspace=colorspace,
                 vflip="true",
             )
-        material = ET.SubElement(
-            asset,
-            "material",
-            name="xbox_surface",
-            rgba="1 1 1 1",
-            emission="10",
-            specular="1",
-            metallic="1",
-            roughness="1",
-            reflectance="0",
-        )
-        for name, _, _, _, role in texture_specs:
-            ET.SubElement(material, "layer", texture=name, role=role)
+        for material_name, include_opacity in (
+            ("xbox_surface_opaque", False),
+            ("xbox_surface_transparent", True),
+        ):
+            material = ET.SubElement(
+                asset,
+                "material",
+                name=material_name,
+                rgba="1 1 1 1",
+                emission="10",
+                specular="1",
+                metallic="1",
+                roughness="1",
+                reflectance="0",
+            )
+            for name, _, _, _, role in texture_specs:
+                if role != "opacity" or include_opacity:
+                    ET.SubElement(material, "layer", texture=name, role=role)
     else:
         raise ValueError(f"unknown renderer {renderer!r}")
     ET.SubElement(
@@ -154,7 +176,11 @@ def add_assets(
 
 
 def add_gamepad(
-    parent: ET.Element, parts: list[dict[str, Any]], position: str
+    parent: ET.Element,
+    parts: list[dict[str, Any]],
+    position: str,
+    *,
+    renderer: str,
 ) -> ET.Element:
     body = ET.SubElement(
         parent,
@@ -164,13 +190,20 @@ def add_gamepad(
         quat=".707106781186548 .707106781186548 0 0",
     )
     for part in parts:
+        material = "xbox_surface"
+        if renderer == "filament":
+            material = (
+                "xbox_surface_transparent"
+                if part["name"] in TRANSPARENT_PARTS
+                else "xbox_surface_opaque"
+            )
         ET.SubElement(
             body,
             "geom",
             name="visual_" + part["name"],
             type="mesh",
             mesh=part["name"],
-            material="xbox_surface",
+            material=material,
             contype="0",
             conaffinity="0",
             group="1",
@@ -198,6 +231,13 @@ def add_common(root: ET.Element) -> None:
         specular=".2 .2 .2",
     )
     ET.SubElement(visual, "rgba", haze=".15 .15 .15 1")
+    custom = ET.SubElement(root, "custom")
+    ET.SubElement(
+        custom,
+        "numeric",
+        name="filament.fallback.environment_light_intensity",
+        data="10000",
+    )
 
 
 def add_reference_camera(world: ET.Element, scale: float) -> dict[str, Any]:
@@ -237,7 +277,12 @@ def add_reference_camera(world: ET.Element, scale: float) -> dict[str, Any]:
     }
 
 
-def add_table_scene(world: ET.Element, parts: list[dict[str, Any]]) -> None:
+def add_table_scene(
+    world: ET.Element,
+    parts: list[dict[str, Any]],
+    *,
+    renderer: str,
+) -> None:
     ET.SubElement(
         world,
         "geom",
@@ -270,7 +315,46 @@ def add_table_scene(world: ET.Element, parts: list[dict[str, Any]]) -> None:
         contype="0",
         conaffinity="0",
     )
-    add_gamepad(world, parts, "0 0 .8")
+    for attributes in (
+        {
+            "name": "review_key",
+            "type": "spot",
+            "pos": "-.22 -.24 .34",
+            "dir": ".45 .35 -.82",
+            "diffuse": "1 1 1",
+            "intensity": "220000",
+            "range": "2",
+            "cutoff": "48",
+            "softness": ".55",
+            "bulbradius": ".05",
+            "castshadow": "true",
+        },
+        {
+            "name": "review_fill",
+            "type": "spot",
+            "pos": ".24 -.18 .27",
+            "dir": "-.5 .32 -.75",
+            "diffuse": "1 1 1",
+            "intensity": "110000",
+            "range": "2",
+            "cutoff": "55",
+            "softness": ".7",
+            "bulbradius": ".05",
+            "castshadow": "false",
+        },
+        {
+            "name": "review_rim",
+            "type": "point",
+            "pos": "0 .24 .22",
+            "diffuse": "1 1 1",
+            "intensity": "60000",
+            "range": "2",
+            "bulbradius": ".04",
+            "castshadow": "false",
+        },
+    ):
+        ET.SubElement(world, "light", **attributes)
+    add_gamepad(world, parts, "0 0 .8", renderer=renderer)
     ET.SubElement(
         world,
         "camera",
@@ -381,7 +465,7 @@ def main() -> None:
         add_common(asset)
         add_assets(asset, parts, scale, renderer=renderer)
         world = ET.SubElement(asset, "worldbody")
-        add_gamepad(world, parts, "0 0 0")
+        add_gamepad(world, parts, "0 0 0", renderer=renderer)
         filename = (
             "xbox_one_s_visual.xml"
             if renderer == "classic"
@@ -395,7 +479,8 @@ def main() -> None:
         scene = ET.Element("mujoco", model=f"xbox_one_s_{renderer}_table_visual")
         add_common(scene)
         add_assets(scene, parts, scale, renderer=renderer)
-        add_table_scene(ET.SubElement(scene, "worldbody"), parts)
+        scene_world = ET.SubElement(scene, "worldbody")
+        add_table_scene(scene_world, parts, renderer=renderer)
         filename = (
             "table_scene.xml"
             if renderer == "classic"
@@ -408,7 +493,7 @@ def main() -> None:
     add_common(reference)
     add_assets(reference, parts, scale, renderer="filament")
     reference_world = ET.SubElement(reference, "worldbody")
-    add_gamepad(reference_world, parts, "0 0 0")
+    add_gamepad(reference_world, parts, "0 0 0", renderer="filament")
     reference_camera = add_reference_camera(reference_world, scale)
     reference_filename = "reference_scene_filament.xml"
     (output / reference_filename).write_text(xml_text(reference), encoding="utf-8")
@@ -468,6 +553,17 @@ def main() -> None:
                 "metallic",
                 "emissive",
             ],
+            "material_partition": {
+                "opaque_material": "all parts except ABXY; opacity texture omitted so opaque shell triangles use depth writing",
+                "transparent_material": "ABXY only; source opacity texture retained",
+                "transparent_parts": sorted(TRANSPARENT_PARTS),
+                "basis": (
+                    "Source UV audit found alpha=64 samples on ABXY. Applying one "
+                    "transparent Filament material to the opaque non-convex shell "
+                    "caused triangle-order artifacts."
+                ),
+            },
+            "fallback_environment_light_intensity": 10000,
             "source_factors": {
                 "metallic": 1.0,
                 "roughness": 1.0,

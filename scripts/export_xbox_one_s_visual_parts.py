@@ -12,7 +12,7 @@ import re
 import sys
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-SOURCE_RECORD = PROJECT_ROOT / 'sources/xbox_one_s_material_validation.json'
+SOURCE_RECORD = PROJECT_ROOT / 'references/xbox_one_s_material_validation.json'
 
 
 def require(condition, message):

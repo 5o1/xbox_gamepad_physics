@@ -41,7 +41,7 @@ def main():
     parser.add_argument("output", type=Path)
     args = parser.parse_args()
     root = Path(__file__).resolve().parents[1]
-    evidence_path = root / "sources/1708_dimensions.json"
+    evidence_path = root / "references/1708_dimensions.json"
     evidence = json.loads(evidence_path.read_text())
     inventory_path = args.visual_dir / "inventory.json"
     inventory = json.loads(inventory_path.read_text())
@@ -99,12 +99,6 @@ def main():
         raise ValueError("Width check failed")
     report = {
         "status": "width_matched_visual_proxy_not_1708_mechanical_asset",
-        "dimensions_evidence_sha256": hashlib.sha256(
-            evidence_path.read_bytes()
-        ).hexdigest(),
-        "source_inventory_sha256": hashlib.sha256(
-            inventory_path.read_bytes()
-        ).hexdigest(),
         "meters_per_native_unit": scale,
         "width_m": actual_width,
         "excluded_objects": excluded,

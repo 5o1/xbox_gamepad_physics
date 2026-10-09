@@ -15,7 +15,7 @@ SHA-256：`5c5671c83a9cf15db4b8399e7010aa7d5cde915687ceb348b583eb00b0ed24e2`。
 机械参数及几何精度尚未完成标定。
 
 对应运动学配置位于 `assets/appearance_matched_estimated_v0/viewer_profile.json`，
-来源记录位于 `sources/appearance_matched_estimated_v0.json`。
+来源记录位于 `references/appearance_matched_estimated_v0.json`。
 从仓库根目录启动现有查看器时，使用 `--assets assets/xbox_one_s/visual`；
 其余参数见主 README 的启动说明。
 

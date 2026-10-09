@@ -8,6 +8,7 @@ joint names, and signal mappings remain those of the packaged profile.
 from __future__ import annotations
 
 import argparse
+from itertools import islice
 import json
 from pathlib import Path
 import sys
@@ -25,6 +26,12 @@ TEXTURES = (
     ("xbox_opacity", "opacity.png", "1", "linear", "opacity"),
     ("xbox_emissive", "emissive_rgba.png", "4", "sRGB", "emissive"),
 )
+TRANSPARENT_PARTS = {
+    "00_A_Button_VISUAL_UNCALIBRATED",
+    "01_B_Button_VISUAL_UNCALIBRATED",
+    "13_X_Button_VISUAL_UNCALIBRATED",
+    "15_Y_Button_VISUAL_UNCALIBRATED",
+}
 
 
 def build_review_xml(
@@ -32,6 +39,7 @@ def build_review_xml(
     output: Path,
     *,
     source_filename: str = "xbox_one_s.xml",
+    remove_collision_geoms: bool = False,
 ) -> Path:
     resource_root = package_root / "xbox_gamepad_physics" / "resource_data" / "mujoco"
     profile_root = resource_root / "full_controls_estimated_v0"
@@ -64,7 +72,32 @@ def build_review_xml(
             source = (profile_root / child.get("file")).resolve(strict=True)
             child.set("file", str(source))
 
+    custom = root.find("custom")
+    if custom is None:
+        custom = ET.Element("custom")
+        root.insert(list(root).index(asset), custom)
+    ET.SubElement(
+        custom,
+        "numeric",
+        name="filament.fallback.environment_light_intensity",
+        data="10000",
+    )
+
     insertion_index = 0
+    asset.insert(
+        insertion_index,
+        ET.Element(
+            "texture",
+            name="review_skybox",
+            type="skybox",
+            builtin="flat",
+            rgb1=".82 .84 .87",
+            rgb2=".82 .84 .87",
+            width="32",
+            height="32",
+        ),
+    )
+    insertion_index += 1
     for name, filename, channels, colorspace, _ in TEXTURES:
         source = (visual_root / "textures" / filename).resolve(strict=True)
         asset.insert(
@@ -80,20 +113,25 @@ def build_review_xml(
             ),
         )
         insertion_index += 1
-    surface = ET.Element(
-        "material",
-        name="xbox_surface",
-        rgba="1 1 1 1",
-        emission="10",
-        specular="1",
-        metallic="1",
-        roughness="1",
-        reflectance="0",
-    )
-    for name, _, _, _, role in TEXTURES:
-        ET.SubElement(surface, "layer", texture=name, role=role)
-    asset.insert(insertion_index, surface)
-    insertion_index += 1
+    for material_name, include_opacity in (
+        ("xbox_surface_opaque", False),
+        ("xbox_surface_transparent", True),
+    ):
+        surface = ET.Element(
+            "material",
+            name=material_name,
+            rgba="1 1 1 1",
+            emission="10",
+            specular="1",
+            metallic="1",
+            roughness="1",
+            reflectance="0",
+        )
+        for name, _, _, _, role in TEXTURES:
+            if role != "opacity" or include_opacity:
+                ET.SubElement(surface, "layer", texture=name, role=role)
+        asset.insert(insertion_index, surface)
+        insertion_index += 1
     asset.insert(
         insertion_index,
         ET.Element(
@@ -120,7 +158,20 @@ def build_review_xml(
     world = root.find("worldbody")
     if world is None:
         raise ValueError("packaged physical MJCF has no worldbody")
+    if remove_collision_geoms:
+        for body in world.iter("body"):
+            for geom in list(body.findall("geom")):
+                if (geom.get("name") or "").startswith("collision_"):
+                    body.remove(geom)
     for geom in world.iter("geom"):
+        mesh_name = geom.get("mesh")
+        if mesh_name:
+            geom.set(
+                "material",
+                "xbox_surface_transparent"
+                if mesh_name in TRANSPARENT_PARTS
+                else "xbox_surface_opaque",
+            )
         if (geom.get("name") or "").endswith("contact_probe_geom"):
             geom.set("group", "3")
     ET.SubElement(
@@ -135,6 +186,45 @@ def build_review_xml(
         contype="0",
         conaffinity="0",
     )
+    for attributes in (
+        {
+            "name": "review_key",
+            "type": "spot",
+            "pos": "-.22 -.24 .34",
+            "dir": ".45 .35 -.82",
+            "diffuse": "1 1 1",
+            "intensity": "220000",
+            "range": "2",
+            "cutoff": "48",
+            "softness": ".55",
+            "bulbradius": ".05",
+            "castshadow": "true",
+        },
+        {
+            "name": "review_fill",
+            "type": "spot",
+            "pos": ".24 -.18 .27",
+            "dir": "-.5 .32 -.75",
+            "diffuse": "1 1 1",
+            "intensity": "110000",
+            "range": "2",
+            "cutoff": "55",
+            "softness": ".7",
+            "bulbradius": ".05",
+            "castshadow": "false",
+        },
+        {
+            "name": "review_rim",
+            "type": "point",
+            "pos": "0 .24 .22",
+            "diffuse": "1 1 1",
+            "intensity": "60000",
+            "range": "2",
+            "bulbradius": ".04",
+            "castshadow": "false",
+        },
+    ):
+        ET.SubElement(world, "light", **attributes)
     ET.SubElement(
         world,
         "geom",
@@ -181,6 +271,8 @@ def main() -> None:
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--fps", type=int, default=12)
     parser.add_argument("--graphics", default="opengl_headless")
+    parser.add_argument("--remove-collision-geoms", action="store_true")
+    parser.add_argument("--max-frames", type=int)
     parser.add_argument("--groups", nargs="+", choices=GROUPS, default=GROUPS)
     args = parser.parse_args()
 
@@ -204,7 +296,11 @@ def main() -> None:
         XBOX_ONE_S_CHANNELS,
     )
 
-    runtime_xml = build_review_xml(package_root, output / "_runtime")
+    runtime_xml = build_review_xml(
+        package_root,
+        output / "_runtime",
+        remove_collision_geoms=args.remove_collision_geoms,
+    )
     model = mujoco.MjModel.from_xml_path(str(runtime_xml))
     data = mujoco.MjData(model)
     # Fixed-camera world transforms are stored in MjData.  They are undefined
@@ -255,7 +351,12 @@ def main() -> None:
         directory = output / group
         directory.mkdir(parents=True, exist_ok=True)
         observed_frames = []
-        for frame_index, (label, command, pair_value) in enumerate(sequence(group)):
+        frames = sequence(group)
+        if args.max_frames is not None:
+            if args.max_frames <= 0:
+                raise ValueError("max-frames must be positive")
+            frames = islice(frames, args.max_frames)
+        for frame_index, (label, command, pair_value) in enumerate(frames):
             target_state = GamepadState.from_mapping(
                 command,
                 device_id=GamepadDeviceId.XBOX_ONE_S,
@@ -348,6 +449,13 @@ def main() -> None:
         "profile": "full_controls_estimated_v0",
         "renderer": "filament_pbr_with_opacity_role",
         "graphics": args.graphics,
+        "collision_geoms_removed_for_diagnostic": args.remove_collision_geoms,
+        "scene_lighting": {
+            "environment_intensity": 10000,
+            "key_spot_intensity": 220000,
+            "fill_spot_intensity": 110000,
+            "rim_point_intensity": 60000,
+        },
         "fps": args.fps,
         "groups": reports,
         "signal_source": "mujoco_qpos_readback_after_mj_forward",

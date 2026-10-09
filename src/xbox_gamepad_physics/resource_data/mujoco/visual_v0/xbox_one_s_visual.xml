@@ -7,6 +7,9 @@
     <headlight ambient=".25 .25 .25" diffuse=".7 .7 .7" specular=".2 .2 .2" />
     <rgba haze=".15 .15 .15 1" />
   </visual>
+  <custom>
+    <numeric name="filament.fallback.environment_light_intensity" data="10000" />
+  </custom>
   <asset>
     <texture name="xbox_base_color" type="2d" file="textures/base_color.png" colorspace="sRGB" vflip="true" />
     <material name="xbox_surface" texture="xbox_base_color" rgba="1 1 1 1" specular=".5" shininess=".2" reflectance="0" />

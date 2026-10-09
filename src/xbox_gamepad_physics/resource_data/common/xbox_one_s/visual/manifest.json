@@ -6,101 +6,550 @@
   "geometry_sha256": "7548b189051b48d8fded7de65079763c923fe0a48ad9e1e36b6e2b89e31fa7ee",
   "coordinate_frame": "gltf_y_up",
   "meters_per_native_unit": 0.0560472180107161,
+  "blender_source_to_simulation_rotation_x_rad": 1.5707963267948966,
   "scale_status": "existing width-fit visual estimate; not measured local geometry",
   "parts": [
     {
       "name": "00_A_Button_VISUAL_UNCALIBRATED",
       "file": "00_A_Button_VISUAL_UNCALIBRATED.gltf",
+      "source_name": "A Button",
+      "source_object": "A Button_XBox Gamepad by Batony Robson_0",
+      "source_matrix_world": [
+        [
+          1.0,
+          5.9604531088552903e-08,
+          -9.139117196355073e-08,
+          0.7141163945198059
+        ],
+        [
+          9.139115775269602e-08,
+          -7.475421881508737e-08,
+          0.9999999403953552,
+          0.23420488834381104
+        ],
+        [
+          1.1920930376163597e-07,
+          -0.9999999403953552,
+          -1.5149566934269387e-08,
+          0.36498260498046875
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
       "vertices": 144,
       "triangles": 146
     },
     {
       "name": "01_B_Button_VISUAL_UNCALIBRATED",
       "file": "01_B_Button_VISUAL_UNCALIBRATED.gltf",
+      "source_name": "B Button",
+      "source_object": "B Button_XBox Gamepad by Batony Robson_0",
+      "source_matrix_world": [
+        [
+          1.0,
+          1.1920927533992653e-07,
+          -1.5099583094979607e-07,
+          0.9058641195297241
+        ],
+        [
+          9.139120038526016e-08,
+          -1.3435884227419592e-07,
+          0.9999999403953552,
+          0.40978479385375977
+        ],
+        [
+          1.192093463942001e-07,
+          -0.9999999403953552,
+          -1.3435887069590535e-07,
+          0.3396218717098236
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
       "vertices": 190,
       "triangles": 190
     },
     {
       "name": "02_Bumper_L_VISUAL_UNCALIBRATED",
       "file": "02_Bumper_L_VISUAL_UNCALIBRATED.gltf",
+      "source_name": "Bumper_L",
+      "source_object": "Bumper_L_XBox Gamepad by Batony Robson_0",
+      "source_matrix_world": [
+        [
+          1.0,
+          1.6734686880681693e-07,
+          -1.3510258156657073e-07,
+          5.960464477539063e-08
+        ],
+        [
+          1.053002804951575e-07,
+          -5.960470161880949e-08,
+          1.0,
+          6.666627427875937e-08
+        ],
+        [
+          1.971492480379311e-07,
+          -1.0,
+          -2.980237923111417e-08,
+          -1.1920928955078125e-07
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
       "vertices": 79,
       "triangles": 62
     },
     {
       "name": "03_Bumper_R_VISUAL_UNCALIBRATED",
       "file": "03_Bumper_R_VISUAL_UNCALIBRATED.gltf",
+      "source_name": "Bumper_R",
+      "source_object": "Bumper_R_XBox Gamepad by Batony Robson_0",
+      "source_matrix_world": [
+        [
+          1.0,
+          1.6734686880681693e-07,
+          -1.3510258156657073e-07,
+          5.960464477539063e-08
+        ],
+        [
+          1.053002804951575e-07,
+          -5.960470161880949e-08,
+          1.0,
+          4.946977583131229e-08
+        ],
+        [
+          1.971492480379311e-07,
+          -1.0,
+          -2.980237923111417e-08,
+          -5.960464477539063e-08
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
       "vertices": 79,
       "triangles": 62
     },
     {
       "name": "04_Connect_Button_VISUAL_UNCALIBRATED",
       "file": "04_Connect_Button_VISUAL_UNCALIBRATED.gltf",
+      "source_name": "Connect Button",
+      "source_object": "Connect Button_XBox Gamepad by Batony Robson_0",
+      "source_matrix_world": [
+        [
+          1.0,
+          1.6734688301767164e-07,
+          -1.3510259577742545e-07,
+          -0.24002398550510406
+        ],
+        [
+          1.0530029470601221e-07,
+          -5.960463411724959e-08,
+          1.0,
+          0.8719446659088135
+        ],
+        [
+          1.9714926224878582e-07,
+          -1.0,
+          -2.980232594040899e-08,
+          0.2245137095451355
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
       "vertices": 66,
       "triangles": 78
     },
     {
       "name": "05_Controller_Body_VISUAL_UNCALIBRATED",
       "file": "05_Controller_Body_VISUAL_UNCALIBRATED.gltf",
+      "source_name": "Controller Body",
+      "source_object": "Controller Body_XBox Gamepad by Batony Robson_0",
+      "source_matrix_world": [
+        [
+          1.0,
+          1.6734688301767164e-07,
+          -1.3510259577742545e-07,
+          0.0
+        ],
+        [
+          1.0530028760058485e-07,
+          -5.960463766996327e-08,
+          1.0,
+          0.0
+        ],
+        [
+          1.9714926224878582e-07,
+          -1.0,
+          -2.980232594040899e-08,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
       "vertices": 3414,
       "triangles": 4348
     },
     {
       "name": "06_D-Pad_VISUAL_UNCALIBRATED",
       "file": "06_D-Pad_VISUAL_UNCALIBRATED.gltf",
+      "source_name": "D-Pad",
+      "source_object": "D-Pad_XBox Gamepad by Batony Robson_0",
+      "source_matrix_world": [
+        [
+          1.0,
+          1.5604739189711836e-07,
+          -1.5803161090843787e-07,
+          -0.36241093277931213
+        ],
+        [
+          1.282293311533067e-07,
+          -1.9396348704958655e-07,
+          0.9999999403953552,
+          -0.03226315975189209
+        ],
+        [
+          1.8584975691737782e-07,
+          -0.9999999403953552,
+          -1.6416117887274595e-07,
+          0.19999992847442627
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
       "vertices": 144,
       "triangles": 162
     },
     {
       "name": "07_Menu_L_VISUAL_UNCALIBRATED",
       "file": "07_Menu_L_VISUAL_UNCALIBRATED.gltf",
+      "source_name": "Menu_L",
+      "source_object": "Menu_L_XBox Gamepad by Batony Robson_0",
+      "source_matrix_world": [
+        [
+          1.000000238418579,
+          1.9371510973087425e-07,
+          -3.745133199117845e-07,
+          -0.2023680955171585
+        ],
+        [
+          1.658970489870626e-07,
+          1.636643673919025e-07,
+          1.0000001192092896,
+          0.42516279220581055
+        ],
+        [
+          4.470356884667126e-08,
+          -1.0000001192092896,
+          1.465268439915235e-08,
+          0.3663395643234253
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
       "vertices": 66,
       "triangles": 60
     },
     {
       "name": "08_Menu_R_VISUAL_UNCALIBRATED",
       "file": "08_Menu_R_VISUAL_UNCALIBRATED.gltf",
+      "source_name": "Menu_R",
+      "source_object": "Menu_R_XBox Gamepad by Batony Robson_0",
+      "source_matrix_world": [
+        [
+          1.000000238418579,
+          1.9371509552001953e-07,
+          -3.7451329149007506e-07,
+          0.20081187784671783
+        ],
+        [
+          1.6589703477620787e-07,
+          1.636643673919025e-07,
+          1.0000001192092896,
+          0.4249628782272339
+        ],
+        [
+          4.470354753038919e-08,
+          -1.0000001192092896,
+          1.465268439915235e-08,
+          0.3663397431373596
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
       "vertices": 66,
       "triangles": 60
     },
     {
       "name": "09_Stick_L_VISUAL_UNCALIBRATED",
       "file": "09_Stick_L_VISUAL_UNCALIBRATED.gltf",
+      "source_name": "Stick_L",
+      "source_object": "Stick_L_XBox Gamepad by Batony Robson_0",
+      "source_matrix_world": [
+        [
+          1.0,
+          2.962922280858038e-07,
+          -1.790671859680515e-07,
+          -0.6786308884620667
+        ],
+        [
+          8.96602614375297e-08,
+          -1.343588280633412e-07,
+          1.0,
+          0.43059444427490234
+        ],
+        [
+          2.664899909632368e-07,
+          -0.9999999403953552,
+          -1.6416117887274595e-07,
+          0.2163151651620865
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
       "vertices": 404,
       "triangles": 606
     },
     {
       "name": "10_Stick_R_VISUAL_UNCALIBRATED",
       "file": "10_Stick_R_VISUAL_UNCALIBRATED.gltf",
+      "source_name": "Stick_R",
+      "source_object": "Stick_R_XBox Gamepad by Batony Robson_0",
+      "source_matrix_world": [
+        [
+          1.0,
+          1.6313083506247494e-07,
+          -1.6511503986293974e-07,
+          0.3667925298213959
+        ],
+        [
+          1.353127743186633e-07,
+          -1.9396348704958655e-07,
+          0.9999999403953552,
+          0.008727312088012695
+        ],
+        [
+          1.929332000827344e-07,
+          -0.9999999403953552,
+          -1.6416117887274595e-07,
+          0.20818141102790833
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
       "vertices": 404,
       "triangles": 606
     },
     {
       "name": "11_Trigger_L_VISUAL_UNCALIBRATED",
       "file": "11_Trigger_L_VISUAL_UNCALIBRATED.gltf",
+      "source_name": "Trigger_L",
+      "source_object": "Trigger_L_XBox Gamepad by Batony Robson_0",
+      "source_matrix_world": [
+        [
+          1.0000001192092896,
+          4.578162133839214e-07,
+          -2.48695300797408e-07,
+          -0.8149914145469666
+        ],
+        [
+          3.5005916743102716e-07,
+          -4.470348358154297e-07,
+          1.0,
+          0.6426565051078796
+        ],
+        [
+          4.1163676200994814e-07,
+          -1.0000001192092896,
+          -2.086162567138672e-07,
+          0.03739473223686218
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
       "vertices": 67,
       "triangles": 65
     },
     {
       "name": "12_Trigger_R_VISUAL_UNCALIBRATED",
       "file": "12_Trigger_R_VISUAL_UNCALIBRATED.gltf",
+      "source_name": "Trigger_R",
+      "source_object": "Trigger_R_XBox Gamepad by Batony Robson_0",
+      "source_matrix_world": [
+        [
+          1.0,
+          4.692881816481531e-07,
+          -3.1450650794795365e-07,
+          0.8149915337562561
+        ],
+        [
+          2.7556836812436813e-07,
+          -2.9802322387695312e-08,
+          1.0,
+          0.642656683921814
+        ],
+        [
+          5.043829673923028e-07,
+          -0.9999998807907104,
+          8.940696716308594e-08,
+          0.03739506006240845
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
       "vertices": 67,
       "triangles": 65
     },
     {
       "name": "13_X_Button_VISUAL_UNCALIBRATED",
       "file": "13_X_Button_VISUAL_UNCALIBRATED.gltf",
+      "source_name": "X Button",
+      "source_object": "X Button_XBox Gamepad by Batony Robson_0",
+      "source_matrix_world": [
+        [
+          1.0,
+          1.1920927533992653e-07,
+          -1.5099583094979607e-07,
+          0.5231810212135315
+        ],
+        [
+          9.139120038526016e-08,
+          -1.3435884227419592e-07,
+          0.9999999403953552,
+          0.4251340627670288
+        ],
+        [
+          1.192093463942001e-07,
+          -0.9999999403953552,
+          -1.3435887069590535e-07,
+          0.3789825439453125
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
       "vertices": 113,
       "triangles": 112
     },
     {
       "name": "14_XboxButton_VISUAL_UNCALIBRATED",
       "file": "14_XboxButton_VISUAL_UNCALIBRATED.gltf",
+      "source_name": "XboxButton",
+      "source_object": "XboxButton_XBox Gamepad by Batony Robson_0",
+      "source_matrix_world": [
+        [
+          1.000000238418579,
+          1.9272303575235128e-07,
+          -3.735212317224068e-07,
+          -3.778934001275047e-07
+        ],
+        [
+          1.6490497500853962e-07,
+          1.636643673919025e-07,
+          1.0000001192092896,
+          0.7263538837432861
+        ],
+        [
+          4.371149486814829e-08,
+          -1.0000001192092896,
+          1.465268439915235e-08,
+          0.3268953561782837
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
       "vertices": 98,
       "triangles": 118
     },
     {
       "name": "15_Y_Button_VISUAL_UNCALIBRATED",
       "file": "15_Y_Button_VISUAL_UNCALIBRATED.gltf",
+      "source_name": "Y Button",
+      "source_object": "Y Button_XBox Gamepad by Batony Robson_0",
+      "source_matrix_world": [
+        [
+          1.0,
+          5.9604531088552903e-08,
+          -9.139117196355073e-08,
+          0.7159603834152222
+        ],
+        [
+          9.139115775269602e-08,
+          -7.475421881508737e-08,
+          0.9999999403953552,
+          0.6026140451431274
+        ],
+        [
+          1.1920930376163597e-07,
+          -0.9999999403953552,
+          -1.5149566934269387e-08,
+          0.3617640733718872
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
       "vertices": 107,
       "triangles": 106
     }

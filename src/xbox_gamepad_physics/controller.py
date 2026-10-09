@@ -34,6 +34,15 @@ def _valid_radius(value: object) -> bool:
     )
 
 
+def _valid_neutral_epsilon(value: object, limit: float) -> bool:
+    return (
+        not isinstance(value, bool)
+        and isinstance(value, (int, float))
+        and math.isfinite(value)
+        and 0 <= value < limit
+    )
+
+
 def _source_value(source_positions: Mapping[str, float], source: str) -> float:
     if source not in source_positions:
         raise StateValidationError(f"missing mechanism coordinate {source!r}")
@@ -63,6 +72,7 @@ class RadialSignalGroup:
 
     channels: tuple[str, str]
     radius: float
+    neutral_epsilon: float = 0.0
 
 
 @dataclass(frozen=True, slots=True)
@@ -73,6 +83,7 @@ class ScalarSignalMapping:
     source: str
     lower: float
     upper: float
+    neutral_epsilon: float = 0.0
 
 
 @dataclass(frozen=True, slots=True)
@@ -92,6 +103,7 @@ class RadialSourceGroup:
 
     sources: tuple[str, str]
     radius: float
+    neutral_epsilon: float = 0.0
 
 
 @dataclass(frozen=True, slots=True)
@@ -193,6 +205,10 @@ class GamepadSignalController:
                 raise StateValidationError(
                     f"scalar mapping {mapping.channel!r} lower must be below upper"
                 )
+            if not _valid_neutral_epsilon(mapping.neutral_epsilon, 1.0):
+                raise StateValidationError(
+                    f"scalar mapping {mapping.channel!r} neutral_epsilon must be in [0, 1)"
+                )
             mapped_channels.add(mapping.channel)
             mapped_sources.add(mapping.source)
 
@@ -241,6 +257,10 @@ class GamepadSignalController:
                 )
             if not _valid_radius(group.radius):
                 raise StateValidationError("radial group radius must be in (0, 1]")
+            if not _valid_neutral_epsilon(group.neutral_epsilon, group.radius):
+                raise StateValidationError(
+                    "radial group neutral_epsilon must be in [0, radius)"
+                )
 
         source_groups = tuple(radial_source_groups)
         split_sources = {mapping.source for mapping in split}
@@ -261,6 +281,10 @@ class GamepadSignalController:
             if not _valid_radius(group.radius):
                 raise StateValidationError(
                     "radial source group radius must be in (0, 1]"
+                )
+            if not _valid_neutral_epsilon(group.neutral_epsilon, group.radius):
+                raise StateValidationError(
+                    "radial source group neutral_epsilon must be in [0, radius)"
                 )
 
         events = tuple(physical_event_mappings)
@@ -367,7 +391,10 @@ class GamepadSignalController:
         for mapping in self._scalar_mappings:
             raw = _source_value(source_positions, mapping.source)
             normalized = (raw - mapping.lower) / (mapping.upper - mapping.lower)
-            values[mapping.channel] = max(0.0, min(1.0, normalized))
+            normalized = max(0.0, min(1.0, normalized))
+            values[mapping.channel] = (
+                0.0 if normalized <= mapping.neutral_epsilon else normalized
+            )
 
         split_values = {}
         for mapping in self._split_mappings:
@@ -378,7 +405,10 @@ class GamepadSignalController:
         for group in self._radial_source_groups:
             first, second = group.sources
             radius = math.hypot(split_values[first], split_values[second])
-            if radius > group.radius:
+            if radius <= group.neutral_epsilon:
+                split_values[first] = 0.0
+                split_values[second] = 0.0
+            elif radius > group.radius:
                 factor = group.radius / radius
                 split_values[first] *= factor
                 split_values[second] *= factor
@@ -391,7 +421,10 @@ class GamepadSignalController:
         for group in self._radial_groups:
             first, second = group.channels
             radius = math.hypot(values[first], values[second])
-            if radius > group.radius:
+            if radius <= group.neutral_epsilon:
+                values[first] = 0.0
+                values[second] = 0.0
+            elif radius > group.radius:
                 factor = group.radius / radius
                 values[first] *= factor
                 values[second] *= factor

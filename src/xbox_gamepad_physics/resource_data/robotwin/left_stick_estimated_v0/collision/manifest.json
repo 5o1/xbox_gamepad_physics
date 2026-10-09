@@ -111,6 +111,5 @@
       ]
     }
   },
-  "source_record": "sources/robotwin_left_stick_estimated_v0.json",
-  "source_sha256": "2a4b0ba61eecaa273457f7bb6adc48785fc3345c5756297f58f74aa2b36658f5"
+  "source_record": "references/robotwin_left_stick_estimated_v0.json"
 }

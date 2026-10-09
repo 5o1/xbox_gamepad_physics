@@ -33,7 +33,7 @@
       "url": "https://download.microsoft.com/download/7/C/A/7CA6D7FD-9758-4DA8-BD27-4FDAB0C18E1F/TDS_XboxOneControllerPlusCableforWindows.pdf",
       "kind": "manufacturer_technical_datasheet",
       "locator": "Page 1, Product Dimensions; FCC/IC ID identifies Model 1708",
-      "scope": "Model 1708 whole-controller width, length, height and battery-loaded mass recorded in sources/1708_dimensions.json",
+      "scope": "Model 1708 whole-controller width, length, height and battery-loaded mass recorded in references/1708_dimensions.json",
       "limitation": "No dimensional tolerance is published. Whole-controller dimensions do not validate a third-party mesh's local geometry or mechanical revision."
     },
     "batony_xbox_one_s_visual": {

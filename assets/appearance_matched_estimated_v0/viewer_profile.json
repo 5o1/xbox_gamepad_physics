@@ -6,20 +6,15 @@
   "status": "estimated_kinematic_preview_not_physical_asset",
   "source_bindings": {
     "static_inventory": "results/xbox_one_s_batonyrobson_UNVERIFIED/static_visual_parts_inventory_UNCALIBRATED.json",
-    "static_inventory_sha256": "ab310d28155b592344c4e1f3890976f4363b59c645585a09dbca24c5fbb13049",
     "source_glb_sha256": "5c5671c83a9cf15db4b8399e7010aa7d5cde915687ceb348b583eb00b0ed24e2",
     "static_glb": "Xbox_One_S_BatonyRobson_STATIC_VISUAL_UNCALIBRATED.glb",
     "static_glb_sha256": "7548b189051b48d8fded7de65079763c923fe0a48ad9e1e36b6e2b89e31fa7ee",
     "artist_motion_summary": "results/xbox_one_s_batonyrobson_UNVERIFIED/artist_animation_summary_UNCALIBRATED.json",
-    "artist_motion_summary_sha256": "fda7e876a19823fd679d2bd1e9051e1ab8642f23873f62b0707a468259442664",
     "full_artist_motion_audit_sha256": "4c97d513d66f008e5cbc2b375d3c98692cfb495ecf32178c42d399304b31e6df",
     "full_artist_motion_audit_gpu_path": "/path/to/gpu-data/<gpu-project>/controller-candidates/xbox_one_s_batonyrobson_UNVERIFIED/harness_repo/results/artist_animation_audit_relative_to_frame0_UNCALIBRATED.json",
-    "dimension_evidence": "sources/1708_dimensions.json",
-    "dimension_evidence_sha256": "25f272d5cbe866d36dc83a2a30bc70a4884cccc4d1d1b3d5dad206c6aac5914c",
-    "stick_reference": "sources/stick_envelope.json",
-    "stick_reference_sha256": "1c71f9576fc3b2ae3111e099acdd50953b1e04621ae5b94e4d7ce2350bc9f88e",
-    "evidence_catalog": "sources/catalog.json",
-    "evidence_catalog_sha256": "56f0ebc4de4c0963f65e4e22d722de30f1ff16beb2340271233c6e4d5cb82f39"
+    "dimension_evidence": "references/1708_dimensions.json",
+    "stick_reference": "references/stick_envelope.json",
+    "evidence_catalog": "references/catalog.json"
   },
   "visual": {
     "mode": "gltf_container",
@@ -1070,8 +1065,7 @@
     },
     "inverse_policy": "return_represented_state_after_constraint_projection"
   },
-  "parameter_source": "sources/appearance_matched_estimated_v0.json",
-  "parameter_source_sha256": "ee0c6929327ae3cc503a42da09d26ccaf69305880821a50974c6b92a77442263",
+  "parameter_source": "references/appearance_matched_estimated_v0.json",
   "acceptance": {
     "appearance_binding": true,
     "target_appearance_identity_accepted": true,

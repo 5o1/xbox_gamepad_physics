@@ -1,7 +1,6 @@
 {
   "schema_version": 1,
   "source": "common/xbox_one_s/visual/manifest.json",
-  "source_sha256": "4949463388206258ab23a513eefad1254ea9f99cac0beb79fa03646c2ab0fcae",
   "root_link": "controller_body",
   "moving_parts": {
     "00_A_Button_VISUAL_UNCALIBRATED": {

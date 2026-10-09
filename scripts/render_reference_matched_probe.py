@@ -24,17 +24,17 @@ hdri = Path(arguments[2])
 hdri_records = {
     "boiler_room_4k.exr": {
         "slug": "boiler_room",
-        "source_record": "sources/boiler_room_hdri.json",
+        "source_record": "references/boiler_room_hdri.json",
         "output_directory": "reference_matched_cycles_probe",
     },
     "industrial_workshop_foundry_4k.hdr": {
         "slug": "industrial_workshop_foundry",
-        "source_record": "sources/industrial_workshop_foundry_hdri.json",
+        "source_record": "references/industrial_workshop_foundry_hdri.json",
         "output_directory": "reference_matched_cycles_industrial_workshop_foundry_probe",
     },
     "studio_small_08_4k.exr": {
         "slug": "studio_small_08",
-        "source_record": "sources/studio_small_08_hdri.json",
+        "source_record": "references/studio_small_08_hdri.json",
         "output_directory": "reference_matched_cycles_studio_small_08_probe",
     },
 }
@@ -47,9 +47,9 @@ scene_path = (
     / "Xbox_One_S_BatonyRobson_MATERIAL_REVIEW_UNCALIBRATED.blend"
 )
 hdri_record_path = root / hdri_record["source_record"]
-model_record_path = root / "sources/xbox_one_s_material_validation.json"
+model_record_path = root / "references/xbox_one_s_material_validation.json"
 scene_audit_path = root / "results/xbox_official_import_comparison/official_import_4.5.9_LTS/audit.json"
-reference_record_path = root / "sources/sketchfab_render_pipeline_audit.json"
+reference_record_path = root / "references/sketchfab_render_pipeline_audit.json"
 
 
 def require(condition, message):

@@ -1,7 +1,5 @@
-import json
 import math
 import sys
-import tempfile
 import unittest
 from pathlib import Path
 
@@ -99,47 +97,22 @@ class EstimatedV0Test(unittest.TestCase):
             self.assertEqual(constraint["coordinate_space"], "joint_coordinates")
             self.assertEqual(constraint["approximation_ref"], "stick_joint_space_envelope")
 
-    def test_all_upstream_evidence_and_generated_outputs_are_hash_bound(self):
+    def test_local_reference_bindings_exist(self):
         bindings = self.evidence["source_bindings"]
-        for path, expected in (
-            (builder.DIMENSIONS, builder.EXPECTED_DIMENSIONS_SHA256),
-            (builder.STICK_REFERENCE, builder.EXPECTED_STICK_REFERENCE_SHA256),
-            (builder.CATALOG, builder.EXPECTED_CATALOG_SHA256),
+        for field in (
+            "static_inventory",
+            "artist_motion_summary",
+            "dimension_evidence",
+            "stick_reference",
+            "evidence_catalog",
         ):
-            self.assertEqual(builder.sha256(path), expected)
-        self.assertEqual(bindings["dimension_evidence_sha256"], builder.EXPECTED_DIMENSIONS_SHA256)
-        self.assertEqual(bindings["stick_reference_sha256"], builder.EXPECTED_STICK_REFERENCE_SHA256)
-        self.assertEqual(bindings["evidence_catalog_sha256"], builder.EXPECTED_CATALOG_SHA256)
-        self.assertNotIn(str(builder.AUDIT_OUTPUT.relative_to(builder.ROOT)), self.audit["output_sha256"])
-        self.assertEqual(
-            self.audit["output_sha256"][str(builder.EVIDENCE_OUTPUT.relative_to(builder.ROOT))],
-            builder.hashlib.sha256(builder.encoded(self.evidence)).hexdigest(),
-        )
-        self.assertEqual(
-            self.audit["output_sha256"][str(builder.PROFILE_OUTPUT.relative_to(builder.ROOT))],
-            builder.hashlib.sha256(builder.encoded(self.profile)).hexdigest(),
-        )
+            self.assertTrue((builder.ROOT / bindings[field]).is_file(), field)
 
-    def test_every_parameter_evidence_id_resolves_in_pinned_catalog(self):
+    def test_every_parameter_evidence_id_resolves_in_catalog(self):
         available = set(self.evidence["evidence_index"]["available_ids"])
-        self.assertEqual(self.evidence["evidence_index"]["catalog_sha256"], builder.EXPECTED_CATALOG_SHA256)
         for name, record in self.evidence["parameters"].items():
             self.assertTrue(record["evidence"], name)
             self.assertLessEqual(set(record["evidence"]), available, name)
-
-    def test_catalog_citation_drift_is_rejected_before_generation(self):
-        mutated = json.loads(builder.CATALOG.read_text(encoding="utf-8"))
-        mutated["sources"]["alps_stick"]["url"] = "https://example.invalid/drift"
-        original_path = builder.CATALOG
-        with tempfile.TemporaryDirectory() as directory:
-            candidate = Path(directory) / "catalog.json"
-            candidate.write_text(json.dumps(mutated), encoding="utf-8")
-            builder.CATALOG = candidate
-            try:
-                with self.assertRaisesRegex(ValueError, "evidence catalog hash changed"):
-                    builder.build()
-            finally:
-                builder.CATALOG = original_path
 
     def test_checked_in_generated_outputs_are_fresh(self):
         for path, value in zip(

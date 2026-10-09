@@ -229,6 +229,56 @@ class GamepadSignalControllerTests(unittest.TestCase):
         saturated = self.controller.encode({"stick_x": -0.8, "stick_y": 0.0})
         self.assertEqual(saturated.channel("left_x"), -1.0)
 
+    def test_neutral_epsilon_zeros_solver_residue_without_rescaling(self):
+        controller = GamepadSignalController.xbox_one_s(
+            (
+                AxisSignalMapping("left_x", "stick_x", -0.4, 0.4),
+                AxisSignalMapping("left_y", "stick_y", -0.4, 0.4),
+            ),
+            (RadialSignalGroup(("left_x", "left_y"), 1.0, 1e-4),),
+            scalar_mappings=(
+                ScalarSignalMapping(
+                    "left_trigger", "trigger", 0.0, 0.3, 1e-4
+                ),
+            ),
+            split_mappings=(
+                SplitSignalMapping(
+                    "dpad_left", "dpad_right", "dpad_x", -0.2, 0.2
+                ),
+                SplitSignalMapping(
+                    "dpad_up", "dpad_down", "dpad_y", -0.2, 0.2
+                ),
+            ),
+            radial_source_groups=(
+                RadialSourceGroup(("dpad_x", "dpad_y"), 1.0, 1e-4),
+            ),
+        )
+        neutral = controller.encode(
+            {
+                "stick_x": 0.4 * 5e-5,
+                "stick_y": 0.0,
+                "trigger": 0.3 * 5e-5,
+                "dpad_x": 0.2 * 5e-5,
+                "dpad_y": 0.0,
+            }
+        )
+        self.assertEqual(neutral.channel("left_x"), 0.0)
+        self.assertEqual(neutral.channel("left_trigger"), 0.0)
+        self.assertEqual(neutral.channel("dpad_right"), 0.0)
+
+        outside = controller.encode(
+            {
+                "stick_x": 0.4 * 2e-4,
+                "stick_y": 0.0,
+                "trigger": 0.3 * 2e-4,
+                "dpad_x": 0.2 * 2e-4,
+                "dpad_y": 0.0,
+            }
+        )
+        self.assertAlmostEqual(outside.channel("left_x"), 2e-4)
+        self.assertAlmostEqual(outside.channel("left_trigger"), 2e-4)
+        self.assertAlmostEqual(outside.channel("dpad_right"), 2e-4)
+
     def test_controller_rejects_invalid_configuration_and_observations(self):
         with self.assertRaisesRegex(StateValidationError, "missing mechanism"):
             self.controller.encode({"stick_x": 0.0})

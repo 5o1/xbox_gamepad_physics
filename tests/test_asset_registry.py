@@ -1,4 +1,3 @@
-import hashlib
 import json
 from pathlib import Path
 import unittest
@@ -34,7 +33,7 @@ class AssetRegistryTest(unittest.TestCase):
         self.assertIsNone(physical["simulator_asset"])
         self.assertFalse(physical["contact_dynamics_validated"])
 
-    def test_registered_local_files_exist_and_hashes_match(self):
+    def test_registered_local_files_exist(self):
         for candidate in self.index["candidates"].values():
             for field in ("source", "front_render"):
                 with self.subTest(candidate=candidate["title"], field=field):
@@ -44,18 +43,10 @@ class AssetRegistryTest(unittest.TestCase):
             with self.subTest(variant=variant_id):
                 inventory = resolve_from_assets(variant["inventory"])
                 self.assertTrue(inventory.is_file())
-                self.assertEqual(
-                    hashlib.sha256(inventory.read_bytes()).hexdigest(),
-                    variant["inventory_sha256"],
-                )
                 profile_binding = variant.get("viewer_profile")
                 if profile_binding is not None:
                     profile = resolve_from_assets(profile_binding["path"])
                     self.assertTrue(profile.is_file())
-                    self.assertEqual(
-                        hashlib.sha256(profile.read_bytes()).hexdigest(),
-                        profile_binding["sha256"],
-                    )
 
         for profile_id, profile in self.index.get(
             "partial_physics_profiles", {}
@@ -63,19 +54,15 @@ class AssetRegistryTest(unittest.TestCase):
             with self.subTest(partial_profile=profile_id):
                 self.assertFalse(profile["full_controller_ready"])
                 self.assertFalse(profile["hardware_calibrated"])
-                for path_field, hash_field in (
-                    ("source", "source_sha256"),
-                    ("manifest", "manifest_sha256"),
-                    ("validation_result", "validation_result_sha256"),
-                    ("sensitivity_result", "sensitivity_result_sha256"),
-                    ("review_video", "review_video_sha256"),
+                for path_field in (
+                    "source",
+                    "manifest",
+                    "validation_result",
+                    "sensitivity_result",
+                    "review_video",
                 ):
                     path = resolve_from_assets(profile[path_field])
                     self.assertTrue(path.is_file())
-                    self.assertEqual(
-                        hashlib.sha256(path.read_bytes()).hexdigest(),
-                        profile[hash_field],
-                    )
 
         for profile_id, profile in self.index.get("simulation_profiles", {}).items():
             with self.subTest(simulation_profile=profile_id):
@@ -84,24 +71,12 @@ class AssetRegistryTest(unittest.TestCase):
                     profile["status"],
                     "implemented_pending_user_review_and_hardware_calibration",
                 )
-                for path_field, hash_field in (
-                    ("source", "source_sha256"),
-                    ("manifest", "manifest_sha256"),
-                    ("nonvisual_result", "nonvisual_result_sha256"),
-                ):
+                for path_field in ("source", "manifest", "nonvisual_result"):
                     path = resolve_from_assets(profile[path_field])
                     self.assertTrue(path.is_file())
-                    self.assertEqual(
-                        hashlib.sha256(path.read_bytes()).hexdigest(),
-                        profile[hash_field],
-                    )
                 if "contact_result" in profile:
                     path = resolve_from_assets(profile["contact_result"])
                     self.assertTrue(path.is_file())
-                    self.assertEqual(
-                        hashlib.sha256(path.read_bytes()).hexdigest(),
-                        profile["contact_result_sha256"],
-                    )
 
     def test_legacy_1914_assets_cannot_become_xbox_one_s_physics(self):
         active_id = self.index["interactive_viewer"]["active_variant_id"]

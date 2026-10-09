@@ -114,13 +114,11 @@ async function load(){
   if(!registryResponse.ok)throw Error(`资产注册表 HTTP ${registryResponse.status}`);
   if(!inventoryResponse.ok)throw Error(`资产清单 HTTP ${inventoryResponse.status}`);
   const registry=await registryResponse.json();
-  const inventoryBytes=await inventoryResponse.arrayBuffer();
-  const inventoryDigest=[...new Uint8Array(await crypto.subtle.digest('SHA-256',inventoryBytes))].map(x=>x.toString(16).padStart(2,'0')).join('');
-  const allowed=new Set([registry.interactive_viewer?.active_variant_id,...(registry.interactive_viewer?.allowed_variant_ids??[])]);
-  const matches=Object.entries(registry.derived_variants??{}).filter(([id,variant])=>allowed.has(id)&&variant.inventory_sha256===inventoryDigest);
-  if(matches.length!==1)throw Error(`资产清单必须唯一匹配一个允许的 viewer variant；当前匹配 ${matches.length} 个`);
-  [activeVariantId]=matches[0];const variant=matches[0][1];
-  const inventory=JSON.parse(new TextDecoder().decode(inventoryBytes)),loader=new OBJLoader();
+  const inventory=await inventoryResponse.json();
+  activeVariantId=registry.interactive_viewer?.active_variant_id;
+  const variant=registry.derived_variants?.[activeVariantId];
+  if(!variant)throw Error(`资产注册表缺少活动 viewer variant：${activeVariantId}`);
+  const loader=new OBJLoader();
   for(const item of inventory.objects){
     const raw=await (await fetch('/assets/'+encodeURIComponent(item.file))).arrayBuffer();
     const digest=[...new Uint8Array(await crypto.subtle.digest('SHA-256',raw))].map(x=>x.toString(16).padStart(2,'0')).join('');

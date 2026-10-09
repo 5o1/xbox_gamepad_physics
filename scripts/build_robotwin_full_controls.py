@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import math
 from pathlib import Path
@@ -14,7 +13,7 @@ import trimesh
 
 
 ROOT = Path(__file__).resolve().parents[1]
-SOURCE = ROOT / "sources" / "full_controls_estimated_v0.json"
+SOURCE = ROOT / "references" / "full_controls_estimated_v0.json"
 PROFILE = ROOT / "assets" / "appearance_matched_estimated_v0" / "viewer_profile.json"
 VISUAL_ROOT = (
     ROOT
@@ -25,7 +24,7 @@ VISUAL_ROOT = (
     / "xbox_one_s"
     / "visual"
 )
-LEFT_STICK_SOURCE = ROOT / "sources" / "robotwin_left_stick_estimated_v0.json"
+LEFT_STICK_SOURCE = ROOT / "references" / "robotwin_left_stick_estimated_v0.json"
 DEFAULT_OUTPUT = (
     ROOT
     / "src"
@@ -70,10 +69,6 @@ def _json(path: Path) -> dict:
     if not isinstance(value, dict):
         raise ValueError(f"expected JSON object: {path}")
     return value
-
-
-def _sha256(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
 def _fmt(value: float) -> str:
@@ -408,6 +403,7 @@ def build(output: Path) -> None:
     scalar_mappings = []
     split_mappings = []
     physical_events = []
+    neutral_epsilon = float(source["signal_policy"]["device_neutral_epsilon"])
     for joint_id, joint in dynamics.items():
         driver = joint["driver"]
         if driver["kind"] == "linear_channel":
@@ -420,6 +416,8 @@ def build(output: Path) -> None:
             }
             (axis_mappings if channel in {"left_x", "left_y", "right_x", "right_y"}
              else scalar_mappings).append(item)
+            if channel not in {"left_x", "left_y", "right_x", "right_y"}:
+                item["neutral_epsilon"] = neutral_epsilon
         elif driver["kind"] == "difference_channels":
             split_mappings.append({
                 "negative_channel": W3C_TO_CANONICAL[int(driver["negative_channel"])],
@@ -439,7 +437,6 @@ def build(output: Path) -> None:
     visual_binding = {
         "schema_version": 1,
         "source": "common/xbox_one_s/visual/manifest.json",
-        "source_sha256": _sha256(VISUAL_ROOT / "manifest.json"),
         "root_link": "controller_body",
         "moving_parts": {
             PART_BY_CONTROL[control]: {
@@ -455,7 +452,7 @@ def build(output: Path) -> None:
         "method": source["collision_policy"],
         "links": primitive_records,
         "mass_kg": {"controller_body": body_mass, **moving_mass},
-        "source": "sources/full_controls_estimated_v0.json",
+        "source": "references/full_controls_estimated_v0.json",
     }
     (output / "visual" / "manifest.json").write_text(
         json.dumps(visual_binding, indent=2) + "\n", encoding="utf-8"
@@ -499,8 +496,7 @@ def build(output: Path) -> None:
         "reason": None,
         "scope": source["scope"],
         "evidence_status": source["status"],
-        "source_record": "sources/full_controls_estimated_v0.json",
-        "source_sha256": _sha256(SOURCE),
+        "source_record": "references/full_controls_estimated_v0.json",
         "joint_dynamics": [
             {
                 "name": name,
@@ -517,14 +513,30 @@ def build(output: Path) -> None:
             "scalars": scalar_mappings,
             "splits": split_mappings,
             "radial_groups": [
-                {"channels": ["left_x", "left_y"], "radius": 1.0},
-                {"channels": ["right_x", "right_y"], "radius": 1.0},
+                {
+                    "channels": ["left_x", "left_y"],
+                    "radius": 1.0,
+                    "neutral_epsilon": neutral_epsilon,
+                },
+                {
+                    "channels": ["right_x", "right_y"],
+                    "radius": 1.0,
+                    "neutral_epsilon": neutral_epsilon,
+                },
             ],
             "radial_source_groups": [
-                {"joints": ["dpad_horizontal", "dpad_vertical"], "radius": 1.0}
+                {
+                    "joints": ["dpad_horizontal", "dpad_vertical"],
+                    "radius": 1.0,
+                    "neutral_epsilon": neutral_epsilon,
+                }
             ],
             "physical_events": physical_events,
-            "deadzone": None,
+            "neutral_policy": {
+                "epsilon": neutral_epsilon,
+                "mode": source["signal_policy"]["device_neutral_mode"],
+                "status": "simulation_solver_tolerance_not_hardware_deadzone",
+            },
         },
         "contact_material": left_stick["contact_material"],
         "visual_binding": visual_binding,
