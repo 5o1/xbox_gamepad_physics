@@ -23,6 +23,7 @@ from xbox_gamepad_physics.robotwin.articulation import XboxOneSArticulation
 from xbox_gamepad_physics.robotwin.errors import (
     JointConfigurationError,
     RoboTwinManifestError,
+    SceneCompatibilityError,
 )
 from xbox_gamepad_physics.robotwin.install import install_native_assets
 from xbox_gamepad_physics.robotwin import loader as loader_module
@@ -285,6 +286,21 @@ class RoboTwinRuntimeTest(unittest.TestCase):
         )
         self.assertEqual(wrapper.joint_names, ("button_a", "left_stick_x"))
         self.assertEqual(len(fake_loader.paths), 1)
+
+    def test_numeric_pose_contract_uses_metres_and_wxyz(self):
+        class Pose:
+            def __init__(self, *, p, q):
+                self.p = tuple(p)
+                self.q = tuple(q)
+
+        with mock.patch.object(
+            loader_module, "_import_sapien", return_value=SimpleNamespace(Pose=Pose)
+        ):
+            pose = loader_module._coerce_pose([0.1, -0.2, 0.8, 2.0, 0.0, 0.0, 0.0])
+        self.assertEqual(pose.p, (0.1, -0.2, 0.8))
+        self.assertEqual(pose.q, (1.0, 0.0, 0.0, 0.0))
+        with self.assertRaisesRegex(SceneCompatibilityError, "must contain"):
+            loader_module._coerce_pose([0.0] * 6)
 
     def test_pinned_robotwin_set_pose_fallback_is_supported(self):
         temporary = tempfile.TemporaryDirectory()

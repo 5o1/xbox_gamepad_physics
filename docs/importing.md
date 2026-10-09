@@ -52,6 +52,9 @@ python -m xbox_gamepad_physics verify --backend robotwin --profile left_stick
 
 ## RoboTwin / SAPIEN
 
+RoboTwin 的公共接入约定与任务模板见 [`robotwin_backend.md`](robotwin_backend.md)。
+调用者持有场景和安装位姿；资产包只把 `pose` 应用到 `controller_body` 根 link。
+
 视觉阶段可以在物理 URDF 就绪前加载 16 个 render-only 部件：
 
 ```python
@@ -94,7 +97,7 @@ print(state.available_mask, state.task_mask, state.device_id)
 profile 将两轴 qpos 归一化到 `[-1, 1]`，并在对角超出单位圆时做径向投影。完整接触
 验证示例见 `examples/robotwin_left_stick.py`。
 
-需要使用 RoboTwin 原生目录时，可以先查看 copy plan：
+需要把数据文件复制进 RoboTwin 原生资产目录时，可以先查看 copy plan：
 
 ```sh
 xbox-gamepad-physics install-robotwin --root /path/to/RoboTwin
@@ -108,7 +111,8 @@ xbox-gamepad-physics install-robotwin \
   --apply
 ```
 
-这个命令只复制已审核的资源文件，不修改 RoboTwin Python 源码或任务注册。
+这个命令只复制已审核的资源文件，不修改 RoboTwin Python 源码或任务注册。公共 backend
+接口不要求执行复制；任务代码可以直接调用 `load_into_scene(task.scene, ...)`。
 
 ## MuJoCo 独立场景
 
@@ -277,5 +281,5 @@ MuJoCo ready profile 还需要 `scenes` 和 `bindings`。RoboTwin ready profile 
 6. 构造 MuJoCo parent spec attachment，确认 prefix 后的 joint/sensor 名称能够绑定。
 7. 构建 wheel，确认两个 backend manifest 被包含在安装包中。
 
-物理资源完成后还需要在真实 SAPIEN 与 MuJoCo 版本中执行编译、接触和跨后端响应测试。
-当前基础设施测试不构成动力学验收。
+自动测试覆盖资源完整性、命名绑定和调用边界。各后端的用户视觉检查、真实手柄标定和
+机械臂接触实验继续按独立验收项推进。

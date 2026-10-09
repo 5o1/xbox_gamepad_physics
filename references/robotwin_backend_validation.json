@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "scope": "Public RoboTwin backend consumed through the real Base_Task.load_actors lifecycle",
+  "executed_at": "2026-10-09",
+  "package_revision": "same Git commit as this record",
+  "robotwin": {
+    "url": "https://github.com/RoboTwin-Platform/RoboTwin.git",
+    "commit": "ea8b21121ebb3cd201ff5b3fe361944ac94eda3f",
+    "python_environment": "/path/to/gpu-data/robotwin-benchmark/envs/robotwin",
+    "gpu": 3
+  },
+  "entrypoint": "scripts/validate_robotwin_task_integration.py",
+  "consumer_hook": "Base_Task.load_actors",
+  "profile": "full_controls",
+  "caller_pose": [0.0, 0.0, 0.8, 1.0, 0.0, 0.0, 0.0],
+  "result": {
+    "passed": true,
+    "joint_count": 20,
+    "available_channel_count": 21,
+    "scene_articulation_count": 2,
+    "robot_articulation_count": 1,
+    "simulation_steps_after_state_write": 10,
+    "roundtrip": {
+      "left_x": 0.3000000046362012,
+      "left_y": -0.40000000618160164,
+      "right_trigger": 0.7,
+      "south": 0.9999999878791173
+    },
+    "maximum_roundtrip_absolute_error": 1.2120882748605235e-08,
+    "observed_root_pose": {
+      "position": [0.0, 0.0, 0.800000011920929],
+      "quaternion_wxyz": [1.0, 0.0, 0.0, 0.0]
+    },
+    "root_position_comparison_tolerance_m": 1e-06,
+    "episode_rebuild": {
+      "scene_recreated": true,
+      "gamepad_handle_recreated": true,
+      "gamepad_state_neutral": true
+    }
+  },
+  "validated": [
+    "RoboTwin task creates scene, table, ALOHA robot and cameras before load_actors",
+    "consumer calls the public load_into_scene API with task-owned scene and pose",
+    "full_controls loads as a 20-joint articulation",
+    "all 21 Xbox game channels are available",
+    "the dual-arm ALOHA articulation and gamepad articulation coexist in one scene",
+    "concurrent canonical state write and readback",
+    "a second setup_demo call recreates scene and handle and starts from neutral state"
+  ],
+  "not_validated": [
+    "user visual acceptance in the task cameras",
+    "robot or dexterous-hand contact",
+    "complete per-control motion review",
+    "hardware calibration"
+  ]
+}

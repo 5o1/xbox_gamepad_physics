@@ -89,6 +89,7 @@ http://127.0.0.1:8770/viewer/gamepad_overlay/index.html?source=canonical&trace=/
 - [32 维张量契约来源](references/gamepad_tensor_contract_v1.json)：通道顺序、mask 与设备标识的依据和项目选择。
 - [虚拟手柄适配器](viewer/gamepad_overlay/index.html)：将 canonical 状态交给现成 SVG 手柄渲染器。
 - [完整控件使用说明](docs/full_controls.md)：20-DOF 双后端资产、信号接口和运行记录。
+- [RoboTwin backend 接入](docs/robotwin_backend.md)：公共接口、位姿所有权和真实任务生命周期接入点。
 - [MuBlE 适配器](src/xbox_gamepad_physics/muble/)：从公共 MuJoCo 接口导出 body pose，并驱动已验收 Blender 对象。
 - [待统一确认与实测清单](docs/pending_user_review.md)：延后处理的视觉确认和硬件测量。
 - 完整控件逐项验收材料：生成到 `build/experiments/full_controls_user_review/`，不进入 Git。
@@ -150,7 +151,8 @@ python3 -m xbox_gamepad_physics verify \
 离线的既有 RoboTwin 环境使用 `python3 -m pip install -e . --no-build-isolation`，仓库中的
 `setup.py` 兼容其 Python 3.10 / setuptools 59 安装链。
 
-默认可运行 profile 为双后端 `full_controls`，RoboTwin 另提供局部 `left_stick`。完整导入接口见
+默认可运行 profile 为双后端 `full_controls`，RoboTwin 另提供局部 `left_stick`。RoboTwin
+任务接入见 [RoboTwin backend 接入](docs/robotwin_backend.md)，后端总览见
 [RoboTwin 与 MuJoCo 导入约定](docs/importing.md)。
 
 需要定位失败时，可直接运行底层测试：

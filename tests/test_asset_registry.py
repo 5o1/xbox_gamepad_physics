@@ -32,6 +32,10 @@ class AssetRegistryTest(unittest.TestCase):
         self.assertIsNone(physical["collision_asset"])
         self.assertIsNone(physical["simulator_asset"])
         self.assertFalse(physical["contact_dynamics_validated"])
+        viewer_adapter = physical["viewer_adapter"]
+        self.assertEqual(viewer_adapter["viewer_schema_version"], 2)
+        self.assertEqual(viewer_adapter["implementation"], "viewer/kinematics.mjs")
+        self.assertFalse(viewer_adapter["physical_acceptance_allowed"])
 
     def test_registered_local_files_exist(self):
         for candidate in self.index["candidates"].values():
@@ -62,6 +66,9 @@ class AssetRegistryTest(unittest.TestCase):
                 for path_field in ("source", "manifest"):
                     path = resolve_from_assets(profile[path_field])
                     self.assertTrue(path.is_file())
+                integration = profile.get("consumer_integration")
+                if integration is not None:
+                    self.assertTrue(resolve_from_assets(integration).is_file())
 
         for profile_id, profile in self.index.get("simulation_profiles", {}).items():
             with self.subTest(simulation_profile=profile_id):
@@ -73,6 +80,9 @@ class AssetRegistryTest(unittest.TestCase):
                 for path_field in ("source", "manifest"):
                     path = resolve_from_assets(profile[path_field])
                     self.assertTrue(path.is_file())
+                integration = profile.get("consumer_integration")
+                if integration is not None:
+                    self.assertTrue(resolve_from_assets(integration).is_file())
 
     def test_legacy_1914_assets_cannot_become_xbox_one_s_physics(self):
         active_id = self.index["interactive_viewer"]["active_variant_id"]

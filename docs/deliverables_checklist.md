@@ -49,6 +49,7 @@
 - [x] 完整手柄 profile 通过 readiness 检查
 - [x] wheel 干净安装后包含并识别完整 profile
 - [x] canonical `GamepadState` 可同步 qpos 或设置 SAPIEN drive target
+- [x] 固定 RoboTwin `ea8b211` 的真实 `Base_Task.load_actors` 生命周期可通过公共接口加载完整 profile
 
 ## 路线 B：MuJoCo
 

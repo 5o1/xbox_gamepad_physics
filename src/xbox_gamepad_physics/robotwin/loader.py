@@ -728,11 +728,17 @@ def load_into_scene(
     profile: str = "full_controls",
     attach_visual: bool = True,
 ) -> XboxOneSArticulation:
-    """Load the packaged Xbox One S URDF directly into a SAPIEN scene.
+    """Load the packaged Xbox One S URDF into a caller-owned SAPIEN scene.
 
-    Loading bypasses RoboTwin's ``create_sapien_urdf_obj`` and its articulation
-    wrapper.  Consequently the mass, center of mass, and inertia authored in
-    the URDF remain untouched.
+    ``scene`` may be a SAPIEN scene or an object exposing ``.scene``; passing
+    ``task.scene`` is the stable, low-coupling RoboTwin path. ``pose`` is the
+    caller-selected pose of the URDF ``controller_body`` root link in that
+    scene. A numeric pose uses metres and ``[x, y, z, qw, qx, qy, qz]``.
+    ``fixed_root`` is forwarded to the SAPIEN URDF loader.
+
+    Loading bypasses RoboTwin's asset-directory helpers and articulation
+    wrapper. Consequently the mass, center of mass, inertia, joint dynamics,
+    state mapping and visual binding remain owned by this backend package.
     """
 
     if type(fixed_root) is not bool:

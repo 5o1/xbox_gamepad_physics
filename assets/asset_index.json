@@ -216,10 +216,10 @@
     "meters_per_native_unit": null,
     "contact_dynamics_validated": false,
     "viewer_adapter": {
-      "status": "blocked_unimplemented",
+      "status": "appearance_schema_2_implemented_canonical_physics_adapter_pending",
       "canonical_schema_version": 2,
-      "viewer_schema_version": 1,
-      "implementation": null,
+      "viewer_schema_version": 2,
+      "implementation": "viewer/kinematics.mjs",
       "physical_acceptance_allowed": false,
       "interactive_acceptance": "specs/interactive_acceptance.json"
     }
@@ -249,7 +249,8 @@
       "status": "implemented_pending_user_review_and_hardware_calibration",
       "hardware_calibrated": false,
       "source": "../references/full_controls.json",
-      "manifest": "../src/xbox_gamepad_physics/resource_data/robotwin/full_controls/manifest.json"
+      "manifest": "../src/xbox_gamepad_physics/resource_data/robotwin/full_controls/manifest.json",
+      "consumer_integration": "../references/robotwin_backend_validation.json"
     },
     "mujoco_full_controls": {
       "backend": "mujoco",
