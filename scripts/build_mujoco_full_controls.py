@@ -35,6 +35,12 @@ DEFAULT_OUTPUT = (
     / "mujoco"
     / "full_controls"
 )
+STICK_TILT_JOINTS = {
+    "left_stick_x",
+    "left_stick_y",
+    "right_stick_x",
+    "right_stick_y",
+}
 
 
 def _json(path: Path) -> dict:
@@ -226,7 +232,9 @@ def build(output: Path) -> None:
                 limited="true",
                 stiffness=_fmt(drive["stiffness"]),
                 damping=_fmt(drive["damping"]),
-                frictionloss=_fmt(drive["friction"]),
+                frictionloss=_fmt(
+                    0.0 if joint["name"] in STICK_TILT_JOINTS else drive["friction"]
+                ),
                 springref=_fmt(drive["target"]),
             )
         return body

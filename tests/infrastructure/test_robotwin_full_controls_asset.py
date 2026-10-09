@@ -74,6 +74,14 @@ class RoboTwinFullControlsAssetTest(unittest.TestCase):
             [group.neutral_epsilon for group in controller.radial_groups],
             [0.01, 0.01],
         )
+        dynamics = {item.name: item for item in description.joint_dynamics}
+        for name in (
+            "left_stick_x",
+            "left_stick_y",
+            "right_stick_x",
+            "right_stick_y",
+        ):
+            self.assertEqual(dynamics[name].friction, 0.1)
 
     def test_isolated_joint_endpoints_produce_named_signals(self):
         description = _validated_description("full_controls")

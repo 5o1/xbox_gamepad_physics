@@ -238,7 +238,11 @@ def build(output: Path) -> None:
             stiffness=stiffness,
             drive_damping=damping,
             passive_damping=damping * 0.05,
-            friction=0.0,
+            friction=(
+                float(source["control_groups"]["sticks"]["tilt_joint_friction_coefficient"])
+                if name in stick_tilts
+                else 0.0
+            ),
             target=(-preload_fraction * travel if name in one_sided else 0.0),
         )
         dynamics[name] = joint

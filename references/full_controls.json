@@ -57,6 +57,9 @@
     "sticks": {
       "joint_prefixes": ["left_stick", "right_stick"],
       "tilt_dynamics": "reuse references/left_stick.json for both identical reference modules",
+      "tilt_joint_friction_coefficient": 0.1,
+      "tilt_joint_friction_status": "owner_selected_simulation_value_not_hardware_measurement",
+      "tilt_joint_friction_basis": "Selected by the owner after the 2026-10-09 bounded free-root shake search bracketed the 0.01-signal transition between dimensionless PhysX joint-friction coefficients 0.076123046875 and 0.076171875. The adopted 0.1 is a simulation setting, not an identified Xbox parameter.",
       "click_force_n": 7.4,
       "click_force_range_n": [4.4, 10.4],
       "click_force_evidence": "catalog.reference_values.stick_click_force",
