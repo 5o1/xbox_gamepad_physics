@@ -163,7 +163,7 @@
       "mechanical_revision_match": null,
       "collision_approved": false,
       "approved_for_contact_or_training": false,
-      "viewer_entry": "../viewer/v0.html",
+      "viewer_entry": "../viewer/index.html",
       "viewer_profile": {
         "route": "/generated/kinematics/xbox_one_s.json"
       },
@@ -182,8 +182,7 @@
     "legacy_casper_1914_width_scaled_proxy": {
       "source_candidate_id": "xbox_series_1914_casperh2o_visual",
       "gpu_directory": "/path/to/gpu-data/<gpu-project>/xbox-physics-v1/LEGACY_1914_shape_scaled_to_1708_width_NO_SHARE_NOT_VALIDATED",
-      "purpose": "viewer software regression only",
-      "viewer_entry": "../viewer/index.html",
+      "purpose": "archived provenance record; not an interactive viewer variant",
       "shape_revision_match": false,
       "mechanical_revision_match": false,
       "collision_approved": false,
@@ -201,7 +200,7 @@
     }
   },
   "interactive_viewer": {
-    "entry": "../viewer/v0.html",
+    "entry": "../viewer/index.html",
     "acceptance": "../specs/interactive_acceptance.json",
     "design_sources": "../references/viewer_design.json",
     "active_variant_id": "xbox_one_s",

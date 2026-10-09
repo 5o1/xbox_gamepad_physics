@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {execFileSync} from 'node:child_process';
 import {readFile} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
-import {configuredChannels,evaluateProfile,nodeSteps,sourceToGltfVector,stateWithJointCoordinate,validateProfile} from '../viewer/schema2_runtime.mjs';
+import {configuredChannels,evaluateProfile,nodeSteps,sourceToGltfVector,stateWithJointCoordinate,validateProfile} from '../viewer/kinematics.mjs';
 
 const root=fileURLToPath(new URL('../',import.meta.url));
 execFileSync('python3',['scripts/build_kinematics.py','--write'],{cwd:root,stdio:'ignore'});

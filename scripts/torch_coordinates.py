@@ -1,4 +1,4 @@
-"""Differentiable coordinate mapping matching viewer/rig.mjs, not physics.
+"""Differentiable synthetic coordinate mapping, not viewer runtime or physics.
 
 Only configured channels are returned by the inverse. No values are invented
 for unknown channels. Asymmetric stick mapping has a kink at zero; clipped

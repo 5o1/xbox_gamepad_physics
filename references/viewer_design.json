@@ -8,7 +8,6 @@
       "package.json": "aa42494664dba4cf76d89c6975ee38321a402f09a048672e190bad6f13beec93",
       "build/three.module.js": "c8211c69345d2e9949dc7a8ac969380497aa0600a5a8ac6a459c8cd02dd9cb8a",
       "build/three.core.js": "eb077d2417f61d3e6d9264c317cabc4ea35769ed6b0ab533067292a550784c20",
-      "examples/jsm/loaders/OBJLoader.js": "e3ceb6a8ed48ca146049a8f0879c7acbf884d430f2e728779af26c6ea3a57c65",
       "examples/jsm/controls/OrbitControls.js": "b97879c748170baadeb3fb84cea1ffdf4674e283dc06042f34e2acb95a76042c",
       "examples/jsm/loaders/GLTFLoader.js": "67ac5551fdafa6e349bd80c8f8e5e39c136d6b2fb1ad647db9abb21dc86f9e4a",
       "examples/jsm/environments/RoomEnvironment.js": "c20f0b4677f6128a138d7152b85cbef9091f4f45cdfa05adca04d40c1697c7ae",
@@ -20,18 +19,18 @@
   },
   "references": {
     "picking": "https://threejs.org/docs/pages/Raycaster.html",
-    "mesh_loading": "https://threejs.org/docs/pages/OBJLoader.html",
+    "mesh_loading": "https://threejs.org/docs/pages/GLTFLoader.html",
     "input": "https://www.w3.org/TR/2025/WD-gamepad-20250710/#remapping"
   },
   "decisions": {
-    "geometry": "Load actual SHA256-checked width-proxy OBJ parts, not replacement primitives",
-    "motion": "Only explicit source-labeled configuration; no default pivots or physical ranges. Scene presentation defaults are camera/light settings only.",
-    "mapping": "Piecewise-linear signal/joint coordinate mapping, neutral fixed at zero for stick axes. This is inspection interpolation, not a measured sensor calibration.",
-    "composition": "Configured transforms composed in file order about neutral-world axes/pivots; not an inferred internal mechanism",
-    "drag": "Revolute: signed ray-plane angle about configured axis. Prismatic: ray-view-plane displacement projected onto axis, corrected for foreshortening; reject near-end-on views.",
-    "reset": "Immediate kinematic reset or explicit hold; no claim of spring dynamics",
-    "configuration_evidence": "A provenance string is required but not semantically verified. Loading a file never approves its physics.",
+    "geometry": "Load the adopted 16-part Xbox One S GLB registered in assets/asset_index.json.",
+    "material": "Bind the audited source GLB material for inspection while the visible frame is produced from the user-approved packed Blender/Cycles scene.",
+    "motion": "Generate the appearance-kinematics schema 2 profile and evidence under build/generated/kinematics; unsupported physical values remain unknown.",
+    "mapping": "Map the standard 21-channel browser state to explicit joints and constraints. This is a kinematic preview, not measured sensor or contact calibration.",
+    "drag": "Project picked visible-part motion through the same schema-2 mapping; paired sticks use the shared bounded two-axis solver.",
+    "reset": "Immediate kinematic reset or explicit hold; no claim of spring dynamics.",
+    "rendering": "CyclesView requests frames from one persistent Blender worker and retains only the latest pending pose.",
     "server": "Loopback only; explicit roots and no directory listing",
-    "harness": "tests/test_gamepad_state.mjs, tests/test_rig.mjs plus real browser inspection; real-device gate remains separate"
+    "harness": "tests/test_gamepad_state.mjs, tests/test_viewer_kinematics.mjs, tests/test_drag2d.mjs and tests/browser_viewer_harness.mjs; real-device gate remains separate"
   }
 }

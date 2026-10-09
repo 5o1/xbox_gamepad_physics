@@ -62,7 +62,7 @@ class ViewerServerTest(unittest.TestCase):
                 },
                 "derived_variants": {
                     "test_variant": {
-                        "viewer_entry": "../viewer/v0.html",
+                        "viewer_entry": "../viewer/index.html",
                         "viewer_profile": {
                             "route": "/generated/kinematics/viewer_profile.json",
                         },
@@ -72,12 +72,12 @@ class ViewerServerTest(unittest.TestCase):
             (project / "assets/asset_index.json").write_text(json.dumps(registry))
             (project / "build/generated/kinematics/viewer_profile.json").write_bytes(profile_bytes)
             (project / "build/generated/kinematics/parameters.json").write_bytes(parameters)
-            (project / "viewer/v0.html").write_text("test")
+            (project / "viewer/index.html").write_text("test")
             (external / "inventory.json").write_bytes(inventory)
             (external / "model.glb").write_bytes(container)
 
             _, variant = validate_asset_variant(project, external, "test_variant")
-            self.assertEqual(variant["_validated_viewer_url"], "/v0.html")
+            self.assertEqual(variant["_validated_viewer_url"], "/index.html")
             self.assertEqual(
                 variant["_validated_profile_url"],
                 "/generated/kinematics/viewer_profile.json",

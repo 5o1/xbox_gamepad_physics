@@ -189,7 +189,7 @@ def build():
                 "quantity": "Range of independent X/Y/Z extent-fit scale ratios; not a manufacturing tolerance or confidence interval.",
                 "confidence": None,
             },
-            applicability="Estimated-v0 viewer scale only. The visual candidate is not dimensionally or revision verified.",
+            applicability="Estimated appearance-preview scale only. The visual candidate is not dimensionally or revision verified.",
         )
     }
 
@@ -278,7 +278,7 @@ def build():
                 "inputs": {"control": control, "bone": CONTROL_TO_BONE[control]},
             },
             uncertainty=None,
-            applicability="Estimated-v0 visual translation direction only; not a measured guide axis.",
+            applicability="Estimated appearance-preview translation direction only; not a measured guide axis.",
         )
 
     for control in ("left_trigger", "right_trigger", "dpad"):
@@ -293,7 +293,7 @@ def build():
                 "inputs": {"control": control, "bone": CONTROL_TO_BONE[control], "peak_frame": peak["frame"]},
             },
             uncertainty=None,
-            applicability="Estimated-v0 visual motion only; no physical uncertainty bound can be inferred from artist keyframes.",
+            applicability="Estimated appearance-preview motion only; no physical uncertainty bound can be inferred from artist keyframes.",
         )
 
     for control in ("left_trigger", "right_trigger"):
@@ -308,7 +308,7 @@ def build():
                 "inputs": {"control": control, "bone": CONTROL_TO_BONE[control], "peak_frame": peak["frame"]},
             },
             uncertainty=None,
-            applicability="Estimated-v0 visual hinge axis only; not a measured trigger axis.",
+            applicability="Estimated appearance-preview hinge axis only; not a measured trigger axis.",
         )
 
     for control in ("left_stick", "right_stick", "dpad"):
@@ -329,7 +329,7 @@ def build():
                     },
                 },
                 uncertainty=None,
-                applicability="Estimated-v0 separable visual control basis; not a measured gimbal axis.",
+                applicability="Estimated appearance-preview separable control basis; not a measured gimbal axis.",
             )
 
     parameters["stick_click_axis"] = parameter(

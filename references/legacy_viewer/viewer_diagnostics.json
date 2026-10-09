@@ -1,4 +1,5 @@
 {
+  "status": "archived_removed_schema_1_diagnostics",
   "scope": "Interactive acceptance diagnostics; no mechanical parameters inferred",
   "source": "https://www.w3.org/TR/2025/WD-gamepad-20250710/",
   "sections": ["Gamepad Interface: timestamp, mapping, axes, buttons", "Remapping"],
@@ -10,7 +11,7 @@
     "Display kinematic coordinates in rad or m using the same toJoint mapping as rendering. Configured signals do not establish physical accuracy.",
     "Lifecycle clear removes old snapshot and time metadata along with input values."
   ],
-  "harness": "tests/test_diagnostics.mjs",
+  "harness": "Retired with the schema-1 viewer; the current page exposes raw and represented values directly and uses debug.mjs only for browser acceptance.",
   "verification": {
     "three_new_unit_tests": "passed",
     "javascript_test_files": "4 passed",

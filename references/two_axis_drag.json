@@ -17,7 +17,7 @@
     "meaning": "Software convergence and responsiveness controls, not sourced physical parameters. Degenerate/unreachable target preserves a finite bounded state and reports residual."
   },
   "limits": "No circular mechanical envelope inferred, no force/contact or spring behavior; exact physical constraints still require source-backed target configuration. Local solver may stop short at a singular view or signal limit.",
-  "harness": ["tests/test_drag2d.mjs", "tests/browser_harness.mjs"],
-  "browser_result": "build/experiments/browser_harness.json: one actual pointer movement changes both configured stick channels; releasing resets both. Explicit synthetic mechanism only, not real-device acceptance.",
+  "harness": ["tests/test_drag2d.mjs", "tests/browser_viewer_harness.mjs"],
+  "browser_result": "The current browser harness drives both sticks beyond the circular boundary and back inside without release, checks finite bounded signals and checks release reset. This is a software interaction result, not real-device acceptance.",
   "target_parameter_changes": []
 }

@@ -7,17 +7,12 @@ export const CACHE_BUSTER_PARAMETER = '__xbox_regression_nonce';
 // scripts/serve_viewer.py and the pages validate repository JSON structurally
 // and verify external binary assets where identity matters. Hashing every served
 // repository file again would only duplicate Git and test the test harness.
-export const CRITICAL_SOURCE_RESOURCES = Object.freeze([
-  {request_path: '/'},
-  {request_path: '/registry/asset_index.json'},
-]);
-
 export const MATERIAL_MODULE_SOURCE_RESOURCES = Object.freeze([
   {request_path: '/material_check.mjs'},
 ]);
 
-export const V0_SOURCE_RESOURCES = Object.freeze([
-  {request_path: '/v0.html'},
+export const VIEWER_SOURCE_RESOURCES = Object.freeze([
+  {request_path: '/index.html'},
   {request_path: '/registry/asset_index.json'},
   {request_path: '/generated/kinematics/xbox_one_s.json'},
   {request_path: '/generated/kinematics/xbox_one_s_evidence.json'},
@@ -78,11 +73,6 @@ export function recordSourceResponse(responses, message, expectedOrigin, specifi
     });
   }
   return true;
-}
-
-
-export function recordCriticalResponse(responses, message, expectedOrigin) {
-  return recordSourceResponse(responses, message, expectedOrigin, CRITICAL_SOURCE_RESOURCES);
 }
 
 

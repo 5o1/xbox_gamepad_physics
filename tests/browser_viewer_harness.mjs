@@ -7,15 +7,15 @@ import {
   makeCacheBustedNavigationUrl,
   prepareUncachedNetwork,
   recordSourceResponse,
-  V0_SOURCE_RESOURCES,
+  VIEWER_SOURCE_RESOURCES,
 } from './browser_source_binding.mjs';
 
 
-const requestedViewerUrl = new URL(process.argv[2] ?? 'http://127.0.0.1:9898/v0.html');
+const requestedViewerUrl = new URL(process.argv[2] ?? 'http://127.0.0.1:9898/index.html');
 requestedViewerUrl.searchParams.set('debug', '1');
 const viewerUrl = requestedViewerUrl.href;
 const cdpUrl = process.argv[3] ?? 'http://127.0.0.1:9310';
-const output = process.argv[4] ?? '/tmp/xbox-v0-browser';
+const output = process.argv[4] ?? '/tmp/xbox-viewer-browser';
 await mkdir(output, {recursive: true});
 
 const navigation = makeCacheBustedNavigationUrl(viewerUrl);
@@ -53,7 +53,7 @@ try {
     if (message.method === 'Network.requestWillBeSent') {
       requests.set(message.params.requestId, message.params.request.url);
     }
-    recordSourceResponse(boundaryResponses, message, viewerOrigin, V0_SOURCE_RESOURCES);
+    recordSourceResponse(boundaryResponses, message, viewerOrigin, VIEWER_SOURCE_RESOURCES);
     if (message.method === 'Network.responseReceived' && message.params.response.status >= 400) {
       resourceFailures.push({url: message.params.response.url, status: message.params.response.status});
     }
@@ -102,7 +102,7 @@ try {
   const actualNavigationUrl = await evaluate('location.href');
   const sourceBinding = await buildVerifiedSourceBinding({
     responses: boundaryResponses,
-    specifications: V0_SOURCE_RESOURCES,
+    specifications: VIEWER_SOURCE_RESOURCES,
     navigation,
     actualNavigationUrl,
     cache,
@@ -301,7 +301,7 @@ try {
     real_controller_tested: false,
     physical_acceptance: false,
   };
-  await writeFile(join(output, 'browser_v0_harness.json'), `${JSON.stringify(result, null, 2)}\n`);
+  await writeFile(join(output, 'browser_viewer_harness.json'), `${JSON.stringify(result, null, 2)}\n`);
   console.log(JSON.stringify({...result, output}));
 } catch (error) {
   harnessFailed = true;

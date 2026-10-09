@@ -14,8 +14,8 @@
     "reuse": "Third-party reference only, not incorporated as redistributed mesh texture"
   },
   "asset_consequence": "If the Xbox One S target is verified to use the same one-piece D-pad cap topology, candidate objects DPadDown/Left/Right/Up must receive the same ordered transforms. Until that comparison is performed, this remains a testable cross-model topology hypothesis and supplies no target metric validation.",
-  "implementation": "viewer/assembly_constraints.mjs; validateRig third argument; active in viewer/app.mjs",
-  "harness": "tests/test_assembly_constraints.mjs checks actual candidate inventory, rejects independent direction motion and incomplete groups, accepts transforms shared by the whole group",
+  "current_use": "Cross-model mechanism reference consumed by the physical-profile evidence record; it does not directly configure the browser viewer.",
+  "retired_viewer_experiment": "The removed schema-1 viewer tested a four-mesh Casper D-pad grouping. That experiment did not apply to the adopted 16-part Xbox One S asset, whose D-pad is one visual node.",
   "unknown": {
     "joint_type": null,
     "pivot_m": null,

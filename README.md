@@ -172,7 +172,7 @@ npm ci
 npm run viewer
 ```
 
-打开 `http://127.0.0.1:8766/v0.html`。无需连接 GPU 节点或提供额外的模型路径。
+打开 `http://127.0.0.1:8766/`。无需连接 GPU 节点或提供额外的模型路径。
 视觉验收由用户检查并确认。需要指定端口时使用 `npm run viewer -- --port 8767`。
 Blender 未加入 PATH 时，使用 `npm run viewer -- --blender "/完整路径/blender"`。
 
@@ -195,7 +195,7 @@ python3 scripts/serve_viewer.py \
   --port 8766
 ```
 
-打开 `http://127.0.0.1:8766/v0.html`。服务应只绑定本地地址；手柄接在运行浏览器的电脑上，
+打开 `http://127.0.0.1:8766/`。服务应只绑定本地地址；手柄接在运行浏览器的电脑上，
 通过 `navigator.getGamepads()` 读取，不需要把 USB 设备转发到计算节点。
 
 当前页面是运动学检查器。鼠标或 Gamepad 能驱动网格，只说明输入、映射和显示链路工作；

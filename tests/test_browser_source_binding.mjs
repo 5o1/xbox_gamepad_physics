@@ -10,11 +10,11 @@ import {
 
 test('cache-busted navigation preserves the requested page', () => {
   const navigation = makeCacheBustedNavigationUrl(
-    'http://127.0.0.1:9898/v0.html?debug=1',
+    'http://127.0.0.1:9898/index.html?debug=1',
     'boundary-test',
   );
   const actual = new URL(navigation.url);
-  assert.equal(actual.pathname, '/v0.html');
+  assert.equal(actual.pathname, '/index.html');
   assert.equal(actual.searchParams.get('debug'), '1');
   assert.equal(actual.searchParams.get(CACHE_BUSTER_PARAMETER), 'boundary-test');
 });
@@ -22,7 +22,7 @@ test('cache-busted navigation preserves the requested page', () => {
 
 test('browser binding accepts only observed successful boundary responses', async () => {
   const origin = 'http://127.0.0.1:9898';
-  const specifications = [{request_path: '/v0.html'}, {request_path: '/registry/asset_index.json'}];
+  const specifications = [{request_path: '/index.html'}, {request_path: '/registry/asset_index.json'}];
   const responses = new Map();
   for (const [index, specification] of specifications.entries()) {
     recordSourceResponse(responses, {
@@ -35,7 +35,7 @@ test('browser binding accepts only observed successful boundary responses', asyn
       }},
     }, origin, specifications);
   }
-  const navigation = makeCacheBustedNavigationUrl(`${origin}/v0.html`, 'boundary-test');
+  const navigation = makeCacheBustedNavigationUrl(`${origin}/index.html`, 'boundary-test');
   const common = {
     responses,
     specifications,

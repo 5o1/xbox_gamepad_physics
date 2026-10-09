@@ -1,3 +1,4 @@
+// Debug-only browser inspection API loaded when index.html has ?debug=1.
 import * as T from 'three';
 
 
