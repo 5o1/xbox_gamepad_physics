@@ -65,7 +65,7 @@ def attach_to_spec(
     site: Any | None = None,
     prefix: str = "xbox_",
     suffix: str = "",
-    profile: str = "estimated_v0",
+    profile: str = "full_controls",
 ) -> GamepadAttachment:
     """Attach the gamepad child model to one parent frame or site.
 

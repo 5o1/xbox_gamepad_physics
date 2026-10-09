@@ -128,7 +128,7 @@ def main() -> None:
     manifest = {
         "schema_version": 1,
         "status": "materials_ready_pending_user_review",
-        "profile": "full_controls_estimated_v0",
+        "profile": "full_controls",
         "acceptance_decision_recorded": False,
         "visualization": {
             "video_fps": 12,

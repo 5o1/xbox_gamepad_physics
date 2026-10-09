@@ -725,7 +725,7 @@ def load_into_scene(
     scene: Any,
     pose: Any,
     fixed_root: bool,
-    profile: str,
+    profile: str = "full_controls",
     attach_visual: bool = True,
 ) -> XboxOneSArticulation:
     """Load the packaged Xbox One S URDF directly into a SAPIEN scene.

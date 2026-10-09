@@ -42,7 +42,7 @@ def main() -> None:
         scene,
         pose=sapien.Pose(),
         fixed_root=True,
-        profile="left_stick_estimated_v0",
+        profile="left_stick",
     )
     limit = math.radians(23.0)
 
@@ -211,7 +211,7 @@ def main() -> None:
 
     report = {
         "sapien": sapien.__version__,
-        "profile": "left_stick_estimated_v0",
+        "profile": "left_stick",
         "timestep": scene.get_timestep(),
         "joint_names": list(gamepad.joint_names),
         "samples": samples,

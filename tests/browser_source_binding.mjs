@@ -19,8 +19,8 @@ export const MATERIAL_MODULE_SOURCE_RESOURCES = Object.freeze([
 export const V0_SOURCE_RESOURCES = Object.freeze([
   {request_path: '/v0.html'},
   {request_path: '/registry/asset_index.json'},
-  {request_path: '/generated/kinematics/xbox_one_s_estimated_v0.json'},
-  {request_path: '/evidence/appearance_matched_estimated_v0.json'},
+  {request_path: '/generated/kinematics/xbox_one_s.json'},
+  {request_path: '/generated/kinematics/xbox_one_s_evidence.json'},
 ]);
 
 

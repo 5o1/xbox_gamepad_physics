@@ -1,4 +1,4 @@
-<mujoco model="xbox_one_s_full_controls_estimated_v0">
+<mujoco model="xbox_one_s_full_controls">
   <compiler angle="radian" autolimits="true" discardvisual="false" />
   <option timestep="0.00416666666667" gravity="0 0 -9.81" integrator="discrete" />
   <default>

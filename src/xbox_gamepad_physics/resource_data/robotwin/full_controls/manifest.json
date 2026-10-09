@@ -2,7 +2,7 @@
   "schema_version": 1,
   "asset_id": "xbox_one_s",
   "backend": "robotwin",
-  "profile": "full_controls_estimated_v0",
+  "profile": "full_controls",
   "available": true,
   "dynamics_ready": true,
   "entrypoint": "mobility.urdf",
@@ -17,7 +17,9 @@
   "reason": null,
   "scope": "RoboTwin and MuJoCo first-pass physics for every Xbox One S control represented by the licensed visual asset",
   "evidence_status": "simulation_estimate_pending_owner_hardware_measurement",
-  "source_record": "references/full_controls_estimated_v0.json",
+  "parameter_status": "estimated",
+  "hardware_calibrated": false,
+  "source_record": "references/full_controls.json",
   "joint_dynamics": [
     {
       "name": "a_press",

@@ -43,7 +43,7 @@ def main() -> None:
     )
     model = mujoco.MjModel.from_xml_path(str(runtime_xml))
     data = mujoco.MjData(model)
-    manifest = load_runtime_manifest("full_controls_estimated_v0")
+    manifest = load_runtime_manifest("full_controls")
     handle = bind_handle(
         model,
         data,
@@ -167,7 +167,7 @@ def main() -> None:
         "schema_version": 1,
         "review_group": "left_stick_contact",
         "backend": "mujoco_filament",
-        "profile": "full_controls_estimated_v0",
+        "profile": "full_controls",
         "stimulus": "mocap_sphere_contact_then_release",
         "signal_source": "mujoco_qpos_readback_after_mj_step",
         "fps": args.fps,

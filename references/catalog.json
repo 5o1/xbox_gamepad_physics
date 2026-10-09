@@ -49,7 +49,7 @@
       "url": "https://sketchfab.com/3d-models/xbox-one-s-controllergamepad-animated-a62cf7475b7d4ead9fbf1a86e5a2b6a4",
       "kind": "artist_animation_prior",
       "locator": "Blender 4.5.9 audit summarized in references/xbox_one_s_artist_animation_summary.json; full audit SHA-256 4c97d513d66f008e5cbc2b375d3c98692cfb495ecf32178c42d399304b31e6df retained on the GPU node",
-      "scope": "Candidate rest pivots, motion directions and displayed endpoint excursions for an explicitly labelled appearance-matched estimated-v0 kinematic preview.",
+      "scope": "Candidate rest pivots, motion directions and displayed endpoint excursions for the explicitly uncalibrated kinematic preview.",
       "limitation": "Artist keyframes are neither measurements nor manufacturer specifications. They provide no target-revision identity, forces, mass, inertia, friction, damping, activation threshold or real-time response."
     },
     "xbox_visual": {

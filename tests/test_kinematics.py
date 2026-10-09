@@ -6,16 +6,17 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
-import build_estimated_v0 as builder
+import build_kinematics as builder
 
 
-class EstimatedV0Test(unittest.TestCase):
+class KinematicsTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.evidence, cls.profile, cls.audit = builder.build()
 
     def test_profile_is_explicitly_not_physics(self):
-        self.assertEqual(self.profile["status"], "estimated_kinematic_preview_not_physical_asset")
+        self.assertEqual(self.profile["status"], "kinematic_preview_not_physical_asset")
+        self.assertFalse(self.profile["hardware_calibrated"])
         self.assertTrue(
             self.profile["acceptance"]["target_appearance_identity_accepted"]
         )
@@ -49,7 +50,7 @@ class EstimatedV0Test(unittest.TestCase):
                 self.assertIn(joint[reference], parameters)
                 record = parameters[joint[reference]]
                 self.assertTrue(record["evidence"])
-                self.assertEqual(record["harness"]["path"], "scripts/build_estimated_v0.py")
+                self.assertEqual(record["harness"]["path"], "scripts/build_kinematics.py")
         self.assertTrue(all(value["value"] is None for value in self.evidence["unknown_physical_parameters"].values()))
 
     def test_artist_pivots_are_nonzero_and_reconstruct_sampled_transforms(self):
@@ -114,12 +115,8 @@ class EstimatedV0Test(unittest.TestCase):
             self.assertTrue(record["evidence"], name)
             self.assertLessEqual(set(record["evidence"]), available, name)
 
-    def test_checked_in_generated_outputs_are_fresh(self):
-        self.assertEqual(
-            builder.EVIDENCE_OUTPUT.read_bytes(),
-            builder.encoded(self.evidence),
-            f"stale generated output: {builder.EVIDENCE_OUTPUT}",
-        )
+    def test_generated_outputs_live_under_build(self):
+        self.assertTrue(builder.EVIDENCE_OUTPUT.is_relative_to(builder.ROOT / "build"))
         self.assertTrue(builder.PROFILE_OUTPUT.is_relative_to(builder.ROOT / "build"))
 
 

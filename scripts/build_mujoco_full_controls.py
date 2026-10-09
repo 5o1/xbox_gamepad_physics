@@ -15,7 +15,7 @@ ROBOTWIN = (
     / "xbox_gamepad_physics"
     / "resource_data"
     / "robotwin"
-    / "full_controls_estimated_v0"
+    / "full_controls"
 )
 VISUAL = (
     ROOT
@@ -25,14 +25,14 @@ VISUAL = (
     / "mujoco"
     / "visual_v0"
 )
-SOURCE = ROOT / "references" / "full_controls_estimated_v0.json"
+SOURCE = ROOT / "references" / "full_controls.json"
 DEFAULT_OUTPUT = (
     ROOT
     / "src"
     / "xbox_gamepad_physics"
     / "resource_data"
     / "mujoco"
-    / "full_controls_estimated_v0"
+    / "full_controls"
 )
 
 
@@ -123,7 +123,7 @@ def build(output: Path) -> None:
     links, joints, children = _urdf_records()
     dynamics = {item["name"]: item for item in robotwin_manifest["joint_dynamics"]}
 
-    root, asset, worldbody = _base_document("xbox_one_s_full_controls_estimated_v0")
+    root, asset, worldbody = _base_document("xbox_one_s_full_controls")
     ET.SubElement(
         asset,
         "texture",
@@ -313,9 +313,11 @@ def build(output: Path) -> None:
         "schema_version": 1,
         "asset_id": "xbox_one_s",
         "backend": "mujoco",
-        "profile": "full_controls_estimated_v0",
+        "profile": "full_controls",
         "available": True,
         "dynamics_ready": True,
+        "parameter_status": robotwin_manifest["parameter_status"],
+        "hardware_calibrated": robotwin_manifest["hardware_calibrated"],
         "entrypoint": "xbox_one_s.xml",
         "required_files": [
             "xbox_one_s.xml", "scene_fixed.xml", "scene_contact_probe.xml"
@@ -327,8 +329,8 @@ def build(output: Path) -> None:
         },
         "bindings": bindings,
         "state_mapping": robotwin_manifest["state_mapping"],
-        "source_record": "references/full_controls_estimated_v0.json",
-        "mechanism_source": "robotwin/full_controls_estimated_v0",
+        "source_record": "references/full_controls.json",
+        "mechanism_source": "robotwin/full_controls",
         "material_limitations": [
             "MuJoCo sliding friction uses one coefficient; the shared dynamic coefficient 0.4 is used.",
             "The shared restitution estimate has no direct MJCF scalar and remains unmodeled in this first pass."

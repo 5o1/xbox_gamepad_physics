@@ -39,7 +39,6 @@ class ViewerServerTest(unittest.TestCase):
             (project / "assets").mkdir(parents=True)
             (project / "build/generated/kinematics").mkdir(parents=True)
             (project / "viewer").mkdir()
-            (project / "references").mkdir()
             external.mkdir()
 
             inventory = b'{"objects":[]}'
@@ -47,22 +46,22 @@ class ViewerServerTest(unittest.TestCase):
             parameters = b"{}"
             profile = {
                 "schema_version": 2,
-                "variant_id": "estimated_v0",
+                "variant_id": "test_variant",
                 "visual": {
                     "file": "model.glb",
                     "sha256": hashlib.sha256(container).hexdigest(),
                 },
-                "parameter_source": "references/parameters.json",
+                "parameter_source": "/generated/kinematics/parameters.json",
             }
             profile_bytes = (json.dumps(profile) + "\n").encode()
             registry = {
                 "interactive_viewer": {
                     "entry": "../viewer/index.html",
                     "active_variant_id": "legacy",
-                    "allowed_variant_ids": ["estimated_v0"],
+                    "allowed_variant_ids": ["test_variant"],
                 },
                 "derived_variants": {
-                    "estimated_v0": {
+                    "test_variant": {
                         "viewer_entry": "../viewer/v0.html",
                         "viewer_profile": {
                             "route": "/generated/kinematics/viewer_profile.json",
@@ -72,12 +71,12 @@ class ViewerServerTest(unittest.TestCase):
             }
             (project / "assets/asset_index.json").write_text(json.dumps(registry))
             (project / "build/generated/kinematics/viewer_profile.json").write_bytes(profile_bytes)
+            (project / "build/generated/kinematics/parameters.json").write_bytes(parameters)
             (project / "viewer/v0.html").write_text("test")
-            (project / "references/parameters.json").write_bytes(parameters)
             (external / "inventory.json").write_bytes(inventory)
             (external / "model.glb").write_bytes(container)
 
-            _, variant = validate_asset_variant(project, external, "estimated_v0")
+            _, variant = validate_asset_variant(project, external, "test_variant")
             self.assertEqual(variant["_validated_viewer_url"], "/v0.html")
             self.assertEqual(
                 variant["_validated_profile_url"],
@@ -85,7 +84,7 @@ class ViewerServerTest(unittest.TestCase):
             )
             (external / "model.glb").write_bytes(b"tampered")
             with self.assertRaisesRegex(ValueError, "visual container SHA-256"):
-                validate_asset_variant(project, external, "estimated_v0")
+                validate_asset_variant(project, external, "test_variant")
 
     def test_vendor_version_and_module_hash_are_enforced(self):
         with tempfile.TemporaryDirectory() as directory:

@@ -27,7 +27,7 @@ class LoadedScene:
 
 def load_scene(
     *,
-    profile: str = "estimated_v0",
+    profile: str = "full_controls",
     scene: str = "fixed",
 ) -> LoadedScene:
     """Load and compile a declared standalone XML or MJZ scene.

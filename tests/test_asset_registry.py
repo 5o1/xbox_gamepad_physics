@@ -50,7 +50,7 @@ class AssetRegistryTest(unittest.TestCase):
                 if profile_binding is not None:
                     self.assertEqual(
                         profile_binding,
-                        {"route": "/generated/kinematics/xbox_one_s_estimated_v0.json"},
+                        {"route": "/generated/kinematics/xbox_one_s.json"},
                     )
 
         for profile_id, profile in self.index.get(

@@ -1,11 +1,13 @@
 {
   "schema_version": 1,
-  "profile": "left_stick_estimated_v0",
+  "profile": "left_stick",
   "scope": "RoboTwin/SAPIEN left-stick contact and signal vertical slice",
   "status": "simulation_estimate_pending_owner_hardware_measurement",
+  "parameter_status": "estimated",
+  "hardware_calibrated": false,
   "evidence": {
     "visual_and_artist_animation": "assets/xbox_one_s/source/xbox_one_s_controllergamepad_animated.glb",
-    "derived_kinematics": "references/appearance_matched_estimated_v0.json",
+    "kinematics_generator": "scripts/build_kinematics.py",
     "whole_controller_dimensions_and_mass": "references/1708_dimensions.json",
     "same_generation_internal_photos": "references/1708_fcc_internal.json",
     "reference_stick_component": "references/stick_envelope.json",

@@ -22,7 +22,7 @@ PROFILE = (
     / "xbox_gamepad_physics"
     / "resource_data"
     / "robotwin"
-    / "left_stick_estimated_v0"
+    / "left_stick"
 )
 
 
@@ -42,9 +42,9 @@ class RoboTwinLeftStickAssetTest(unittest.TestCase):
                 )
 
     def test_ready_profile_and_loader_description_match_asset(self):
-        profile = require_physics_ready("robotwin", "left_stick_estimated_v0")
+        profile = require_physics_ready("robotwin", "left_stick")
         self.assertTrue(profile.physics_ready)
-        description = _validated_description("left_stick_estimated_v0")
+        description = _validated_description("left_stick")
         self.assertEqual(
             tuple(item.name for item in description.joint_dynamics),
             ("left_stick_x", "left_stick_y"),

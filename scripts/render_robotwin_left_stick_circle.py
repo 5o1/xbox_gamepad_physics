@@ -108,7 +108,7 @@ def main() -> None:
         scene,
         pose=sapien.Pose(p=[0, 0, 0.8]),
         fixed_root=True,
-        profile="left_stick_estimated_v0",
+        profile="left_stick",
     )
     camera = scene.add_camera(
         "left_stick_circle_camera",
@@ -187,7 +187,7 @@ def main() -> None:
     observed_trace = {
         "schema_version": 1,
         "demo": "left_stick_unit_circle_observed",
-        "source_profile": "robotwin/left_stick_estimated_v0",
+        "source_profile": "robotwin/left_stick",
         "signal_source": "sapien_articulation_qpos_readback",
         "stimulus": "scripted_kinematic_qpos_sweep",
         "fps": trace["fps"],

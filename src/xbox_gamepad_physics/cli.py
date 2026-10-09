@@ -86,7 +86,7 @@ def _parser() -> argparse.ArgumentParser:
     status.add_argument(
         "--backend", choices=(*_BACKENDS, "all"), default="all"
     )
-    status.add_argument("--profile", default="estimated_v0")
+    status.add_argument("--profile", default="full_controls")
     status.add_argument("--json", action="store_true")
     status.set_defaults(handler=_status)
 
@@ -96,7 +96,7 @@ def _parser() -> argparse.ArgumentParser:
     verify.add_argument(
         "--backend", choices=(*_BACKENDS, "all"), default="all"
     )
-    verify.add_argument("--profile", default="estimated_v0")
+    verify.add_argument("--profile", default="full_controls")
     verify.set_defaults(handler=_verify)
 
     install = subparsers.add_parser(
@@ -104,7 +104,7 @@ def _parser() -> argparse.ArgumentParser:
         help="inspect or copy ready resources into a RoboTwin checkout",
     )
     install.add_argument("--root", required=True)
-    install.add_argument("--profile", default="estimated_v0")
+    install.add_argument("--profile", default="full_controls")
     install.add_argument(
         "--apply",
         action="store_true",

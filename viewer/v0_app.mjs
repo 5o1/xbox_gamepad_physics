@@ -90,7 +90,7 @@ renderer.domElement.addEventListener('pointerdown',event=>{
   if(!ready||event.button!==0)return;pointerRay(event);const hits=ray.intersectObjects([...parts.values()],true),hit=hits[0];if(!hit)return;
   selected=hit.object.userData.profileNode;const nodeRecord=profile.nodes.find(node=>node.source_node===selected),candidates=profile.joints.filter(joint=>joint.node===selected),selectedChannel=Number(el('channel').value);
   let joint=candidates.find(candidate=>jointChannels(candidate).includes(selectedChannel))??candidates.find(candidate=>jointChannels(candidate).length);
-  el('selection').textContent=JSON.stringify({node:nodeRecord,selected_joint:joint??null,parameter:joint?evidence.parameters[joint.parameter_ref]:null,warning:'运动仅为 estimated-v0；不是目标手柄的实测机械参数'},null,2);
+  el('selection').textContent=JSON.stringify({node:nodeRecord,selected_joint:joint??null,parameter:joint?evidence.parameters[joint.parameter_ref]:null,warning:'运动学预览不是目标手柄的实测机械参数'},null,2);
   if(session.mode!=='mouse'||!joint)return;
   const local=parts.get(selected).worldToLocal(hit.point.clone()),control=nodeRecord.control;
   if(el('drag2d').checked&&['left_stick','right_stick'].includes(control)){
@@ -139,7 +139,7 @@ async function load(){
   const registry=await registryResponse.json();await inventoryResponse.json();activeVariantId=registry.interactive_viewer?.active_variant_id;
   const variant=registry.derived_variants?.[activeVariantId],binding=variant?.viewer_profile;if(!binding)throw Error('当前 variant 没有 schema-2 viewer profile');
   const profileResponse=await fetch(binding.route);if(!profileResponse.ok)throw Error(`viewer profile HTTP ${profileResponse.status}`);profile=await profileResponse.json();
-  const evidenceRelative=profile.parameter_source;if(!evidenceRelative.startsWith('references/'))throw Error('参数证据路径不安全');const evidenceResponse=await fetch('/evidence/'+evidenceRelative.slice('references/'.length));if(!evidenceResponse.ok)throw Error(`参数证据 HTTP ${evidenceResponse.status}`);evidence=await evidenceResponse.json();
+  const evidenceRelative=profile.parameter_source;if(!evidenceRelative.startsWith('/generated/'))throw Error('参数证据路径不安全');const evidenceResponse=await fetch(evidenceRelative);if(!evidenceResponse.ok)throw Error(`参数证据 HTTP ${evidenceResponse.status}`);evidence=await evidenceResponse.json();
   const glbResponse=await fetch('/assets/'+encodeURIComponent(profile.visual.file));if(!glbResponse.ok)throw Error(`GLB HTTP ${glbResponse.status}`);const glbBytes=await glbResponse.arrayBuffer(),glbHash=await digest(glbBytes);if(glbHash!==profile.visual.sha256)throw Error('GLB 哈希不匹配');
   const gltf=await new Promise((resolve,reject)=>new GLTFLoader().parse(glbBytes,'/assets/',resolve,reject));model=gltf.scene;model.rotation.x=profile.visual.gltf_to_viewer_rotation_x_rad;model.scale.setScalar(profile.visual.meters_per_native_unit);scene.add(model);model.updateMatrixWorld(true);
   // Reuse the original, previously audited material. Blender's static export
@@ -163,13 +163,13 @@ async function load(){
   verifiedBindings={
     inventory:{url:'/assets/inventory.json'},
     profile:{url:binding.route},
-    evidence:{url:'/evidence/'+evidenceRelative.slice('references/'.length)},
+    evidence:{url:evidenceRelative},
     visual:{url:'/assets/'+profile.visual.file,actual_sha256:glbHash,expected_sha256:profile.visual.sha256},
     material:{url:sourceUrl,actual_sha256:sourceHash,expected_sha256:profile.source_bindings.source_glb_sha256},
   };
   validateProfile(profile,evidence,new Set(parts.keys()));ready=true;session.updateFromPartPose(neutralState(),performance.now(),configuredChannels(profile));applyPose();resetCamera();
   el('limits').textContent=JSON.stringify({acceptance:profile.acceptance,unknown_physical_parameters:evidence.unknown_physical_parameters,scale_fit:evidence.scale_fit},null,2);
-  status(`已核验 16 部件材质 GLB、schema-2 estimated-v0 配置和参数证据；variant=${activeVariantId}`);document.body.dataset.ready='true';document.body.dataset.variantId=activeVariantId;
+  status(`已核验 16 部件材质 GLB、schema-2 运动学配置和参数证据；variant=${activeVariantId}`);document.body.dataset.ready='true';document.body.dataset.variantId=activeVariantId;
 }
 
 function valuesChanged(before,after){return before.length!==after.length||before.some((value,index)=>value!==after[index]);}

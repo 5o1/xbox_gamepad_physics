@@ -16,15 +16,15 @@ GPU 节点，存档位置见 `references/switch_pro_candidates.json` 和 `assets
 | 目标实物 | Xbox One S；由持有者明确确认 |
 | 目标外观资产 | BatonyRobson 的 Xbox One S 模型；已选定 |
 | 物理几何标定 | 局部尺寸、内部结构和关节位置尚未实测 |
-| estimated-v0 | 可交互的估计运动学预览，不是可训练物理资产 |
+| Viewer kinematics | 可交互的运动学预览，不是可训练物理资产 |
 | 旧 Casper 候选 | 外观特征更接近 1914；模型在 GPU 节点存档，不分发 |
-| 动力学 | `full_controls_estimated_v0` 已覆盖 20 个关节；参数仍待实测替换 |
+| 动力学 | `full_controls` 已覆盖 20 个关节；参数仍待实测替换 |
 | 双后端基础设施 | RoboTwin/SAPIEN 与 MuJoCo 完整 profile 均可加载、步进和读写 21 个游戏通道 |
 | 真实手柄验收 | 尚未执行 |
 
 主候选的来源、许可和文件身份记录在
 [候选清单](references/xbox_replacement_candidates.json)。它使用 16 个视觉节点和作者动画信息
-生成 estimated-v0；统一尺度来自候选整体宽度与微软公布宽度之比。
+生成 Viewer 运动学；统一尺度来自候选整体宽度与微软公布宽度之比。
 目标产品与外观资产已确认。尺度拟合用于交互预览；真实轴心、行程和受力保持待标定状态。
 
 旧 Casper 资产的型号判断见 [几何复核](references/geometry_review.json)。它的 Share 键、圆盘方向键
@@ -92,8 +92,7 @@ http://127.0.0.1:8770/viewer/gamepad_overlay/index.html?source=canonical&trace=/
 - [MuBlE 适配器](src/xbox_gamepad_physics/muble/)：从公共 MuJoCo 接口导出 body pose，并驱动已验收 Blender 对象。
 - [待统一确认与实测清单](docs/pending_user_review.md)：延后处理的视觉确认和硬件测量。
 - 完整控件逐项验收材料：生成到 `build/experiments/full_controls_user_review/`，不进入 Git。
-- [estimated-v0 来源](references/appearance_matched_estimated_v0.json)：估计运动学的来源、推导和限制。
-- estimated-v0 profile：由 `scripts/build_estimated_v0.py` 生成到 `build/generated/kinematics/`。
+- Viewer 运动学与参数依据：由 `scripts/build_kinematics.py` 生成到 `build/generated/kinematics/`。
 - [官方尺寸记录](references/1708_dimensions.json)：整体尺寸及其适用边界。
 - [方向键记录](references/1708_dpad_assembly.json)：十字键整体结构证据。
 - [扳机记录](references/1708_trigger_mechanism.json)：外帽、内部组件和缓冲接触证据。
@@ -128,10 +127,10 @@ python3.10 -m venv .venv
 npm ci
 ```
 
-检查 estimated-v0 生成物是否与来源一致：
+检查 Viewer 运动学生成逻辑与来源：
 
 ```sh
-python3 scripts/build_estimated_v0.py --check
+python3 scripts/build_kinematics.py --check
 ```
 
 运行默认回归：
@@ -145,14 +144,13 @@ python3 scripts/run_regression.py fast
 ```sh
 python3 -m pip install -e .
 python3 -m xbox_gamepad_physics verify \
-  --backend all --profile full_controls_estimated_v0
+  --backend all --profile full_controls
 ```
 
 离线的既有 RoboTwin 环境使用 `python3 -m pip install -e . --no-build-isolation`，仓库中的
 `setup.py` 兼容其 Python 3.10 / setuptools 59 安装链。
 
-历史 `estimated_v0` profile 继续报告 `blocked`。可运行 profile 为双后端
-`full_controls_estimated_v0` 和 RoboTwin 局部 `left_stick_estimated_v0`。完整导入接口见
+默认可运行 profile 为双后端 `full_controls`，RoboTwin 另提供局部 `left_stick`。完整导入接口见
 [RoboTwin 与 MuJoCo 导入约定](docs/importing.md)。
 
 需要定位失败时，可直接运行底层测试：
@@ -193,7 +191,7 @@ Blender 未加入 PATH 时，使用 `npm run viewer -- --blender "/完整路径/
 python3 scripts/serve_viewer.py \
   --assets assets/xbox_one_s/visual \
   --vendor <three.js-package-directory> \
-  --variant-id xbox_one_s_batonyrobson_appearance_matched_estimated_v0 \
+  --variant-id xbox_one_s \
   --port 8766
 ```
 

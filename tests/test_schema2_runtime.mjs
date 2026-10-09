@@ -6,9 +6,9 @@ import {fileURLToPath} from 'node:url';
 import {configuredChannels,evaluateProfile,nodeSteps,sourceToGltfVector,stateWithJointCoordinate,validateProfile} from '../viewer/schema2_runtime.mjs';
 
 const root=fileURLToPath(new URL('../',import.meta.url));
-execFileSync('python3',['scripts/build_estimated_v0.py','--write'],{cwd:root,stdio:'ignore'});
-const profile=JSON.parse(await readFile(new URL('../build/generated/kinematics/xbox_one_s_estimated_v0.json',import.meta.url)));
-const evidence=JSON.parse(await readFile(new URL('../references/appearance_matched_estimated_v0.json',import.meta.url)));
+execFileSync('python3',['scripts/build_kinematics.py','--write'],{cwd:root,stdio:'ignore'});
+const profile=JSON.parse(await readFile(new URL('../build/generated/kinematics/xbox_one_s.json',import.meta.url)));
+const evidence=JSON.parse(await readFile(new URL('../build/generated/kinematics/xbox_one_s_evidence.json',import.meta.url)));
 const nodes=new Set(profile.nodes.map(node=>node.source_node));
 
 test('profile validates with exact 21-channel coverage and fail-closed status',()=>{

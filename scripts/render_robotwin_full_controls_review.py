@@ -199,7 +199,7 @@ def main() -> None:
         scene,
         pose=sapien.Pose(p=[0, 0, 0.8]),
         fixed_root=True,
-        profile="full_controls_estimated_v0",
+        profile="full_controls",
     )
     camera = scene.add_camera(
         "full_controls_review", 1280, 720, math.radians(35), 0.001, 10
@@ -310,7 +310,7 @@ def main() -> None:
             "schema_version": 1,
             "review_group": group,
             "backend": "robotwin_sapien",
-            "profile": "full_controls_estimated_v0",
+            "profile": "full_controls",
             "stimulus": "canonical_state_to_sapien_drive_targets",
             "signal_source": "sapien_articulation_qpos_readback_after_physics_steps",
             "fps": args.fps,
@@ -334,7 +334,7 @@ def main() -> None:
         "schema_version": 1,
         "backend": "robotwin_sapien",
         "sapien": sapien.__version__,
-        "profile": "full_controls_estimated_v0",
+        "profile": "full_controls",
         "renderer": "robotwin_rt",
         "samples_per_pixel": args.spp,
         "denoiser": args.denoiser,

@@ -22,7 +22,7 @@ PROFILE = (
     / "xbox_gamepad_physics"
     / "resource_data"
     / "mujoco"
-    / "full_controls_estimated_v0"
+    / "full_controls"
 )
 
 
@@ -58,7 +58,7 @@ class MujocoFullControlsAssetTest(unittest.TestCase):
         self.assertEqual(len(root.findall(".//keyframe/key")), 1)
 
     def test_runtime_manifest_builds_shared_signal_controller(self):
-        manifest = load_runtime_manifest("full_controls_estimated_v0")
+        manifest = load_runtime_manifest("full_controls")
         self.assertEqual(len(manifest.joints), 20)
         self.assertEqual(len(manifest.sensors), 20)
         self.assertIsNotNone(manifest.signal_controller)

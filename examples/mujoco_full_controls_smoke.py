@@ -25,9 +25,9 @@ def main() -> None:
     from xbox_gamepad_physics.resources import load_json_resource
     from xbox_gamepad_physics.state import GamepadState
 
-    loaded = load_scene(profile="full_controls_estimated_v0", scene="fixed")
+    loaded = load_scene(profile="full_controls", scene="fixed")
     gamepad = loaded.gamepad
-    manifest = load_json_resource("mujoco", "full_controls_estimated_v0")
+    manifest = load_json_resource("mujoco", "full_controls")
     neutral = gamepad.gamepad_state()
 
     endpoint_checks = {}
@@ -111,7 +111,7 @@ def main() -> None:
 
     result = {
         "mujoco": mujoco.__version__,
-        "profile": "full_controls_estimated_v0",
+        "profile": "full_controls",
         "joint_count": len(gamepad.joint_names),
         "sensor_count": len(gamepad.sensor_names),
         "available_game_channels": sum(neutral.available_mask),

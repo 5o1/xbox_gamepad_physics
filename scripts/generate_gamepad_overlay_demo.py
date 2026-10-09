@@ -35,7 +35,7 @@ def _mechanism_coordinate(signal: float, lower: float, upper: float) -> float:
 
 
 def _controller_from_manifest() -> tuple[GamepadSignalController, dict[str, AxisSignalMapping]]:
-    manifest = load_json_resource("robotwin", "left_stick_estimated_v0")
+    manifest = load_json_resource("robotwin", "left_stick")
     raw_mapping = manifest["state_mapping"]
     mappings = tuple(
         AxisSignalMapping(
@@ -118,7 +118,7 @@ def build_trace(fps: int = 30) -> dict:
     return {
         "schema_version": 1,
         "demo": "left_stick_unit_circle",
-        "source_profile": "robotwin/left_stick_estimated_v0",
+        "source_profile": "robotwin/left_stick",
         "fps": fps,
         "frame_count": len(frames),
         "duration_seconds": len(frames) / fps,

@@ -1,4 +1,4 @@
-"""Build the appearance-matched estimated-v0 viewer profile from pinned evidence.
+"""Build the Xbox One S viewer kinematics from pinned evidence.
 
 This builder does not create a calibrated Xbox One S physical model. It derives
 an inspectable kinematic preview from the owner-approved BatonyRobson appearance,
@@ -23,11 +23,11 @@ MOTION_SUMMARY = ROOT / "references/xbox_one_s_artist_animation_summary.json"
 DIMENSIONS = ROOT / "references/1708_dimensions.json"
 STICK_REFERENCE = ROOT / "references/stick_envelope.json"
 CATALOG = ROOT / "references/catalog.json"
-EVIDENCE_OUTPUT = ROOT / "references/appearance_matched_estimated_v0.json"
-PROFILE_OUTPUT = ROOT / "build/generated/kinematics/xbox_one_s_estimated_v0.json"
-AUDIT_OUTPUT = ROOT / "build/experiments/xbox_one_s_batonyrobson_UNVERIFIED/estimated_v0_build_audit.json"
+EVIDENCE_OUTPUT = ROOT / "build/generated/kinematics/xbox_one_s_evidence.json"
+PROFILE_OUTPUT = ROOT / "build/generated/kinematics/xbox_one_s.json"
+AUDIT_OUTPUT = ROOT / "build/experiments/xbox_one_s/kinematics_build_audit.json"
 
-PROFILE_ID = "xbox_one_s_batonyrobson_appearance_matched_estimated_v0"
+PROFILE_ID = "xbox_one_s"
 VARIANT_ID = PROFILE_ID
 EXPECTED_FULL_MOTION_AUDIT_SHA256 = "4c97d513d66f008e5cbc2b375d3c98692cfb495ecf32178c42d399304b31e6df"
 
@@ -106,7 +106,7 @@ def parameter(*, value, unit_name, status, evidence, derivation, uncertainty, ap
         "uncertainty": uncertainty,
         "harness": {
             "kind": "python_derivation",
-            "path": "scripts/build_estimated_v0.py",
+            "path": "scripts/build_kinematics.py",
             "entrypoint": "build",
         },
         "applicability": applicability,
@@ -119,7 +119,7 @@ def unknown(reason, unit_name=None):
         "unit": unit_name,
         "status": "unknown",
         "evidence": [],
-        "harness": "scripts/build_estimated_v0.py:build",
+        "harness": "scripts/build_kinematics.py:build",
         "reason": reason,
     }
 
@@ -225,7 +225,7 @@ def build():
             },
             uncertainty=uncertainty,
             applicability=(
-                "Artist-rig pivot candidate for the estimated-v0 visual motion; not a measured mechanical pivot."
+                "Artist-rig pivot candidate for the kinematic preview; not a measured mechanical pivot."
                 if fit is not None
                 else "Artist render anchor only. A pivot does not affect a pure prismatic transform; this is not a mechanical pivot claim."
             ),
@@ -258,7 +258,7 @@ def build():
                 "quantity": "Only candidate whole-shape scale mismatch; excludes unknown artist-vs-hardware motion error.",
                 "confidence": None,
             },
-            applicability="Appearance-matched estimated-v0 kinematic preview; not measured cap travel.",
+            applicability="Appearance-matched kinematic preview; not measured cap travel.",
         )
 
     translation_controls = [
@@ -356,7 +356,7 @@ def build():
             "inputs": {"reference_degrees": stick_reference["half_sweep_max_deg"], "component_match": None},
         },
         uncertainty=None,
-        applicability="Reference component upper envelope for estimated-v0 only; installed Xbox component match is unconfirmed and the enclosure limit is unknown.",
+        applicability="Reference component upper envelope for the kinematic preview only; installed Xbox component match is unconfirmed and the enclosure limit is unknown.",
     )
     click = catalog["reference_values"]["stick_click_travel"]
     parameters["stick_click_travel"] = parameter(
@@ -408,9 +408,9 @@ def build():
             "at u=v=t^2/2 and smallest at the cardinal endpoints. Because acos is decreasing, "
             "the stated inclination extrema follow analytically."
         ),
-        "harness": "scripts/build_estimated_v0.py:build",
+        "harness": "scripts/build_kinematics.py:build",
         "validation": {
-            "path": "tests/test_estimated_v0.py",
+            "path": "tests/test_kinematics.py",
             "method": "Sample 7200 uniformly spaced azimuths on the circular joint-space boundary and verify every composed-rotation inclination lies within the analytic extrema, with cardinal and diagonal samples attaining the bounds.",
             "sample_count": 7200,
             "numerical_tolerance_rad": 1e-12,
@@ -605,7 +605,9 @@ def build():
     evidence = {
         "schema_version": 1,
         "profile_id": PROFILE_ID,
-        "status": "appearance_matched_estimated_kinematics_not_physics",
+        "status": "kinematic_preview_not_hardware_calibrated",
+        "parameter_status": "mixed_reference_derived_estimated_and_unknown",
+        "hardware_calibrated": False,
         "source_bindings": {
             "static_inventory": str(STATIC_INVENTORY.relative_to(ROOT)),
             "source_glb_sha256": inventory["source_sha256"],
@@ -653,7 +655,7 @@ def build():
         },
         "parameters": parameters,
         "unknown_physical_parameters": {
-            name: unknown("No target-specific measurement or applicable physical source is available; estimated-v0 must not invent this value.", unit_name)
+            name: unknown("No target-specific measurement or applicable physical source is available; the kinematic preview must not invent this value.", unit_name)
             for name, unit_name in {
                 "body_and_control_masses": "kg",
                 "body_and_control_inertias": "kg*m^2",
@@ -685,7 +687,9 @@ def build():
         "schema_name": "appearance_kinematics_runtime",
         "profile_id": PROFILE_ID,
         "variant_id": VARIANT_ID,
-        "status": "estimated_kinematic_preview_not_physical_asset",
+        "status": "kinematic_preview_not_physical_asset",
+        "parameter_status": "mixed_reference_derived_estimated_and_unknown",
+        "hardware_calibrated": False,
         "source_bindings": evidence["source_bindings"],
         "visual": {
             "mode": "gltf_container",
@@ -723,7 +727,7 @@ def build():
             },
             "inverse_policy": "return_represented_state_after_constraint_projection",
         },
-        "parameter_source": str(EVIDENCE_OUTPUT.relative_to(ROOT)),
+        "parameter_source": "/generated/kinematics/xbox_one_s_evidence.json",
         "acceptance": evidence["acceptance"],
     }
     require(finite_tree(evidence) and finite_tree(profile), "generated documents contain non-finite values")
@@ -779,16 +783,9 @@ def main():
     values = build()
     outputs = (EVIDENCE_OUTPUT, PROFILE_OUTPUT)
     values_to_write = (values[0], values[1])
-    mismatches = []
-    for path, value in zip(outputs, values_to_write):
-        data = encoded(value)
-        if args.write:
-            atomic_write(path, data)
-        elif not path.is_file() or path.read_bytes() != data:
-            mismatches.append(str(path.relative_to(ROOT)))
-    if mismatches:
-        raise SystemExit("stale or missing generated files: " + ", ".join(mismatches))
     if args.write:
+        for path, value in zip(outputs, values_to_write):
+            atomic_write(path, encoded(value))
         atomic_write(AUDIT_OUTPUT, encoded(values[2]))
     reported = (*outputs, *((AUDIT_OUTPUT,) if args.write else ()))
     print(json.dumps({"profile_id": PROFILE_ID, "mode": "write" if args.write else "check", "outputs": [str(path.relative_to(ROOT)) for path in reported]}))

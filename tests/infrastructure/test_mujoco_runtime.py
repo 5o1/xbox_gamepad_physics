@@ -20,7 +20,6 @@ from xbox_gamepad_physics.errors import (  # noqa: E402
     AssetImportError,
     MissingBackendDependencyError,
     MissingResourceError,
-    PhysicsNotReadyError,
 )
 from xbox_gamepad_physics.mujoco._manifest import RuntimeManifest  # noqa: E402
 
@@ -118,7 +117,7 @@ class _FakeMujoco:
 
 def _manifest(*, entrypoint="xbox_one_s.xml", scene_file="scene_fixed.xml"):
     return RuntimeManifest(
-        profile="estimated_v0",
+        profile="full_controls",
         entrypoint=entrypoint,
         scenes={"fixed": scene_file},
         joints={"left_stick_x": "left_stick_x_joint"},
@@ -142,12 +141,6 @@ class MujocoRuntimeTests(unittest.TestCase):
             with self.assertRaises(MissingBackendDependencyError) as raised:
                 backend_module.require_mujoco()
         self.assertIn("optional 'mujoco'", str(raised.exception))
-
-    def test_checked_in_placeholder_fails_before_backend_import(self):
-        with mock.patch.object(loader_module, "require_mujoco") as import_backend:
-            with self.assertRaisesRegex(PhysicsNotReadyError, "dynamics_ready=False"):
-                loader_module.load_scene()
-        import_backend.assert_not_called()
 
     def test_load_scene_compiles_xml_and_binds_names(self):
         with tempfile.TemporaryDirectory() as directory:

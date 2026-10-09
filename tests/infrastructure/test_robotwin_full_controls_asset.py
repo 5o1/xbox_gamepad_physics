@@ -23,7 +23,7 @@ PROFILE = (
     / "xbox_gamepad_physics"
     / "resource_data"
     / "robotwin"
-    / "full_controls_estimated_v0"
+    / "full_controls"
 )
 
 
@@ -64,7 +64,7 @@ class RoboTwinFullControlsAssetTest(unittest.TestCase):
         )
         self.assertTrue(all(link.find("inertial") is not None for link in links))
 
-        description = _validated_description("full_controls_estimated_v0")
+        description = _validated_description("full_controls")
         controller = description.signal_controller
         self.assertEqual(len(description.joint_dynamics), 20)
         self.assertEqual(len(controller.available_channels), 21)
@@ -72,7 +72,7 @@ class RoboTwinFullControlsAssetTest(unittest.TestCase):
         self.assertEqual(len(controller.physical_event_mappings), 1)
 
     def test_isolated_joint_endpoints_produce_named_signals(self):
-        description = _validated_description("full_controls_estimated_v0")
+        description = _validated_description("full_controls")
         controller = description.signal_controller
         positions = {item.name: 0.0 for item in description.joint_dynamics}
 

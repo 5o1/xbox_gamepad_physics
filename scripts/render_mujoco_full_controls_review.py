@@ -42,7 +42,7 @@ def build_review_xml(
     remove_collision_geoms: bool = False,
 ) -> Path:
     resource_root = package_root / "xbox_gamepad_physics" / "resource_data" / "mujoco"
-    profile_root = resource_root / "full_controls_estimated_v0"
+    profile_root = resource_root / "full_controls"
     visual_root = resource_root / "visual_v0"
     source_path = (profile_root / source_filename).resolve(strict=True)
     root = ET.parse(source_path).getroot()
@@ -307,7 +307,7 @@ def main() -> None:
     # until the first forward pass; converting the camera before this call
     # produces a valid-looking Filament render whose view is effectively empty.
     mujoco.mj_forward(model, data)
-    manifest = load_runtime_manifest("full_controls_estimated_v0")
+    manifest = load_runtime_manifest("full_controls")
     handle = bind_handle(
         model,
         data,
@@ -423,7 +423,7 @@ def main() -> None:
             "schema_version": 1,
             "review_group": group,
             "backend": "mujoco_filament",
-            "profile": "full_controls_estimated_v0",
+            "profile": "full_controls",
             "stimulus": "canonical_state_to_mujoco_qpos",
             "signal_source": "mujoco_qpos_readback_after_mj_forward",
             "fps": args.fps,
@@ -446,7 +446,7 @@ def main() -> None:
         "schema_version": 1,
         "backend": "mujoco_filament",
         "mujoco": mujoco.__version__,
-        "profile": "full_controls_estimated_v0",
+        "profile": "full_controls",
         "renderer": "filament_pbr_with_opacity_role",
         "graphics": args.graphics,
         "collision_geoms_removed_for_diagnostic": args.remove_collision_geoms,

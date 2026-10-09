@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<robot name="xbox_one_s_full_controls_estimated_v0">
+<robot name="xbox_one_s_full_controls">
   <link name="controller_body">
     <inertial>
       <origin xyz="-0.00014 -0.00325 -0.00475" rpy="0 0 0" />

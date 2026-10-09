@@ -13,7 +13,7 @@ import struct
 
 from PIL import Image
 
-from build_estimated_v0 import build as build_estimated_v0
+from build_kinematics import build as build_kinematics
 
 ROOT=Path(__file__).resolve().parents[1]
 
@@ -38,7 +38,7 @@ def main():
     static=ROOT/'assets/xbox_one_s/visual/Xbox_One_S_BatonyRobson_STATIC_VISUAL_UNCALIBRATED.glb'
     inventory=json.loads((ROOT/'assets/xbox_one_s/visual/inventory.json').read_text())
     inventory_by_stem={Path(item['file']).stem:item for item in inventory['objects']}
-    _,profile,_=build_estimated_v0()
+    _,profile,_=build_kinematics()
     assert hashlib.sha256(source.read_bytes()).hexdigest()==profile['source_bindings']['source_glb_sha256']
     assert hashlib.sha256(static.read_bytes()).hexdigest()==profile['visual']['sha256']
     authored,authored_bin=read_glb(source)

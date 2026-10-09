@@ -73,7 +73,7 @@
     }
   },
   "derived_variants": {
-    "xbox_one_s_batonyrobson_appearance_matched_estimated_v0": {
+    "xbox_one_s": {
       "source_candidate_id": "xbox_one_s_batonyrobson_a62cf747",
       "inventory": "xbox_one_s/visual/inventory.json",
       "visual_manifest": {
@@ -96,10 +96,10 @@
               ],
               "harness": {
                 "kind": "python_derivation",
-                "path": "scripts/build_estimated_v0.py",
+                "path": "scripts/build_kinematics.py",
                 "entrypoint": "build"
               },
-              "applicability": "Uniform width-fit scale for the appearance-matched estimated-v0 viewer only; not approved target geometry.",
+              "applicability": "Uniform width-fit scale for the kinematic viewer only; not approved target geometry.",
               "derivation": {
                 "method": "Divide the Microsoft-published whole-controller width by the complete downloaded visual candidate X extent and apply the scalar uniformly on all axes.",
                 "inputs": [
@@ -157,7 +157,7 @@
         }
       },
       "gpu_directory": "/path/to/gpu-data/<gpu-project>/controller-candidates/xbox_one_s_batonyrobson_UNVERIFIED/Xbox_One_S_BatonyRobson_16parts_VISUAL_UNCALIBRATED",
-      "purpose": "appearance-matched estimated-v0 interactive kinematic preview",
+      "purpose": "interactive kinematic preview",
       "target_appearance_match": true,
       "metric_geometry_match": null,
       "mechanical_revision_match": null,
@@ -165,7 +165,7 @@
       "approved_for_contact_or_training": false,
       "viewer_entry": "../viewer/v0.html",
       "viewer_profile": {
-        "route": "/generated/kinematics/xbox_one_s_estimated_v0.json"
+        "route": "/generated/kinematics/xbox_one_s.json"
       },
       "target_appearance_approval": {
         "approved": true,
@@ -204,9 +204,9 @@
     "entry": "../viewer/v0.html",
     "acceptance": "../specs/interactive_acceptance.json",
     "design_sources": "../references/viewer_design.json",
-    "active_variant_id": "xbox_one_s_batonyrobson_appearance_matched_estimated_v0",
+    "active_variant_id": "xbox_one_s",
     "allowed_variant_ids": [],
-    "verification_scope": "The active estimated-v0 viewer uses the approved Xbox One S appearance. Metric geometry, real-controller, contact and dynamics acceptance remain separate gates.",
+    "verification_scope": "The active viewer uses the approved Xbox One S appearance. Metric geometry, real-controller, contact and dynamics acceptance remain separate gates.",
     "target_rig": null,
     "real_controller_verified": false
   },
@@ -226,15 +226,15 @@
     }
   },
   "partial_physics_profiles": {
-    "robotwin_left_stick_estimated_v0": {
+    "left_stick": {
       "backend": "robotwin",
-      "profile": "left_stick_estimated_v0",
+      "profile": "left_stick",
       "scope": "left-stick contact and left_x/left_y signal vertical slice only",
       "status": "automated_and_user_visual_validation_passed",
       "full_controller_ready": false,
       "hardware_calibrated": false,
-      "source": "../references/robotwin_left_stick_estimated_v0.json",
-      "manifest": "../src/xbox_gamepad_physics/resource_data/robotwin/left_stick_estimated_v0/manifest.json",
+      "source": "../references/left_stick.json",
+      "manifest": "../src/xbox_gamepad_physics/resource_data/robotwin/left_stick/manifest.json",
       "limitations": [
         "Mass, damping and contact material include explicitly labeled simulation estimates.",
         "The reference stick component has not been identified as the installed Xbox part.",
@@ -243,23 +243,23 @@
     }
   },
   "simulation_profiles": {
-    "robotwin_full_controls_estimated_v0": {
+    "robotwin_full_controls": {
       "backend": "robotwin",
-      "profile": "full_controls_estimated_v0",
+      "profile": "full_controls",
       "scope": "20-DOF full controller, 21 game channels and Pair physical event",
       "status": "implemented_pending_user_review_and_hardware_calibration",
       "hardware_calibrated": false,
-      "source": "../references/full_controls_estimated_v0.json",
-      "manifest": "../src/xbox_gamepad_physics/resource_data/robotwin/full_controls_estimated_v0/manifest.json"
+      "source": "../references/full_controls.json",
+      "manifest": "../src/xbox_gamepad_physics/resource_data/robotwin/full_controls/manifest.json"
     },
-    "mujoco_full_controls_estimated_v0": {
+    "mujoco_full_controls": {
       "backend": "mujoco",
-      "profile": "full_controls_estimated_v0",
+      "profile": "full_controls",
       "scope": "20-DOF full controller, 20 joint sensors, 21 game channels and Pair physical event",
       "status": "implemented_pending_user_review_and_hardware_calibration",
       "hardware_calibrated": false,
-      "source": "../references/full_controls_estimated_v0.json",
-      "manifest": "../src/xbox_gamepad_physics/resource_data/mujoco/full_controls_estimated_v0/manifest.json"
+      "source": "../references/full_controls.json",
+      "manifest": "../src/xbox_gamepad_physics/resource_data/mujoco/full_controls/manifest.json"
     }
   },
   "evidence": {

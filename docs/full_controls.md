@@ -1,6 +1,6 @@
 # 完整控件物理资产
 
-`full_controls_estimated_v0` 是 Xbox One S 的首版完整物理 profile，同时提供
+`full_controls` 是 Xbox One S 的首版完整物理 profile，同时提供
 RoboTwin/SAPIEN 和 MuJoCo 资源。它覆盖 20 个活动关节、21 个游戏通道和一个 Pair
 物理事件。当前数值用于仿真与训练启动，尚未替代真实手柄测量。
 
@@ -15,7 +15,7 @@ RoboTwin/SAPIEN 和 MuJoCo 资源。它覆盖 20 个活动关节、21 个游戏�
 
 运动方向、轴心和行程来自已归档 artist animation profile。摇杆参考扭矩、摇杆点击、
 正面按钮和肩键参考值来自 `references/catalog.json`。扳机、D-pad、质量分配、接触材料和
-1.5% 单向控件预紧均在 `references/full_controls_estimated_v0.json` 中标明适用范围和
+1.5% 单向控件预紧均在 `references/full_controls.json` 中标明适用范围和
 替换条件。真实测量与统一人工检查项目记录在 `docs/pending_user_review.md`。
 
 设备状态层使用 `1e-4` 的归一化中立容差，覆盖双摇杆径向幅值、双扳机、按钮和
@@ -30,7 +30,7 @@ Gamepad 对轴做线性归一化。因此游戏侧 dead-zone 将作为独立策�
 python scripts/build_robotwin_full_controls.py
 python scripts/build_mujoco_full_controls.py
 python -m xbox_gamepad_physics verify \
-  --backend all --profile full_controls_estimated_v0
+  --backend all --profile full_controls
 ```
 
 ## RoboTwin / SAPIEN
@@ -42,7 +42,7 @@ gamepad = load_into_scene(
     scene,
     pose=sapien.Pose(),
     fixed_root=True,
-    profile="full_controls_estimated_v0",
+    profile="full_controls",
 )
 
 state = gamepad.gamepad_state()
@@ -68,7 +68,7 @@ python examples/robotwin_full_controls_smoke.py \
 ```python
 from xbox_gamepad_physics.mujoco import load_scene
 
-loaded = load_scene(profile="full_controls_estimated_v0", scene="fixed")
+loaded = load_scene(profile="full_controls", scene="fixed")
 state = loaded.gamepad.gamepad_state()
 loaded.gamepad.set_gamepad_state(state)
 loaded.gamepad.set_physical_events({"pair_bind_connect": 0.0})

@@ -8,8 +8,8 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-ROBOTWIN = ROOT / "build" / "experiments" / "robotwin_full_controls_estimated_v0" / "result.json"
-MUJOCO = ROOT / "build" / "experiments" / "mujoco_full_controls_estimated_v0" / "result.json"
+ROBOTWIN = ROOT / "build" / "experiments" / "robotwin_full_controls" / "result.json"
+MUJOCO = ROOT / "build" / "experiments" / "mujoco_full_controls" / "result.json"
 DEFAULT_OUTPUT = ROOT / "build" / "experiments" / "full_controls_backend_comparison.json"
 
 
@@ -26,7 +26,7 @@ def build() -> dict:
     }
     return {
         "schema_version": 1,
-        "profile": "full_controls_estimated_v0",
+        "profile": "full_controls",
         "channels": channels,
         "endpoint_absolute_error": endpoint_error,
         "maximum_endpoint_absolute_error": max(endpoint_error.values()),

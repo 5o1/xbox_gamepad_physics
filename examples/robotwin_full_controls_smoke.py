@@ -31,16 +31,16 @@ def main() -> None:
         scene,
         pose=sapien.Pose(),
         fixed_root=True,
-        profile="full_controls_estimated_v0",
+        profile="full_controls",
         attach_visual=False,
     )
     manifest = json.loads(
         resource_path(
-            "robotwin", "full_controls_estimated_v0", "manifest.json"
+            "robotwin", "full_controls", "manifest.json"
         ).read_text()
     )
     joint_limits = _joint_limits(resource_path(
-        "robotwin", "full_controls_estimated_v0", "mobility.urdf"
+        "robotwin", "full_controls", "mobility.urdf"
     ))
 
     neutral = gamepad.gamepad_state()
@@ -104,7 +104,7 @@ def main() -> None:
 
     result = {
         "sapien": sapien.__version__,
-        "profile": "full_controls_estimated_v0",
+        "profile": "full_controls",
         "joint_count": len(gamepad.joint_names),
         "available_game_channels": sum(neutral.available_mask),
         "endpoint_checks": endpoint_checks,

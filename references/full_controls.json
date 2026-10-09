@@ -1,13 +1,14 @@
 {
   "schema_version": 1,
-  "profile": "full_controls_estimated_v0",
+  "profile": "full_controls",
   "scope": "RoboTwin and MuJoCo first-pass physics for every Xbox One S control represented by the licensed visual asset",
   "status": "simulation_estimate_pending_owner_hardware_measurement",
+  "parameter_status": "estimated",
+  "hardware_calibrated": false,
   "sources": {
-    "kinematics_generator": "scripts/build_estimated_v0.py",
-    "kinematic_derivation": "references/appearance_matched_estimated_v0.json",
+    "kinematics_generator": "scripts/build_kinematics.py",
     "reference_values": "references/catalog.json",
-    "left_stick_physics": "references/robotwin_left_stick_estimated_v0.json",
+    "left_stick_physics": "references/left_stick.json",
     "target_structure": "references/mechanical_structure.json",
     "trigger_structure": "references/1708_trigger_mechanism.json",
     "dpad_structure": "references/1708_dpad_assembly.json",
@@ -55,7 +56,7 @@
     },
     "sticks": {
       "joint_prefixes": ["left_stick", "right_stick"],
-      "tilt_dynamics": "reuse references/robotwin_left_stick_estimated_v0.json for both identical reference modules",
+      "tilt_dynamics": "reuse references/left_stick.json for both identical reference modules",
       "click_force_n": 7.4,
       "click_force_range_n": [4.4, 10.4],
       "click_force_evidence": "catalog.reference_values.stick_click_force",
@@ -87,7 +88,7 @@
     "bumpers_and_triggers": "box fitted to 90 percent of converted visual AABB",
     "shell": "central support plus explicit stick gate rings; visual triangle mesh is not used as a dynamic collision mesh",
     "fit_scale": 0.9,
-    "contact_material": "reuse references/robotwin_left_stick_estimated_v0.json contact estimate"
+    "contact_material": "reuse references/left_stick.json contact estimate"
   },
   "mass_policy": {
     "whole_controller_mass_kg": 0.28,

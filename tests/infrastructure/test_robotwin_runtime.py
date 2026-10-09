@@ -13,7 +13,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "src"))
 
 from xbox_gamepad_physics.profiles import BackendProfile
-from xbox_gamepad_physics.errors import PhysicsNotReadyError
+from xbox_gamepad_physics.errors import ResourceNotFoundError
 from xbox_gamepad_physics.controller import (
     AxisSignalMapping,
     GamepadSignalController,
@@ -419,14 +419,14 @@ class RoboTwinRuntimeTest(unittest.TestCase):
         after = {name for name in sys.modules if name == "sapien" or name.startswith("sapien.")}
         self.assertEqual(after, before)
 
-    def test_checked_in_estimated_profile_is_blocked_before_scene_mutation(self):
+    def test_missing_profile_fails_before_scene_mutation(self):
         scene = FakeScene(FakeLoader(FakeArticulation()))
-        with self.assertRaisesRegex(PhysicsNotReadyError, "blocked"):
+        with self.assertRaises(ResourceNotFoundError):
             loader_module.load_into_scene(
                 scene,
                 SimpleNamespace(p=(0, 0, 0), q=(1, 0, 0, 0)),
                 fixed_root=True,
-                profile="estimated_v0",
+                profile="does_not_exist",
             )
         self.assertEqual(scene.loader.paths, [])
 

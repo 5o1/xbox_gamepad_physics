@@ -44,12 +44,11 @@ MuJoCo/Filament 开发使用独立 Python 3.12 环境。GPU 节点当前验证�
 ```sh
 python -m xbox_gamepad_physics verify --backend mujoco
 python -m xbox_gamepad_physics verify --backend robotwin
-python -m xbox_gamepad_physics verify --backend robotwin --profile left_stick_estimated_v0
+python -m xbox_gamepad_physics verify --backend robotwin --profile left_stick
 ```
 
-历史 `estimated_v0` 在两个后端都处于 blocked 状态。完整仿真资产使用可运行的
-`full_controls_estimated_v0`；其结构已满足仿真加载要求，但物理参数仍是未完成硬件校准的
-估计值。RoboTwin 另有 `left_stick_estimated_v0`，只覆盖左摇杆物理闭环。
+完整仿真资产使用可运行的 `full_controls`；其结构已满足仿真加载要求，但物理参数仍是未完成硬件校准的
+估计值。RoboTwin 另有 `left_stick`，只覆盖左摇杆物理闭环。
 
 ## RoboTwin / SAPIEN
 
@@ -74,7 +73,7 @@ gamepad = load_into_scene(
     scene=self,  # RoboTwin task，或直接传 sapien.Scene
     pose=[0.0, 0.0, 0.8, 1.0, 0.0, 0.0, 0.0],
     fixed_root=True,
-    profile="left_stick_estimated_v0",
+    profile="left_stick",
 )
 
 state = gamepad.gamepad_state()
@@ -176,7 +175,7 @@ model, data = attachment.compile()
 ```python
 from xbox_gamepad_physics.mujoco import load_scene
 
-loaded = load_scene(profile="estimated_v0", scene="fixed")
+loaded = load_scene(profile="full_controls", scene="fixed")
 model = loaded.model
 data = loaded.data
 gamepad = loaded.gamepad
@@ -198,7 +197,7 @@ attachment = attach_to_spec(
     parent,
     frame="gamepad_mount",
     prefix="xbox_",
-    profile="estimated_v0",
+    profile="full_controls",
 )
 
 compiled = attachment.compile()

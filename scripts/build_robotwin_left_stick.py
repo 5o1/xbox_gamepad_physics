@@ -8,11 +8,11 @@ import math
 from pathlib import Path
 import xml.etree.ElementTree as ET
 
-from build_estimated_v0 import build as build_estimated_v0
+from build_kinematics import build as build_kinematics
 
 
 ROOT = Path(__file__).resolve().parents[1]
-SOURCE = ROOT / "references" / "robotwin_left_stick_estimated_v0.json"
+SOURCE = ROOT / "references" / "left_stick.json"
 VISUAL_MANIFEST = (
     ROOT
     / "src"
@@ -29,7 +29,7 @@ DEFAULT_OUTPUT = (
     / "xbox_gamepad_physics"
     / "resource_data"
     / "robotwin"
-    / "left_stick_estimated_v0"
+    / "left_stick"
 )
 
 
@@ -137,7 +137,7 @@ def _find_joint(profile: dict, joint_id: str) -> dict:
 
 def build(output: Path) -> None:
     source = _json(SOURCE)
-    _, kinematics, _ = build_estimated_v0()
+    _, kinematics, _ = build_kinematics()
     visual = _json(VISUAL_MANIFEST)
     output.mkdir(parents=True, exist_ok=True)
     (output / "collision").mkdir(exist_ok=True)
@@ -160,7 +160,7 @@ def build(output: Path) -> None:
     if not math.isclose(source_x["limits"][1], k["half_sweep_rad"], abs_tol=1e-12):
         raise ValueError("left-stick angle differs from the reviewed kinematic profile")
 
-    robot = ET.Element("robot", name="xbox_one_s_left_stick_estimated_v0")
+    robot = ET.Element("robot", name="xbox_one_s_left_stick")
     body = ET.SubElement(robot, "link", name="controller_body")
     _inertial(
         body,
@@ -297,7 +297,7 @@ def build(output: Path) -> None:
         "mass_properties": mass,
         "passive_dynamics": dynamics,
         "contact_material": contact,
-        "source_record": "references/robotwin_left_stick_estimated_v0.json",
+        "source_record": "references/left_stick.json",
     }
     (output / "collision" / "manifest.json").write_text(
         json.dumps(collision_manifest, indent=2) + "\n", encoding="utf-8"
@@ -342,7 +342,9 @@ def build(output: Path) -> None:
         "reason": None,
         "scope": source["scope"],
         "evidence_status": source["status"],
-        "source_record": "references/robotwin_left_stick_estimated_v0.json",
+        "parameter_status": source["parameter_status"],
+        "hardware_calibrated": source["hardware_calibrated"],
+        "source_record": "references/left_stick.json",
         "joint_dynamics": [
             {
                 "name": name,

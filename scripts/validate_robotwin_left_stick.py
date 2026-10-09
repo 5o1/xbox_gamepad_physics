@@ -22,7 +22,7 @@ def run_case(sapien, np, timestep, mass_scale, friction):
         scene,
         pose=sapien.Pose(),
         fixed_root=True,
-        profile="left_stick_estimated_v0",
+        profile="left_stick",
         attach_visual=False,
     )
     articulation = gamepad.articulation
@@ -118,7 +118,7 @@ def main():
                 cases.append(run_case(sapien, np, timestep, mass_scale, friction))
     report = {
         "sapien": sapien.__version__,
-        "profile": "left_stick_estimated_v0",
+        "profile": "left_stick",
         "case_count": len(cases),
         "passed": all(item["passed"] for item in cases),
         "cases": cases,

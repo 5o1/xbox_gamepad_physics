@@ -25,7 +25,7 @@ def main() -> None:
     from xbox_gamepad_physics.mujoco import load_scene
 
     loaded = load_scene(
-        profile="full_controls_estimated_v0", scene="contact_probe"
+        profile="full_controls", scene="contact_probe"
     )
     model, data, gamepad = loaded.model, loaded.data, loaded.gamepad
     body = model.body("left_stick_contact_probe")
@@ -58,7 +58,7 @@ def main() -> None:
     final = gamepad.joint_positions()
     result = {
         "mujoco": mujoco.__version__,
-        "profile": "full_controls_estimated_v0",
+        "profile": "full_controls",
         "scene": "contact_probe",
         "contact_frames": contact_frames,
         "peak_abs_left_x": peak_abs_left_x,

@@ -88,7 +88,7 @@ try {
   const pageError = await evaluate('document.body.dataset.error || null');
   assert.equal(pageError, null, `viewer error: ${pageError}`);
   assert.equal(state.parts.length, 16);
-  assert.equal(state.profileId, 'xbox_one_s_batonyrobson_appearance_matched_estimated_v0');
+  assert.equal(state.profileId, 'xbox_one_s');
   assert.equal(state.activeVariantId, state.profileId);
   assert.ok(['visual', 'material'].map(name=>state.verifiedBindings[name]).every(binding => (
     binding.actual_sha256 === binding.expected_sha256
@@ -110,9 +110,9 @@ try {
   });
 
   const baseline = await call('Page.captureScreenshot', {format: 'png'});
-  await writeFile(join(output, 'estimated_v0_baseline.png'), Buffer.from(baseline.data, 'base64'));
+  await writeFile(join(output, 'kinematics_baseline.png'), Buffer.from(baseline.data, 'base64'));
   const profile = JSON.parse(await readFile(
-    new URL('../build/generated/kinematics/xbox_one_s_estimated_v0.json', import.meta.url),
+    new URL('../build/generated/kinematics/xbox_one_s.json', import.meta.url),
     'utf8',
   ));
 
@@ -273,7 +273,7 @@ try {
   await waitForCycles();
   const concurrentShot = await call('Page.captureScreenshot', {format: 'png'});
   await writeFile(
-    join(output, 'estimated_v0_concurrent_input.png'),
+    join(output, 'kinematics_concurrent_input.png'),
     Buffer.from(concurrentShot.data, 'base64'),
   );
 

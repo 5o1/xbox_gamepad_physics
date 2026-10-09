@@ -14,9 +14,8 @@ SHA-256：`5c5671c83a9cf15db4b8399e7010aa7d5cde915687ceb348b583eb00b0ed24e2`。
 静态 GLB 保留材质和内嵌贴图；OBJ 只包含几何。部件名称、哈希及原始装配变换见 inventory。
 机械参数及几何精度尚未完成标定。
 
-运行时运动学配置由 `scripts/build_estimated_v0.py` 生成到
-`build/generated/kinematics/xbox_one_s_estimated_v0.json`，来源记录位于
-`references/appearance_matched_estimated_v0.json`。
+运行时运动学配置由 `scripts/build_kinematics.py` 生成到
+`build/generated/kinematics/xbox_one_s.json`，参数依据与运行配置一并生成在该目录。
 从仓库根目录启动现有查看器时，使用 `--assets assets/xbox_one_s/visual`；
 其余参数见主 README 的启动说明。
 

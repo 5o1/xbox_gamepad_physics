@@ -16,7 +16,6 @@ if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
 from xbox_gamepad_physics.errors import (  # noqa: E402
-    PhysicsNotReadyError,
     ResourceNotFoundError,
     StateValidationError,
     UnsafeResourcePathError,
@@ -349,41 +348,40 @@ class GamepadSignalControllerTests(unittest.TestCase):
 
 
 class ResourceAndProfileTests(unittest.TestCase):
-    def test_packaged_manifests_are_explicitly_blocked(self):
+    def test_packaged_full_control_manifests_are_ready(self):
         for backend in ("robotwin", "mujoco"):
-            manifest = load_json_resource(backend, "estimated_v0")
+            manifest = load_json_resource(backend, "full_controls")
             self.assertEqual(manifest["asset_id"], "xbox_one_s")
             self.assertEqual(manifest["backend"], backend)
-            self.assertIs(manifest["available"], False)
-            self.assertIs(manifest["dynamics_ready"], False)
-            self.assertIsNone(manifest["entrypoint"])
+            self.assertIs(manifest["available"], True)
+            self.assertIs(manifest["dynamics_ready"], True)
+            self.assertIsInstance(manifest["entrypoint"], str)
             self.assertTrue(manifest["required_files"])
-            self.assertTrue(manifest["reason"])
+            self.assertIsNone(manifest["reason"])
 
-            profile = load_profile(backend, "estimated_v0")
-            self.assertFalse(profile.physics_ready)
+            profile = load_profile(backend, "full_controls")
+            self.assertTrue(profile.physics_ready)
             self.assertIsInstance(profile.required_files, tuple)
-            with self.assertRaises(PhysicsNotReadyError):
-                require_physics_ready(backend, "estimated_v0")
+            self.assertTrue(require_physics_ready(backend, "full_controls").physics_ready)
 
     def test_default_resource_is_manifest(self):
-        path = resource_path("mujoco", "estimated_v0")
+        path = resource_path("mujoco", "full_controls")
         self.assertEqual(path.name, "manifest.json")
         self.assertTrue(path.is_file())
 
     def test_missing_resource_fails_closed(self):
         with self.assertRaises(ResourceNotFoundError):
-            resource_path("mujoco", "estimated_v0", "xbox_one_s.xml")
+            resource_path("mujoco", "full_controls", "does_not_exist.xml")
         with self.assertRaises(ResourceNotFoundError):
             load_json_resource("mujoco", "does_not_exist")
 
     def test_path_traversal_is_rejected(self):
         unsafe_requests = (
-            ("../mujoco", "estimated_v0", ()),
-            ("mujoco", "../estimated_v0", ()),
-            ("mujoco", "estimated_v0", ("../manifest.json",)),
-            ("mujoco", "estimated_v0", ("/etc/passwd",)),
-            ("mujoco", "estimated_v0", ("visual\\..\\manifest.json",)),
+            ("../mujoco", "full_controls", ()),
+            ("mujoco", "../full_controls", ()),
+            ("mujoco", "full_controls", ("../manifest.json",)),
+            ("mujoco", "full_controls", ("/etc/passwd",)),
+            ("mujoco", "full_controls", ("visual\\..\\manifest.json",)),
         )
         for backend, profile, parts in unsafe_requests:
             with self.subTest(backend=backend, profile=profile, parts=parts):

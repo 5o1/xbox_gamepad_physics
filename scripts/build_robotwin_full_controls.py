@@ -11,11 +11,11 @@ import xml.etree.ElementTree as ET
 import numpy as np
 import trimesh
 
-from build_estimated_v0 import build as build_estimated_v0
+from build_kinematics import build as build_kinematics
 
 
 ROOT = Path(__file__).resolve().parents[1]
-SOURCE = ROOT / "references" / "full_controls_estimated_v0.json"
+SOURCE = ROOT / "references" / "full_controls.json"
 VISUAL_ROOT = (
     ROOT
     / "src"
@@ -25,14 +25,14 @@ VISUAL_ROOT = (
     / "xbox_one_s"
     / "visual"
 )
-LEFT_STICK_SOURCE = ROOT / "references" / "robotwin_left_stick_estimated_v0.json"
+LEFT_STICK_SOURCE = ROOT / "references" / "left_stick.json"
 DEFAULT_OUTPUT = (
     ROOT
     / "src"
     / "xbox_gamepad_physics"
     / "resource_data"
     / "robotwin"
-    / "full_controls_estimated_v0"
+    / "full_controls"
 )
 
 PART_BY_CONTROL = {
@@ -166,7 +166,7 @@ def _critical_damping(stiffness: float, effective_mass: float, ratio: float) -> 
 
 def build(output: Path) -> None:
     source = _json(SOURCE)
-    _, profile, _ = build_estimated_v0()
+    _, profile, _ = build_kinematics()
     visual = _json(VISUAL_ROOT / "manifest.json")
     left_stick = _json(LEFT_STICK_SOURCE)
     output.mkdir(parents=True, exist_ok=True)
@@ -243,7 +243,7 @@ def build(output: Path) -> None:
         )
         dynamics[name] = joint
 
-    robot = ET.Element("robot", name="xbox_one_s_full_controls_estimated_v0")
+    robot = ET.Element("robot", name="xbox_one_s_full_controls")
     link_elements = {"controller_body": ET.SubElement(robot, "link", name="controller_body")}
     primitive_records = {"controller_body": []}
     body_mass = float(source["mass_policy"]["whole_controller_mass_kg"])
@@ -453,7 +453,7 @@ def build(output: Path) -> None:
         "method": source["collision_policy"],
         "links": primitive_records,
         "mass_kg": {"controller_body": body_mass, **moving_mass},
-        "source": "references/full_controls_estimated_v0.json",
+        "source": "references/full_controls.json",
     }
     (output / "visual" / "manifest.json").write_text(
         json.dumps(visual_binding, indent=2) + "\n", encoding="utf-8"
@@ -497,7 +497,9 @@ def build(output: Path) -> None:
         "reason": None,
         "scope": source["scope"],
         "evidence_status": source["status"],
-        "source_record": "references/full_controls_estimated_v0.json",
+        "parameter_status": source["parameter_status"],
+        "hardware_calibrated": source["hardware_calibrated"],
+        "source_record": "references/full_controls.json",
         "joint_dynamics": [
             {
                 "name": name,

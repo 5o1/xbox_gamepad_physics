@@ -2,9 +2,11 @@
   "schema_version": 1,
   "asset_id": "xbox_one_s",
   "backend": "mujoco",
-  "profile": "full_controls_estimated_v0",
+  "profile": "full_controls",
   "available": true,
   "dynamics_ready": true,
+  "parameter_status": "estimated",
+  "hardware_calibrated": false,
   "entrypoint": "xbox_one_s.xml",
   "required_files": [
     "xbox_one_s.xml",
@@ -240,8 +242,8 @@
       "status": "simulation_solver_tolerance_not_hardware_deadzone"
     }
   },
-  "source_record": "references/full_controls_estimated_v0.json",
-  "mechanism_source": "robotwin/full_controls_estimated_v0",
+  "source_record": "references/full_controls.json",
+  "mechanism_source": "robotwin/full_controls",
   "material_limitations": [
     "MuJoCo sliding friction uses one coefficient; the shared dynamic coefficient 0.4 is used.",
     "The shared restitution estimate has no direct MJCF scalar and remains unmodeled in this first pass."

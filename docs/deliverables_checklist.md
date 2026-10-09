@@ -40,7 +40,7 @@
 - [x] 摇杆按压 L3/R3
 - [x] 并发输入和完整标准手柄状态张量
 
-实现状态：`full_controls_estimated_v0` 提供 20 个活动关节、21 个游戏通道和 Pair
+实现状态：`full_controls` 提供 20 个活动关节、21 个游戏通道和 Pair
 物理事件。视觉、穿插和真实手柄检查延后到 `pending_user_review.md`，本项勾选不代表验收。
 
 ### A4. RoboTwin 交付
@@ -84,7 +84,7 @@
 ### B4. MuJoCo 交付
 
 - [x] 自包含 MJCF、碰撞资源和状态绑定
-- [x] `full_controls_estimated_v0` manifest 通过 readiness 检查
+- [x] `full_controls` manifest 通过 readiness 检查
 - [x] wheel 干净安装后包含并识别完整 profile
 - [x] canonical `GamepadState` 可同步 MuJoCo qpos
 

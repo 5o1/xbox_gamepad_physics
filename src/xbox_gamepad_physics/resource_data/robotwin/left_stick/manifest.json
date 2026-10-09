@@ -2,7 +2,7 @@
   "schema_version": 1,
   "asset_id": "xbox_one_s",
   "backend": "robotwin",
-  "profile": "left_stick_estimated_v0",
+  "profile": "left_stick",
   "available": true,
   "dynamics_ready": true,
   "entrypoint": "mobility.urdf",
@@ -17,7 +17,9 @@
   "reason": null,
   "scope": "RoboTwin/SAPIEN left-stick contact and signal vertical slice",
   "evidence_status": "simulation_estimate_pending_owner_hardware_measurement",
-  "source_record": "references/robotwin_left_stick_estimated_v0.json",
+  "parameter_status": "estimated",
+  "hardware_calibrated": false,
+  "source_record": "references/left_stick.json",
   "joint_dynamics": [
     {
       "name": "left_stick_x",

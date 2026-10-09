@@ -16,7 +16,7 @@ def main() -> None:
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
 
-    loaded = load_scene(profile="full_controls_estimated_v0", scene="fixed")
+    loaded = load_scene(profile="full_controls", scene="fixed")
     trace = export_pose_trace(
         loaded,
         (

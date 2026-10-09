@@ -12,11 +12,18 @@ from urllib.parse import unquote, urlsplit
 def generate_viewer_profile(project):
     """Generate the runtime-only kinematic profile under ignored build/."""
 
-    from build_estimated_v0 import PROFILE_OUTPUT, atomic_write, build, encoded
+    from build_kinematics import (
+        EVIDENCE_OUTPUT,
+        PROFILE_OUTPUT,
+        atomic_write,
+        build,
+        encoded,
+    )
 
     if PROFILE_OUTPUT.resolve().parents[2] != (project / "build").resolve():
         raise ValueError("viewer profile output must remain under build/")
-    _, profile, _ = build()
+    evidence, profile, _ = build()
+    atomic_write(EVIDENCE_OUTPUT, encoded(evidence))
     atomic_write(PROFILE_OUTPUT, encoded(profile))
     return PROFILE_OUTPUT
 
@@ -79,14 +86,15 @@ def validate_asset_variant(project, assets, variant_id):
         parameter_source = profile.get("parameter_source")
         if (
             not isinstance(parameter_source, str)
-            or not parameter_source.startswith("references/")
+            or not parameter_source.startswith("/generated/")
             or "\\" in parameter_source
-            or Path(parameter_source).is_absolute()
-            or any(part in {"", ".", ".."} for part in Path(parameter_source).parts)
         ):
             raise ValueError(f"{variant_id}: unsafe parameter source path")
-        parameter_path = (project.resolve() / parameter_source).resolve()
-        if not parameter_path.is_relative_to((project / "references").resolve()) or not parameter_path.is_file():
+        parameter_relative = parameter_source.removeprefix("/generated/")
+        if any(part in {"", ".", ".."} for part in Path(parameter_relative).parts):
+            raise ValueError(f"{variant_id}: unsafe parameter source path")
+        parameter_path = (project / "build" / "generated" / parameter_relative).resolve()
+        if not parameter_path.is_relative_to(profile_root) or not parameter_path.is_file():
             raise ValueError(f"{variant_id}: missing parameter source")
         variant["_validated_profile_url"] = route
     viewer_entry = variant.get("viewer_entry", viewer.get("entry"))

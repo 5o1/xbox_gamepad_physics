@@ -61,7 +61,7 @@ class MuBlEPoseExportUnitTest(unittest.TestCase):
                 self.events = dict(events)
 
         loaded = SimpleNamespace(
-            model=Model(), data=data, gamepad=Handle(), profile="full_controls_estimated_v0"
+            model=Model(), data=data, gamepad=Handle(), profile="full_controls"
         )
         fake_mujoco = SimpleNamespace(
             mj_forward=lambda model, runtime_data: None,
@@ -96,7 +96,7 @@ class MuBlEPoseExportTest(unittest.TestCase):
     def test_public_mujoco_handle_exports_muble_trace(self):
         from xbox_gamepad_physics.mujoco import load_scene
 
-        loaded = load_scene(profile="full_controls_estimated_v0", scene="fixed")
+        loaded = load_scene(profile="full_controls", scene="fixed")
         part_to_body = derive_part_to_body(loaded.model)
         self.assertEqual(len(part_to_body), 16)
 
