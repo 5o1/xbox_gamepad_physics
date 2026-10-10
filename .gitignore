@@ -62,6 +62,7 @@ lighting/
 !assets/xbox_one_s/render/boiler_room_vertical_fov35_strength_1p0.png
 !src/xbox_gamepad_physics/resource_data/common/xbox_one_s/visual/*.gltf
 !src/xbox_gamepad_physics/resource_data/common/xbox_one_s/visual/meshes.bin
+!assets/xbox_one_s/collision_meshbase/meshes/*.obj
 !src/xbox_gamepad_physics/resource_data/mujoco/visual_v0/meshes/*.obj
 
 # Third-party reference captures retained outside Git. Their URLs and hashes are

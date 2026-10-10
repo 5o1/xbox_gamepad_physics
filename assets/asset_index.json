@@ -179,6 +179,22 @@
         "reason": "Metric local geometry and mechanics remain unmeasured."
       }
     },
+    "xbox_one_s_collision_meshbase": {
+      "source_candidate_id": "xbox_one_s_batonyrobson_a62cf747",
+      "inventory": "xbox_one_s/collision_meshbase/manifest.json",
+      "purpose": "persistent collision mesh base input; closed per-component geometry",
+      "status": "collision mesh base; closed per-component; not a validated contact model",
+      "target_appearance_match": true,
+      "metric_geometry_match": null,
+      "mechanical_revision_match": null,
+      "collision_approved": false,
+      "approved_for_contact_or_training": false,
+      "metric_geometry_approval": {
+        "approved": false,
+        "evidence": [],
+        "reason": "Closed mesh-base geometry does not establish local physical calibration or contact validation."
+      }
+    },
     "legacy_casper_1914_width_scaled_proxy": {
       "source_candidate_id": "xbox_series_1914_casperh2o_visual",
       "gpu_directory": "/path/to/gpu-data/<gpu-project>/xbox-physics-v1/LEGACY_1914_shape_scaled_to_1708_width_NO_SHARE_NOT_VALIDATED",
