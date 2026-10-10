@@ -1,1 +1,2 @@
 recursive-include src/xbox_gamepad_physics/resource_data *
+include src/xbox_gamepad_physics/_resource_lock.json

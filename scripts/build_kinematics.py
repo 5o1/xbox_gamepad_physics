@@ -132,7 +132,7 @@ def channel_index(name):
     )
 
 
-def build():
+def build(output: Path | None = None):
     inventory = json.loads(STATIC_INVENTORY.read_text())
     motion = json.loads(MOTION_SUMMARY.read_text())
     dimensions = json.loads(DIMENSIONS.read_text())
@@ -760,6 +760,9 @@ def build():
         "counts": {"nodes": len(nodes), "joints": len(joints), "constraints": len(constraints), "channels": len(channels)},
     }
     require(all(audit["checks"].values()), f"build audit failed: {audit['checks']}")
+    if output is not None:
+        for name, value in (("xbox_one_s_evidence.json", evidence), ("xbox_one_s.json", profile), ("kinematics_build_audit.json", audit)):
+            atomic_write(output / name, encoded(value))
     return evidence, profile, audit
 
 

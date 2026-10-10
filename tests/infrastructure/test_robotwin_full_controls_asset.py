@@ -1,3 +1,5 @@
+from unittest import mock
+import importlib.util
 import json
 from pathlib import Path
 import sys
@@ -13,7 +15,10 @@ for path in (SRC, SCRIPTS):
     if str(path) not in sys.path:
         sys.path.insert(0, str(path))
 
-from build_robotwin_full_controls import build  # noqa: E402
+BUILD_DEPS = all(importlib.util.find_spec(name) is not None for name in ("numpy", "trimesh"))
+if BUILD_DEPS:
+    from build_robotwin_full_controls import build  # noqa: E402
+from build_common_motion import build as build_motion
 from xbox_gamepad_physics.robotwin.loader import _validated_description  # noqa: E402
 
 
@@ -28,27 +33,23 @@ PROFILE = (
 
 
 class RoboTwinFullControlsAssetTest(unittest.TestCase):
-    def test_generated_profile_is_fresh(self):
+    @unittest.skipIf(not BUILD_DEPS, "generator requires the [build] extra: numpy and trimesh")
+    def test_generated_profile_loads_and_matches_motion_contract(self):
         with tempfile.TemporaryDirectory() as directory:
-            generated = Path(directory)
-            build(generated)
-            expected = sorted(
-                path.relative_to(PROFILE)
-                for path in PROFILE.rglob("*")
-                if path.is_file()
-            )
-            actual = sorted(
-                path.relative_to(generated)
-                for path in generated.rglob("*")
-                if path.is_file()
-            )
-            self.assertEqual(actual, expected)
-            for relative in expected:
-                self.assertEqual(
-                    (generated / relative).read_bytes(),
-                    (PROFILE / relative).read_bytes(),
-                    relative,
-                )
+            root = Path(directory)
+            generated = root / "robotwin/full_controls"
+            motion_path = root / "common/xbox_one_s/motion/full_controls.json"
+            contract = build_motion(motion_path)
+            build(generated, common_motion=motion_path)
+            manifest = json.loads((generated / "manifest.json").read_text())
+            for relative in manifest["required_files"]:
+                self.assertTrue((generated / relative).is_file(), relative)
+            joints = ET.parse(generated / "mobility.urdf").getroot().findall("joint")
+            self.assertEqual({joint.get("name") for joint in joints}, {item["name"] for item in contract["joints"]})
+            with mock.patch("xbox_gamepad_physics.resources.resource_root", return_value=root):
+                description = _validated_description("full_controls")
+            self.assertEqual(len(description.joint_dynamics), 20)
+            self.assertEqual(len(description.signal_controller.available_channels), 21)
 
     def test_joint_tree_and_controller_cover_all_device_controls(self):
         manifest = json.loads((PROFILE / "manifest.json").read_text())

@@ -163,11 +163,12 @@ def _critical_damping(stiffness: float, effective_mass: float, ratio: float) -> 
     return 2.0 * ratio * math.sqrt(stiffness * effective_mass)
 
 
-def build(output: Path) -> None:
+def build(output: Path, *, kinematics: Path | None = None,
+          visual_root: Path = VISUAL_ROOT, common_motion: Path = COMMON_MOTION) -> None:
     source = _json(SOURCE)
-    _, profile, _ = build_kinematics()
-    motion = _json(COMMON_MOTION)
-    visual = _json(VISUAL_ROOT / "manifest.json")
+    profile = _json(kinematics) if kinematics is not None else build_kinematics()[1]
+    motion = _json(common_motion)
+    visual = _json(visual_root / "manifest.json")
     left_stick = _json(LEFT_STICK_SOURCE)
     output.mkdir(parents=True, exist_ok=True)
     (output / "collision").mkdir(exist_ok=True)
@@ -186,7 +187,7 @@ def build(output: Path) -> None:
     nodes = {node["control"]: node for node in profile["nodes"]}
     scale = float(visual["meters_per_native_unit"])
     bounds = {
-        control: _converted_bounds(VISUAL_ROOT / next(
+        control: _converted_bounds(visual_root / next(
             part["file"] for part in visual["parts"] if part["name"] == part_name
         ), scale)
         for control, part_name in PART_BY_CONTROL.items()

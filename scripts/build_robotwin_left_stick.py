@@ -135,10 +135,11 @@ def _find_joint(profile: dict, joint_id: str) -> dict:
     raise ValueError(f"missing kinematic joint {joint_id!r}")
 
 
-def build(output: Path) -> None:
+def build(output: Path, *, kinematics: Path | None = None,
+          visual_manifest: Path = VISUAL_MANIFEST) -> None:
     source = _json(SOURCE)
-    _, kinematics, _ = build_kinematics()
-    visual = _json(VISUAL_MANIFEST)
+    kinematics = _json(kinematics) if kinematics is not None else build_kinematics()[1]
+    visual = _json(visual_manifest)
     output.mkdir(parents=True, exist_ok=True)
     (output / "collision").mkdir(exist_ok=True)
     (output / "visual").mkdir(exist_ok=True)

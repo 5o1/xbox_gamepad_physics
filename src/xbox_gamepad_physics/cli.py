@@ -11,6 +11,7 @@ from typing import Sequence
 
 from .errors import XboxGamepadPhysicsError
 from .profiles import load_profile, require_physics_ready
+from .resources import build_resources, resource_root, resource_status
 
 
 _BACKENDS = ("robotwin", "mujoco")
@@ -21,6 +22,9 @@ def _selected_backends(value: str) -> tuple[str, ...]:
 
 
 def _status(args: argparse.Namespace) -> int:
+    resources = resource_status()
+    if not args.json:
+        _print_resources(resources)
     profiles = [
         load_profile(backend, args.profile)
         for backend in _selected_backends(args.backend)
@@ -31,6 +35,8 @@ def _status(args: argparse.Namespace) -> int:
             item = asdict(profile)
             item["manifest_path"] = str(item["manifest_path"])
             item["physics_ready"] = profile.physics_ready
+            item["resources"] = resources
+            item["resource_root"] = str(resource_root())
             payload.append(item)
         print(json.dumps(payload, ensure_ascii=False, indent=2))
         return 0
@@ -47,6 +53,7 @@ def _status(args: argparse.Namespace) -> int:
 
 
 def _verify(args: argparse.Namespace) -> int:
+    _print_resources(resource_status())
     selected = _selected_backends(args.backend)
     for backend in selected:
         profile = require_physics_ready(backend, args.profile)
@@ -54,6 +61,18 @@ def _verify(args: argparse.Namespace) -> int:
             f"{backend}/{args.profile}: ready "
             f"({len(profile.required_files)} required files)"
         )
+    return 0
+
+
+def _print_resources(value: dict) -> None:
+    print(f"resource root: {value['root']} ({value['mode']})")
+    for node in value["nodes"]:
+        print(f"  {node['name']}: {'stale' if node['stale'] else 'current'}")
+    print("  missing: " + (", ".join(value["missing"]) or "none"))
+
+
+def _build_resources(args: argparse.Namespace) -> int:
+    print(f"resource root: {build_resources(force=args.force)}")
     return 0
 
 
@@ -79,6 +98,10 @@ def _parser() -> argparse.ArgumentParser:
         description="Inspect or load the packaged Xbox One S physical asset.",
     )
     subparsers = parser.add_subparsers(dest="command", required=True)
+
+    build = subparsers.add_parser("build-resources", help="build stale project-local resources")
+    build.add_argument("--force", action="store_true")
+    build.set_defaults(handler=_build_resources)
 
     status = subparsers.add_parser(
         "status", help="show declared backend artifact readiness"

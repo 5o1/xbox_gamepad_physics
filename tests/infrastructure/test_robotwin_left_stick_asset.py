@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import json
+from unittest import mock
 from pathlib import Path
 import sys
 import tempfile
@@ -27,19 +29,19 @@ PROFILE = (
 
 
 class RoboTwinLeftStickAssetTest(unittest.TestCase):
-    def test_generated_profile_is_fresh(self):
+    def test_generated_profile_loads_and_has_required_files(self):
         with tempfile.TemporaryDirectory() as temporary:
-            generated = Path(temporary)
+            root = Path(temporary)
+            generated = root / "robotwin/left_stick"
             build(generated)
-            expected = sorted(path.relative_to(PROFILE) for path in PROFILE.rglob("*") if path.is_file())
-            actual = sorted(path.relative_to(generated) for path in generated.rglob("*") if path.is_file())
-            self.assertEqual(actual, expected)
-            for relative in expected:
-                self.assertEqual(
-                    (generated / relative).read_bytes(),
-                    (PROFILE / relative).read_bytes(),
-                    relative,
-                )
+            manifest = json.loads((generated / "manifest.json").read_text())
+            for relative in manifest["required_files"]:
+                self.assertTrue((generated / relative).is_file(), relative)
+            joints = ET.parse(generated / "mobility.urdf").getroot().findall("joint")
+            self.assertEqual({joint.get("name") for joint in joints}, {"left_stick_x", "left_stick_y"})
+            with mock.patch("xbox_gamepad_physics.resources.resource_root", return_value=root):
+                description = _validated_description("left_stick")
+            self.assertEqual({item.name for item in description.joint_dynamics}, {joint.get("name") for joint in joints})
 
     def test_ready_profile_and_loader_description_match_asset(self):
         profile = require_physics_ready("robotwin", "left_stick")

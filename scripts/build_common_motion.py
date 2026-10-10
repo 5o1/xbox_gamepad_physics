@@ -33,9 +33,9 @@ def _json(path: Path) -> dict:
     return value
 
 
-def build(output: Path = DEFAULT_OUTPUT) -> dict:
+def build(output: Path = DEFAULT_OUTPUT, *, kinematics: Path | None = None) -> dict:
     source = _json(SOURCE)
-    _, profile, _ = build_kinematics()
+    profile = _json(kinematics) if kinematics is not None else build_kinematics()[1]
     neutral = float(source["signal_policy"]["device_neutral_epsilon"])
     stick_neutral = float(source["signal_policy"]["stick_neutral_epsilon"])
 

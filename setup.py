@@ -6,12 +6,20 @@ otherwise installs an ``UNKNOWN`` editable package.  Keep this small mirror
 until the supported RoboTwin environment provides a modern build backend.
 """
 
+import re
+from pathlib import Path
+
 from setuptools import find_packages, setup
+
+
+# pyproject.toml is the single source of the version; setuptools 59 cannot read it itself.
+_PYPROJECT = (Path(__file__).resolve().parent / "pyproject.toml").read_text(encoding="utf-8")
+_VERSION = re.search(r'^version\s*=\s*"([^"]+)"', _PYPROJECT, re.M).group(1)
 
 
 setup(
     name="xbox-gamepad-physics",
-    version="0.1.0",
+    version=_VERSION,
     description="Evidence-bound Xbox One S physical asset and simulator adapters",
     python_requires=">=3.10",
     package_dir={"": "src"},
@@ -32,6 +40,7 @@ setup(
         ]
     },
     extras_require={
+        "build": ["numpy>=1.24", "trimesh>=4.4", "Pillow>=9"],
         "mujoco": ["mujoco==3.15.0", "typing_extensions>=4.16"],
         "robotwin": ["sapien==3.0.0b1"],
     },

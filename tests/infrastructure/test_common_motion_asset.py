@@ -1,3 +1,4 @@
+from unittest import mock
 from pathlib import Path
 import sys
 import tempfile
@@ -13,24 +14,18 @@ from build_common_motion import build  # noqa: E402
 from xbox_gamepad_physics import load_motion_contract  # noqa: E402
 
 
-PACKAGED = (
-    ROOT
-    / "src"
-    / "xbox_gamepad_physics"
-    / "resource_data"
-    / "common"
-    / "xbox_one_s"
-    / "motion"
-    / "full_controls.json"
-)
-
-
 class CommonMotionAssetTest(unittest.TestCase):
-    def test_packaged_contract_is_fresh(self):
+    def test_generated_contract_loads_and_covers_named_joints(self):
         with tempfile.TemporaryDirectory() as directory:
-            generated = Path(directory) / "full_controls.json"
-            build(generated)
-            self.assertEqual(generated.read_bytes(), PACKAGED.read_bytes())
+            root = Path(directory)
+            generated = root / "common/xbox_one_s/motion/full_controls.json"
+            contract = build(generated)
+            with mock.patch("xbox_gamepad_physics.resources.resource_root", return_value=root):
+                motion = load_motion_contract("full_controls")
+            self.assertEqual(set(motion.joint_by_name), {item["name"] for item in contract["joints"]})
+            self.assertEqual(len(motion.joints), 20)
+            self.assertEqual(len(motion.signal_controller.available_channels), 21)
+            self.assertEqual(len(motion.signal_controller.physical_event_mappings), 1)
 
     def test_public_contract_owns_ranges_and_signal_constraints(self):
         motion = load_motion_contract("full_controls")

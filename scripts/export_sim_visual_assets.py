@@ -30,20 +30,20 @@ def read_glb(path):
     return document,data[28+length:28+length+binary_length]
 
 
-def main():
-    parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--output',type=Path,default=ROOT/'src/xbox_gamepad_physics/resource_data/common/xbox_one_s/visual')
-    args=parser.parse_args()
+DEFAULT_OUTPUT = ROOT/'src/xbox_gamepad_physics/resource_data/common/xbox_one_s/visual'
+
+
+def build(output: Path = DEFAULT_OUTPUT, *, kinematics: Path | None = None):
     source=ROOT/'assets/xbox_one_s/source/xbox_one_s_controllergamepad_animated.glb'
     static=ROOT/'assets/xbox_one_s/visual/Xbox_One_S_BatonyRobson_STATIC_VISUAL_UNCALIBRATED.glb'
     inventory=json.loads((ROOT/'assets/xbox_one_s/visual/inventory.json').read_text())
     inventory_by_stem={Path(item['file']).stem:item for item in inventory['objects']}
-    _,profile,_=build_kinematics()
+    profile=json.loads(kinematics.read_text()) if kinematics is not None else build_kinematics()[1]
     assert hashlib.sha256(source.read_bytes()).hexdigest()==profile['source_bindings']['source_glb_sha256']
     assert hashlib.sha256(static.read_bytes()).hexdigest()==profile['visual']['sha256']
     authored,authored_bin=read_glb(source)
     geometry,geometry_bin=read_glb(static)
-    output=args.output;output.mkdir(parents=True,exist_ok=True)
+    output.mkdir(parents=True,exist_ok=True)
     textures=output/'textures';textures.mkdir(exist_ok=True)
     material=authored['materials'][0]
     names=['base_color','metallic_roughness','emissive','normal','specular_intensity']
@@ -132,6 +132,13 @@ def main():
     }
     (output/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
     print(json.dumps({'parts':len(parts),'textures':len(texture_files),'mesh_bytes':len(packed),'output':str(output)}))
+
+
+def main():
+    parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--output',type=Path,default=DEFAULT_OUTPUT)
+    args=parser.parse_args()
+    build(args.output)
 
 
 if __name__=='__main__':main()
