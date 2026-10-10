@@ -420,34 +420,28 @@ class RoboTwinRuntimeTest(unittest.TestCase):
                 GamepadSignalController.xbox_one_s(()),
             )
 
-    def test_urdf_missing_inertial_fails_before_scene_mutation(self):
+    def test_built_profile_check_rejects_urdf_without_inertial(self):
+        # Explicit physics is a build-time property of generated URDFs (asset tests),
+        # not a per-load check; this keeps the rule itself covered.
+        from tests.infrastructure.built_profile_checks import check_explicit_urdf_physics
+
         temporary = tempfile.TemporaryDirectory()
         self.addCleanup(temporary.cleanup)
         urdf = Path(temporary.name) / "mobility.urdf"
         urdf.write_text(
-            ready_urdf().replace(
-                '<mass value="0.1"/>', '<!-- mass deliberately absent -->', 1
-            ),
+            ready_urdf().replace('<mass value="0.1"/>', '<!-- mass deliberately absent -->', 1),
             encoding="utf-8",
         )
-        scene = FakeScene(FakeLoader(FakeArticulation()))
-        with (
-            mock.patch.object(
-                loader_module, "require_physics_ready", return_value=ready_profile(urdf)
-            ),
-            mock.patch.object(
-                loader_module, "load_json_resource", return_value=ready_manifest()
-            ),
-            mock.patch.object(loader_module, "resource_path", return_value=urdf),
-        ):
-            with self.assertRaisesRegex(RoboTwinManifestError, "explicit inertial"):
-                loader_module.load_into_scene(
-                    scene,
-                    SimpleNamespace(p=(0, 0, 0), q=(1, 0, 0, 0)),
-                    fixed_root=True,
-                    profile="test_ready",
-                )
-        self.assertEqual(scene.loader.paths, [])
+        with self.assertRaisesRegex(AssertionError, "explicit inertial"):
+            check_explicit_urdf_physics(urdf)
+
+    def test_built_profile_check_rejects_non_finite_joint_target(self):
+        from tests.infrastructure.built_profile_checks import check_manifest_ranges
+
+        manifest = ready_manifest()
+        manifest["joint_dynamics"][0]["target"] = float("nan")
+        with self.assertRaisesRegex(AssertionError, "finite number"):
+            check_manifest_ranges(manifest)
 
     def test_importing_robotwin_package_does_not_import_sapien(self):
         before = {name for name in sys.modules if name == "sapien" or name.startswith("sapien.")}

@@ -11,7 +11,6 @@ from importlib import import_module
 import math
 from pathlib import Path
 from typing import Any, Mapping, Sequence
-import xml.etree.ElementTree as ET
 
 from xbox_gamepad_physics.profiles import require_physics_ready
 from xbox_gamepad_physics.resources import load_json_resource, resource_path
@@ -43,17 +42,6 @@ from .errors import (
 
 
 _BACKEND = "robotwin"
-_ASSET_ID = "xbox_one_s"
-_JOINT_FIELDS = (
-    "name",
-    "stiffness",
-    "damping",
-    "force_limit",
-    "friction",
-    "target",
-)
-
-
 @dataclass(frozen=True)
 class JointDynamics:
     name: str
@@ -83,112 +71,98 @@ class ContactMaterial:
     rest_offset: float
 
 
-def _number(record: Mapping[str, Any], field: str, joint: str) -> float:
-    value = record.get(field)
-    if isinstance(value, bool) or not isinstance(value, (int, float)):
-        raise RoboTwinManifestError(
-            f"joint_dynamics[{joint!r}].{field} must be a finite number"
-        )
-    number = float(value)
-    if not math.isfinite(number):
-        raise RoboTwinManifestError(
-            f"joint_dynamics[{joint!r}].{field} must be a finite number"
-        )
-    return number
+def _field(record: Any, key: str, context: str) -> Any:
+    try:
+        return record[key]
+    except (KeyError, TypeError, IndexError) as error:
+        raise RoboTwinManifestError(f"{context} missing required field {key!r}") from error
 
 
-def _neutral_epsilon(record: Mapping[str, Any], context: str) -> float:
-    value = record.get("neutral_epsilon", 0.0)
-    if isinstance(value, bool) or not isinstance(value, (int, float)):
-        raise RoboTwinManifestError(f"{context}.neutral_epsilon must be numeric")
-    value = float(value)
-    if not math.isfinite(value):
-        raise RoboTwinManifestError(f"{context}.neutral_epsilon must be finite")
+def _items(mapping: Mapping[str, Any], key: str) -> list[Any]:
+    value = mapping.get(key, [])
+    if not isinstance(value, list):
+        raise RoboTwinManifestError(f"state_mapping.{key} must be a list")
     return value
 
 
+def _signal_controller(mapping: Any) -> GamepadSignalController:
+    """Build the controller; it validates channels, ranges and groups itself."""
+
+    if not isinstance(mapping, Mapping):
+        raise RoboTwinManifestError("ready RoboTwin profile needs state_mapping")
+    context = "state_mapping"
+    try:
+        return GamepadSignalController.xbox_one_s(
+            [
+                AxisSignalMapping(_field(raw, "channel", context), _field(raw, "joint", context),
+                                  _field(raw, "lower", context), _field(raw, "upper", context))
+                for raw in _items(mapping, "axes")
+            ],
+            [
+                RadialSignalGroup(tuple(_field(raw, "channels", context)), _field(raw, "radius", context),
+                                  raw.get("neutral_epsilon", 0.0))
+                for raw in _items(mapping, "radial_groups")
+            ],
+            [
+                ScalarSignalMapping(_field(raw, "channel", context), _field(raw, "joint", context),
+                                    _field(raw, "lower", context), _field(raw, "upper", context),
+                                    raw.get("neutral_epsilon", 0.0))
+                for raw in _items(mapping, "scalars")
+            ],
+            [
+                SplitSignalMapping(_field(raw, "negative_channel", context),
+                                   _field(raw, "positive_channel", context),
+                                   _field(raw, "joint", context),
+                                   _field(raw, "lower", context), _field(raw, "upper", context))
+                for raw in _items(mapping, "splits")
+            ],
+            [
+                RadialSourceGroup(tuple(_field(raw, "joints", context)), _field(raw, "radius", context),
+                                  raw.get("neutral_epsilon", 0.0))
+                for raw in _items(mapping, "radial_source_groups")
+            ],
+            [
+                PhysicalEventMapping(_field(raw, "event", context), _field(raw, "joint", context),
+                                     _field(raw, "lower", context), _field(raw, "upper", context))
+                for raw in _items(mapping, "physical_events")
+            ],
+        )
+    except StateValidationError as error:
+        raise RoboTwinManifestError(f"invalid state_mapping: {error}") from error
+
+
 def _validated_description(profile: str) -> RoboTwinAssetDescription:
-    """Gate readiness first, then validate every RoboTwin-specific field."""
+    """Read a built RoboTwin profile.
+
+    Field ranges and the explicit-physics URDF rules are guaranteed by the
+    generators and checked by the asset tests at build time; here the loader
+    only gates readiness and files, converts the manifest, and checks the
+    joint names that form the public API.
+    """
 
     ready = require_physics_ready(_BACKEND, profile)
-    manifest = load_json_resource(_BACKEND, profile)
-    if manifest.get("asset_id") != _ASSET_ID:
-        raise RoboTwinManifestError(
-            f"expected asset_id {_ASSET_ID!r}, got {manifest.get('asset_id')!r}"
-        )
-    if manifest.get("backend") != _BACKEND:
-        raise RoboTwinManifestError(
-            f"expected backend {_BACKEND!r}, got {manifest.get('backend')!r}"
-        )
-    if manifest.get("profile") != profile:
-        raise RoboTwinManifestError(
-            f"manifest profile {manifest.get('profile')!r} does not match {profile!r}"
-        )
-
-    entrypoint = ready.entrypoint
-    if not isinstance(entrypoint, str) or not entrypoint.endswith(".urdf"):
+    if not ready.entrypoint.endswith(".urdf"):
         raise RoboTwinManifestError("ready RoboTwin profile needs a .urdf entrypoint")
-    if entrypoint not in ready.required_files:
-        raise RoboTwinManifestError("entrypoint must be listed in required_files")
+    manifest = load_json_resource(_BACKEND, profile)
+    urdf_path = resource_path(_BACKEND, profile, ready.entrypoint).resolve(strict=True)
 
-    for relative in ready.required_files:
-        resource_path(_BACKEND, profile, relative, must_exist=True)
-    urdf_path = resource_path(
-        _BACKEND, profile, entrypoint, must_exist=True
-    ).resolve(strict=True)
-    if not urdf_path.is_absolute():  # defensive: Path.resolve() must guarantee this
-        raise RoboTwinManifestError("resolved URDF path is not absolute")
+    raw_dynamics = _field(manifest, "joint_dynamics", "manifest")
+    dynamics = tuple(
+        JointDynamics(
+            name=_field(raw, "name", f"joint_dynamics[{index}]"),
+            **{
+                key: float(_field(raw, key, f"joint_dynamics[{index}]"))
+                for key in ("stiffness", "damping", "force_limit", "friction", "target")
+            },
+        )
+        for index, raw in enumerate(raw_dynamics)
+    )
+    names = {item.name for item in dynamics}
+    if len(names) != len(dynamics):
+        raise RoboTwinManifestError("joint_dynamics contains duplicate joint names")
 
-    raw_dynamics = manifest.get("joint_dynamics")
-    if not isinstance(raw_dynamics, list) or not raw_dynamics:
-        raise RoboTwinManifestError(
-            "ready RoboTwin profile needs a non-empty joint_dynamics list"
-        )
-    dynamics: list[JointDynamics] = []
-    names: set[str] = set()
-    for index, raw in enumerate(raw_dynamics):
-        if not isinstance(raw, dict):
-            raise RoboTwinManifestError(
-                f"joint_dynamics[{index}] must be an object"
-            )
-        missing = [field for field in _JOINT_FIELDS if field not in raw]
-        if missing:
-            raise RoboTwinManifestError(
-                f"joint_dynamics[{index}] missing required fields {missing}"
-            )
-        name = raw["name"]
-        if not isinstance(name, str) or not name:
-            raise RoboTwinManifestError(
-                f"joint_dynamics[{index}].name must be a non-empty string"
-            )
-        if name in names:
-            raise RoboTwinManifestError(f"duplicate joint dynamics name {name!r}")
-        names.add(name)
-        item = JointDynamics(
-            name=name,
-            stiffness=_number(raw, "stiffness", name),
-            damping=_number(raw, "damping", name),
-            force_limit=_number(raw, "force_limit", name),
-            friction=_number(raw, "friction", name),
-            target=_number(raw, "target", name),
-        )
-        if item.stiffness < 0 or item.damping < 0 or item.friction < 0:
-            raise RoboTwinManifestError(
-                f"joint {name!r} stiffness, damping, and friction must be non-negative"
-            )
-        if item.force_limit <= 0:
-            raise RoboTwinManifestError(
-                f"joint {name!r} force_limit must be positive"
-            )
-        dynamics.append(item)
-    raw_motion_contract = manifest.get("motion_contract")
     joint_motion: tuple[MotionJoint, ...] = ()
-    if raw_motion_contract is not None:
-        expected_motion_contract = f"common/xbox_one_s/motion/{profile}.json"
-        if raw_motion_contract != expected_motion_contract:
-            raise RoboTwinManifestError(
-                f"motion_contract must be {expected_motion_contract!r}"
-            )
+    if manifest.get("motion_contract") is not None:
         motion_contract = load_motion_contract(profile)
         joint_motion = motion_contract.joints
         motion_names = set(motion_contract.joint_by_name)
@@ -201,410 +175,38 @@ def _validated_description(profile: str) -> RoboTwinAssetDescription:
         mapping = motion_contract.state_mapping
     else:
         mapping = manifest.get("state_mapping")
-    if not isinstance(mapping, Mapping):
-        raise RoboTwinManifestError("ready RoboTwin profile needs state_mapping")
-    raw_axes = mapping.get("axes")
-    if not isinstance(raw_axes, list) or not raw_axes:
-        raise RoboTwinManifestError("state_mapping.axes must be a non-empty list")
-    axis_mappings: list[AxisSignalMapping] = []
-    channels: set[str] = set()
-    for index, raw in enumerate(raw_axes):
-        if not isinstance(raw, dict):
-            raise RoboTwinManifestError(f"state_mapping.axes[{index}] must be an object")
-        channel = raw.get("channel")
-        joint = raw.get("joint")
-        if (
-            channel not in {"left_x", "left_y", "right_x", "right_y"}
-            or channel in channels
-        ):
-            raise RoboTwinManifestError(
-                f"state_mapping.axes[{index}] has invalid or duplicate channel"
-            )
-        if joint not in names:
-            raise RoboTwinManifestError(
-                f"state_mapping.axes[{index}] references undeclared joint {joint!r}"
-            )
-        lower = _number(raw, "lower", f"state_mapping.axes[{index}]")
-        upper = _number(raw, "upper", f"state_mapping.axes[{index}]")
-        if not lower < 0 < upper:
-            raise RoboTwinManifestError(
-                f"state_mapping.axes[{index}] limits must straddle zero"
-            )
-        channels.add(channel)
-        axis_mappings.append(AxisSignalMapping(channel, joint, lower, upper))
-
-    scalar_mappings: list[ScalarSignalMapping] = []
-    raw_scalars = mapping.get("scalars", [])
-    if not isinstance(raw_scalars, list):
-        raise RoboTwinManifestError("state_mapping.scalars must be a list")
-    for index, raw in enumerate(raw_scalars):
-        if not isinstance(raw, dict):
-            raise RoboTwinManifestError(
-                f"state_mapping.scalars[{index}] must be an object"
-            )
-        channel = raw.get("channel")
-        joint = raw.get("joint")
-        if not isinstance(channel, str) or channel in channels:
-            raise RoboTwinManifestError(
-                f"state_mapping.scalars[{index}] has invalid or duplicate channel"
-            )
-        if joint not in names:
-            raise RoboTwinManifestError(
-                f"state_mapping.scalars[{index}] references undeclared joint {joint!r}"
-            )
-        lower = _number(raw, "lower", f"state_mapping.scalars[{index}]")
-        upper = _number(raw, "upper", f"state_mapping.scalars[{index}]")
-        if not lower < upper:
-            raise RoboTwinManifestError(
-                f"state_mapping.scalars[{index}] lower must be below upper"
-            )
-        channels.add(channel)
-        scalar_mappings.append(
-            ScalarSignalMapping(
-                channel,
-                joint,
-                lower,
-                upper,
-                _neutral_epsilon(raw, f"state_mapping.scalars[{index}]"),
-            )
+    signal_controller = _signal_controller(mapping)
+    referenced = {
+        item.source
+        for group in (
+            signal_controller.axis_mappings,
+            signal_controller.scalar_mappings,
+            signal_controller.split_mappings,
+            signal_controller.physical_event_mappings,
         )
-
-    split_mappings: list[SplitSignalMapping] = []
-    raw_splits = mapping.get("splits", [])
-    if not isinstance(raw_splits, list):
-        raise RoboTwinManifestError("state_mapping.splits must be a list")
-    split_sources: set[str] = set()
-    for index, raw in enumerate(raw_splits):
-        if not isinstance(raw, dict):
-            raise RoboTwinManifestError(
-                f"state_mapping.splits[{index}] must be an object"
-            )
-        negative = raw.get("negative_channel")
-        positive = raw.get("positive_channel")
-        joint = raw.get("joint")
-        if (
-            not isinstance(negative, str)
-            or not isinstance(positive, str)
-            or negative == positive
-            or negative in channels
-            or positive in channels
-        ):
-            raise RoboTwinManifestError(
-                f"state_mapping.splits[{index}] has invalid or duplicate channels"
-            )
-        if joint not in names or joint in split_sources:
-            raise RoboTwinManifestError(
-                f"state_mapping.splits[{index}] has invalid joint {joint!r}"
-            )
-        lower = _number(raw, "lower", f"state_mapping.splits[{index}]")
-        upper = _number(raw, "upper", f"state_mapping.splits[{index}]")
-        if not lower < 0 < upper:
-            raise RoboTwinManifestError(
-                f"state_mapping.splits[{index}] limits must straddle zero"
-            )
-        channels.update((negative, positive))
-        split_sources.add(joint)
-        split_mappings.append(
-            SplitSignalMapping(negative, positive, joint, lower, upper)
-        )
-    raw_groups = mapping.get("radial_groups", [])
-    if not isinstance(raw_groups, list):
-        raise RoboTwinManifestError("state_mapping.radial_groups must be a list")
-    radial_groups: list[RadialSignalGroup] = []
-    for index, raw in enumerate(raw_groups):
-        if not isinstance(raw, dict):
-            raise RoboTwinManifestError(
-                f"state_mapping.radial_groups[{index}] must be an object"
-            )
-        group_channels = raw.get("channels")
-        if (
-            not isinstance(group_channels, list)
-            or len(group_channels) != 2
-            or group_channels[0] not in channels
-            or group_channels[1] not in channels
-            or group_channels[0] == group_channels[1]
-        ):
-            raise RoboTwinManifestError(
-                f"state_mapping.radial_groups[{index}] needs two mapped channels"
-            )
-        radius = _number(raw, "radius", f"state_mapping.radial_groups[{index}]")
-        if radius <= 0 or radius > 1:
-            raise RoboTwinManifestError(
-                f"state_mapping.radial_groups[{index}].radius must be in (0, 1]"
-            )
-        radial_groups.append(
-            RadialSignalGroup(
-                tuple(group_channels),
-                radius,
-                _neutral_epsilon(raw, f"state_mapping.radial_groups[{index}]"),
-            )
-        )
-
-    radial_source_groups: list[RadialSourceGroup] = []
-    raw_source_groups = mapping.get("radial_source_groups", [])
-    if not isinstance(raw_source_groups, list):
+        for item in group
+    }
+    if not referenced <= names:
         raise RoboTwinManifestError(
-            "state_mapping.radial_source_groups must be a list"
-        )
-    for index, raw in enumerate(raw_source_groups):
-        if not isinstance(raw, dict):
-            raise RoboTwinManifestError(
-                f"state_mapping.radial_source_groups[{index}] must be an object"
-            )
-        group_joints = raw.get("joints")
-        if (
-            not isinstance(group_joints, list)
-            or len(group_joints) != 2
-            or group_joints[0] == group_joints[1]
-            or any(joint not in split_sources for joint in group_joints)
-        ):
-            raise RoboTwinManifestError(
-                f"state_mapping.radial_source_groups[{index}] needs two split joints"
-            )
-        radius = _number(
-            raw, "radius", f"state_mapping.radial_source_groups[{index}]"
-        )
-        if not 0 < radius <= 1:
-            raise RoboTwinManifestError(
-                f"state_mapping.radial_source_groups[{index}].radius must be in (0, 1]"
-            )
-        radial_source_groups.append(
-            RadialSourceGroup(
-                tuple(group_joints),
-                radius,
-                _neutral_epsilon(
-                    raw, f"state_mapping.radial_source_groups[{index}]"
-                ),
-            )
+            f"state_mapping references undeclared joints {sorted(referenced - names)}"
         )
 
-    physical_event_mappings: list[PhysicalEventMapping] = []
-    raw_events = mapping.get("physical_events", [])
-    if not isinstance(raw_events, list):
-        raise RoboTwinManifestError("state_mapping.physical_events must be a list")
-    event_names: set[str] = set()
-    for index, raw in enumerate(raw_events):
-        if not isinstance(raw, dict):
-            raise RoboTwinManifestError(
-                f"state_mapping.physical_events[{index}] must be an object"
-            )
-        event = raw.get("event")
-        joint = raw.get("joint")
-        if not isinstance(event, str) or not event or event in event_names:
-            raise RoboTwinManifestError(
-                f"state_mapping.physical_events[{index}] has invalid event"
-            )
-        if joint not in names:
-            raise RoboTwinManifestError(
-                f"state_mapping.physical_events[{index}] references undeclared joint {joint!r}"
-            )
-        lower = _number(raw, "lower", f"state_mapping.physical_events[{index}]")
-        upper = _number(raw, "upper", f"state_mapping.physical_events[{index}]")
-        if not lower < upper:
-            raise RoboTwinManifestError(
-                f"state_mapping.physical_events[{index}] lower must be below upper"
-            )
-        event_names.add(event)
-        physical_event_mappings.append(
-            PhysicalEventMapping(event, joint, lower, upper)
-        )
-
-    try:
-        signal_controller = GamepadSignalController.xbox_one_s(
-            axis_mappings,
-            radial_groups,
-            scalar_mappings,
-            split_mappings,
-            radial_source_groups,
-            physical_event_mappings,
-        )
-    except StateValidationError as error:
-        raise RoboTwinManifestError(f"invalid state_mapping: {error}") from error
-
-    raw_contact = manifest.get("contact_material")
-    if not isinstance(raw_contact, dict):
-        raise RoboTwinManifestError("ready RoboTwin profile needs contact_material")
+    raw_contact = _field(manifest, "contact_material", "manifest")
     contact = ContactMaterial(
-        static_friction=_number(raw_contact, "static_friction", "contact_material"),
-        dynamic_friction=_number(raw_contact, "dynamic_friction", "contact_material"),
-        restitution=_number(raw_contact, "restitution", "contact_material"),
-        contact_offset=_number(raw_contact, "contact_offset_m", "contact_material"),
-        rest_offset=_number(raw_contact, "rest_offset_m", "contact_material"),
+        static_friction=float(_field(raw_contact, "static_friction", "contact_material")),
+        dynamic_friction=float(_field(raw_contact, "dynamic_friction", "contact_material")),
+        restitution=float(_field(raw_contact, "restitution", "contact_material")),
+        contact_offset=float(_field(raw_contact, "contact_offset_m", "contact_material")),
+        rest_offset=float(_field(raw_contact, "rest_offset_m", "contact_material")),
     )
-    if (
-        contact.static_friction < 0
-        or contact.dynamic_friction < 0
-        or not 0 <= contact.restitution <= 1
-        or contact.contact_offset <= contact.rest_offset
-        or contact.rest_offset < 0
-    ):
-        raise RoboTwinManifestError("contact_material values are outside valid ranges")
-    visual_binding = manifest.get("visual_binding")
-    if not isinstance(visual_binding, dict):
-        raise RoboTwinManifestError("ready RoboTwin profile needs visual_binding")
-
-    description = RoboTwinAssetDescription(
+    return RoboTwinAssetDescription(
         urdf_path,
-        tuple(dynamics),
+        dynamics,
         joint_motion,
         signal_controller,
         contact,
-        visual_binding,
+        _field(manifest, "visual_binding", "manifest"),
     )
-    _validate_urdf_physics(description)
-    return description
-
-
-def _xml_number(element: ET.Element, attribute: str, context: str) -> float:
-    raw = element.get(attribute)
-    try:
-        value = float(raw)  # type: ignore[arg-type]
-    except (TypeError, ValueError) as error:
-        raise RoboTwinManifestError(
-            f"{context} needs finite numeric attribute {attribute!r}"
-        ) from error
-    if not math.isfinite(value):
-        raise RoboTwinManifestError(
-            f"{context} needs finite numeric attribute {attribute!r}"
-        )
-    return value
-
-
-def _xml_vector(
-    element: ET.Element, attribute: str, length: int, context: str
-) -> tuple[float, ...]:
-    raw = element.get(attribute)
-    if not isinstance(raw, str):
-        raise RoboTwinManifestError(f"{context} needs attribute {attribute!r}")
-    try:
-        values = tuple(float(value) for value in raw.split())
-    except ValueError as error:
-        raise RoboTwinManifestError(
-            f"{context}.{attribute} must contain {length} finite numbers"
-        ) from error
-    if len(values) != length or not all(math.isfinite(value) for value in values):
-        raise RoboTwinManifestError(
-            f"{context}.{attribute} must contain {length} finite numbers"
-        )
-    return values
-
-
-def _validate_urdf_physics(description: RoboTwinAssetDescription) -> None:
-    """Reject URDFs that would make SAPIEN invent physical defaults."""
-
-    try:
-        root = ET.parse(description.urdf_path).getroot()
-    except (ET.ParseError, OSError) as error:
-        raise RoboTwinManifestError(
-            f"cannot parse RoboTwin URDF {description.urdf_path}: {error}"
-        ) from error
-    if root.tag != "robot":
-        raise RoboTwinManifestError("RoboTwin entrypoint root element must be <robot>")
-
-    links = root.findall("link")
-    if not links:
-        raise RoboTwinManifestError("RoboTwin URDF contains no links")
-    link_names: set[str] = set()
-    collision_count = 0
-    for link in links:
-        name = link.get("name")
-        if not isinstance(name, str) or not name:
-            raise RoboTwinManifestError("every URDF link needs a non-empty name")
-        if name in link_names:
-            raise RoboTwinManifestError(f"duplicate URDF link name {name!r}")
-        link_names.add(name)
-        inertial = link.find("inertial")
-        mass = inertial.find("mass") if inertial is not None else None
-        inertia = inertial.find("inertia") if inertial is not None else None
-        inertial_origin = inertial.find("origin") if inertial is not None else None
-        if (
-            inertial is None
-            or inertial_origin is None
-            or mass is None
-            or inertia is None
-        ):
-            raise RoboTwinManifestError(
-                f"URDF link {name!r} needs explicit inertial origin, mass, and inertia"
-            )
-        _xml_vector(inertial_origin, "xyz", 3, f"link {name!r} inertial origin")
-        _xml_vector(inertial_origin, "rpy", 3, f"link {name!r} inertial origin")
-        mass_value = _xml_number(mass, "value", f"link {name!r} mass")
-        if mass_value <= 0:
-            raise RoboTwinManifestError(f"URDF link {name!r} mass must be positive")
-        ixx, ixy, ixz, iyy, iyz, izz = (
-            _xml_number(inertia, field, f"link {name!r} inertia")
-            for field in ("ixx", "ixy", "ixz", "iyy", "iyz", "izz")
-        )
-        leading_minor_2 = ixx * iyy - ixy * ixy
-        determinant = (
-            ixx * (iyy * izz - iyz * iyz)
-            - ixy * (ixy * izz - iyz * ixz)
-            + ixz * (ixy * iyz - iyy * ixz)
-        )
-        if ixx <= 0 or leading_minor_2 <= 0 or determinant <= 0:
-            raise RoboTwinManifestError(
-                f"URDF link {name!r} inertia tensor must be positive definite"
-            )
-        collision_count += len(link.findall("collision"))
-    if collision_count == 0:
-        raise RoboTwinManifestError("ready RoboTwin URDF contains no collision geometry")
-
-    active_names: set[str] = set()
-    for joint in root.findall("joint"):
-        name = joint.get("name")
-        kind = joint.get("type")
-        if not isinstance(name, str) or not name:
-            raise RoboTwinManifestError("every URDF joint needs a non-empty name")
-        parent = joint.find("parent")
-        child = joint.find("child")
-        if parent is None or parent.get("link") not in link_names:
-            raise RoboTwinManifestError(f"joint {name!r} has an invalid parent link")
-        if child is None or child.get("link") not in link_names:
-            raise RoboTwinManifestError(f"joint {name!r} has an invalid child link")
-        origin = joint.find("origin")
-        if origin is None:
-            raise RoboTwinManifestError(f"joint {name!r} needs an explicit origin")
-        _xml_vector(origin, "xyz", 3, f"joint {name!r} origin")
-        _xml_vector(origin, "rpy", 3, f"joint {name!r} origin")
-        if kind == "fixed":
-            continue
-        if kind not in {"revolute", "continuous", "prismatic"}:
-            raise RoboTwinManifestError(
-                f"joint {name!r} has unsupported active type {kind!r}"
-            )
-        if name in active_names:
-            raise RoboTwinManifestError(f"duplicate active URDF joint name {name!r}")
-        active_names.add(name)
-        axis = joint.find("axis")
-        if axis is None:
-            raise RoboTwinManifestError(f"joint {name!r} needs an explicit axis")
-        axis_vector = _xml_vector(axis, "xyz", 3, f"joint {name!r} axis")
-        if math.sqrt(sum(value * value for value in axis_vector)) <= 1e-12:
-            raise RoboTwinManifestError(f"joint {name!r} axis must be non-zero")
-        limit = joint.find("limit")
-        if limit is None:
-            raise RoboTwinManifestError(f"joint {name!r} needs explicit limits")
-        effort = _xml_number(limit, "effort", f"joint {name!r} limit")
-        velocity = _xml_number(limit, "velocity", f"joint {name!r} limit")
-        if effort <= 0 or velocity <= 0:
-            raise RoboTwinManifestError(
-                f"joint {name!r} effort and velocity limits must be positive"
-            )
-        if kind != "continuous":
-            lower = _xml_number(limit, "lower", f"joint {name!r} limit")
-            upper = _xml_number(limit, "upper", f"joint {name!r} limit")
-            if lower >= upper:
-                raise RoboTwinManifestError(
-                    f"joint {name!r} lower limit must be smaller than upper"
-                )
-
-    declared_names = {item.name for item in description.joint_dynamics}
-    if active_names != declared_names:
-        raise RoboTwinManifestError(
-            "URDF/joint_dynamics name mismatch: "
-            f"URDF-only={sorted(active_names - declared_names)}, "
-            f"profile-only={sorted(declared_names - active_names)}"
-        )
 
 
 def _resolve_scene(scene_or_task: Any) -> Any:

@@ -293,8 +293,10 @@ reason
 
 MuJoCo ready profile 还需要 `scenes` 和 `bindings`。RoboTwin ready profile 还需要逐关节
 `joint_dynamics`。完整控件的两个 backend manifest 通过 `motion_contract` 指向公共运动
-契约，关节范围和信号约束不在 backend manifest 中重复维护。格式约束见
-`schemas/backend_manifest.schema.json`。
+契约，关节范围和信号约束不在 backend manifest 中重复维护。格式说明见
+`schemas/backend_manifest.schema.json`（文档，运行时不校验）。RoboTwin 的字段取值范围与有限性、URDF 显式惯量与限位等由生成器保证，
+并在资产测试中对构建结果检查一次；RoboTwin 加载器运行时只检查就绪状态、必需文件和关节名一致。
+公共运动契约和信号控制器仍校验各自的输入，冻结的 MuJoCo 层保留原有检查。
 
 ## 验证
 
