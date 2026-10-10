@@ -25,6 +25,15 @@
 export XBOX_GAMEPAD_PHYSICS_RESOURCES=/path/to/shared/xbox_gamepad_physics_resources
 ```
 
+## 发布资源包
+
+1. `python scripts/package_release_resources.py`：完整构建资源，在 `dist/` 生成
+   `xbox_gamepad_physics-resources-<版本>.zip`、`SHA256SUMS`，并把下载锁写入
+   `src/xbox_gamepad_physics/_resource_lock.json`（该文件不进 Git）。版本号取自 `pyproject.toml`。
+2. 用 `python -m build` 生成 sdist 与 wheel。它先打 sdist，再从 sdist 构建 wheel，不受仓库里残留的
+   `build/lib`、`*.egg-info` 影响；不要在有旧构建产物的工作区直接用 `pip wheel .` 发布。
+3. 把 zip 上传到 GitHub Release `v<版本>`，与 wheel 一起发布。
+
 ## 安装与状态检查
 
 基础包不强制安装仿真器：
@@ -308,7 +317,7 @@ MuJoCo ready profile 还需要 `scenes` 和 `bindings`。RoboTwin ready profile 
 4. 改变活动 joint 顺序，确认名称化访问仍返回正确 qpos。
 5. 构造缺失 inertial、joint limit、binding 和资源文件的 profile，确认全部 fail closed。
 6. 构造 MuJoCo parent spec attachment，确认 prefix 后的 joint/sensor 名称能够绑定。
-7. 构建 wheel，确认两个 backend manifest 被包含在安装包中。
+7. 构建 wheel，确认其中只有代码（以及发布时生成的 `_resource_lock.json`），不含资产或构建好的资源。
 
 自动测试覆盖资源完整性、命名绑定和调用边界。各后端的用户视觉检查、真实手柄标定和
 机械臂接触实验继续按独立验收项推进。

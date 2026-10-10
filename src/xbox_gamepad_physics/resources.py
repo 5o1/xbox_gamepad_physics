@@ -31,17 +31,21 @@ RESOURCE_ENV = "XBOX_GAMEPAD_PHYSICS_RESOURCES"
 
 
 def package_version() -> str:
+    """The package version; pyproject.toml is the single source in a checkout.
+
+    In a checkout an editable install's metadata can lag behind the source,
+    so the checkout's pyproject.toml wins; installed code uses its metadata.
+    """
+
+    repo = _repository()
+    if repo is not None:
+        match = re.search(r'^version\s*=\s*"([^"]+)"', (repo / "pyproject.toml").read_text(encoding="utf-8"), re.M)
+        if match:
+            return match.group(1)
     try:
         return version("xbox-gamepad-physics")
-    except PackageNotFoundError:
-        # A source checkout can be used via PYTHONPATH without installation;
-        # pyproject.toml stays the single source of the version.
-        repo = _repository()
-        if repo is not None:
-            match = re.search(r'^version\s*=\s*"([^"]+)"', (repo / "pyproject.toml").read_text(encoding="utf-8"), re.M)
-            if match:
-                return match.group(1)
-        raise ResourceError("cannot determine the package version; install the package or run from a checkout")
+    except PackageNotFoundError as error:
+        raise ResourceError("cannot determine the package version; install the package or run from a checkout") from error
 
 
 def release_url() -> str:

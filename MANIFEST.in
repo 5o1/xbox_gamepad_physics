@@ -1,1 +1,4 @@
 include src/xbox_gamepad_physics/_resource_lock.json
+# Code-only distributions: never pick up built resources or stale build output.
+prune src/xbox_gamepad_physics/resource_data
+prune build
