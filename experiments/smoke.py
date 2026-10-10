@@ -2,44 +2,28 @@
 
 from __future__ import annotations
 
-import argparse
-import json
 from pathlib import Path
-import sys
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .runner import RunContext
 
 
-ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "src"))
-
-
-def main() -> None:
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--output", type=Path, required=True)
-    parser.add_argument("--steps", type=int, default=500)
-    args = parser.parse_args()
-
+def run(cfg: dict, ctx: RunContext) -> dict:
     import numpy as np
     import sapien
 
     from xbox_gamepad_physics import load_motion_contract
     from xbox_gamepad_physics.resources import load_json_resource, resource_path
-    from xbox_gamepad_physics.robotwin import load_into_scene
     from xbox_gamepad_physics.state import GamepadState
 
-    scene = sapien.Scene()
-    scene.set_timestep(1.0 / 240.0)
-    gamepad = load_into_scene(
-        scene,
-        pose=sapien.Pose(),
-        fixed_root=True,
-        profile="full_controls",
-        attach_visual=False,
-    )
-    manifest = load_json_resource("robotwin", "full_controls")
-    motion = load_motion_contract("full_controls")
+    scene, gamepad = ctx.scene, ctx.gamepad
+    profile = cfg["profile"]
+    manifest = load_json_resource("robotwin", profile)
+    motion = load_motion_contract(profile)
     state_mapping = motion.state_mapping
     joint_limits = _joint_limits(resource_path(
-        "robotwin", "full_controls", "mobility.urdf"
+        "robotwin", profile, "mobility.urdf"
     ))
 
     neutral = gamepad.gamepad_state()
@@ -97,13 +81,13 @@ def main() -> None:
         initial[joint_name] = 0.25 * joint_manifest["upper"]
     gamepad.set_joint_positions(initial)
     gamepad.articulation.set_qvel(np.zeros(len(gamepad.joint_names)))
-    for _ in range(args.steps):
+    for _ in range(cfg["params"]["steps"]):
         scene.step()
     final = gamepad.joint_positions()
 
     result = {
         "sapien": sapien.__version__,
-        "profile": "full_controls",
+        "profile": profile,
         "joint_count": len(gamepad.joint_names),
         "available_game_channels": sum(neutral.available_mask),
         "endpoint_checks": endpoint_checks,
@@ -114,9 +98,21 @@ def main() -> None:
         "return_final_l1": sum(abs(value) for value in final.values()),
         "finite": all(np.isfinite(value) for value in final.values()),
     }
-    args.output.resolve().parent.mkdir(parents=True, exist_ok=True)
-    args.output.resolve().write_text(json.dumps(result, indent=2) + "\n")
-    print(json.dumps(result))
+    axis_channels = {mapping["channel"] for mapping in state_mapping["axes"]}
+    result["checks"] = {
+        "joint_count": result["joint_count"] == 20,
+        "available_game_channels": result["available_game_channels"] == 21,
+        "endpoints": len(endpoint_checks) == 21 and all(
+            abs((abs(value) if name in axis_channels else value) - 1.0) <= 1e-6
+            for name, value in endpoint_checks.items()
+        ),
+        "command_roundtrip": roundtrip_error <= 1e-6,
+        "pair_roundtrip": pair_roundtrip_error <= 1e-6,
+        "finite": result["finite"],
+        "return_to_neutral": result["return_final_l1"] < result["return_initial_l1"],
+    }
+    result["passed"] = all(result["checks"].values())
+    return result
 
 
 def _joint_limits(path: Path) -> list[dict]:
@@ -133,7 +129,3 @@ def _joint_limits(path: Path) -> list[dict]:
             }
         )
     return result
-
-
-if __name__ == "__main__":
-    main()

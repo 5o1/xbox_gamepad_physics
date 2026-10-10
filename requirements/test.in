@@ -6,3 +6,4 @@ scipy
 trimesh
 opencv-python
 torch
+pyyaml

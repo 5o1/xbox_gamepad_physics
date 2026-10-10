@@ -23,6 +23,10 @@ python3 -m pip install -e . --no-build-isolation     # offline RoboTwin env (set
 # Full regression (unittest discover over tests/ + node --test tests/test_*.mjs)
 python3 scripts/run_regression.py fast               # == npm test
 
+# Experiment platform (run from the repo root; needs the RoboTwin/SAPIEN env and PyYAML)
+python3 run_robotwin.py configs/smoke_full_controls.yaml --set params.steps=20
+python3 run_robotwin.py configs/render_review.yaml --set scene.robotwin_root=/path/to/RoboTwin --output build/runs/review
+
 # Single test
 python3 -m unittest tests.infrastructure.test_resource_resolution -v
 python3 -m unittest tests.test_kinematics.<Class>.<test_method>
@@ -45,6 +49,8 @@ Many tests `skipIf` optional deps (numpy, torch, OpenCV, mujoco, sapien) and onl
 MuJoCo/Filament work uses a separate Python 3.12 env (see `docs/importing.md`); the Filament renderer needs the patched `5o1/mujoco` opacity-texture branch, and a self-built MuJoCo needs the conda `libstdc++` activation scripts in `requirements/conda/`.
 
 ## Architecture
+
+**Experiment platform.** `run_robotwin.py` (repo root) runs an experiment from `configs/*.yaml`. Each experiment is one `run(cfg, ctx) -> metrics` function in `experiments/`, registered in `experiments/__init__.py`. Outputs go to `build/runs/<config>/<timestamp>/` (`config.yaml`, `meta.json`, `metrics.json`, artifacts). `experiments/` and `configs/` are checkout-only and never enter the wheel.
 
 **Resources are built, not committed.** Runtime resources are generated at build time from the sources in Git (`assets/`, `references/`, `specs/`, the frozen MuJoCo tree) by the explicit DAG in `scripts/build_resources.py`. Each node calls an existing generator's `build(output=..., <inputs>=...)`. The resolver in `src/xbox_gamepad_physics/resources.py` picks the resource root in this order:
 

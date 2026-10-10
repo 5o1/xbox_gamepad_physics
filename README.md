@@ -167,6 +167,31 @@ python3 -m unittest discover -s tests
 node --test tests/test_*.mjs
 ```
 
+## 实验平台
+
+从仓库根目录运行 RoboTwin 实验，需要测试依赖中的 PyYAML 和 RoboTwin/SAPIEN 环境：
+
+```sh
+python run_robotwin.py configs/smoke_full_controls.yaml
+python run_robotwin.py configs/smoke_full_controls.yaml --set params.steps=20 gamepad.fixed_root=true
+python run_robotwin.py configs/render_review.yaml \
+  --set scene.robotwin_root=/实际/RoboTwin/根目录 --output build/runs/review
+```
+
+配置指定实验、profile、场景、手柄位姿和 `params` 实验参数。`--set key.sub=value` 按 YAML
+解析数字、布尔和列表，未知 key 报错。位姿为 `[x, y, z, qw, qx, qy, qz]`，位置单位为米。
+smoke 不加载渲染器；render_review 使用既有 RoboTwin RT 配置输出一帧与仿真状态，需指定
+`scene.robotwin_root`。冒烟通过只说明加载、步进和信号链路可用；渲染外观由用户确认，
+接触物理和抓取需要各自的实验验证。
+
+默认输出到 `build/runs/<配置文件名>/<YYYYmmdd-HHMMSS>/`，也可用 `--output` 指定。
+每次保存覆盖后的 `config.yaml`、Git/版本/资源根/完整命令行 `meta.json`、`metrics.json`，
+以及实验产物（渲染实验的 `frame.png` 和 `state.json`）。
+
+新增实验时，在 `experiments/` 增加一个文件，实现 `run(cfg: dict, ctx: RunContext) -> dict`，
+并在 `experiments/__init__.py` 的 `EXPERIMENTS` 注册函数；再在 `configs/` 加一份 YAML。
+`ctx` 提供输出目录、已搭建场景和已加载手柄，返回值作为 metrics 保存。实验与配置均不进入 wheel。
+
 ## 启动交互预览
 
 需要 Python 3.10 或更新版本、Node.js 22、npm 和 Blender 4.5.9。Xbox One S 网格、材质和贴图已在仓库中，
