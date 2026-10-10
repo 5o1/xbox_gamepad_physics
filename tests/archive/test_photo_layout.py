@@ -2,7 +2,7 @@ import importlib.util
 from pathlib import Path
 import unittest
 
-spec = importlib.util.spec_from_file_location('photo', Path(__file__).parents[1] / 'scripts/check_photo_layout.py')
+spec = importlib.util.spec_from_file_location('photo', Path(__file__).parents[2] / 'scripts/archive/check_photo_layout.py')
 photo = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(photo)
 

@@ -2,7 +2,7 @@
 
 Run with Blender, for example::
 
-    blender --background --python scripts/audit_xbox_artist_animation.py -- SOURCE.glb OUT.json
+    blender --background --python scripts/archive/audit_xbox_artist_animation.py -- SOURCE.glb OUT.json
 
 The report is intentionally expressed in source-native coordinates.  It records
 what the downloaded rig does, including all action keyframes and sampled bone
@@ -19,7 +19,7 @@ from pathlib import Path
 import sys
 
 
-PROJECT_ROOT = Path(__file__).resolve().parents[1]
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
 SOURCE_RECORD = PROJECT_ROOT / "references" / "xbox_one_s_material_validation.json"
 
 

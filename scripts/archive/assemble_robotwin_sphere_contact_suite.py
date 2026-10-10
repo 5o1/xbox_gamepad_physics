@@ -16,7 +16,7 @@ import numpy as np
 from render_robotwin_sphere_contact_suite import CONTACT_CASES
 
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 
 
 def wait_http(url: str, timeout: float = 20.0) -> None:
@@ -143,7 +143,7 @@ def main() -> None:
                 overlay_frames = segment / "overlay_frames"
                 subprocess.run(
                     [
-                        args.node, str(ROOT / "scripts/capture_gamepad_overlay_demo.mjs"),
+                        args.node, str(ROOT / "scripts/archive/capture_gamepad_overlay_demo.mjs"),
                         viewer_url, cdp_url, str(trace_path), str(overlay_frames),
                         "480", "270", "transparent",
                     ],

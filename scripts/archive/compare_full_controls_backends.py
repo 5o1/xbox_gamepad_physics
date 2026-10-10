@@ -7,7 +7,7 @@ import json
 from pathlib import Path
 
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 ROBOTWIN = ROOT / "build" / "experiments" / "robotwin_full_controls" / "result.json"
 MUJOCO = ROOT / "build" / "experiments" / "mujoco_full_controls" / "result.json"
 DEFAULT_OUTPUT = ROOT / "build" / "experiments" / "full_controls_backend_comparison.json"

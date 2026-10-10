@@ -6,7 +6,7 @@
     "https://www.w3.org/TR/2025/WD-gamepad-20250710/#remapping"
   ],
   "design": {
-    "numeric_mapping": "Standalone piecewise-affine surrogate in scripts/coordinate_mapping.mjs and scripts/torch_coordinates.py; it is independent of the browser viewer and is not a measured Xbox transfer function.",
+    "numeric_mapping": "Standalone piecewise-affine surrogate in scripts/archive/coordinate_mapping.mjs and scripts/archive/torch_coordinates.py; it is independent of the browser viewer and is not a measured Xbox transfer function.",
     "input": "floating tensor [...,21] with standard axes then button values",
     "output": "[...,J] coordinates in explicit configured channel order; inverse returns only J configured signals, never invented zeros for unknown channels",
     "parameters": "q0/q1 must be finite and explicitly provided with provenance; fixed buffers, not learnable physical parameters",
@@ -16,8 +16,8 @@
   },
   "harness": {
     "script": "tests/test_torch_coordinates.py",
-    "reference_generator": "tests/export_coordinate_reference.mjs using scripts/coordinate_mapping.mjs",
-    "reference": "tests/fixtures/coordinate_reference.json",
+    "reference_generator": "tests/export_coordinate_reference.mjs using scripts/archive/coordinate_mapping.mjs",
+    "reference": "tests/archive/fixtures/coordinate_reference.json",
     "reference_scope": "9 state vectors times all 21 channels, neutral/endpoints/intermediate values; synthetic parameters only",
     "gradient_scope": "Batched [2,3,21] forward, inverse gradcheck in float64; composed upstream gradient; saturated zero gradient; float32 backward; malformed/null configuration rejection",
     "comparison_tolerance": "atol=rtol=1e-12 for float64 cross-language coordinate comparison; numerical tolerance, not physical accuracy"

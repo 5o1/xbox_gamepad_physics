@@ -19,7 +19,7 @@ except ImportError:
 class CollisionTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        path = Path(__file__).resolve().parents[1] / "scripts/build_button_colliders.py"
+        path = Path(__file__).resolve().parents[2] / "scripts/archive/build_button_colliders.py"
         spec = importlib.util.spec_from_file_location("colliders", path)
         cls.module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(cls.module)

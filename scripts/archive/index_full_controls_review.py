@@ -7,7 +7,7 @@ from pathlib import Path
 import subprocess
 
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 RESULTS = ROOT / "build" / "experiments" / "full_controls_user_review"
 GROUPS = (
     "sticks",
@@ -161,9 +161,9 @@ def main() -> None:
         "source_scripts": [
             "scripts/render_robotwin_full_controls_review.py",
             "scripts/render_mujoco_full_controls_review.py",
-            "scripts/render_robotwin_contact_review.py",
+            "scripts/archive/render_robotwin_contact_review.py",
             "scripts/render_mujoco_contact_review.py",
-            "scripts/capture_gamepad_overlay_demo.mjs",
+            "scripts/archive/capture_gamepad_overlay_demo.mjs",
         ],
     }
     (RESULTS / "manifest.json").write_text(

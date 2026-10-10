@@ -40,7 +40,7 @@ def main():
     parser.add_argument("visual_dir", type=Path)
     parser.add_argument("output", type=Path)
     args = parser.parse_args()
-    root = Path(__file__).resolve().parents[1]
+    root = Path(__file__).resolve().parents[2]
     evidence_path = root / "references/1708_dimensions.json"
     evidence = json.loads(evidence_path.read_text())
     inventory_path = args.visual_dir / "inventory.json"

@@ -3,7 +3,7 @@ from pathlib import Path
 import math
 import unittest
 
-path = Path(__file__).resolve().parents[1] / "scripts/scale_visual_candidate.py"
+path = Path(__file__).resolve().parents[2] / "scripts/archive/scale_visual_candidate.py"
 spec = importlib.util.spec_from_file_location("scaling", path)
 scaling = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(scaling)

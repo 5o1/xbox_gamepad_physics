@@ -21,7 +21,7 @@
     "excluded_objects": ["ShareButton", "ShareButtonSymbol"],
     "exclusion_reason": "Not a control on the owner-confirmed 1708; original files retained. Exclusion alone does not repair the shell opening or establish revision compatibility.",
     "scale_status": "width_matched_visual_proxy_not_calibrated_geometry",
-    "harness": "scripts/scale_visual_candidate.py, serialized vertex roundtrip and assembly width checks",
+    "harness": "scripts/archive/scale_visual_candidate.py, serialized vertex roundtrip and assembly width checks",
     "joint_frames": null,
     "contact_approved": false
   }

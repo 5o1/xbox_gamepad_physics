@@ -15,7 +15,7 @@ except ImportError:
 class SphereFitTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        path = Path(__file__).resolve().parents[1] / "scripts/fit_stick_geometry.py"
+        path = Path(__file__).resolve().parents[2] / "scripts/archive/fit_stick_geometry.py"
         spec = importlib.util.spec_from_file_location("fit", path)
         cls.fit = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(cls.fit)

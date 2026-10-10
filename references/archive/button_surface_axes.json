@@ -6,7 +6,7 @@
   "method": "Uniform triangle-surface covariance followed by symmetric eigendecomposition, rather than equally weighted mesh vertices. CGAL documents triangle-area weighting and continuous-object PCA; implementation here is NumPy, not CGAL.",
   "derivation": "For uniform triangle barycentric coordinates, E[li]=1/3, E[li^2]=1/6, E[li*lj]=1/12. For centered vertices vi and s=sum vi, E[xx^T]=(sum vi vi^T+s s^T)/12. Weight each triangle by its area and sum. Center coordinates before forming moments.",
   "scope": "All four named visual layers of each ABXY button in the existing width-scaled candidate. Every mesh SHA256 is checked against the inventory.",
-  "script": "scripts/button_surface_axes.py",
+  "script": "scripts/archive/button_surface_axes.py",
   "harness": "tests/test_button_surface_axes.py: analytic rectangle covariance, subdivision invariance, rigid transform covariance, degenerate/nonfinite rejection; 3 tests passed in existing GPU environment",
   "result": "build/experiments/button_surface_axes.json",
   "observations": [

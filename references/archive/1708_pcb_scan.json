@@ -17,7 +17,7 @@
   "license": null,
   "reuse_scope": "Reference image retained separately; no claim of open CAD licensing or permission to redistribute derived textures.",
   "registration_attempt": {
-    "script": "scripts/register_pcb.py",
+    "script": "scripts/archive/register_pcb.py",
     "method_reference": "https://docs.opencv.org/4.x/d1/de0/tutorial_py_feature_homography.html",
     "settings": "SIFT, exact BF L2 matching, tutorial ratio 0.7 and RANSAC threshold 5 px; seed 0. Unique destination matches; every third source-x-sorted match withheld before fitting. These are diagnostic algorithm settings, not mechanical tolerances.",
     "normal_result": "build/experiments/pcb_registration_v1.json: 17 correspondences, 11 training, 6 held out, 6 training inliers; held-out median error 315.726 px",
@@ -26,7 +26,7 @@
   },
   "manual_registration": {
     "annotations": "references/archive/pcb_hole_correspondences.json",
-    "script": "scripts/fit_pcb_holes.py",
+    "script": "scripts/archive/fit_pcb_holes.py",
     "result": "build/experiments/pcb_holes_v1.json",
     "fit": "Four outer mounting holes; direct homography without robust rejection",
     "held_out": "Two inner holes and SW3 contact center, errors approximately 1.80, 5.97, 1.77 photo pixels",

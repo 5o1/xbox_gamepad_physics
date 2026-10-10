@@ -6,10 +6,10 @@ import unittest
 import xml.etree.ElementTree as ET
 
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 SPEC = importlib.util.spec_from_file_location(
     "render_robotwin_sphere_contact_suite",
-    ROOT / "scripts/render_robotwin_sphere_contact_suite.py",
+    ROOT / "scripts/archive/render_robotwin_sphere_contact_suite.py",
 )
 MODULE = importlib.util.module_from_spec(SPEC)
 sys.modules[SPEC.name] = MODULE
@@ -56,7 +56,7 @@ class RobotwinContactSuiteTest(unittest.TestCase):
         total = sum(counts.values())
         self.assertEqual(MODULE.frame_phase(0, **counts), ("ready", 0.0))
         self.assertEqual(MODULE.frame_phase(total - 1, **counts), ("release / passive return", 0.0))
-        source = (ROOT / "scripts/render_robotwin_sphere_contact_suite.py").read_text()
+        source = (ROOT / "scripts/archive/render_robotwin_sphere_contact_suite.py").read_text()
         self.assertNotIn("set_gamepad_targets(", source)
         self.assertNotIn("set_gamepad_state(", source)
 

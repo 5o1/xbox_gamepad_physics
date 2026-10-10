@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {toCoordinate,toSignal} from '../scripts/coordinate_mapping.mjs';
+import {toCoordinate,toSignal} from '../../scripts/archive/coordinate_mapping.mjs';
 
 test('synthetic axis mapping roundtrips neutral and endpoints',()=>{
   for(const value of [-1,-.5,0,.5,1]){

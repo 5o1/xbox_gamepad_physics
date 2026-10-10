@@ -55,9 +55,9 @@
     "delivery_archive": "build/experiments/robotwin_sphere_contact_review/review_delivery.tar.gz"
   },
   "source_scripts": [
-    "scripts/render_robotwin_sphere_contact_suite.py",
-    "scripts/capture_gamepad_overlay_demo.mjs",
-    "scripts/assemble_robotwin_sphere_contact_suite.py"
+    "scripts/archive/render_robotwin_sphere_contact_suite.py",
+    "scripts/archive/capture_gamepad_overlay_demo.mjs",
+    "scripts/archive/assemble_robotwin_sphere_contact_suite.py"
   ],
   "not_validated": [
     "user visual acceptance",

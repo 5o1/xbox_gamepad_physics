@@ -22,7 +22,7 @@
     "approval_error_threshold_m": null,
     "shell_policy": "Do not convexify shell as one body: control openings and internal clearances have not been verified",
     "other_controls": "D-pad, sticks, shoulders and triggers not covered by this candidate algorithm",
-    "harness": "scripts/build_button_colliders.py and tests/test_collision.py",
+    "harness": "scripts/archive/build_button_colliders.py and tests/test_collision.py",
     "numerical_tolerance": "128 * float64 machine epsilon * max absolute source coordinate; roundoff check only, not a physical contact tolerance",
     "allowed_use": "geometry inspection only; no mass, contact material or simulator default assignments"
   },
@@ -32,7 +32,7 @@
     "version_scope": "Online API documentation currently 5.1.1; executed implementation version is recorded in results and tested on synthetic geometry",
     "grouping": "For each ABXY, compare Button-only hull to named letter, Button, Interior and Interior2 objects together. This grouping is diagnostic, not approved mechanical connectivity.",
     "method": "Same vertex/face-centroid sampling as the original audit, now retaining the maximum-distance point pair and target triangle for inspection",
-    "harness": "scripts/audit_button_assembly.py; tests/test_collision.py::test_distance_witness_reproduces_reported_maximum",
+    "harness": "scripts/archive/audit_button_assembly.py; tests/test_collision.py::test_distance_witness_reproduces_reported_maximum",
     "acceptance_threshold": null
   }
 }

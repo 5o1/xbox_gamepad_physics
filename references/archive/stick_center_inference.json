@@ -7,7 +7,7 @@
   "selection": "Whole LeftThumb/RightThumb and Joystick-Left/Right-Ring objects; additionally every exact-weld connected component when split. No hand-picked residual threshold or inlier rejection.",
   "validation": "Evaluate vertex radial residuals plus triangle-centroid radial residuals. Centroids are a geometric discretization check, not independent measured validation data.",
   "numerical_controls": "Normalized solver ftol/xtol/gtol 1e-12; numerical convergence only, not a physical acceptance tolerance",
-  "harness": ["scripts/fit_stick_geometry.py", "tests/test_sphere_fit.py"],
+  "harness": ["scripts/archive/fit_stick_geometry.py", "tests/test_sphere_fit.py"],
   "result": "build/experiments/stick_sphere_fit.json",
   "decision": "Do not choose the best-looking center: components produce very different centers and small residual alone does not identify a hinge. Retain target pivot null.",
   "next_evidence": "1708 mechanical drawing or calibrated multi-pose geometry/photographs from the same stick; force measurements alone do not locate its pivot.",

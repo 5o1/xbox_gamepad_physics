@@ -1,5 +1,5 @@
 // Software fixtures only. This surrogate is independent of the browser viewer.
-import {toCoordinate,toSignal} from '../scripts/coordinate_mapping.mjs';
+import {toCoordinate,toSignal} from '../../scripts/archive/coordinate_mapping.mjs';
 const joints=Array.from({length:21},(_,channel)=>({channel,
   q0:channel<4?-.2:0, q1:channel<4?.3:.004,
   evidence:'Synthetic cross-language fixture, NOT Xbox parameters'}));

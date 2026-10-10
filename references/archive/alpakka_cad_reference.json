@@ -20,6 +20,6 @@
     "The four inspected part sources do not define mass, density, inertia, friction, damping, force-displacement law or simulation joints. This is useful manufacturing CAD, not a ready-made validated dynamics asset.",
     "Alpakka D-pad button geometry is not transferable to the single cross-shaped Xbox 1708 cap."
   ],
-  "harness": "scripts/audit_cad_reference.py checks every downloaded file hash and named numeric literals without importing/executing third-party CAD",
+  "harness": "scripts/archive/audit_cad_reference.py checks every downloaded file hash and named numeric literals without importing/executing third-party CAD",
   "unknown_target_values": {"mass":null,"inertia":null,"button_travel":null,"force_curve":null,"pivot":null}
 }

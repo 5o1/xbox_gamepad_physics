@@ -14,5 +14,5 @@
   "method": "Least-squares y=a*millimeters+b on training ruler marks, report held-out residuals. Divide shaft-center vertical pixel separation by a. No homography or 3D pose estimate.",
   "physical_distance_m": null,
   "unresolved": ["ruler versus stick-top plane offset", "perspective and lens distortion", "stick neutral pose", "pixel landmark uncertainty", "registration to visual asset"],
-  "harness": "scripts/check_photo_layout.py and tests/test_photo_layout.py"
+  "harness": "scripts/archive/check_photo_layout.py and tests/test_photo_layout.py"
 }

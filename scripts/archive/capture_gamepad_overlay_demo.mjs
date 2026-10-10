@@ -9,7 +9,7 @@ import {
   connectCdp,
   describeRuntimeException,
   evaluateCdp,
-} from '../tests/cdp_client.mjs';
+} from '../../tests/cdp_client.mjs';
 
 
 const viewerUrl = process.argv[2] ?? 'http://127.0.0.1:8770/viewer/gamepad_overlay/index.html';

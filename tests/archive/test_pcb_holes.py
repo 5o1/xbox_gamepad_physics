@@ -4,7 +4,7 @@ import unittest
 
 AVAILABLE = all(importlib.util.find_spec(name) for name in ('cv2', 'numpy'))
 if AVAILABLE:
-    spec = importlib.util.spec_from_file_location('holes', Path(__file__).parents[1] / 'scripts/fit_pcb_holes.py')
+    spec = importlib.util.spec_from_file_location('holes', Path(__file__).parents[2] / 'scripts/archive/fit_pcb_holes.py')
     holes = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(holes)
 
