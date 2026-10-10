@@ -24,21 +24,8 @@ setup(
     python_requires=">=3.10",
     package_dir={"": "src"},
     packages=find_packages("src"),
-    include_package_data=True,
-    package_data={
-        "xbox_gamepad_physics": [
-            "resource_data/common/xbox_one_s/visual/*",
-            "resource_data/common/xbox_one_s/visual/textures/*",
-            "resource_data/mujoco/visual_v0/*",
-            "resource_data/mujoco/visual_v0/meshes/*",
-            "resource_data/mujoco/visual_v0/textures/*",
-            "resource_data/*/*/*",
-            "resource_data/*/*/visual/*",
-            "resource_data/*/*/visual/**/*",
-            "resource_data/*/*/collision/*",
-            "resource_data/*/*/collision/**/*",
-        ]
-    },
+    include_package_data=False,
+    package_data={"xbox_gamepad_physics": ["_resource_lock.json"]},
     extras_require={
         "build": ["numpy>=1.24", "trimesh>=4.4", "Pillow>=9"],
         "mujoco": ["mujoco==3.15.0", "typing_extensions>=4.16"],

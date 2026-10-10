@@ -11,6 +11,11 @@ def load(relative_path):
 
 
 def resolve_from_assets(relative_path):
+    # "resource:" paths are built resources, relative to the resolved resource root.
+    if relative_path.startswith("resource:"):
+        from xbox_gamepad_physics.resources import resource_root
+
+        return resource_root() / relative_path.removeprefix("resource:")
     return (ROOT / "assets" / relative_path).resolve()
 
 

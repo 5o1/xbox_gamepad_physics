@@ -18,25 +18,14 @@ robotwin = ["sapien==3.0.0b1"]
 xbox-gamepad-physics = "xbox_gamepad_physics.cli:main"
 
 [tool.setuptools]
-include-package-data = true
+include-package-data = false
 
 [tool.setuptools.packages.find]
 where = ["src"]
 
+# Code only: the release-time lock is the sole data file; resources come from the release zip or a local build.
 [tool.setuptools.package-data]
-xbox_gamepad_physics = [
-  "resource_data/common/xbox_one_s/visual/*",
-  "resource_data/common/xbox_one_s/visual/textures/*",
-  "resource_data/common/xbox_one_s/motion/*",
-  "resource_data/mujoco/visual_v0/*",
-  "resource_data/mujoco/visual_v0/meshes/*",
-  "resource_data/mujoco/visual_v0/textures/*",
-  "resource_data/*/*/*",
-  "resource_data/*/*/visual/*",
-  "resource_data/*/*/visual/**/*",
-  "resource_data/*/*/collision/*",
-  "resource_data/*/*/collision/**/*",
-]
+xbox_gamepad_physics = ["_resource_lock.json"]
 
 [tool.xbox-gamepad-physics]
 full-test-input = "requirements/test.in"

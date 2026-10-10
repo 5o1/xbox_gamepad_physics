@@ -18,9 +18,8 @@ from xbox_gamepad_physics.state import W3C_STANDARD_TO_CANONICAL  # noqa: E402
 SOURCE = ROOT / "references" / "full_controls.json"
 DEFAULT_OUTPUT = (
     ROOT
-    / "src"
-    / "xbox_gamepad_physics"
-    / "resource_data"
+    / "build"
+    / "standalone"
     / "common"
     / "xbox_one_s"
     / "motion"

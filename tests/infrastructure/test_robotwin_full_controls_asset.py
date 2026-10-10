@@ -22,14 +22,17 @@ from build_common_motion import build as build_motion
 from xbox_gamepad_physics.robotwin.loader import _validated_description  # noqa: E402
 
 
-PROFILE = (
-    ROOT
-    / "src"
-    / "xbox_gamepad_physics"
-    / "resource_data"
-    / "robotwin"
-    / "full_controls"
-)
+def _profile() -> Path:
+    """The full_controls profile in the resolved resource root (built on first use)."""
+    from xbox_gamepad_physics.resources import resource_root
+
+    return resource_root() / "robotwin" / "full_controls"
+
+
+def _visual_root() -> Path:
+    from xbox_gamepad_physics.resources import resource_root
+
+    return resource_root() / "common" / "xbox_one_s" / "visual"
 
 
 class RoboTwinFullControlsAssetTest(unittest.TestCase):
@@ -40,7 +43,7 @@ class RoboTwinFullControlsAssetTest(unittest.TestCase):
             generated = root / "robotwin/full_controls"
             motion_path = root / "common/xbox_one_s/motion/full_controls.json"
             contract = build_motion(motion_path)
-            build(generated, common_motion=motion_path)
+            build(generated, common_motion=motion_path, visual_root=_visual_root())
             manifest = json.loads((generated / "manifest.json").read_text())
             for relative in manifest["required_files"]:
                 self.assertTrue((generated / relative).is_file(), relative)
@@ -52,13 +55,13 @@ class RoboTwinFullControlsAssetTest(unittest.TestCase):
             self.assertEqual(len(description.signal_controller.available_channels), 21)
 
     def test_joint_tree_and_controller_cover_all_device_controls(self):
-        manifest = json.loads((PROFILE / "manifest.json").read_text())
+        manifest = json.loads((_profile() / "manifest.json").read_text())
         self.assertEqual(
             manifest["motion_contract"],
             "common/xbox_one_s/motion/full_controls.json",
         )
         self.assertNotIn("state_mapping", manifest)
-        root = ET.parse(PROFILE / "mobility.urdf").getroot()
+        root = ET.parse(_profile() / "mobility.urdf").getroot()
         links = root.findall("link")
         joints = root.findall("joint")
         self.assertEqual(len(links), 21)
@@ -130,7 +133,7 @@ class RoboTwinFullControlsAssetTest(unittest.TestCase):
         )
 
     def test_mass_budget_matches_whole_controller_estimate(self):
-        collision = json.loads((PROFILE / "collision" / "manifest.json").read_text())
+        collision = json.loads((_profile() / "collision" / "manifest.json").read_text())
         self.assertAlmostEqual(sum(collision["mass_kg"].values()), 0.28, places=12)
 
 if __name__ == "__main__":

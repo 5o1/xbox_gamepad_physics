@@ -18,9 +18,8 @@ ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "references" / "full_controls.json"
 VISUAL_ROOT = (
     ROOT
-    / "src"
-    / "xbox_gamepad_physics"
-    / "resource_data"
+    / "build"
+    / "resources"
     / "common"
     / "xbox_one_s"
     / "visual"
@@ -28,9 +27,8 @@ VISUAL_ROOT = (
 LEFT_STICK_SOURCE = ROOT / "references" / "left_stick.json"
 COMMON_MOTION = (
     ROOT
-    / "src"
-    / "xbox_gamepad_physics"
-    / "resource_data"
+    / "build"
+    / "resources"
     / "common"
     / "xbox_one_s"
     / "motion"
@@ -38,9 +36,8 @@ COMMON_MOTION = (
 )
 DEFAULT_OUTPUT = (
     ROOT
-    / "src"
-    / "xbox_gamepad_physics"
-    / "resource_data"
+    / "build"
+    / "standalone"
     / "robotwin"
     / "full_controls"
 )

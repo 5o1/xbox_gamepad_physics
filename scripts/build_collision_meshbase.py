@@ -21,7 +21,7 @@ import trimesh
 
 
 ROOT = Path(__file__).resolve().parents[1]
-VISUAL_REL = "src/xbox_gamepad_physics/resource_data/common/xbox_one_s/visual"
+VISUAL_REL = "build/resources/common/xbox_one_s/visual"  # run build-resources first
 GENERATOR_REL = "scripts/build_collision_meshbase.py"
 DEFAULT_OUTPUT = ROOT / "assets/xbox_one_s/collision_meshbase"
 
@@ -370,7 +370,7 @@ def build(output: Path = DEFAULT_OUTPUT, visual: Path | None = None) -> dict:
         "meshes": meshes,
         "derived_from": {
             "source": "assets/xbox_one_s/source/xbox_one_s_controllergamepad_animated.glb "
-                      f"(static bake in {VISUAL_REL})",
+                      "(static bake in src/xbox_gamepad_physics/resource_data/common/xbox_one_s/visual)",
             "generator": GENERATOR_REL,
             "date": PROCESS_DATE,
         },

@@ -6,7 +6,8 @@
     "metadata_links": "asset_index_directory",
     "visual_manifest_path": "repository_root",
     "viewer_adapter_acceptance": "repository_root",
-    "external_gpu_paths": "absolute_external"
+    "external_gpu_paths": "absolute_external",
+    "built_resources": "resource:<path> is relative to the resolved resource root (build-resources)"
   },
   "target_hardware": {
     "model": "Xbox One S",
@@ -249,7 +250,7 @@
       "full_controller_ready": false,
       "hardware_calibrated": false,
       "source": "../references/left_stick.json",
-      "manifest": "../src/xbox_gamepad_physics/resource_data/robotwin/left_stick/manifest.json",
+      "manifest": "resource:robotwin/left_stick/manifest.json",
       "limitations": [
         "Mass, damping and contact material include explicitly labeled simulation estimates.",
         "The reference stick component has not been identified as the installed Xbox part.",
@@ -265,7 +266,7 @@
       "status": "implemented_pending_user_review_and_hardware_calibration",
       "hardware_calibrated": false,
       "source": "../references/full_controls.json",
-      "manifest": "../src/xbox_gamepad_physics/resource_data/robotwin/full_controls/manifest.json",
+      "manifest": "resource:robotwin/full_controls/manifest.json",
       "consumer_integration": "../references/robotwin_backend_validation.json"
     },
     "mujoco_full_controls": {

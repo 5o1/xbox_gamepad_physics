@@ -16,14 +16,15 @@ Python 3.10 is the baseline (RoboTwin/SAPIEN env). Node 22 (`.node-version`) for
 # Setup
 python3.10 -m venv .venv && .venv/bin/python -m pip install -r requirements/gpu-tested.freeze.txt
 npm ci
-python3 -m pip install -e .                          # add ".[mujoco]" / ".[robotwin]" for backends
+python3 -m pip install -e ".[build]"                # add ".[mujoco]" / ".[robotwin]" for backends
+python3 -m xbox_gamepad_physics build-resources     # build the resource DAG into build/resources/ (--force)
 python3 -m pip install -e . --no-build-isolation     # offline RoboTwin env (setuptools 59, uses setup.py)
 
 # Full regression (unittest discover over tests/ + node --test tests/test_*.mjs)
 python3 scripts/run_regression.py fast               # == npm test
 
 # Single test
-python3 -m unittest tests.infrastructure.test_mujoco_full_controls_asset -v
+python3 -m unittest tests.infrastructure.test_resource_resolution -v
 python3 -m unittest tests.test_kinematics.<Class>.<test_method>
 node --test tests/test_drag2d.mjs
 
@@ -45,22 +46,21 @@ MuJoCo/Filament work uses a separate Python 3.12 env (see `docs/importing.md`); 
 
 ## Architecture
 
-**Packaged resources are generated, then frozen.** Everything under `src/xbox_gamepad_physics/resource_data/` is build output checked into Git, produced by scripts in `scripts/` in this order:
+**Resources are built, not committed.** Runtime resources are generated at build time from the sources in Git (`assets/`, `references/`, `specs/`, the frozen MuJoCo tree) by the explicit DAG in `scripts/build_resources.py`. Each node calls an existing generator's `build(output=..., <inputs>=...)`. The resolver in `src/xbox_gamepad_physics/resources.py` picks the resource root in this order:
 
-```sh
-python scripts/build_common_motion.py          # common/xbox_one_s/motion/full_controls.json
-python scripts/build_robotwin_full_controls.py # robotwin/full_controls/ (URDF + manifest)
-python scripts/build_mujoco_full_controls.py   # mujoco/full_controls/ (MJCF + manifest)
-```
+1. `XBOX_GAMEPAD_PHYSICS_RESOURCES`
+2. `<repo>/build/resources/` in a checkout
+3. `<project>/.xbox_gamepad_physics/resources/` when installed as a dependency
 
-`assets/xbox_one_s/collision_meshbase/` is a frozen, reviewed source snapshot (closed per-component meshes) for future collision generation, not a rebuild step. `scripts/build_collision_meshbase.py` records how it was made and only accepts the reviewed source mesh; upstream mesh changes do not require regenerating it.
+Missing or stale resources are rebuilt locally, or downloaded as the release zip and checked against `_resource_lock.json`, which is generated only by `scripts/package_release_resources.py` and git-ignored. Staleness uses private per-node stamps of input contents; never assert hashes in tests or manifests. Tests build into a temp dir and inspect structure, they do not byte-diff. The wheel is code only. Running a generator directly writes to `build/standalone/` and reads inputs from `build/resources/`.
 
-Tests in `tests/infrastructure/test_*_asset.py` rebuild into a temp dir and diff against the checked-in files (`test_*_is_fresh`). After changing a build script, an evidence file in `references/`, or the motion contract, rerun the affected builders and commit the regenerated resources together. Never hand-edit generated URDF/MJCF/manifests.
+- MuJoCo is frozen: `src/xbox_gamepad_physics/resource_data/mujoco/` stays in Git and is copied as-is. Its generators read common resources that are no longer tracked, so its freshness test is skipped.
+- `assets/xbox_one_s/collision_meshbase/` is a frozen, reviewed source snapshot (closed per-component meshes) for future collision generation, not a rebuild step. `scripts/build_collision_meshbase.py` records how it was made and only accepts the reviewed source mesh; upstream mesh changes do not require regenerating it.
 
 **Layering:**
 - `references/*.json` — evidence records (source, units, applicability, derivation, uncertainty). Builders read physical parameters from here (notably `references/full_controls.json`, `references/catalog.json`). `specs/` holds target specs and explicit unknowns; `assets/asset_index.json` is the source of truth for candidate/admission status.
-- `resource_data/common/xbox_one_s/` — backend-neutral visual (glTF + 2K textures) and the **motion contract** (`motion/full_controls.json`: joint topology, per-axis ranges, radial constraints, signal bindings). Both backends and the signal controller read this one contract; backend manifests do not duplicate motion limits.
-- `resource_data/<backend>/<profile>/manifest.json` — validated by `schemas/backend_manifest.schema.json` and `profiles.py`; declares readiness flags and required files. Profiles: `full_controls` (both backends, 20 active joints) and `left_stick` (RoboTwin only).
+- `common/xbox_one_s/` (in the resource root) — backend-neutral visual (glTF + 2K textures) and the **motion contract** (`motion/full_controls.json`: joint topology, per-axis ranges, radial constraints, signal bindings). Both backends and the signal controller read this one contract; backend manifests do not duplicate motion limits.
+- `<backend>/<profile>/manifest.json` (in the resource root) — validated by `schemas/backend_manifest.schema.json` and `profiles.py`; declares readiness flags and required files. Profiles: `full_controls` (both backends, 20 active joints) and `left_stick` (RoboTwin only).
 - `state.py` — versioned 32-channel `sdl3-gamepad-core-v1` tensor (6 SDL3 axes + 26 buttons) with `available_mask`, `task_mask`, `device_id`. Xbox One S uses 21 channels; Pair is a physical event, not a game channel. Adapt by channel name, never by index. The browser side uses the 21-float W3C layout only at its boundary (`W3C_STANDARD_TO_CANONICAL`).
 - `controller.py` — `GamepadSignalController`: backend-independent mapping between named joint positions and `GamepadState` (normalization, saturation, dual-stick radial clamp, D-pad split, deadzones, masks), both directions.
 - `robotwin/` and `mujoco/` — loaders that consume a caller-owned scene/`MjSpec` and pose. Loaders gate on manifest readiness, file presence, explicit inertials, and joint-name agreement; public handles expose joints by name only (qpos order is not API). The package never imports RoboTwin task modules or chooses table/fixture poses.
@@ -72,5 +72,5 @@ Tests in `tests/infrastructure/test_*_asset.py` rebuild into a temp dir and diff
 ## Conventions
 
 - Outputs of experiments, review videos and generated viewer kinematics go under `build/` (git-ignored); they describe one run, not current HEAD.
-- `pyproject.toml` is canonical package metadata; `setup.py` is a mirror for setuptools 59 — keep `package_data` in sync when adding resource directories.
+- `pyproject.toml` is canonical package metadata (setup.py reads its version); `setup.py` is a mirror for setuptools 59 — keep dependencies/extras in sync.
 - Commit messages use conventional-commit prefixes (`feat:`, `fix:`, `refactor:`, `docs:`, `chore:`).

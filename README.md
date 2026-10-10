@@ -143,10 +143,15 @@ python3 scripts/run_regression.py fast
 检查可安装包和双后端资源状态：
 
 ```sh
-python3 -m pip install -e .
+python3 -m pip install -e ".[build]"
+python3 -m xbox_gamepad_physics build-resources
 python3 -m xbox_gamepad_physics verify \
   --backend all --profile full_controls
 ```
+
+运行时资源不进入 Git，也不打包进 wheel：仓库检出中由 `build-resources` 按依赖图生成到
+`build/resources/`，输入不变时跳过；作为依赖安装时自动下载 GitHub Release 的资源 zip。
+解析顺序、共享缓存和下载说明见 [RoboTwin 与 MuJoCo 导入约定](docs/importing.md)。
 
 离线的既有 RoboTwin 环境使用 `python3 -m pip install -e . --no-build-isolation`，仓库中的
 `setup.py` 兼容其 Python 3.10 / setuptools 59 安装链。

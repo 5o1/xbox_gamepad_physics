@@ -30,7 +30,7 @@ def read_glb(path):
     return document,data[28+length:28+length+binary_length]
 
 
-DEFAULT_OUTPUT = ROOT/'src/xbox_gamepad_physics/resource_data/common/xbox_one_s/visual'
+DEFAULT_OUTPUT = ROOT/'build/standalone/common/xbox_one_s/visual'
 
 
 def build(output: Path = DEFAULT_OUTPUT, *, kinematics: Path | None = None):

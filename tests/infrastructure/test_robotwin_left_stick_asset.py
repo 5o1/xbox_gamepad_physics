@@ -18,14 +18,17 @@ from xbox_gamepad_physics.profiles import require_physics_ready  # noqa: E402
 from xbox_gamepad_physics.robotwin.loader import _validated_description  # noqa: E402
 
 
-PROFILE = (
-    ROOT
-    / "src"
-    / "xbox_gamepad_physics"
-    / "resource_data"
-    / "robotwin"
-    / "left_stick"
-)
+def _profile() -> Path:
+    """The left_stick profile in the resolved resource root (built on first use)."""
+    from xbox_gamepad_physics.resources import resource_root
+
+    return resource_root() / "robotwin" / "left_stick"
+
+
+def _visual_root() -> Path:
+    from xbox_gamepad_physics.resources import resource_root
+
+    return resource_root() / "common" / "xbox_one_s" / "visual"
 
 
 class RoboTwinLeftStickAssetTest(unittest.TestCase):
@@ -33,7 +36,7 @@ class RoboTwinLeftStickAssetTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
             generated = root / "robotwin/left_stick"
-            build(generated)
+            build(generated, visual_manifest=_visual_root() / "manifest.json")
             manifest = json.loads((generated / "manifest.json").read_text())
             for relative in manifest["required_files"]:
                 self.assertTrue((generated / relative).is_file(), relative)
@@ -64,7 +67,7 @@ class RoboTwinLeftStickAssetTest(unittest.TestCase):
         )
 
     def test_urdf_contains_explicit_physics_and_contact_geometry(self):
-        root = ET.parse(PROFILE / "mobility.urdf").getroot()
+        root = ET.parse(_profile() / "mobility.urdf").getroot()
         links = {link.get("name"): link for link in root.findall("link")}
         self.assertEqual(
             set(links), {"controller_body", "left_stick_x_frame", "left_stick"}

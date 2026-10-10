@@ -20,7 +20,12 @@ PDFs and large intermediates remain outside this Git repository.
   The static derivatives evaluate source frame 0 and bake transforms into world
   coordinates without decimation or scale fitting. Materials and textures are
   embedded in the static GLB. Attribution accompanies the files in
-  `assets/xbox_one_s/README.md`.
+  `assets/xbox_one_s/README.md`. The closed per-component collision mesh base in
+  `assets/xbox_one_s/collision_meshbase/` is a further derivative; its changes are
+  listed in that directory's `README.md`.
+- Release resource zip: the GitHub release zip contains these asset files, the
+  resources built from them and this notice; attribution and change notes travel
+  with it.
 - Repository derivatives: rendered views and material/lighting comparisons in
   `build/experiments/xbox_one_s_batonyrobson_UNVERIFIED/`,
   `build/experiments/xbox_official_import_comparison/`, and

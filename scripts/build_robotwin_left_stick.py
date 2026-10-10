@@ -15,9 +15,8 @@ ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "references" / "left_stick.json"
 VISUAL_MANIFEST = (
     ROOT
-    / "src"
-    / "xbox_gamepad_physics"
-    / "resource_data"
+    / "build"
+    / "resources"
     / "common"
     / "xbox_one_s"
     / "visual"
@@ -25,9 +24,8 @@ VISUAL_MANIFEST = (
 )
 DEFAULT_OUTPUT = (
     ROOT
-    / "src"
-    / "xbox_gamepad_physics"
-    / "resource_data"
+    / "build"
+    / "standalone"
     / "robotwin"
     / "left_stick"
 )

@@ -1,17 +1,42 @@
 # RoboTwin 与 MuJoCo 导入约定
 
-本仓库以 Python 包形式提供 Xbox One S 资产。运行时资源位于
-`xbox_gamepad_physics/resource_data/<backend>/<profile>/`，加载器通过包内绝对路径访问，
-调用者的当前工作目录不参与资源解析。
+本仓库以 Python 包形式提供 Xbox One S 资产。wheel 只包含代码；运行时资源（运动契约、
+视觉、RoboTwin 与 MuJoCo profile）在构建时生成，或从 GitHub Release 的资源 zip 下载，
+统一缓存在资源根目录下的 `<backend>/<profile>/`。
+
+## 资源根目录
+
+加载器按以下顺序确定资源根目录：
+
+1. 环境变量 `XBOX_GAMEPAD_PHYSICS_RESOURCES` 指定的目录。
+2. 在仓库检出中运行时：`<仓库>/build/resources/`。
+3. 作为依赖安装时：从当前目录向上找到含 `pyproject.toml` 或 `.git` 的工程根，使用
+   `<工程根>/.xbox_gamepad_physics/resources/`（请加入该工程的 `.gitignore`）。找不到工程根时报错。
+
+资源缺失或过期时自动处理：仓库检出中在本地按依赖图构建（需要 `[build]` extra），
+否则下载与包版本对应的 Release zip，校验 SHA-256 后解压。下载使用标准库默认的网络
+设置，遵循 `HTTPS_PROXY`、`NO_PROXY` 等标准代理变量。结果写入后不再重复构建：
+各构建节点记录输入内容，输入不变时直接跳过（本地实测第二次构建约 0.03 秒）。
+缓存不会写入用户主目录或 site-packages。
+
+多个实验共用同一台机器（例如 GPU 节点）时，可让它们指向同一缓存，只构建一次：
+
+```sh
+export XBOX_GAMEPAD_PHYSICS_RESOURCES=/path/to/shared/xbox_gamepad_physics_resources
+```
 
 ## 安装与状态检查
 
 基础包不强制安装仿真器：
 
 ```sh
-python -m pip install -e .
+python -m pip install -e ".[build]"
+python -m xbox_gamepad_physics build-resources
 python -m xbox_gamepad_physics status
 ```
+
+`build-resources` 也会在首次加载资源时自动执行；手动运行便于提前构建和查看进度，
+`--force` 强制全部重建。
 
 已有 RoboTwin 环境需要保持离线安装时，可以复用环境中的 setuptools：
 

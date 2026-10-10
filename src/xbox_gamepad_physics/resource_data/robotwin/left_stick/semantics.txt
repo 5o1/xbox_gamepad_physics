@@ -1,3 +1,0 @@
-controller_body fixed controller_body
-left_stick_x_frame hinge left_stick_gimbal
-left_stick hinge left_stick
