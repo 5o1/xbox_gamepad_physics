@@ -1,7 +1,7 @@
 {
   "status": "manual_correspondence_hypothesis",
-  "scan_record": "references/1708_pcb_scan.json",
-  "photo_record": "references/fcc_p7_landmarks.json",
+  "scan_record": "references/archive/1708_pcb_scan.json",
+  "photo_record": "references/archive/fcc_p7_landmarks.json",
   "coordinate_units": "pixels, original recorded image sizes, top-left origin",
   "selection": "Four outer mounting holes chosen by PCB outline; two inner mounting holes and a exposed circular contact reserved before fitting. No matching threshold search.",
   "fit": [

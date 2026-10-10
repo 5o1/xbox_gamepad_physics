@@ -4,7 +4,7 @@
 游戏强化学习、VLA 和机械臂控制不在这里实现。
 
 当前只分发 Xbox One S 的模型资产。Switch Pro 和旧 Xbox Series X|S 候选模型保存在
-GPU 节点，存档位置见 `references/switch_pro_candidates.json` 和 `assets/asset_index.json`。
+GPU 节点，存档位置见 `references/archive/switch_pro_candidates.json` 和 `assets/asset_index.json`。
 仓库保留相关历史报告、图片和来源记录；旧型号已退出查看器可选入口。
 
 ## 当前状态
