@@ -197,6 +197,10 @@ assert (resources.resource_root() / "test/profile/second.txt").is_file()
 class ReleaseDownloadTest(unittest.TestCase):
     setUp = ResourceResolutionTest.setUp
     def _release(self, base):
+        # Pin the version: a checkout run via PYTHONPATH has no installed metadata.
+        patcher = mock.patch.object(resources, "package_version", return_value="0.0.0+fixture")
+        patcher.start()
+        self.addCleanup(patcher.stop)
         served = base / "http"
         served.mkdir()
         archive = served / "release.zip"
@@ -294,6 +298,12 @@ class ReleaseDownloadTest(unittest.TestCase):
             shutil.copytree(ROOT / "src/xbox_gamepad_physics", target,
                             ignore=shutil.ignore_patterns("resource_data", "__pycache__", "_resource_lock.json"))
             shutil.copy2(package / "_resource_lock.json", target)
+            # A real install carries distribution metadata; the code reads its version from it.
+            metadata = installed / "xbox_gamepad_physics-0.0.0+fixture.dist-info"
+            metadata.mkdir()
+            (metadata / "METADATA").write_text(
+                "Metadata-Version: 2.1\nName: xbox-gamepad-physics\nVersion: 0.0.0+fixture\n"
+            )
             before = sorted(p.relative_to(installed).as_posix() for p in installed.rglob("*"))
             for p in installed.rglob("*"):
                 p.chmod(0o555 if p.is_dir() else 0o444)

@@ -16,7 +16,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 from build_robotwin_left_stick import build  # noqa: E402
 from xbox_gamepad_physics.profiles import require_physics_ready  # noqa: E402
 from xbox_gamepad_physics.robotwin.loader import _validated_description  # noqa: E402
-from tests.infrastructure.built_profile_checks import check_explicit_urdf_physics, check_manifest_ranges  # noqa: E402
+from .built_profile_checks import check_explicit_urdf_physics, check_manifest_ranges  # noqa: E402
 
 
 def _profile() -> Path:

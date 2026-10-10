@@ -20,7 +20,7 @@ if BUILD_DEPS:
     from build_robotwin_full_controls import build  # noqa: E402
 from build_common_motion import build as build_motion
 from xbox_gamepad_physics.robotwin.loader import _validated_description  # noqa: E402
-from tests.infrastructure.built_profile_checks import check_explicit_urdf_physics, check_manifest_ranges  # noqa: E402
+from .built_profile_checks import check_explicit_urdf_physics, check_manifest_ranges  # noqa: E402
 
 
 def _profile() -> Path:

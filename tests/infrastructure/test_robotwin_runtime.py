@@ -423,7 +423,7 @@ class RoboTwinRuntimeTest(unittest.TestCase):
     def test_built_profile_check_rejects_urdf_without_inertial(self):
         # Explicit physics is a build-time property of generated URDFs (asset tests),
         # not a per-load check; this keeps the rule itself covered.
-        from tests.infrastructure.built_profile_checks import check_explicit_urdf_physics
+        from .built_profile_checks import check_explicit_urdf_physics
 
         temporary = tempfile.TemporaryDirectory()
         self.addCleanup(temporary.cleanup)
@@ -436,7 +436,7 @@ class RoboTwinRuntimeTest(unittest.TestCase):
             check_explicit_urdf_physics(urdf)
 
     def test_built_profile_check_rejects_non_finite_joint_target(self):
-        from tests.infrastructure.built_profile_checks import check_manifest_ranges
+        from .built_profile_checks import check_manifest_ranges
 
         manifest = ready_manifest()
         manifest["joint_dynamics"][0]["target"] = float("nan")
