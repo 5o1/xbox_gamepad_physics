@@ -248,7 +248,4 @@ python3 scripts/serve_viewer.py \
 
 ## 下一步
 
-1. 按 `docs/pending_user_review.md` 测量并替换目标手柄参数。
-2. 统一检查完整控件的轴向、轴心、穿插和两个后端的外观。
-3. 用真实 Xbox One S 和鼠标分别驱动完整 profile，记录并发输入。
-4. 将完整 profile 接入机械臂任务与训练数据生成流程。
+当前计划和待办见 [计划](docs/plan.md)，完整过程与证据见[阶段报告](docs/reports/xbox_one_s_physics_asset_report.html)。

@@ -1,0 +1,168 @@
+{
+ "retained_candidates": [
+  {
+   "fingerprint": "b1be414a4f4eb241",
+   "reason": "范围说明：交代训练不在本仓库，属于背景"
+  },
+  {
+   "fingerprint": "130dce63912b8a27",
+   "reason": "记录负责人的决定、要求或确认，负责人已作主语"
+  },
+  {
+   "fingerprint": "8b3e5cf746396181",
+   "reason": "概念定义：说明软件或几何概念的行为，由概念或引擎作主语"
+  },
+  {
+   "fingerprint": "b65e4b0f4a3ad913",
+   "reason": "概念定义：说明软件或几何概念的行为，由概念或引擎作主语"
+  },
+  {
+   "fingerprint": "00b898ecaf8b84db",
+   "reason": "概念定义：说明软件或几何概念的行为，由概念或引擎作主语"
+  },
+  {
+   "fingerprint": "cf80709adcdb09c6",
+   "reason": "概念定义：说明软件或几何概念的行为，由概念或引擎作主语"
+  },
+  {
+   "fingerprint": "9d99384d1ea0c15b",
+   "reason": "概念定义：说明软件或几何概念的行为，由概念或引擎作主语"
+  },
+  {
+   "fingerprint": "5e85210f39803154",
+   "reason": "转述外部文档，句首已写明出处 [5]"
+  },
+  {
+   "fingerprint": "b4c9c0fb5929f800",
+   "reason": "说明外部指标 [21] 的计算方法，由指标作主语"
+  },
+  {
+   "fingerprint": "372b405da5f108ff",
+   "reason": "描述外部资产的属性，由资产作主语"
+  },
+  {
+   "fingerprint": "e4f5ae7605c542e8",
+   "reason": "记录负责人的决定、要求或确认，负责人已作主语"
+  },
+  {
+   "fingerprint": "16408bdc91df33a1",
+   "reason": "记录负责人的决定、要求或确认，负责人已作主语"
+  },
+  {
+   "fingerprint": "5110bfdc547ac7d0",
+   "reason": "记录负责人的决定、要求或确认，负责人已作主语"
+  },
+  {
+   "fingerprint": "d632360e177598bd",
+   "reason": "方法说明：解释表 2 指标的计算口径，由指标作主语"
+  },
+  {
+   "fingerprint": "d841c92d9aa51648",
+   "reason": "记录负责人的决定、要求或确认，负责人已作主语"
+  },
+  {
+   "fingerprint": "bcb0c5550fec4691",
+   "reason": "组首目的或组尾小结：复述本组上文已经标明责任者的结论或任务，不新增设计动作"
+  },
+  {
+   "fingerprint": "329f15f12695c3e4",
+   "reason": "组首目的或组尾小结：复述本组上文已经标明责任者的结论或任务，不新增设计动作"
+  },
+  {
+   "fingerprint": "b004b630c8c37780",
+   "reason": "记录早期产物及其缺失，推断部分已用“从文件名看”标明"
+  },
+  {
+   "fingerprint": "ab2d9bbd821594d5",
+   "reason": "记录负责人的决定、要求或确认，负责人已作主语"
+  },
+  {
+   "fingerprint": "52effeb874f0d85b",
+   "reason": "记录实验设置与表 3 说明，责任者已在表内逐行写明"
+  },
+  {
+   "fingerprint": "baedfb5bc6c6c211",
+   "reason": "记录实验设置与表 3 说明，责任者已在表内逐行写明"
+  },
+  {
+   "fingerprint": "2f5d8580d40db77f",
+   "reason": "记录负责人的决定、要求或确认，负责人已作主语"
+  },
+  {
+   "fingerprint": "86aa64199172099f",
+   "reason": "记录负责人的决定、要求或确认，负责人已作主语"
+  },
+  {
+   "fingerprint": "5bd5a05f0735fee1",
+   "reason": "记录负责人的决定、要求或确认，负责人已作主语"
+  },
+  {
+   "fingerprint": "d135bf736a5c59a9",
+   "reason": "记录负责人的决定、要求或确认，负责人已作主语"
+  },
+  {
+   "fingerprint": "45b805d672acd873",
+   "reason": "报告实验执行内容与结果，执行主体为前文已写明的执行代理"
+  },
+  {
+   "fingerprint": "d6b4fb97ed40a0d5",
+   "reason": "报告实验执行内容与结果，执行主体为前文已写明的执行代理"
+  },
+  {
+   "fingerprint": "991e27b8a49cee2b",
+   "reason": "主助手已作主语，记录其提案"
+  },
+  {
+   "fingerprint": "559fbfaaefd33324",
+   "reason": "记录负责人的决定、要求或确认，负责人已作主语"
+  },
+  {
+   "fingerprint": "b8ef130ef29d7b5c",
+   "reason": "组首目的或组尾小结：复述本组上文已经标明责任者的结论或任务，不新增设计动作"
+  },
+  {
+   "fingerprint": "e4468a20c3dc7287",
+   "reason": "记录负责人的决定、要求或确认，负责人已作主语"
+  },
+  {
+   "fingerprint": "331c7ffe3f168578",
+   "reason": "列出负责人要求的实现内容，由提交作主语"
+  },
+  {
+   "fingerprint": "aaf38bd13b8e1e4c",
+   "reason": "报告运行环境与回归结果，由运行和数据作主语"
+  },
+  {
+   "fingerprint": "73660e8a9d0418b5",
+   "reason": "报告运行环境与回归结果，由运行和数据作主语"
+  },
+  {
+   "fingerprint": "e70090c39e8ed304",
+   "reason": "报告运行环境与回归结果，由运行和数据作主语"
+  },
+  {
+   "fingerprint": "b9ef7bf120f7bf05",
+   "reason": "报告运行环境与回归结果，由运行和数据作主语"
+  },
+  {
+   "fingerprint": "5db93ac44714803d",
+   "reason": "组首目的或组尾小结：复述本组上文已经标明责任者的结论或任务，不新增设计动作"
+  },
+  {
+   "fingerprint": "f096206d21a81666",
+   "reason": "记录接入设置与负责人的验收回复，负责人已作主语"
+  },
+  {
+   "fingerprint": "c6ef0f3ca607a6c4",
+   "reason": "执行代理已作主语，记录其诊断发现与处理"
+  },
+  {
+   "fingerprint": "6eb3bed1fcbea670",
+   "reason": "主助手已作主语，记录其发现与本节结论"
+  },
+  {
+   "fingerprint": "45ff80ebd08e84c3",
+   "reason": "主助手已作主语，记录其发现与本节结论"
+  }
+ ]
+}
