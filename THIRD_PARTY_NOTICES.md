@@ -22,7 +22,8 @@ PDFs and large intermediates remain outside this Git repository.
   embedded in the static GLB. Attribution accompanies the files in
   `assets/xbox_one_s/README.md`. The closed per-component collision mesh base in
   `assets/xbox_one_s/collision_meshbase/` is a further derivative; its changes are
-  listed in that directory's `README.md`.
+  listed in that directory's `README.md`. Superseded snapshots of it are kept unchanged
+  in `assets/xbox_one_s/archive/` for provenance only; they are not in the release zip.
 - Release resource zip: the GitHub release zip contains these asset files, the
   resources built from them and this notice; attribution and change notes travel
   with it.

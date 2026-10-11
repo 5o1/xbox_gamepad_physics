@@ -52,6 +52,37 @@ def _connected_link(edges: list[tuple[int, int]]) -> bool:
     return len(seen) == len(graph)
 
 
+def _self_crossings(vertices, faces) -> list[tuple[int, int]]:
+    """Non-adjacent triangle pairs that touch or cross (separating-axis test, AABB broad phase)."""
+
+    import numpy as np
+
+    triangles = vertices[faces]
+    lower, upper = triangles.min(1), triangles.max(1)
+    edges = np.roll(triangles, -1, axis=1) - triangles
+    normals = np.cross(edges[:, 0], edges[:, 1])
+    pairs = []
+    for i in range(len(triangles) - 1):
+        others = np.arange(i + 1, len(triangles))
+        others = others[np.all(lower[i] <= upper[others], axis=1) & np.all(lower[others] <= upper[i], axis=1)]
+        others = others[~np.isin(faces[others], faces[i]).any(axis=1)]
+        if not len(others):
+            continue
+        axes = np.concatenate([
+            np.broadcast_to(normals[i], (len(others), 1, 3)), normals[others][:, None],
+            np.cross(edges[i][None, :, None], edges[others][:, None, :]).reshape(-1, 9, 3),
+            # In-plane edge normals separate coplanar pairs.
+            np.broadcast_to(np.cross(normals[i], edges[i]), (len(others), 3, 3)),
+            np.cross(normals[others][:, None], edges[others]),
+        ], axis=1)
+        a = np.einsum("vc,nac->nav", triangles[i], axes)
+        b = np.einsum("nvc,nac->nav", triangles[others], axes)
+        valid = np.linalg.norm(axes, axis=2) > 1e-24
+        separated = ((a.max(2) < b.min(2)) | (b.max(2) < a.min(2))) & valid
+        pairs.extend((i, int(j)) for j in others[~separated.any(1)])
+    return pairs
+
+
 class CollisionMeshbaseAssetTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -62,7 +93,7 @@ class CollisionMeshbaseAssetTest(unittest.TestCase):
         self.assertEqual(
             set(manifest),
             {"meshes", "derived_from", "license", "author", "source_url",
-             "changes", "coordinate_frame", "units", "components"},
+             "changes", "previous_versions", "coordinate_frame", "units", "components"},
         )
         self.assertEqual(set(manifest["meshes"]), COMPONENTS)
         self.assertEqual(set(manifest["components"]), COMPONENTS)
@@ -74,6 +105,10 @@ class CollisionMeshbaseAssetTest(unittest.TestCase):
         self.assertIn("Z up", manifest["coordinate_frame"])
         self.assertTrue((ASSET / "README.md").is_file())
         self.assertTrue((ROOT / manifest["derived_from"]["generator"]).is_file())
+        for previous in manifest["previous_versions"]:
+            with self.subTest(previous=previous["path"]):
+                self.assertTrue(previous["superseded_because"].strip())
+                self.assertTrue((ROOT / previous["path"] / "manifest.json").is_file())
 
         on_disk = {path.relative_to(ASSET).as_posix() for path in (ASSET / "meshes").glob("*.obj")}
         self.assertEqual(on_disk, {f"meshes/{name}.obj" for name in COMPONENTS})
@@ -134,6 +169,8 @@ class CollisionMeshbaseAssetTest(unittest.TestCase):
                     ).sum() / 6
                     self.assertGreater(volume, 0, "every shell must face outward")
                 self.assertEqual(len(shells), 2 if name in TWO_SHELL_COMPONENTS else 1)
+                for shell in shells:
+                    self.assertEqual(_self_crossings(vertices, faces[shell]), [], "shell crosses itself")
 
 
 if __name__ == "__main__":

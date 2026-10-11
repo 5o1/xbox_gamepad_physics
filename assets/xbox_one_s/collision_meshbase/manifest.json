@@ -21,16 +21,23 @@
   "derived_from": {
     "source": "assets/xbox_one_s/source/xbox_one_s_controllergamepad_animated.glb (static bake in src/xbox_gamepad_physics/resource_data/common/xbox_one_s/visual)",
     "generator": "scripts/build_collision_meshbase.py",
-    "date": "2026-10-10"
+    "date": "2026-10-11"
   },
   "license": "CC-BY-4.0",
   "author": "BatonyRobson",
   "source_url": "https://sketchfab.com/3d-models/xbox-one-s-controllergamepad-animated-a62cf7475b7d4ead9fbf1a86e5a2b6a4",
-  "changes": "Converted static visual geometry to simulation-frame metres; retained closed shell and front plate separately; applied reviewed fold repairs and interface/round-hole caps; excluded ABXY glyphs and visual discs and body linings/tongues; closed hidden control openings; retained both overlapping stick shells. No voxel mesh reconstruction or cross-link union.",
+  "changes": "Converted static visual geometry to simulation-frame metres; retained closed shell and front plate separately; applied reviewed fold repairs and interface/round-hole caps; excluded ABXY glyphs and visual discs and body linings/tongues; closed hidden control openings; retained both overlapping stick shells; flipped one inner-slope diagonal so no shell crosses itself. No voxel mesh reconstruction or cross-link union.",
+  "previous_versions": [
+    {
+      "path": "assets/xbox_one_s/archive/collision_meshbase_2026-10-10",
+      "generator_commit": "05354cd",
+      "superseded_because": "shell had 10 non-adjacent self-intersecting triangle pairs (inner slope under the top edge vs. the guide-button opening; left fold patch)"
+    }
+  ],
   "coordinate_frame": "simulation: (x,-z,y); Z up; -y toward grip ends",
   "units": "m",
   "components": {
-    "shell": "keep independent main shell; approved fold/round-opening/lower-interface patches; drop lining/tongue pieces",
+    "shell": "keep independent main shell; approved fold/round-opening/lower-interface patches; one inner-slope diagonal flip; drop lining/tongue pieces",
     "shell_front_plate": "keep independent front plate; USB fill and back cap; no bridges",
     "a": "keep keycap; drop glyph piece and zero/near-zero-thickness visual disc",
     "b": "keep keycap; drop glyph piece and zero/near-zero-thickness visual disc",

@@ -47,22 +47,33 @@ PART_BY_CONTROL = {
 # Reviewed source-face sets (indices into the vertex-merged body mesh).
 FOLD_FACES = [4056, 4054, 4055, 4057, 4058, 4059, 4060, 4061, 4062, 4063, 4064, 4065, 4067,
               4106, 4107, 4108, 4100, 4101, 3808, 3809, 745, 744, 581, 354, 375, 374, 396,
-              1519, 1518]
+              1519, 1518,
+              355, 411]  # 2026-10-11: two fold faces the first fold patch still crossed
+# Quad diagonals flipped in place (no vertex moves): the inner slope under the top edge
+# crossed the guide-button opening wall and its round-hole cap.
+FLIPPED_EDGES = [(4047, 4045)]
 LOWER_INTERFACE_FACES = [2226, 2227, 2232, 2233, 2242, 2243, 2244, 2245, 2248, 2249, 2206,
                          2207, 2210, 2211, 2214, 2215, 2216, 2217, 2218, 2219, 2177, 2166,
                          2167, 2168, 2169, 2176, 4146, 4147]
 USB_FACES = [2352, 2364, 2363, 2362, 2355, 2354, 2353, 2377, 2366, 2376, 2371, 2370, 2369,
              2368, 2367, 2365]
-PROCESS_DATE = "2026-10-10"
+PROCESS_DATE = "2026-10-11"
 BODY_COMPONENT_FACES = [4068, 150, 68, 42, 10, 10]  # shell, front plate, 4 port liners
 KEYCAP_FACES = 64
 GLYPH_FACES = {"a": 68, "b": 112, "x": 34, "y": 28}
 VISUAL_DISC_FACES = 14
 STICK_SHELL_FACES = [288, 318]  # antislip ring, stick body
 
+PREVIOUS_VERSIONS = [{
+    "path": "assets/xbox_one_s/archive/collision_meshbase_2026-10-10",
+    "generator_commit": "05354cd",
+    "superseded_because": "shell had 10 non-adjacent self-intersecting triangle pairs (inner slope "
+                          "under the top edge vs. the guide-button opening; left fold patch)",
+}]
+
 DESCRIPTIONS = {
     "shell": "keep independent main shell; approved fold/round-opening/lower-interface patches; "
-             "drop lining/tongue pieces",
+             "one inner-slope diagonal flip; drop lining/tongue pieces",
     "shell_front_plate": "keep independent front plate; USB fill and back cap; no bridges",
 }
 KEYCAP_DESCRIPTION = "keep keycap; drop glyph piece and zero/near-zero-thickness visual disc"
@@ -73,8 +84,8 @@ CHANGES = (
     "Converted static visual geometry to simulation-frame metres; retained closed shell and "
     "front plate separately; applied reviewed fold repairs and interface/round-hole caps; "
     "excluded ABXY glyphs and visual discs and body linings/tongues; closed hidden control "
-    "openings; retained both overlapping stick shells. No voxel mesh reconstruction or "
-    "cross-link union."
+    "openings; retained both overlapping stick shells; flipped one inner-slope diagonal so "
+    "no shell crosses itself. No voxel mesh reconstruction or cross-link union."
 )
 
 
@@ -180,6 +191,20 @@ def _replace_faces(
             faces.extend(patch)
             sources.extend([-1] * len(patch))
     return trimesh.Trimesh(vertices, faces, process=False), np.array(sources)
+
+
+def _flip_edge(mesh: trimesh.Trimesh, first: int, second: int) -> trimesh.Trimesh:
+    """Replace the shared diagonal of two adjacent faces by the other diagonal, keeping winding."""
+
+    faces = mesh.faces.copy()
+    shared = [v for v in faces[first] if v in faces[second]]
+    if len(shared) != 2:
+        raise ValueError(f"faces {first} and {second} do not share an edge")
+    apex = [v for v in faces[first] if v not in shared][0]
+    opposite = [v for v in faces[second] if v not in shared][0]
+    start, end = np.roll(faces[first], -list(faces[first]).index(apex) - 1)[:2]
+    faces[first], faces[second] = [start, opposite, apex], [opposite, end, apex]
+    return trimesh.Trimesh(mesh.vertices, faces, process=False)
 
 
 def _crossings(a: trimesh.Trimesh, b: trimesh.Trimesh) -> list[tuple[int, int]]:
@@ -307,6 +332,9 @@ def _shell_components(body: trimesh.Trimesh) -> dict[str, trimesh.Trimesh]:
     if [len(piece.faces) for piece in pieces] != BODY_COMPONENT_FACES:
         raise ValueError("controller body components differ from the reviewed source")
     shell, plate = pieces[:2]
+    local = {int(source): index for index, source in enumerate(groups[0])}
+    for first, second in FLIPPED_EDGES:
+        shell = _flip_edge(shell, local[first], local[second])
 
     main, _ = _cap_shell(shell)
     sources = np.r_[groups[0], np.full(len(main.faces) - len(shell.faces), -1, int)]
@@ -359,6 +387,9 @@ def build(output: Path = DEFAULT_OUTPUT, visual: Path | None = None) -> dict:
             components[control] = _control_component(control, _load_part(visual, parts[part_name], scale))
     for name, mesh in components.items():
         _require_closed(name, _rounded(mesh))
+        for shell in _rounded(mesh).split(only_watertight=False):
+            if _crossings(shell, shell):
+                raise RuntimeError(f"{name}: a shell crosses itself")
 
     (output / "meshes").mkdir(parents=True, exist_ok=True)
     meshes = {}
@@ -378,6 +409,7 @@ def build(output: Path = DEFAULT_OUTPUT, visual: Path | None = None) -> dict:
         "author": visual_manifest["author"],
         "source_url": visual_manifest["source_url"],
         "changes": CHANGES,
+        "previous_versions": PREVIOUS_VERSIONS,
         "coordinate_frame": "simulation: (x,-z,y); Z up; -y toward grip ends",
         "units": "m",
         "components": {name: _description(name) for name in components},

@@ -1,0 +1,51 @@
+{
+  "meshes": {
+    "shell": "meshes/shell.obj",
+    "shell_front_plate": "meshes/shell_front_plate.obj",
+    "a": "meshes/a.obj",
+    "b": "meshes/b.obj",
+    "left_shoulder": "meshes/left_shoulder.obj",
+    "right_shoulder": "meshes/right_shoulder.obj",
+    "pair": "meshes/pair.obj",
+    "dpad": "meshes/dpad.obj",
+    "view": "meshes/view.obj",
+    "menu": "meshes/menu.obj",
+    "left_stick": "meshes/left_stick.obj",
+    "right_stick": "meshes/right_stick.obj",
+    "left_trigger": "meshes/left_trigger.obj",
+    "right_trigger": "meshes/right_trigger.obj",
+    "x": "meshes/x.obj",
+    "guide": "meshes/guide.obj",
+    "y": "meshes/y.obj"
+  },
+  "derived_from": {
+    "source": "assets/xbox_one_s/source/xbox_one_s_controllergamepad_animated.glb (static bake in src/xbox_gamepad_physics/resource_data/common/xbox_one_s/visual)",
+    "generator": "scripts/build_collision_meshbase.py",
+    "date": "2026-10-10"
+  },
+  "license": "CC-BY-4.0",
+  "author": "BatonyRobson",
+  "source_url": "https://sketchfab.com/3d-models/xbox-one-s-controllergamepad-animated-a62cf7475b7d4ead9fbf1a86e5a2b6a4",
+  "changes": "Converted static visual geometry to simulation-frame metres; retained closed shell and front plate separately; applied reviewed fold repairs and interface/round-hole caps; excluded ABXY glyphs and visual discs and body linings/tongues; closed hidden control openings; retained both overlapping stick shells. No voxel mesh reconstruction or cross-link union.",
+  "coordinate_frame": "simulation: (x,-z,y); Z up; -y toward grip ends",
+  "units": "m",
+  "components": {
+    "shell": "keep independent main shell; approved fold/round-opening/lower-interface patches; drop lining/tongue pieces",
+    "shell_front_plate": "keep independent front plate; USB fill and back cap; no bridges",
+    "a": "keep keycap; drop glyph piece and zero/near-zero-thickness visual disc",
+    "b": "keep keycap; drop glyph piece and zero/near-zero-thickness visual disc",
+    "left_shoulder": "keep complete control; close hidden openings",
+    "right_shoulder": "keep complete control; close hidden openings",
+    "pair": "keep complete control; close hidden openings",
+    "dpad": "keep complete control; close hidden openings",
+    "view": "keep complete control; close hidden openings",
+    "menu": "keep complete control; close hidden openings",
+    "left_stick": "keep main stick body and antislip ring as two overlapping closed shells",
+    "right_stick": "keep main stick body and antislip ring as two overlapping closed shells",
+    "left_trigger": "keep complete control; close hidden openings",
+    "right_trigger": "keep complete control; close hidden openings",
+    "x": "keep keycap; drop glyph piece and zero/near-zero-thickness visual disc",
+    "guide": "keep complete control; close hidden openings",
+    "y": "keep keycap; drop glyph piece and zero/near-zero-thickness visual disc"
+  }
+}
