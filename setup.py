@@ -27,7 +27,7 @@ setup(
     include_package_data=False,
     package_data={"xbox_gamepad_physics": ["_resource_lock.json"]},
     extras_require={
-        "build": ["numpy>=1.24", "trimesh>=4.4", "Pillow>=9"],
+        "build": ["numpy>=1.24", "trimesh>=4.4", "Pillow>=9", "coacd==1.0.14", "manifold3d==3.5.4"],
         "mujoco": ["mujoco==3.15.0", "typing_extensions>=4.16"],
         "robotwin": ["sapien==3.0.0b1"],
     },

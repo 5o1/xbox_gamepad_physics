@@ -25,7 +25,7 @@ def _number(element: ET.Element, attribute: str, context: str) -> float:
     return _numbers(element, attribute, 1, context)[0]
 
 
-def check_explicit_urdf_physics(urdf_path: Path) -> set[str]:
+def check_explicit_urdf_physics(urdf_path: Path, *, require_moving_meshes=False) -> set[str]:
     """Reject URDFs that would let SAPIEN invent physical defaults; return active joint names."""
 
     root = ET.parse(urdf_path).getroot()
@@ -57,10 +57,14 @@ def check_explicit_urdf_physics(urdf_path: Path) -> set[str]:
         if ixx <= 0 or ixx * iyy - ixy * ixy <= 0 or determinant <= 0:
             raise AssertionError(f"URDF link {name!r} inertia tensor must be positive definite")
         collisions += len(link.findall("collision"))
+        for mesh in link.findall("collision/geometry/mesh"):
+            if not (urdf_path.parent / mesh.get("filename", "")).is_file():
+                raise AssertionError(f"link {name!r} collision mesh is missing")
     if collisions == 0:
         raise AssertionError("URDF contains no collision geometry")
 
     active: set[str] = set()
+    frame_parents = {joint.find("parent").get("link") for joint in root.findall("joint")}
     for joint in root.findall("joint"):
         name, kind = joint.get("name"), joint.get("type")
         if not name:
@@ -79,6 +83,13 @@ def check_explicit_urdf_physics(urdf_path: Path) -> set[str]:
         if kind not in {"revolute", "continuous", "prismatic"} or name in active:
             raise AssertionError(f"joint {name!r} has an unsupported type or a duplicate name")
         active.add(name)
+        if require_moving_meshes:
+            child = joint.find("child").get("link")
+            # Intermediate motion frames carry no control geometry.
+            if child not in frame_parents:
+                link = next(link for link in links if link.get("name") == child)
+                if not link.findall("collision/geometry/mesh"):
+                    raise AssertionError(f"moving control link {child!r} needs at least one mesh collision")
         axis, limit = joint.find("axis"), joint.find("limit")
         if axis is None or math.dist(_numbers(axis, "xyz", 3, f"joint {name!r} axis"), (0, 0, 0)) <= 1e-12:
             raise AssertionError(f"joint {name!r} needs an explicit non-zero axis")

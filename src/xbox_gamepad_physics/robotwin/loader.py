@@ -8,6 +8,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from importlib import import_module
+import inspect
 import math
 from pathlib import Path
 from typing import Any, Mapping, Sequence
@@ -60,6 +61,7 @@ class RoboTwinAssetDescription:
     signal_controller: GamepadSignalController
     contact_material: "ContactMaterial"
     visual_binding: Mapping[str, Any]
+    collision_variants: Mapping[str, Any]
 
 
 @dataclass(frozen=True)
@@ -206,6 +208,7 @@ def _validated_description(profile: str) -> RoboTwinAssetDescription:
         signal_controller,
         contact,
         _field(manifest, "visual_binding", "manifest"),
+        manifest.get("collision_variants", {}),
     )
 
 
@@ -353,6 +356,45 @@ def _configure_contact_material(
             shape.set_physical_material(material)
             shape.set_contact_offset(configuration.contact_offset)
             shape.set_rest_offset(configuration.rest_offset)
+            groups = list(shape.get_collision_groups())
+            groups[2] |= 0x80000000
+            groups[3] = 0x5842
+            shape.set_collision_groups(groups)
+
+
+def _sdf_physx():
+    physx = _import_sapien().physx
+    constructor = physx.PhysxCollisionShapeTriangleMesh.__init__
+    try:
+        has_parameter = "sdf" in inspect.signature(constructor).parameters
+    except (TypeError, ValueError):
+        has_parameter = "sdf:" in (constructor.__doc__ or "")
+    if not has_parameter and not callable(getattr(physx, "set_sdf_config", None)):
+        raise SceneCompatibilityError("collision='sdf' requires SAPIEN >= 3.0.3 with SDF support")
+    return physx
+
+
+def _load_sdf(loader, description, physx):
+    variant = description.collision_variants.get("sdf")
+    if variant is None:
+        raise RoboTwinManifestError("profile does not declare an SDF collision variant")
+    articulation_builders, actor_builders, cameras = loader.parse(str(description.urdf_path))
+    if len(articulation_builders) != 1 or actor_builders or cameras:
+        raise ArticulationLoadError("SDF gamepad URDF must contain one articulation and no actors or cameras")
+    builder = articulation_builders[0]
+    for link in builder.link_builders:
+        link.collision_records.clear()
+        for relative in variant["links"].get(link.name, []):
+            link.add_nonconvex_collision_from_file(str(description.urdf_path.parent / relative))
+    # SAPIEN 3.0.3 URDFLoader.parse has already set the root joint type and names.
+    # Its load() lines 754–765 then call build() without overriding them.
+    previous = physx.get_sdf_config()
+    physx.set_sdf_config(spacing=variant["spacing_m"], subgrid_size=previous.subgridSize,
+                         num_threads_for_construction=previous.num_threads_for_construction)
+    try:
+        return builder.build()
+    finally:
+        physx.set_sdf_config(previous)
 
 
 def load_into_scene(
@@ -361,6 +403,7 @@ def load_into_scene(
     fixed_root: bool,
     profile: str = "full_controls",
     attach_visual: bool = True,
+    collision: str = "coacd",
 ) -> XboxOneSArticulation:
     """Load the packaged Xbox One S URDF into a caller-owned SAPIEN scene.
 
@@ -376,6 +419,9 @@ def load_into_scene(
     the public common motion contract.
     """
 
+    if collision not in ("coacd", "sdf"):
+        raise ValueError("collision must be 'coacd' or 'sdf'")
+    physx = _sdf_physx() if collision == "sdf" else None
     if type(fixed_root) is not bool:
         raise TypeError("fixed_root must be bool")
     if type(attach_visual) is not bool:
@@ -391,7 +437,9 @@ def load_into_scene(
 
     load_multiple = getattr(loader, "load_multiple", None)
     load_single = getattr(loader, "load", None)
-    if callable(load_multiple):
+    if collision == "sdf":
+        result = _load_sdf(loader, description, physx)
+    elif callable(load_multiple):
         result = load_multiple(str(description.urdf_path))
     elif callable(load_single):
         result = load_single(str(description.urdf_path))

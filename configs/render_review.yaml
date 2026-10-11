@@ -8,6 +8,7 @@ scene:
 gamepad:
   fixed_root: true
   attach_visual: true
+  collision: coacd
   pose: [0, 0, 0, 1, 0, 0, 0] # m, wxyz
 params:
   steps: 240

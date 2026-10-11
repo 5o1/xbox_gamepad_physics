@@ -12,6 +12,7 @@ import numpy as np
 import trimesh
 
 from build_kinematics import build as build_kinematics
+from build_common_collision import MESHBASE, shell_meshes
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -41,6 +42,7 @@ DEFAULT_OUTPUT = (
     / "robotwin"
     / "full_controls"
 )
+COLLISION_ROOT = ROOT / "build/resources/common/xbox_one_s/collision"
 
 PART_BY_CONTROL = {
     "a": "00_A_Button_VISUAL_UNCALIBRATED",
@@ -69,7 +71,7 @@ def _json(path: Path) -> dict:
 
 
 def _fmt(value: float) -> str:
-    return f"{float(value):.12g}"
+    return f"{float(value):.17g}"
 
 
 def _vec(values) -> str:
@@ -81,54 +83,29 @@ def _origin(parent: ET.Element, xyz, rpy=(0.0, 0.0, 0.0)) -> None:
 
 
 def _inertial(link: ET.Element, mass: float, com, inertia) -> None:
+    tensor = np.asarray(inertia, dtype=float)
+    if tensor.shape == (3,):
+        tensor = np.diag(tensor)
+    if not np.allclose(tensor, tensor.T, atol=1e-18) or np.linalg.eigvalsh(tensor).min() <= 0:
+        raise ValueError(f"{link.get('name')}: inertia tensor must be positive definite")
     node = ET.SubElement(link, "inertial")
     _origin(node, com)
     ET.SubElement(node, "mass", value=_fmt(mass))
     ET.SubElement(
         node,
         "inertia",
-        ixx=_fmt(inertia[0]),
-        ixy="0",
-        ixz="0",
-        iyy=_fmt(inertia[1]),
-        iyz="0",
-        izz=_fmt(inertia[2]),
+        ixx=_fmt(tensor[0, 0]),
+        ixy=_fmt(tensor[0, 1]),
+        ixz=_fmt(tensor[0, 2]),
+        iyy=_fmt(tensor[1, 1]),
+        iyz=_fmt(tensor[1, 2]),
+        izz=_fmt(tensor[2, 2]),
     )
 
 
-def _box_inertia(mass: float, size) -> tuple[float, float, float]:
-    x, y, z = (float(value) for value in size)
-    return (
-        mass * (y * y + z * z) / 12.0,
-        mass * (x * x + z * z) / 12.0,
-        mass * (x * x + y * y) / 12.0,
-    )
-
-
-def _add_box(link: ET.Element, name: str, center, size, yaw=0.0) -> dict:
-    collision = ET.SubElement(link, "collision", name=name)
-    _origin(collision, center, (0.0, 0.0, yaw))
-    geometry = ET.SubElement(collision, "geometry")
-    ET.SubElement(geometry, "box", size=_vec(size))
-    return {"type": "box", "center": list(center), "size": list(size), "yaw": yaw}
-
-
-def _add_cylinder(link: ET.Element, name: str, center, radius, length) -> dict:
-    collision = ET.SubElement(link, "collision", name=name)
-    _origin(collision, center)
-    geometry = ET.SubElement(collision, "geometry")
-    ET.SubElement(geometry, "cylinder", radius=_fmt(radius), length=_fmt(length))
-    return {
-        "type": "cylinder",
-        "center": list(center),
-        "radius": radius,
-        "length": length,
-    }
-
-
-def _joint_element(robot: ET.Element, record: dict, parent: str, child: str, origin) -> None:
+def _joint_element(robot: ET.Element, record: dict, parent: str, child: str, origin, rpy=(0, 0, 0)) -> None:
     joint = ET.SubElement(robot, "joint", name=record["id"], type=record["type"])
-    _origin(joint, origin)
+    _origin(joint, origin, rpy)
     ET.SubElement(joint, "parent", link=parent)
     ET.SubElement(joint, "child", link=child)
     ET.SubElement(joint, "axis", xyz=_vec(record["axis_source"]))
@@ -160,8 +137,53 @@ def _critical_damping(stiffness: float, effective_mass: float, ratio: float) -> 
     return 2.0 * ratio * math.sqrt(stiffness * effective_mass)
 
 
+def _link_transforms(motion):
+    transforms = {"controller_body": np.eye(4)}
+    pending = list(motion["joints"])
+    while pending:
+        ready = [joint for joint in pending if joint["parent"] in transforms]
+        if not ready:
+            raise ValueError("motion joint chain is disconnected")
+        for joint in ready:
+            transform = trimesh.transformations.euler_matrix(*joint.get("rpy", (0, 0, 0)), axes="sxyz")
+            transform[:3, 3] = joint["origin"]
+            transforms[joint["child"]] = transforms[joint["parent"]] @ transform
+            pending.remove(joint)
+    return transforms
+
+
+def _transform_obj(source, destination, transform):
+    lines = []
+    for line in source.read_text().splitlines():
+        fields = line.split()
+        if fields and fields[0] == "v":
+            vertex = transform @ np.array([*(float(x) for x in fields[1:4]), 1.0])
+            line = "v " + _vec(vertex[:3])
+        lines.append(line)
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    destination.write_text("\n".join(lines) + "\n")
+
+
+def _mass_mesh(component, transform):
+    shells = shell_meshes(MESHBASE / "meshes" / f"{component}.obj")
+    if len(shells) == 2:
+        import manifold3d
+        solids = [manifold3d.Manifold(manifold3d.Mesh64(
+            np.asarray(mesh.vertices), np.asarray(mesh.faces, dtype=np.uint64))) for mesh in shells]
+        union = solids[0] + solids[1]
+        if union.status() != manifold3d.Error.NoError:
+            raise ValueError(f"{component}: manifold union failed: {union.status()}")
+        result = union.to_mesh64()
+        mesh = trimesh.Trimesh(result.vert_properties[:, :3], result.tri_verts, process=False)
+    else:
+        mesh = shells[0]
+    mesh.apply_transform(transform)
+    return mesh
+
+
 def build(output: Path, *, kinematics: Path | None = None,
-          visual_root: Path = VISUAL_ROOT, common_motion: Path = COMMON_MOTION) -> None:
+          visual_root: Path = VISUAL_ROOT, common_motion: Path = COMMON_MOTION,
+          collision_root: Path = COLLISION_ROOT) -> None:
     source = _json(SOURCE)
     profile = _json(kinematics) if kinematics is not None else build_kinematics()[1]
     motion = _json(common_motion)
@@ -256,7 +278,7 @@ def build(output: Path, *, kinematics: Path | None = None,
 
     robot = ET.Element("robot", name="xbox_one_s_full_controls")
     link_elements = {"controller_body": ET.SubElement(robot, "link", name="controller_body")}
-    primitive_records = {"controller_body": []}
+    collision_records = {"controller_body": {"coacd": [], "sdf": [], "hull_count": 0}}
     body_mass = float(source["mass_policy"]["whole_controller_mass_kg"])
 
     # The public motion contract owns the articulation topology.
@@ -265,7 +287,7 @@ def build(output: Path, *, kinematics: Path | None = None,
         child = joint["child"]
         if child not in link_elements:
             link_elements[child] = ET.SubElement(robot, "link", name=child)
-            primitive_records[child] = []
+            collision_records[child] = {"coacd": [], "sdf": [], "hull_count": 0}
         link_graph[joint["name"]] = (
             joint["parent"],
             child,
@@ -277,134 +299,62 @@ def build(output: Path, *, kinematics: Path | None = None,
         if control != "shell"
     }
 
-    # Collision primitives and estimated mass properties.
-    moving_mass = {}
+    # Neutral transforms come from the complete motion chain, including frames.
+    transforms = _link_transforms(motion)
+    common_collision = _json(collision_root / "manifest.json")
+    moving_mass, mass_properties = {}, {}
     density = float(source["mass_policy"]["polymer_density_kg_m3"])
-    fit = float(source["collision_policy"]["fit_scale"])
     fill = source["mass_policy"]["solid_fill_factors"]
     minimum_mass = float(source["mass_policy"]["minimum_moving_mass_kg"])
+    for component, record in common_collision["components"].items():
+        link_name = "controller_body" if component in {"shell", "shell_front_plate"} else final_link_by_control[component]
+        if link_name != "controller_body":
+            pivot = np.asarray(dynamics[nodes[component]["joint_ids"][0]]["pivot_source_m"])
+            assert np.max(np.abs(transforms[link_name][:3, 3] - pivot)) <= 1e-12, component
+        local = np.linalg.inv(transforms[link_name])
+        target = collision_records[link_name]
+        for variant in ("coacd", "sdf"):
+            for relative in record[variant]:
+                filename = "collision/" + relative
+                _transform_obj(collision_root / relative, output / filename, local)
+                target[variant].append(filename)
+        target["hull_count"] += record["hull_count"]
+        collision = ET.SubElement(link_elements[link_name], "collision", name=component)
+        geometry = ET.SubElement(collision, "geometry")
+        ET.SubElement(geometry, "mesh", filename="collision/" + record["coacd"][0])
+        if link_name == "controller_body":
+            continue
+        mesh = _mass_mesh(component, local)
+        properties = mesh.mass_properties
+        if properties.volume <= 0:
+            raise ValueError(f"{component}: meshbase volume must be positive")
+        group = ("sticks" if "stick" in component else "triggers" if "trigger" in component
+                 else "bumpers" if "shoulder" in component else "dpad" if component == "dpad" else "buttons")
+        raw_mass = properties.volume * density * float(fill[group])
+        mass = max(minimum_mass, raw_mass)
+        # Unit-density centroidal tensor, scaled to the final clamped mass.
+        tensor = np.asarray(properties.inertia) * (mass / properties.mass)
+        moving_mass[link_name] = mass
+        mass_properties[link_name] = {"volume_m3": properties.volume, "unclamped_mass_kg": raw_mass,
+            "mass_kg": mass, "com_m": properties.center_mass.tolist(), "inertia_kg_m2": tensor.tolist()}
+        _inertial(link_elements[link_name], mass, properties.center_mass, tensor)
 
-    for control, link_name in final_link_by_control.items():
-        link = link_elements[link_name]
-        pivot = np.asarray(dynamics[nodes[control]["joint_ids"][0]]["pivot_source_m"])
-        box = bounds[control]
-        center = (box.mean(axis=0) - pivot).tolist()
-        extents = (box[1] - box[0]) * fit
-        records = primitive_records[link_name]
-        if control in {"a", "b", "x", "y", "view", "menu", "guide"}:
-            radius = float(min(extents[0], extents[1]) * 0.45)
-            length = float(extents[2])
-            records.append(_add_cylinder(link, f"{control}_cap", center, radius, length))
-            volume = math.pi * radius * radius * length
-            factor = float(fill["buttons"])
-        elif control in {"left_stick", "right_stick"}:
-            proxy = left_stick["collision_geometry"]
-            for key in ("lower_stem", "upper_stem", "cap"):
-                item = proxy[key]
-                records.append(_add_cylinder(
-                    link,
-                    f"{control}_{key}",
-                    [0, 0, float(item["center_z_m"])],
-                    float(item["radius_m"]),
-                    float(item["length_m"]),
-                ))
-            volume = sum(
-                math.pi * float(proxy[key]["radius_m"]) ** 2 * float(proxy[key]["length_m"])
-                for key in ("lower_stem", "upper_stem", "cap")
-            )
-            factor = 1.0
-        elif control == "dpad":
-            arm = float(max(extents[0], extents[1]))
-            width = float(min(extents[0], extents[1]) * 0.34)
-            height = float(extents[2])
-            records.append(_add_box(link, "dpad_horizontal", center, [arm, width, height]))
-            records.append(_add_box(link, "dpad_vertical", center, [width, arm, height]))
-            volume = 2 * arm * width * height - width * width * height
-            factor = float(fill["dpad"])
-        else:
-            size = (extents * np.array([1.0, 1.0, 0.9])).tolist()
-            records.append(_add_box(link, f"{control}_box", center, size))
-            volume = float(np.prod(size))
-            factor = float(fill["triggers"] if "trigger" in control else fill["bumpers"])
-        moving_mass[link_name] = max(minimum_mass, density * volume * factor)
-
-    # Intermediate frames have explicit small inertias.
-    for link_name in link_elements:
+    for link_name, link in link_elements.items():
         if link_name == "controller_body" or link_name in moving_mass:
             continue
         moving_mass[link_name] = 0.0005
+        _inertial(link, 0.0005, np.zeros(3), np.eye(3) * 2e-8)
     body_mass -= sum(moving_mass.values())
     if body_mass <= 0:
         raise ValueError("moving mass estimates exceed whole controller mass")
-
-    floor = float(source["mass_policy"]["minimum_diagonal_inertia_kg_m2"])
-    for link_name, link in link_elements.items():
-        if link_name == "controller_body":
-            continue
-        mass = moving_mass[link_name]
-        records = primitive_records[link_name]
-        if records:
-            centers = np.asarray([record["center"] for record in records])
-            com = centers.mean(axis=0)
-            if records[0]["type"] == "box":
-                inertia = _box_inertia(mass, records[0]["size"])
-            else:
-                radius = float(records[0]["radius"])
-                length = float(records[0]["length"])
-                inertia = (
-                    mass * (3 * radius * radius + length * length) / 12,
-                    mass * (3 * radius * radius + length * length) / 12,
-                    mass * radius * radius / 2,
-                )
-        else:
-            com = np.zeros(3)
-            inertia = (2e-8, 2e-8, 2e-8)
-        _inertial(link, mass, com, [max(floor, value) for value in inertia])
-
-    _inertial(
-        link_elements["controller_body"],
-        body_mass,
-        [-0.00014, -0.00325, -0.00475],
-        left_stick["mass_properties"]["body_inertia_kg_m2"],
-    )
-    primitive_records["controller_body"].append(
-        _add_box(
-            link_elements["controller_body"],
-            "body_central_support",
-            [0, 0, -0.018],
-            [0.12, 0.075, 0.028],
-        )
-    )
-    gate = left_stick["collision_geometry"]["gate"]
-    for control in ("left_stick", "right_stick"):
-        pivot = np.asarray(dynamics[f"{control}_x"]["pivot_source_m"])
-        count = int(gate["segments"])
-        inner = float(gate["inner_radius_m"])
-        outer = float(gate["outer_radius_m"])
-        for index in range(count):
-            angle = 2 * math.pi * index / count
-            center = [
-                pivot[0] + 0.5 * (inner + outer) * math.cos(angle),
-                pivot[1] + 0.5 * (inner + outer) * math.sin(angle),
-                pivot[2] + float(gate["center_z_m"]),
-            ]
-            size = [
-                outer - inner,
-                2 * inner * math.tan(math.pi / count),
-                float(gate["height_m"]),
-            ]
-            primitive_records["controller_body"].append(
-                _add_box(
-                    link_elements["controller_body"],
-                    f"{control}_gate_{index:02d}",
-                    center,
-                    size,
-                    angle,
-                )
-            )
+    assert abs(body_mass + sum(moving_mass.values()) - 0.28) <= 1e-12
+    _inertial(link_elements["controller_body"], body_mass,
+              [-0.00014, -0.00325, -0.00475], left_stick["mass_properties"]["body_inertia_kg_m2"])
+    for link_name, record in collision_records.items():
+        record["mass_kg"] = body_mass if link_name == "controller_body" else moving_mass[link_name]
 
     for joint_id, (parent, child, origin) in link_graph.items():
-        _joint_element(robot, dynamics[joint_id], parent, child, origin)
+        _joint_element(robot, dynamics[joint_id], parent, child, origin, motion_joints[joint_id].get("rpy", (0, 0, 0)))
 
     ET.indent(robot, space="  ")
     ET.ElementTree(robot).write(
@@ -427,7 +377,8 @@ def build(output: Path, *, kinematics: Path | None = None,
     collision_manifest = {
         "schema_version": 1,
         "method": source["collision_policy"],
-        "links": primitive_records,
+        "links": collision_records,
+        "moving_mass_properties": mass_properties,
         "mass_kg": {"controller_body": body_mass, **moving_mass},
         "source": "references/full_controls.json",
     }
@@ -461,7 +412,13 @@ def build(output: Path, *, kinematics: Path | None = None,
         "mobility.urdf", "model_data.json", "bounding_box.json", "semantics.txt",
         "visual/manifest.json", "collision/manifest.json",
     ]
+    required.extend(relative for record in collision_records.values() for variant in ("coacd", "sdf") for relative in record[variant])
     manifest = {
+        "collision_variants": {
+            "coacd": {"source": "urdf"},
+            "sdf": {"min_sapien": "3.0.3", "spacing_m": source["collision_policy"]["sdf"]["spacing_m"],
+                    "links": {name: record["sdf"] for name, record in collision_records.items()}},
+        },
         "schema_version": 1,
         "asset_id": "xbox_one_s",
         "backend": "robotwin",

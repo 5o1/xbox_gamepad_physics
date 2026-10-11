@@ -16,7 +16,12 @@
   },
   "control_groups": {
     "face_buttons": {
-      "joints": ["a_press", "b_press", "x_press", "y_press"],
+      "joints": [
+        "a_press",
+        "b_press",
+        "x_press",
+        "y_press"
+      ],
       "reference_force_n": 1.57,
       "reference_force_evidence": "catalog.reference_values.front_force",
       "travel": "artist animation per joint",
@@ -25,7 +30,12 @@
       "damping_ratio": 0.7
     },
     "small_buttons": {
-      "joints": ["view_press", "menu_press", "guide_press", "pair_press"],
+      "joints": [
+        "view_press",
+        "menu_press",
+        "guide_press",
+        "pair_press"
+      ],
       "reference_force_n": 1.57,
       "reference_force_evidence": "catalog.reference_values.front_force",
       "applicability": "Numerical proxy only; no Xbox small-button force measurement is available.",
@@ -34,7 +44,10 @@
       "damping_ratio": 0.7
     },
     "shoulders": {
-      "joints": ["left_shoulder_press", "right_shoulder_press"],
+      "joints": [
+        "left_shoulder_press",
+        "right_shoulder_press"
+      ],
       "reference_force_n": 1.57,
       "reference_force_evidence": "catalog.reference_values.shoulder_force",
       "travel": "artist cap travel; the reference switch travel is not substituted for lever travel",
@@ -43,25 +56,41 @@
       "damping_ratio": 0.7
     },
     "triggers": {
-      "joints": ["left_trigger_hinge", "right_trigger_hinge"],
+      "joints": [
+        "left_trigger_hinge",
+        "right_trigger_hinge"
+      ],
       "endpoint_torque_nm": 0.014,
-      "endpoint_torque_range_nm": [0.004, 0.024],
+      "endpoint_torque_range_nm": [
+        0.004,
+        0.024
+      ],
       "reference_scale_evidence": "catalog.reference_values.stick_operating_torque",
       "applicability": "Cross-control torque scale used only as a simulation placeholder; it is not an Xbox trigger measurement.",
       "angle": "artist animation per joint",
       "stiffness_method": "endpoint_torque_nm / artist_endpoint_angle_rad",
       "force_limit_nm": 0.024,
       "damping_ratio": 0.7,
-      "unknown": ["torsion spring curve", "finger lever arm", "compliant stop curve"]
+      "unknown": [
+        "torsion spring curve",
+        "finger lever arm",
+        "compliant stop curve"
+      ]
     },
     "sticks": {
-      "joint_prefixes": ["left_stick", "right_stick"],
+      "joint_prefixes": [
+        "left_stick",
+        "right_stick"
+      ],
       "tilt_dynamics": "reuse references/left_stick.json for both identical reference modules",
       "tilt_joint_friction_coefficient": 0.1,
       "tilt_joint_friction_status": "owner_selected_simulation_value_not_hardware_measurement",
       "tilt_joint_friction_basis": "Selected by the owner after the 2026-10-09 bounded free-root shake search bracketed the 0.01-signal transition between dimensionless PhysX joint-friction coefficients 0.076123046875 and 0.076171875. The adopted 0.1 is a simulation setting, not an identified Xbox parameter.",
       "click_force_n": 7.4,
-      "click_force_range_n": [4.4, 10.4],
+      "click_force_range_n": [
+        4.4,
+        10.4
+      ],
       "click_force_evidence": "catalog.reference_values.stick_click_force",
       "click_travel_m": 0.0004,
       "click_travel_evidence": "catalog.reference_values.stick_click_travel",
@@ -70,7 +99,10 @@
       "click_damping_ratio": 0.7
     },
     "dpad": {
-      "joints": ["dpad_horizontal", "dpad_vertical"],
+      "joints": [
+        "dpad_horizontal",
+        "dpad_vertical"
+      ],
       "artist_limit_rad": 0.17453241348266602,
       "reference_force_n": 1.57,
       "reference_force_evidence": "catalog.reference_values.front_force",
@@ -84,13 +116,195 @@
     }
   },
   "collision_policy": {
-    "coordinate_conversion": "glTF source (x,y,z) to SAPIEN/URDF (x,-z,y)",
-    "buttons": "cylinder fitted inside converted visual AABB",
-    "sticks": "reuse axisymmetric three-cylinder proxy from the left-stick vertical slice",
-    "dpad": "two crossed boxes fitted inside converted visual AABB",
-    "bumpers_and_triggers": "box fitted to 90 percent of converted visual AABB",
-    "shell": "central support plus explicit stick gate rings; visual triangle mesh is not used as a dynamic collision mesh",
-    "fit_scale": 0.9,
+    "method": "先修成闭合的 meshbase，再按组件、按壳做 CoACD；默认 CoACD 替换基本体，SDF 作为加载选项",
+    "coordinate_frame": "simulation (x,-z,y), Z up; metres; meshbase already converted",
+    "coacd": {
+      "version": "1.0.14",
+      "threads": 1,
+      "parameters": {
+        "seed": 0,
+        "max_ch_vertex": 255
+      },
+      "thresholds": {
+        "shell": [
+          0.03
+        ],
+        "dpad": [
+          0.03
+        ],
+        "left_stick": [
+          0.03,
+          0.05
+        ],
+        "right_stick": [
+          0.03,
+          0.05
+        ]
+      },
+      "default_threshold": 0.05,
+      "defaults": "All other parameters use coacd 1.0.14 defaults, including preprocess_mode=auto, decimate=False, max_convex_hull=-1.",
+      "max_ch_vertex_note": "Explicit 255 matches all Phase A runs; CoACD uses it only when decimate=True, so it is inactive here."
+    },
+    "sdf": {
+      "spacing_m": 0.001,
+      "min_sapien": "3.0.3",
+      "limitations": [
+        "不能与 add_ground 平面碰撞",
+        "不能与另一个 SDF 物体碰撞"
+      ]
+    },
+    "sources": [
+      {
+        "authors": "Wei et al.",
+        "venue": "SIGGRAPH 2022",
+        "title": "Approximate Convex Decomposition for 3D Meshes with Collision-Aware Concavity and Tree Search",
+        "url": "https://arxiv.org/abs/2205.02961"
+      },
+      "build/experiments/collision_sweep_20261011/REPORT.md",
+      "build/experiments/meshbase_selfx_fix_20261011/"
+    ],
+    "uncertainty_by_component": {
+      "shell": {
+        "outward_max_mm": 2.419362210627059,
+        "outward_p95_mm": 1.1463177929243897,
+        "inward_max_mm": 0.0,
+        "inward_p95_mm": 0.0,
+        "source": "build/experiments/collision_sweep_20261011/coacd/shell_repaired_t0.03_cap-1_prepauto/metrics.json"
+      },
+      "shell_front_plate": {
+        "outward_max_mm": 1.134930600853068,
+        "outward_p95_mm": 0.637757822210735,
+        "inward_max_mm": 0.0,
+        "inward_p95_mm": 0.0,
+        "source": "build/experiments/collision_sweep_20261011/coacd/shell_front_plate_t0.05_cap-1/metrics.json"
+      },
+      "a": {
+        "outward_max_mm": 0.11174749009506481,
+        "outward_p95_mm": 0.01807929833734583,
+        "inward_max_mm": 0.0,
+        "inward_p95_mm": 0.0,
+        "source": "build/experiments/collision_sweep_20261011/coacd/a_t0.05_cap-1/metrics.json"
+      },
+      "b": {
+        "outward_max_mm": null,
+        "outward_p95_mm": null,
+        "inward_max_mm": null,
+        "inward_p95_mm": null,
+        "note": "未测，结构与已测同类组件相同"
+      },
+      "left_shoulder": {
+        "outward_max_mm": null,
+        "outward_p95_mm": null,
+        "inward_max_mm": null,
+        "inward_p95_mm": null,
+        "note": "未测，结构与已测同类组件相同"
+      },
+      "right_shoulder": {
+        "outward_max_mm": null,
+        "outward_p95_mm": null,
+        "inward_max_mm": null,
+        "inward_p95_mm": null,
+        "note": "未测，结构与已测同类组件相同"
+      },
+      "pair": {
+        "outward_max_mm": null,
+        "outward_p95_mm": null,
+        "inward_max_mm": null,
+        "inward_p95_mm": null,
+        "note": "未测，结构与已测同类组件相同"
+      },
+      "dpad": {
+        "outward_max_mm": 0.09755073743423565,
+        "outward_p95_mm": 0.05994924954776181,
+        "inward_max_mm": 0.0,
+        "inward_p95_mm": 0.0,
+        "source": "build/experiments/collision_sweep_20261011/coacd/dpad_t0.03_cap-1/metrics.json"
+      },
+      "view": {
+        "outward_max_mm": null,
+        "outward_p95_mm": null,
+        "inward_max_mm": null,
+        "inward_p95_mm": null,
+        "note": "未测，结构与已测同类组件相同"
+      },
+      "menu": {
+        "outward_max_mm": null,
+        "outward_p95_mm": null,
+        "inward_max_mm": null,
+        "inward_p95_mm": null,
+        "note": "未测，结构与已测同类组件相同"
+      },
+      "left_stick": [
+        {
+          "outward_max_mm": 0.3270989125258722,
+          "outward_p95_mm": 0.15104965635630643,
+          "inward_max_mm": 0.0,
+          "inward_p95_mm": 0.0,
+          "source": "build/experiments/collision_sweep_20261011/coacd/left_stick__0_t0.03_cap-1/metrics.json"
+        },
+        {
+          "outward_max_mm": 0.2622071861302301,
+          "outward_p95_mm": 0.1130672348593472,
+          "inward_max_mm": 0.0,
+          "inward_p95_mm": 0.0,
+          "source": "build/experiments/collision_sweep_20261011/coacd/left_stick__1_t0.05_cap-1/metrics.json"
+        }
+      ],
+      "right_stick": {
+        "outward_max_mm": null,
+        "outward_p95_mm": null,
+        "inward_max_mm": null,
+        "inward_p95_mm": null,
+        "note": "未测，结构与已测同类组件相同"
+      },
+      "left_trigger": {
+        "outward_max_mm": 0.7010723115477656,
+        "outward_p95_mm": 0.3715632919190885,
+        "inward_max_mm": 0.0,
+        "inward_p95_mm": 0.0,
+        "source": "build/experiments/collision_sweep_20261011/coacd/left_trigger_t0.05_cap-1/metrics.json"
+      },
+      "right_trigger": {
+        "outward_max_mm": null,
+        "outward_p95_mm": null,
+        "inward_max_mm": null,
+        "inward_p95_mm": null,
+        "note": "未测，结构与已测同类组件相同"
+      },
+      "x": {
+        "outward_max_mm": null,
+        "outward_p95_mm": null,
+        "inward_max_mm": null,
+        "inward_p95_mm": null,
+        "note": "未测，结构与已测同类组件相同"
+      },
+      "guide": {
+        "outward_max_mm": null,
+        "outward_p95_mm": null,
+        "inward_max_mm": null,
+        "inward_p95_mm": null,
+        "note": "未测，结构与已测同类组件相同"
+      },
+      "y": {
+        "outward_max_mm": null,
+        "outward_p95_mm": null,
+        "inward_max_mm": null,
+        "inward_p95_mm": null,
+        "note": "未测，结构与已测同类组件相同"
+      }
+    },
+    "uncertainty_applicability": "Stage A sampled distances relative to meshbase, not a mechanical replica or hardware clearance measurement; repaired shell uses its rerun.",
+    "accepted_known_error": {
+      "decision_date": "2026-10-11",
+      "decision_by": "owner",
+      "description": "十字键、摇杆孔口可触区域约 1–1.5 mm 外胀暂时接受；以后仿真实验确认影响结果再修"
+    },
+    "internal_filter": {
+      "g0_g1": "preserve existing",
+      "g2_or": 2147483648,
+      "g3": 22594,
+      "source": "build/experiments/collision_v2_review/REPORT.md"
+    },
     "contact_material": "reuse references/left_stick.json contact estimate"
   },
   "mass_policy": {
@@ -101,11 +315,26 @@
       "buttons": 0.65,
       "dpad": 0.4,
       "bumpers": 0.35,
-      "triggers": 0.35
+      "triggers": 0.35,
+      "sticks": 0.81
     },
-    "method": "primitive collision volume * density * group fill factor; body receives remaining whole mass",
+    "method": "meshbase 闭合体积 × 密度 × 组件填充系数；机身取剩余质量",
     "minimum_moving_mass_kg": 0.0002,
-    "minimum_diagonal_inertia_kg_m2": 1e-10
+    "minimum_diagonal_inertia_kg_m2": 1e-10,
+    "stick_fill_derivation": {
+      "source": "references/left_stick.json: mass_properties.stick_link_mass_kg",
+      "reference_mass_kg": 0.004,
+      "union_volume_m3": 4.7205773797961385e-06,
+      "density_kg_m3": 1050,
+      "unrounded_factor": 0.8070037842888461,
+      "rounded_factor": 0.81,
+      "rounding": "2 decimal places; shared by left/right stick",
+      "union_method": "manifold3d 3.5.4 union of the two closed left-stick meshbase shells",
+      "applicability": "Simulation estimate preserving the left-stick reference mass scale; not a measured polymer fill ratio",
+      "uncertainty": "Meshbase shape and density/fill assumptions are uncalibrated; rounding prevents exact 0.004 kg recovery"
+    },
+    "small_button_fill": "view/menu/guide/pair use buttons",
+    "minimum_mass_method": "Clamp moving mass to minimum_moving_mass_kg and scale the complete centroidal inertia tensor by the same mass ratio; preserve shape."
   },
   "passive_preload_policy": {
     "one_sided_joint_spring_reference": "-0.015 * positive travel",
@@ -117,13 +346,40 @@
   },
   "signal_policy": {
     "layout": "sdl3-gamepad-core-v1",
-    "axis_mappings": ["left_x", "left_y", "right_x", "right_y"],
-    "scalar_mappings": ["left_trigger", "right_trigger", "south", "east", "west", "north", "back", "guide", "start", "left_stick", "right_stick", "left_shoulder", "right_shoulder"],
+    "axis_mappings": [
+      "left_x",
+      "left_y",
+      "right_x",
+      "right_y"
+    ],
+    "scalar_mappings": [
+      "left_trigger",
+      "right_trigger",
+      "south",
+      "east",
+      "west",
+      "north",
+      "back",
+      "guide",
+      "start",
+      "left_stick",
+      "right_stick",
+      "left_shoulder",
+      "right_shoulder"
+    ],
     "split_mappings": {
-      "dpad_horizontal": ["dpad_left", "dpad_right"],
-      "dpad_vertical": ["dpad_up", "dpad_down"]
+      "dpad_horizontal": [
+        "dpad_left",
+        "dpad_right"
+      ],
+      "dpad_vertical": [
+        "dpad_up",
+        "dpad_down"
+      ]
     },
-    "physical_only": ["pair_bind_connect"],
+    "physical_only": [
+      "pair_bind_connect"
+    ],
     "button_output": "continuous [0,1] travel fraction; consuming task chooses a digital threshold",
     "stick_neutral_epsilon": 0.01,
     "device_neutral_epsilon": 0.0001,

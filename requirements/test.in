@@ -4,6 +4,8 @@
 numpy
 scipy
 trimesh
+coacd==1.0.14
+manifold3d==3.5.4
 opencv-python
 torch
 pyyaml

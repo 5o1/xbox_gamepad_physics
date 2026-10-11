@@ -12,6 +12,7 @@ from pathlib import Path
 import platform
 import subprocess
 import sys
+import time
 from typing import Any
 
 import yaml
@@ -28,6 +29,7 @@ class RunContext:
     output_dir: Path
     scene: Any
     gamepad: Any
+    load_seconds: float = 0.0
 
 
 def load_config(path: Path | str) -> dict:
@@ -101,8 +103,10 @@ def run_experiment(
     previous_cwd = Path.cwd()
     try:
         scene = create_scene(cfg["scene"])
+        tick = time.perf_counter()
         gamepad = load_into_scene(scene, profile=cfg["profile"], **cfg["gamepad"])
-        metrics = experiment(cfg, RunContext(output, scene, gamepad))
+        load_seconds = time.perf_counter() - tick
+        metrics = experiment(cfg, RunContext(output, scene, gamepad, load_seconds))
         (output / "metrics.json").write_text(
             json.dumps(metrics, indent=2) + "\n", encoding="utf-8",
         )

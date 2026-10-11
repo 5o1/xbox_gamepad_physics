@@ -1,0 +1,20 @@
+experiment: collision_overlay
+profile: full_controls
+scene:
+  timestep: 0.004166666666666667
+  ground: false
+  render: true
+  robotwin_root: null
+gamepad:
+  fixed_root: true
+  attach_visual: true
+  collision: coacd
+  pose: [0, 0, 0, 1, 0, 0, 0]
+params:
+  hulls_only: false # true: hide the visual mesh and draw opaque hulls
+  camera:
+    width: 1280
+    height: 720
+    fovy_degrees: 40
+    near: 0.001
+    far: 10

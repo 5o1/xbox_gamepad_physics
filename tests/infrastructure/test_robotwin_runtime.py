@@ -85,6 +85,13 @@ class FakeCollisionShape:
         self.materials = []
         self.contact_offsets = []
         self.rest_offsets = []
+        self.groups = [2, 3, 4, 5]
+
+    def get_collision_groups(self):
+        return list(self.groups)
+
+    def set_collision_groups(self, groups):
+        self.groups = list(groups)
 
     def set_physical_material(self, value):
         self.materials.append(value)
@@ -235,7 +242,7 @@ def ready_urdf():
 
 
 class RoboTwinRuntimeTest(unittest.TestCase):
-    def _load(self, *, use_multiple=True, task_wrapper=False):
+    def _load(self, *, use_multiple=True, task_wrapper=False, collision="coacd"):
         temporary = tempfile.TemporaryDirectory()
         self.addCleanup(temporary.cleanup)
         urdf = Path(temporary.name).resolve() / "mobility.urdf"
@@ -244,6 +251,18 @@ class RoboTwinRuntimeTest(unittest.TestCase):
         fake_loader = FakeLoader(articulation, use_multiple=use_multiple)
         scene = FakeScene(fake_loader)
         passed_scene = SimpleNamespace(scene=scene) if task_wrapper else scene
+        link_builder = SimpleNamespace(name="shell", collision_records=["original"])
+        link_builder.add_nonconvex_collision_from_file = lambda path: link_builder.collision_records.append(path)
+        builder = SimpleNamespace(link_builders=[link_builder], build=lambda: articulation)
+        fake_loader.parse = lambda path: ([builder], [], [])
+        fake_loader.builder = builder
+        config = SimpleNamespace(spacing=0.01, subgridSize=6, num_threads_for_construction=4)
+        fake_physx = SimpleNamespace(
+            get_sdf_config=lambda: config, set_sdf_config=mock.Mock(),
+            PhysxCollisionShapeTriangleMesh=type("Triangle", (), {}),
+        )
+        manifest = ready_manifest()
+        manifest["collision_variants"] = {"sdf": {"spacing_m": 0.001, "links": {"shell": ["collision/sdf/shell_0.obj"]}}}
         pose = SimpleNamespace(p=(1, 2, 3), q=(1, 0, 0, 0))
 
         def fake_resource_path(backend, profile, *parts, must_exist=True):
@@ -256,18 +275,20 @@ class RoboTwinRuntimeTest(unittest.TestCase):
                 loader_module, "require_physics_ready", return_value=ready_profile(urdf)
             ),
             mock.patch.object(
-                loader_module, "load_json_resource", return_value=ready_manifest()
+                loader_module, "load_json_resource", return_value=manifest
             ),
             mock.patch.object(loader_module, "resource_path", fake_resource_path),
             mock.patch.object(
-                loader_module, "_import_sapien", side_effect=AssertionError("eager import")
+                loader_module, "_import_sapien",
+                **({"return_value": SimpleNamespace(physx=fake_physx)} if collision == "sdf"
+                   else {"side_effect": AssertionError("eager import")})
             ),
             mock.patch(
                 "xbox_gamepad_physics.robotwin.visual.attach_visual_to_articulation"
             ),
         ):
             wrapper = loader_module.load_into_scene(
-                passed_scene, pose, fixed_root=True, profile="test_ready"
+                passed_scene, pose, fixed_root=True, profile="test_ready", collision=collision
             )
         return wrapper, articulation, fake_loader, pose, urdf
 
@@ -284,6 +305,24 @@ class RoboTwinRuntimeTest(unittest.TestCase):
         self.assertEqual(articulation.joints[0].friction_calls, [0.1])
         self.assertEqual(articulation.joints[0].target_calls, [0.0])
         self.assertEqual(articulation.mass_writes, [])
+        self.assertEqual(articulation.links[0].shape.groups, [2, 3, 4 | 0x80000000, 0x5842])
+
+    def test_sdf_replaces_collision_records_and_sets_groups(self):
+        _, articulation, loader, _, urdf = self._load(collision="sdf")
+        self.assertEqual(loader.paths, [])
+        self.assertEqual(loader.builder.link_builders[0].collision_records,
+                         [str(urdf.parent / "collision/sdf/shell_0.obj")])
+        self.assertEqual(articulation.links[0].shape.groups, [2, 3, 4 | 0x80000000, 0x5842])
+
+    def test_sdf_unsupported_error_is_explicit(self):
+        with mock.patch.object(loader_module, "_import_sapien", return_value=SimpleNamespace(
+            physx=SimpleNamespace(PhysxCollisionShapeTriangleMesh=type("Triangle", (), {})))):
+            with self.assertRaisesRegex(SceneCompatibilityError, "SAPIEN >= 3.0.3"):
+                loader_module.load_into_scene(None, None, True, collision="sdf")
+
+    def test_invalid_collision_variant(self):
+        with self.assertRaisesRegex(ValueError, "collision must be"):
+            loader_module.load_into_scene(None, None, True, collision="other")
 
     def test_common_motion_limits_are_applied_after_urdf_load(self):
         articulation = FakeArticulation()

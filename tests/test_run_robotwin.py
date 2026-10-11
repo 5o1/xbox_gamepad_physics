@@ -59,7 +59,7 @@ class ConfigurationTest(unittest.TestCase):
             runner.apply_overrides({}, ["params.steps"])
 
     def test_registry(self):
-        self.assertEqual(set(EXPERIMENTS), {"smoke", "render_review"})
+        self.assertEqual(set(EXPERIMENTS), {"smoke", "render_review", "drive_reach", "drop", "collision_check", "collision_overlay"})
         self.assertTrue(all(callable(run) for run in EXPERIMENTS.values()))
 
 

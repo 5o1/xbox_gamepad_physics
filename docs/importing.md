@@ -86,6 +86,17 @@ python -m xbox_gamepad_physics verify --backend robotwin --profile left_stick
 
 ## RoboTwin / SAPIEN
 
+完整控件 profile 的默认碰撞选项为 `collision="coacd"`；使用
+`load_into_scene(scene, pose, fixed_root, profile="full_controls", collision="sdf")`
+或在实验 YAML 的 `gamepad` 下设置 `collision: sdf` 可选择 1 mm SDF。
+SDF 要求 SAPIEN ≥3.0.3，不支持与 `add_ground` 平面、另一个 SDF 物体碰撞；
+桌面用静态盒子。低版本选择 SDF 会明确报错。
+
+两种选项均过滤手柄内部碰撞：全部形状保留 g0/g1，设置
+`g2 |= 0x80000000`、`g3 = 0x5842`，外部物体的接触仍按 g0/g1 判断。
+十字键、摇杆孔口可触区域约 1–1.5 mm 的 CoACD 外胀已于 2026-10-11 暂时接受；
+后续仿真实验确认影响结果后再修。具体参数和按组件误差见 `references/full_controls.json`。
+
 RoboTwin 的公共接入约定与任务模板见 [`robotwin_backend.md`](robotwin_backend.md)。
 调用者持有场景和安装位姿；资产包只把 `pose` 应用到 `controller_body` 根 link。
 

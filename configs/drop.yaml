@@ -1,0 +1,14 @@
+experiment: drop
+profile: full_controls
+scene:
+  timestep: 0.004166666666666667
+  ground: false
+  render: false
+gamepad:
+  fixed_root: false
+  attach_visual: false
+  collision: coacd
+  pose: [0, 0, 0, 1, 0, 0, 0]
+params:
+  orientation: face_up
+  table_top_m: 0.74

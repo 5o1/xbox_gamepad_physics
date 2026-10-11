@@ -96,6 +96,7 @@ def missing_resources(root: Path) -> list[str]:
         "kinematics/kinematics_build_audit.json",
         "common/xbox_one_s/motion/full_controls.json",
         "common/xbox_one_s/visual/manifest.json",
+        "common/xbox_one_s/collision/manifest.json",
         "mujoco/visual_v0/visual_manifest.json",
         "robotwin/left_stick/manifest.json",
         "robotwin/full_controls/manifest.json",

@@ -15,7 +15,7 @@ for path in (SRC, SCRIPTS):
     if str(path) not in sys.path:
         sys.path.insert(0, str(path))
 
-BUILD_DEPS = all(importlib.util.find_spec(name) is not None for name in ("numpy", "trimesh"))
+BUILD_DEPS = all(importlib.util.find_spec(name) is not None for name in ("numpy", "trimesh", "coacd", "manifold3d"))
 if BUILD_DEPS:
     from build_robotwin_full_controls import build  # noqa: E402
 from build_common_motion import build as build_motion
@@ -37,19 +37,20 @@ def _visual_root() -> Path:
 
 
 class RoboTwinFullControlsAssetTest(unittest.TestCase):
-    @unittest.skipIf(not BUILD_DEPS, "generator requires the [build] extra: numpy and trimesh")
+    @unittest.skipIf(not BUILD_DEPS, "generator requires the [build] extra: numpy, trimesh, coacd and manifold3d")
     def test_generated_profile_loads_and_matches_motion_contract(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             generated = root / "robotwin/full_controls"
             motion_path = root / "common/xbox_one_s/motion/full_controls.json"
             contract = build_motion(motion_path)
-            build(generated, common_motion=motion_path, visual_root=_visual_root())
+            build(generated, common_motion=motion_path, visual_root=_visual_root(),
+                  collision_root=_visual_root().parent / "collision")
             manifest = json.loads((generated / "manifest.json").read_text())
             for relative in manifest["required_files"]:
                 self.assertTrue((generated / relative).is_file(), relative)
             self.assertEqual(
-                check_explicit_urdf_physics(generated / "mobility.urdf"),
+                check_explicit_urdf_physics(generated / "mobility.urdf", require_moving_meshes=True),
                 {item["name"] for item in manifest["joint_dynamics"]},
             )
             check_manifest_ranges(manifest)
