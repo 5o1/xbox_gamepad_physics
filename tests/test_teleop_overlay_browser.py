@@ -4,10 +4,12 @@ import tempfile
 import unittest
 import importlib.util
 from teleop.overlay_validate import validate
+from teleop.site import settings
 
 
 class OverlayBrowserTest(unittest.IsolatedAsyncioTestCase):
     @unittest.skipUnless(importlib.util.find_spec('playwright'), '浏览器验收需要Playwright；系统Chrome端到端测试在本机运行')
+    @unittest.skipUnless(settings().get('TELEOP_BROWSER'), '浏览器验收需要本地配置 TELEOP_BROWSER（configs/local/teleop_site.env）')
     async def test_all_core_channels_in_dashboard_and_teleop(self):
         with tempfile.TemporaryDirectory() as directory:
             result = await validate(Path(directory))
