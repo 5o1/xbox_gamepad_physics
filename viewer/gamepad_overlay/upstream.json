@@ -24,7 +24,7 @@
     {
       "id": "teleop-overlay-highlight-20261012",
       "date": "2026-10-12",
-      "reason": "Ruling 8: repair the a4aa9b4 D-pad highlight regression and complete required Guide display without changing the 32-channel input chain.",
+      "reason": "Ruling 8: repair the da23cf4 D-pad highlight regression and complete required Guide display without changing the 32-channel input chain.",
       "files": {
         "overlay-shell.css": {
           "before_sha256": "2b930548d716e48c4fe7f2d055ef42c6662219d78e9db74071782b7d182a00ba",
@@ -39,19 +39,19 @@
         "gamepad-input-sources.js": {
           "before_sha256": "4974ac13f1d9924574b799805d36fd341b71eac3d4d74a0246e5c46f0a050fef",
           "sha256": "dd96eeccffcda715f18de5191e364cae24b057ab74fbf6e26c6072b3e17eb048",
-          "reason": "Bind Guide to the canonical GUIDE state; retain a4aa9b4 setPressAmount and exact-change behavior."
+          "reason": "Bind Guide to the canonical GUIDE state; retain da23cf4 setPressAmount and exact-change behavior."
         }
       }
     },
     {
       "id": "stick-motion-highlight-20261012",
       "date": "2026-10-12",
-      "reason": "Ruling 15: restore the approved c58dbb7 left/right motion coloring without changing the 32-state source or D-pad renderer.",
+      "reason": "Ruling 15: restore the approved be4f188 left/right motion coloring without changing the 32-state source or D-pad renderer.",
       "files": {
         "canonical_adapter.mjs": {
           "before_sha256": "55c716bbf6cc848a4134877d31b4ef45927bde12f8cb20dbb8e1fc14b729c5dd",
           "sha256": "110b7e245d89a873bca61cd3988a99ea366d920432bb120c69e5f81213536aaf",
-          "reason": "Ruling 15: restore c58dbb7 two-sided motion highlight classes from actual canonical axes, retaining a4aa9b4 continuous-state decoding."
+          "reason": "Ruling 15: restore be4f188 two-sided motion highlight classes from actual canonical axes, retaining da23cf4 continuous-state decoding."
         },
         "overlay-theme-research.css": {
           "before_sha256": "cf08041f80a3c5a6b72a1ccd70d2b2036f2af3539cf3f122c5885f937339f203",

@@ -26,6 +26,6 @@
 - `manifest.json`：文件列表、来源记录、署名，以及各组件的取舍。
 - 生成器：仓库中的 `scripts/build_collision_meshbase.py`。它只适用于上述审定过的源 mesh；源 mesh 以后变化时，本目录保持不变，可继续使用，不要求同步重新生成。
 
-旧版本：`assets/xbox_one_s/archive/collision_meshbase_2026-10-10/` 保存 2026-10-10 的原样快照（由提交 `05354cd` 的生成器得到，主壳有 10 对自交三角形），只作追溯，不再用于碰撞生成。`manifest.json` 的 `previous_versions` 记录了它。
+旧版本：`assets/xbox_one_s/archive/collision_meshbase_2026-10-10/` 保存 2026-10-10 的原样快照（由提交 `9bf91a3` 的生成器得到，主壳有 10 对自交三角形），只作追溯，不再用于碰撞生成。`manifest.json` 的 `previous_versions` 记录了它。
 
 分发副本时，保留作者、来源、许可和以上修改说明。作者未被声明为本项目的背书者。

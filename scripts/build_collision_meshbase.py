@@ -66,7 +66,7 @@ STICK_SHELL_FACES = [288, 318]  # antislip ring, stick body
 
 PREVIOUS_VERSIONS = [{
     "path": "assets/xbox_one_s/archive/collision_meshbase_2026-10-10",
-    "generator_commit": "05354cd",
+    "generator_commit": "9bf91a3",
     "superseded_because": "shell had 10 non-adjacent self-intersecting triangle pairs (inner slope "
                           "under the top edge vs. the guide-button opening; left fold patch)",
 }]

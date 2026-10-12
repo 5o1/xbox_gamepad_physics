@@ -14,7 +14,7 @@ async def review(output):
     cases += [('left_stick',1),('right_stick',1)]
     async with async_playwright() as p:
         browser=await p.chromium.launch(executable_path=require('TELEOP_BROWSER'),headless=True,args=['--no-sandbox','--disable-dev-shm-usage'])
-        for revision in ('9bada79','c58dbb7',None):
+        for revision in ('4c85f11','be4f188',None):
             label=revision or 'current';folder=output/label;folder.mkdir(exist_ok=True)
             page=await local_page(browser,'http://127.0.0.1:18986/viewer/gamepad_overlay/index.html?source=canonical',revision)
             await page.wait_for_function('__gamepadOverlayAdapter?.ready')

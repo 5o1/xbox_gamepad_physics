@@ -60,7 +60,7 @@ figcaption { color: var(--muted); font-size: 0.88rem; margin-top: 6px; }
 
 <h1>从开源视觉模型到可交互物理资产：Xbox One S 手柄仿真的阶段报告</h1>
 <p class="meta">阶段报告第 2 版 · 证据截至 2026-10-11 · 仓库 <code>5o1/xbox_gamepad_physics</code>。</p>
-<p class="meta">状态快照：在 HEAD <code>0278f30</code>（71 个提交）之上，阶段 B（第 8.8 节）经负责人验收叠加图后，与本报告一同提交。</p>
+<p class="meta">状态快照：在 HEAD <code>c1e52ed</code>（71 个提交）之上，阶段 B（第 8.8 节）经负责人验收叠加图后，与本报告一同提交。</p>
 <p class="meta">时间口径：文中日期和时刻一律换算为 UTC+9，与 Git 提交时间一致。</p>
 
 <div class="abstract">
@@ -114,7 +114,7 @@ figcaption { color: var(--muted); font-size: 0.88rem; margin-top: 6px; }
 <p>后续的游戏强化学习和视觉-语言-动作模型训练，会直接用这些信号判断机器人“按下了什么”；这些训练不在本仓库实现。</p>
 <p>本文覆盖 2026-10-06 至 2026-10-11 的工作：</p>
 <ul>
-<li>原报告快照的 70 个 Git 提交，加上其后的第 71 个提交 <code>0278f30</code>；</li>
+<li>原报告快照的 70 个 Git 提交，加上其后的第 71 个提交 <code>c1e52ed</code>；</li>
 <li><code>build/experiments/</code> 下的全部 48 个目录和 20 个单独记录文件，另加此后新增的阶段 B 目录和审阅目录。</li>
 </ul>
 <p>前 12 个提交在 2026-10-06 20:54–21:13 集中导入，是更早工作的快照，它们的时间只表示导入时刻。</p>
@@ -168,7 +168,7 @@ figcaption { color: var(--muted); font-size: 0.88rem; margin-top: 6px; }
 <tr><td>RoboTwin/SAPIEN 中的外观</td><td>负责人确认通过（仓库记录）</td><td>第 5.3 节</td></tr>
 <tr><td>MuJoCo 中的外观</td><td>原生渲染器和打过补丁的 Filament 渲染器都实际运行过；正式构建、官方版与补丁版的对照、负责人验收都未完成</td><td>第 5.3 节</td></tr>
 <tr><td>关节与信号</td><td>20 个关节、21 个游戏通道；两个后端都能双向读写</td><td>第 6 节</td></tr>
-<tr><td>碰撞底模（meshbase）</td><td>17 个组件，各自封闭；外壳自交已修复并提交（<code>0278f30</code>）</td><td>第 7.5、8.6 节</td></tr>
+<tr><td>碰撞底模（meshbase）</td><td>17 个组件，各自封闭；外壳自交已修复并提交（<code>c1e52ed</code>）</td><td>第 7.5、8.6 节</td></tr>
 <tr><td>CoACD/SDF 碰撞体</td><td>已接入构建流程和加载接口，关键门槛全部通过；负责人已验收碰撞体叠加图（2026-10-11）</td><td>第 8.8 节</td></tr>
 <tr><td>物理参数（质量、刚度、摩擦）</td><td>全部是有来源的估计值或仿真设置，未经实测</td><td>第 6、8.8 节</td></tr>
 <tr><td>灵巧手接触、实物标定</td><td>未完成</td><td>第 7.3、11 节</td></tr>
@@ -389,8 +389,8 @@ figcaption { color: var(--muted); font-size: 0.88rem; margin-top: 6px; }
 <ul>
 <li><strong>透明部件</strong>：查看器用浏览器端的三维库 Three.js 绘制拾取用的场景。Three.js 默认的透明混合会让透明按键出现黑白面片和错误遮挡。我们固定网格、相机、姿态和光照，只改透明绘制方式，最终采用开启多重采样的 alpha-to-coverage，即用像素内多个采样点的覆盖比例来近似半透明。</li>
 <li><strong>高光贴图</strong>：静态导出时，原 GLB 的 <code>specularTexture</code> 变成了 <code>specularColorTexture</code>，摇杆表面的细节因此丢失。改为直接读取原 GLB 的完整材质后，细节恢复。</li>
-<li><strong>撤回的方案</strong>：我们曾把 Blender 的灯光和 Filmic 设置迁移到浏览器端（提交 <code>15fa289</code>），14 分钟后撤回（<code>aa13cc7</code>）。按 <code>approved_cycles_reuse/README.md</code> 的记录，负责人指定了历史 Cycles 图作为标准，于是撤回了灰色环境、Filmic 和 WebGL 的适配（附录 C）。</li>
-<li><strong>直接用 Cycles 出图</strong>：查看器画面改由常驻的 Blender/Cycles 进程绘制，浏览器只负责拾取和坐标计算（<code>495830e</code>）。复现画面与选定图相比，8 位 RGB 三个通道的平均绝对误差为 0.0041、0.0044、0.0049，单通道最大差为 5、4、5。</li>
+<li><strong>撤回的方案</strong>：我们曾把 Blender 的灯光和 Filmic 设置迁移到浏览器端（提交 <code>c6d4af3</code>），14 分钟后撤回（<code>4a753d4</code>）。按 <code>approved_cycles_reuse/README.md</code> 的记录，负责人指定了历史 Cycles 图作为标准，于是撤回了灰色环境、Filmic 和 WebGL 的适配（附录 C）。</li>
+<li><strong>直接用 Cycles 出图</strong>：查看器画面改由常驻的 Blender/Cycles 进程绘制，浏览器只负责拾取和坐标计算（<code>914490f</code>）。复现画面与选定图相比，8 位 RGB 三个通道的平均绝对误差为 0.0041、0.0044、0.0049，单通道最大差为 5、4、5。</li>
 <li><strong>摇杆拖动</strong>：把摇杆拖到圆形边界外再拉回时，旧求解器会把迭代点停在方形区域的圆外部分，摇杆因此不回中。改为在单位圆内迭代后，“拖到边界外三倍距离再返回”测试中，所有返回点的坐标误差都小于 0.004；在全新克隆的仓库中复测，误差小于 0.005。这些都只是软件层面的检查。</li>
 </ul>
 <p>我们还试过在 Blender 原生视口中实时拖动左摇杆（<code>native_viewport_pilot</code>），每个条件只测了一次：</p>
@@ -438,7 +438,7 @@ figcaption { color: var(--muted); font-size: 0.88rem; margin-top: 6px; }
 <li><strong>接触推动</strong>：运动学物体按脚本给定的轨迹移动，不受力的影响。一个 6 mm 的红色运动学球通过物理接触，把摇杆推到约 −0.301 rad（<code>left_x ≈ −0.75</code>）；球移开后摇杆回中。</li>
 <li><strong>敏感性</strong>：时间步长 3 档 × 移动质量 3 档（2–10 g）× 摩擦与恢复系数 3 组，共 27 组，全部通过。</li>
 </ul>
-<p>按仓库记录，负责人看过视频后确认“效果正确”（提交 <code>d02416d</code>）。</p>
+<p>按仓库记录，负责人看过视频后确认“效果正确”（提交 <code>bdf0334</code>）。</p>
 
 <h3>6.3 完整控件与两个后端的对照</h3>
 <p><code>full_controls</code> 包含 20 个关节、21 个游戏通道和 Pair 物理事件。参数的取法如下：</p>
@@ -499,7 +499,7 @@ figcaption { color: var(--muted); font-size: 0.88rem; margin-top: 6px; }
 <li>信号阈值取 1e-4 时，摩擦系数为 0 和 128 都会产生信号，二分没有可用的区间；</li>
 <li>阈值改为 0.01 后，临界值落在 0.07612 与 0.07617 之间。</li>
 </ul>
-<p>按仓库记录，负责人据此把摩擦系数设为 0.1（<code>ae5bce2</code>）。这个值是仿真设置，Xbox 实物的对应参数还没有测量。</p>
+<p>按仓库记录，负责人据此把摩擦系数设为 0.1（<code>d79278d</code>）。这个值是仿真设置，Xbox 实物的对应参数还没有测量。</p>
 
 <h3>6.5 基本体碰撞与质量（第 8.8 节之前提交的版本）</h3>
 <p>在第 8.8 节之前，仓库中提交的碰撞体是按视觉包围盒手工拟合的基本几何体：</p>
@@ -645,7 +645,7 @@ figcaption { color: var(--muted); font-size: 0.88rem; margin-top: 6px; }
 <p>负责人在 Blender 中检查后决定（18:46）：主壳与前板已经各自是独立的闭合网格，分别生成碰撞体即可，不再合并；顶边凹槽也保持原样。</p>
 
 <h3>7.5 碰撞底模 meshbase v1</h3>
-<p>负责人随后要求整理一份正式的中间资产，并保证每个独立组件都是闭合图形（18:48）。这就是 <code>assets/xbox_one_s/collision_meshbase/</code>（提交 <code>05354cd</code>）：17 个组件、19 个独立闭合壳、6882 个三角面（图 10）。</p>
+<p>负责人随后要求整理一份正式的中间资产，并保证每个独立组件都是闭合图形（18:48）。这就是 <code>assets/xbox_one_s/collision_meshbase/</code>（提交 <code>9bf91a3</code>）：17 个组件、19 个独立闭合壳、6882 个三角面（图 10）。</p>
 <p><strong>各组件的处理：</strong></p>
 <ul>
 <li><strong>ABXY</strong>：只保留键帽，字形装饰片和零厚度的视觉底片整块排除。负责人的判断是，这份资产只用于生成碰撞体，保留可触碰的外形即可（19:14–19:17）。实现时曾把 A、B 的字形片误认为主块，后来改为按 64 面的键帽几何来识别（附录 B）。</li>
@@ -701,7 +701,7 @@ figcaption { color: var(--muted); font-size: 0.88rem; margin-top: 6px; }
 <tr><td>8</td><td>失败、失败、失败</td><td>失败、失败、失败</td></tr>
 </table></div>
 
-<p><strong>手柄包在 3.0.3 上的检查。</strong>在 B 环境中，对本仓库快照 <code>6e0b2a6</code> 做了四项检查：资源构建、冒烟测试（只检查能否加载和运行的最小测试）、渲染检查、fast 回归。四项的退出码都是 0。冒烟结果为 <code>sapien=3.0.3</code>、20 个关节、21 个通道、<code>passed=true</code>，往返误差 2.02e-8（<code>remote/results/xbox/</code>）。这些结果只代表当时的快照；修复后的版本见第 8.8 节。</p>
+<p><strong>手柄包在 3.0.3 上的检查。</strong>在 B 环境中，对本仓库快照 <code>822f437</code> 做了四项检查：资源构建、冒烟测试（只检查能否加载和运行的最小测试）、渲染检查、fast 回归。四项的退出码都是 0。冒烟结果为 <code>sapien=3.0.3</code>、20 个关节、21 个通道、<code>passed=true</code>，往返误差 2.02e-8（<code>remote/results/xbox/</code>）。这些结果只代表当时的快照；修复后的版本见第 8.8 节。</p>
 
 <p><strong>碰撞配对探测。</strong>在 3.0.3 的 CPU 物理下，让一个 10 cm 的立方体从 0.3 m 高处落到不同类型的支撑面上（<code>sdf_pair_probe_20261011</code>）。480 步后，高度与预期之差小于 1 cm 判为“能”。结果见表 5。</p>
 
@@ -848,7 +848,7 @@ figcaption { color: var(--muted); font-size: 0.88rem; margin-top: 6px; }
 <li><strong>CoACD 的反应</strong>：修复后的外壳通过了 CoACD 自己的流形与自交检查。<code>auto</code> 模式不再触发体素重建，结果与 <code>off</code> 逐字节相同（表 6 最后一行、图 13）。</li>
 <li><strong>旧版留档</strong>：旧版原样复制到 <code>assets/xbox_one_s/archive/collision_meshbase_2026-10-10/</code>；新 manifest 的 <code>previous_versions</code> 记录了归档路径、生成器提交和替换原因。</li>
 </ul>
-<p>负责人确认后，这批改动作为 <code>0278f30</code> 提交（15:25）。</p>
+<p>负责人确认后，这批改动作为 <code>c1e52ed</code> 提交（15:25）。</p>
 
 <figure>
 <img src="figures/f11_repaired_shell_top.jpg" alt="修复后外壳外胀热力图">
@@ -929,7 +929,7 @@ figcaption { color: var(--muted); font-size: 0.88rem; margin-top: 6px; }
 <li>代码工程可以表示为无环的依赖图，下游发现上游产物的版本不一致时，重新生成即可，就像 make 一样（21:04）；</li>
 <li>wheel 不包含任何资产；资源随 GitHub Release 的 zip 发布，也支持首次使用时在本地构建（19:09–19:12）。</li>
 </ul>
-<p>相应的实现（提交 <code>b7e71b5</code>、<code>7bc8413</code>）：</p>
+<p>相应的实现（提交 <code>e6e634a</code>、<code>e2442b7</code>）：</p>
 <ul>
 <li>运行时资源按 <code>scripts/build_resources.py</code> 中的依赖图生成。每个节点为自己的输入内容记一份私有摘要，称为 stamp，输入不变时就跳过。</li>
 <li>测试和 manifest 中不断言哈希。负责人专门讨论过：执行代理容易在代码里塞哈希校验，并因此被反复卡住（21:02）。</li>
@@ -947,8 +947,8 @@ figcaption { color: var(--muted); font-size: 0.88rem; margin-top: 6px; }
 <p>同期还有几处方向调整（附录 C）：</p>
 <ul>
 <li>把资源移进 Python 包的提交被撤回；</li>
-<li>删除过度设计的验证逻辑（<code>6d19ff3</code>）；</li>
-<li>RoboTwin 加载接口的数值检查，改为只在构建产物上检查一次（<code>9e21869</code>）。</li>
+<li>删除过度设计的验证逻辑（<code>3327e11</code>）；</li>
+<li>RoboTwin 加载接口的数值检查，改为只在构建产物上检查一次（<code>4be4601</code>）。</li>
 </ul>
 
 <h3>9.2 GPU 冒烟、回归与实验平台</h3>
@@ -958,8 +958,8 @@ figcaption { color: var(--muted); font-size: 0.88rem; margin-top: 6px; }
 <li>远端环境中，第三方包 azure-cosmosdb-table 误带的 <code>tests</code> 包遮蔽了仓库的测试命名空间；</li>
 <li>有些测试依赖安装元数据。</li>
 </ul>
-<p>修复提交 <code>773a562</code> 记录的结果是“108 tests, 2 MuJoCo skips”，原始日志没有保存，通过数无法独立复核。</p>
-<p><strong>实验平台（<code>6e0b2a6</code>）。</strong>仓库根目录的 <code>run_robotwin.py</code> 读取 <code>configs/*.yaml</code>，每次运行把覆盖后的配置、版本信息和指标写到 <code>build/runs/</code> 下。这个设计是负责人要求的：入口放在根目录，配置使用 YAML（2026-10-10 23:02–23:07）。</p>
+<p>修复提交 <code>07507e0</code> 记录的结果是“108 tests, 2 MuJoCo skips”，原始日志没有保存，通过数无法独立复核。</p>
+<p><strong>实验平台（<code>822f437</code>）。</strong>仓库根目录的 <code>run_robotwin.py</code> 读取 <code>configs/*.yaml</code>，每次运行把覆盖后的配置、版本信息和指标写到 <code>build/runs/</code> 下。这个设计是负责人要求的：入口放在根目录，配置使用 YAML（2026-10-10 23:02–23:07）。</p>
 <ul>
 <li>两份配置都在 GPU 节点上运行成功，负责人确认渲染“通过”（23:51）。</li>
 <li>本地回归：110 项通过、4 项跳过。远端没有 Node，JS 测试没有执行，所以 fast 脚本整体返回 1。</li>
@@ -1089,7 +1089,7 @@ python3 run_robotwin.py configs/smoke_full_controls.yaml --set gamepad.collision
 <tr><td><code>robotwin_sapien303_20261011/</code></td><td class="date">10-11</td><td>RoboTwin 升级 SAPIEN 3.0.3：A/B 对照、重复实验、手柄包检查</td><td>8.2</td><td>部分完成后取消</td></tr>
 <tr><td><code>sdf_pair_probe_20261011/</code></td><td class="date">10-11</td><td>SDF 碰撞配对探测（含重跑结果）</td><td>8.2</td><td>已运行</td></tr>
 <tr><td><code>collision_sweep_20261011/</code></td><td class="date">10-11</td><td>CoACD 扫参、自交诊断、SDF 基准</td><td>8.3–8.5</td><td>参数已选定</td></tr>
-<tr><td><code>meshbase_selfx_fix_20261011/</code></td><td class="date">10-11</td><td>自交修复对比、CoACD 复查、孔位剖面、统计 JSON</td><td>8.6–8.7</td><td>已提交（<code>0278f30</code>）</td></tr>
+<tr><td><code>meshbase_selfx_fix_20261011/</code></td><td class="date">10-11</td><td>自交修复对比、CoACD 复查、孔位剖面、统计 JSON</td><td>8.6–8.7</td><td>已提交（<code>c1e52ed</code>）</td></tr>
 <tr><td><code>report_review_20261011/</code></td><td class="date">10-11</td><td>本文第 1 版的独立审阅，以及负责人原话的导出</td><td>—</td><td>已用于第 2 版</td></tr>
 <tr><td><code>collision_phaseB_20261011/</code></td><td class="date">10-11</td><td>CoACD/SDF 接入验证</td><td>8.8</td><td>负责人验收通过</td></tr>
 </table></div>
@@ -1119,12 +1119,12 @@ python3 run_robotwin.py configs/smoke_full_controls.yaml --set gamepad.collision
 <div class="table-wrap"><table>
 <caption>表 10　关键的路线调整（时间为 UTC+9）</caption>
 <tr><th>提交</th><th>内容</th><th>后续</th></tr>
-<tr><td><code>6d19ff3</code>（10-08 00:46）</td><td>删除过度设计的验证逻辑，约 8,700 行</td><td>此后验证工作改为与风险相称</td></tr>
-<tr><td><code>e00d84a</code> → <code>c15fe85</code>（10-08 15:13 → 15:16）</td><td>把运行时资产移进 Python 包，3 分钟后撤回</td><td>撤回原因没有书面记录；10-10 改为构建时生成，wheel 只含代码（<code>b7e71b5</code>、<code>7bc8413</code>）</td></tr>
-<tr><td><code>15fa289</code> → <code>aa13cc7</code>（10-08 15:47 → 16:01）</td><td>把 Blender 的灯光和 Filmic 设置迁移到浏览器端，14 分钟后撤回</td><td>负责人指定历史 Cycles 图为标准，查看器改为直接用 Cycles 出图（<code>495830e</code>）</td></tr>
-<tr><td><code>73dbb33</code>（10-08 17:31）</td><td>交付重点从浏览器查看器转向仿真器原生资产</td><td>随后接入 RoboTwin 与 MuJoCo 的视觉（第 5.3 节）</td></tr>
-<tr><td><code>9e21869</code>（10-10 22:58）</td><td>RoboTwin 加载接口只做 API 层面的检查，数值保证移到构建产物上检查一次</td><td>主助手实现，执行代理交叉审阅</td></tr>
-<tr><td><code>0278f30</code>（10-11 15:25）</td><td>修复碰撞底模的自交，旧版归档</td><td>第 8.6 节</td></tr>
+<tr><td><code>3327e11</code>（10-08 00:46）</td><td>删除过度设计的验证逻辑，约 8,700 行</td><td>此后验证工作改为与风险相称</td></tr>
+<tr><td><code>577cdb8</code> → <code>c4e46f1</code>（10-08 15:13 → 15:16）</td><td>把运行时资产移进 Python 包，3 分钟后撤回</td><td>撤回原因没有书面记录；10-10 改为构建时生成，wheel 只含代码（<code>e6e634a</code>、<code>e2442b7</code>）</td></tr>
+<tr><td><code>c6d4af3</code> → <code>4a753d4</code>（10-08 15:47 → 16:01）</td><td>把 Blender 的灯光和 Filmic 设置迁移到浏览器端，14 分钟后撤回</td><td>负责人指定历史 Cycles 图为标准，查看器改为直接用 Cycles 出图（<code>914490f</code>）</td></tr>
+<tr><td><code>b455165</code>（10-08 17:31）</td><td>交付重点从浏览器查看器转向仿真器原生资产</td><td>随后接入 RoboTwin 与 MuJoCo 的视觉（第 5.3 节）</td></tr>
+<tr><td><code>4be4601</code>（10-10 22:58）</td><td>RoboTwin 加载接口只做 API 层面的检查，数值保证移到构建产物上检查一次</td><td>主助手实现，执行代理交叉审阅</td></tr>
+<tr><td><code>c1e52ed</code>（10-11 15:25）</td><td>修复碰撞底模的自交，旧版归档</td><td>第 8.6 节</td></tr>
 </table></div>
 
 <h2 id="references">参考文献</h2>

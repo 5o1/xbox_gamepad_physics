@@ -90,7 +90,7 @@ async def validate(output, modes=("dashboard","teleop")):
                     await target.locator('#overlayRoot').screenshot(path=str(output/f'{mode}_{name}_svg.png'))
                 await apply(canonical())
                 assert await target.evaluate(SNAPSHOT)==baseline, f'{mode}/{name}: neutral state did not restore'
-            # Preserve a4aa9b4's continuous amplitude and exact-change behavior.
+            # Preserve da23cf4's continuous amplitude and exact-change behavior.
             continuous=[]
             for name in ('south','guide'):
                 for value in (.37,5.4e-7,4.4e-6):

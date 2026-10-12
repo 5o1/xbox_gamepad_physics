@@ -41,10 +41,10 @@
 | A27 | 用户指出合理抓取要靠手掌包拢；随后决定回到碰撞体任务 | 会话记录 2026-10-10 04:43、04:49 | 用户决定 | — |
 | A28 | 外壳闭合 v1：原始主壳就有 43 对自交，按门槛停止；Open3D 独立复核结果一致 | `shell_closed_v1/REPORT.md` | 运行 | — |
 | A29 | 外壳闭合 v2：前板埋入门槛失败；桥接后外部仍有 1,648,794 个可达体素；正面窗口外沿找到 0 个闭合环，按门槛停止；之后改为导出供用户在 Blender 里手工编辑的文件包 | `shell_closed_v2/REPORT.md`、`diagnostic_stop*/`、`manual_kit/README.md` | 运行 | — |
-| A30 | 用户决定主壳和前板分别作为独立闭合体；meshbase v1 共 17 个组件、19 个壳，全部关键门槛通过；主壳 10 对自交按非关键项记录 | 会话记录 2026-10-10 09:46；`collision_meshbase_v1/REPORT.md`；提交 05354cd | 运行加提交 | — |
-| A31 | 资源构建 DAG：首次 0.98 s，命中 stamp 时 0.03 s；75 个文件一致；只改一个输入时只重建两个节点 | `resource_build_v1/REPORT.md`；提交 b7e71b5、7bc8413 | 运行 | — |
-| A32 | GPU 冒烟（SAPIEN 3.0.0b1）：full_controls 的各项指标全部通过；当时 fast 回归失败（1 项失败、7 项错误），后来在 773a562 修复（108 项，2 项跳过） | `sapien_smoke_20261010/REPORT.md`；提交 773a562 | 运行 | — |
-| A33 | 实验平台：两份配置在 GPU 节点运行成功；本地 110 项通过、4 项跳过；用户确认渲染画面 | `platform_20261010/REPORT.md`；提交 6e0b2a6 | 运行 | 远端 JS 没有运行 |
+| A30 | 用户决定主壳和前板分别作为独立闭合体；meshbase v1 共 17 个组件、19 个壳，全部关键门槛通过；主壳 10 对自交按非关键项记录 | 会话记录 2026-10-10 09:46；`collision_meshbase_v1/REPORT.md`；提交 9bf91a3 | 运行加提交 | — |
+| A31 | 资源构建 DAG：首次 0.98 s，命中 stamp 时 0.03 s；75 个文件一致；只改一个输入时只重建两个节点 | `resource_build_v1/REPORT.md`；提交 e6e634a、e2442b7 | 运行 | — |
+| A32 | GPU 冒烟（SAPIEN 3.0.0b1）：full_controls 的各项指标全部通过；当时 fast 回归失败（1 项失败、7 项错误），后来在 07507e0 修复（108 项，2 项跳过） | `sapien_smoke_20261010/REPORT.md`；提交 07507e0 | 运行 | — |
+| A33 | 实验平台：两份配置在 GPU 节点运行成功；本地 110 项通过、4 项跳过；用户确认渲染画面 | `platform_20261010/REPORT.md`；提交 822f437 | 运行 | 远端 JS 没有运行 |
 | A34 | 碰撞方法调研：被操作物体的主流做法是“先修成闭合，再按部件凸分解”；Real-IKEA 提出双向表面偏差指标 | 外部 R-DexGraspNet、R-RoboTwin2、R-RealIKEA、R-ManiSkill | 外部来源（摘要已核对） | Real-IKEA 正文细节以会话记录为准 |
 | A35 | SAPIEN 3.0.3（2026-03-10）提供 SDF 三角网格；RoboTwin 上游仍固定 3.0.0b1（2024-05-22）；fork 升级提交 57d8e95 没有 push | PyPI；`robotwin_sapien303_20261011/REPORT.md` | 运行 | — |
 | A36 | 3.0.3 的 A/B：20 个关键 seed 中 B 成功 19 个，失败的是 open_microwave 的 seed 5；A 环境中同一 seed 重复 3 次的结果为失败、失败、成功；用户之后取消了一致性验证 | `AB_seed_results.json`、`A_gate.json`；会话记录 2026-10-10 18:18/18:22 | 运行（部分） | B 的重复结果、我们的包在 3.0.3 上的冒烟都缺失 |
@@ -210,14 +210,14 @@ Result: PASS
 
 **修订方式：**整篇重写正文。第 1 版保存在会话 scratchpad 的 `report_v1.html`。
 
-**状态快照：**由“HEAD `6e0b2a6` 加未提交的修复”更新为“HEAD `0278f30`（71 个提交），阶段 B 未提交”。
+**状态快照：**由“HEAD `822f437` 加未提交的修复”更新为“HEAD `c1e52ed`（71 个提交），阶段 B 未提交”。
 
 ## A'. 新增与更正的证据
 
 | 编号 | 结论 | 证据 | 程度 |
 |---|---|---|---|
 | A7' | One S 的尺度来自整机宽度 ÷ 模型 X 方向范围 | `scripts/build_kinematics.py:160`。A7 原先引用的是旧 Casper 代理的 `scaling_candidate`，不适用 | 实现 |
-| A36' | 手柄包在 3.0.3 上的 4 项检查（快照 `6e0b2a6`）退出码都是 0，冒烟 `passed=true`；微波炉重复实验 A/B 各 4 个 seed × 3 次 | `robotwin_sapien303_20261011/remote/results/xbox/checks.json`、`smoke_full_controls/metrics.json`、`remote/results/repeats/*.json` | 运行 |
+| A36' | 手柄包在 3.0.3 上的 4 项检查（快照 `822f437`）退出码都是 0，冒烟 `passed=true`；微波炉重复实验 A/B 各 4 个 seed × 3 次 | `robotwin_sapien303_20261011/remote/results/xbox/checks.json`、`smoke_full_controls/metrics.json`、`remote/results/repeats/*.json` | 运行 |
 | A37' | 表 5 两格的重跑结果 | 新存的 `sdf_pair_probe_20261011/results_rerun_cases_8_18.txt`，内容从会话记录 2026-10-10T16:41:25Z 原样导出，并写明来源 | 运行（证据补存） |
 | A42' | 第 8.6 节的修复统计、第 8.7 节的隐藏比例和孔口 95 分位数 | 新存的 `meshbase_selfx_fix_20261011/fix_statistics.py` 与 `fix_statistics.json`，重算结果与第 1 版的数字一致 | 运行（证据补存） |
 | A47 | G20 v2 的门槛修订链 | `g20_grasp_v2/roundA/REPORT.md` 第 100–340 行、`a1_revised_gate.json` | 运行 |
@@ -239,7 +239,7 @@ Result: PASS
 
 | 审阅意见 | 结论 | 处理 | 复查 |
 |---|---|---|---|
-| S1：3.0.3 上的检查与 B 重复实验被写成缺失 | 需修改 | 8.2 节补上四项检查和表 4，并写明结果绑定的是快照 `6e0b2a6`；11.1 节改正 | 对照 `checks.json` 和 repeats JSON，数字一致 |
+| S1：3.0.3 上的检查与 B 重复实验被写成缺失 | 需修改 | 8.2 节补上四项检查和表 4，并写明结果绑定的是快照 `822f437`；11.1 节改正 | 对照 `checks.json` 和 repeats JSON，数字一致 |
 | S4：“完整包住”超出证据 | 需修改 | 2.4、8.4 节改为“采样中在 10 µm 容差内全部覆盖，不证明连续包含”；补上外胀统计对象（149,602/490,547）和 decimate 例外 | 一致 |
 | S5：“接触不到”只有中立位依据 | 需修改 | 8.7 节限定为“所示中立剖面”，运动后的可达性写明未评估；“提前约 1 mm”标为预测；统计数字落盘 | `fix_statistics.json` 重算一致 |
 | G1：薄区分母 | 需修改 | 7.5 节写明分母只含可测样本，并补上 Guide 1 mm 深度排除 85.7%、剩 2869 个样本 | 与 `collision_meshbase_v1/REPORT.md` 第 12649 行一致 |
@@ -274,7 +274,7 @@ Result: PASS
 | 漏写 H3 与扫参中的执行问题（G5） | 需修改 | 7.2 节补上 H3 和 H7 环境受阻；8.3 节和附录 B 补上 OOM、字段名错误、日志被覆盖 |
 | 分发设计与实际发布混淆（G15） | 需修改 | 9.1 节写明“只在本地 HTTP 上验证过，GitHub Release 尚未发布” |
 | G20 修订链（S2） | 需修改 | 新增表 3，写明每次的提出者；v1 是动力学实验、v2 是几何筛选，分开写 |
-| Revert 与路线调整（S3） | 需修改 | 5.2、9.1 节短记，附录 C 列出；e00d84a 的撤回原因写明“没有书面记录” |
+| Revert 与路线调整（S3） | 需修改 | 5.2、9.1 节短记，附录 C 列出；577cdb8 的撤回原因写明“没有书面记录” |
 
 ## 第四轮（修订 2）：中文与 HTML 版式
 
@@ -308,8 +308,8 @@ Result: PASS
 
 ```text
 1. 早期整件 CoACD 预览的参数，以及当时被否决的原因，没有书面记录。
-2. 773a562 的“108 tests”通过数，原日志缺失。
-3. e00d84a 的撤回原因没有书面记录。
+2. 07507e0 的“108 tests”通过数，原日志缺失。
+3. 577cdb8 的撤回原因没有书面记录。
 4. 孔口外胀对接触的实际影响，没有做过接触实验。
 5. 阶段 B 未提交；叠加图待负责人验收。
 ```
