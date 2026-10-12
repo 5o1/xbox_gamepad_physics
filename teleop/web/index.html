@@ -1,0 +1,10 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Xbox One S · 遥操作</title><link rel="stylesheet" href="/web/style.css"></head>
+<body><header><div><strong>Xbox One S</strong><span>悬浮夹爪 · 实时操作</span></div><span id="connection">连接中</span></header>
+<main><section class="stage"><nav id="views"><button data-view="front">按钮面</button><button data-view="buttons_close">按钮面特写</button><button data-view="overall">整体</button><button data-view="buttons">按键俯视</button><button data-view="left">左侧</button><button data-view="right">右侧</button><button data-view="triggers">扳机侧</button></nav>
+<div class="video-wrap"><canvas id="video" width="1280" height="720" tabindex="0" aria-label="点击锁定指针，夹爪作为光标"></canvas><div id="mode">点击画面锁定指针</div></div>
+<p>鼠标：画面平面内移动夹爪 · 左键闭合 / 右键张开 · W/S 俯仰、A/D 偏航（根部为中心） · Q 靠近 / E 远离相机 · Shift 精细 · Tab 主副切换 · G 手柄冻结/解冻 · Esc 解锁停住（解锁后切换视角）</p>
+<div class="statistics"><span id="fps">– fps</span><span id="latency">响应 – ms</span><span id="step">step –</span><span id="sequence">输入 –</span></div></section>
+<aside><h2>夹爪状态</h2><dl><dt>当前控制</dt><dd id="active">–</dd><dt>手柄</dt><dd id="gamepad-freeze">–</dd><dt>模式</dt><dd id="state">–</dd><dt>幽灵检查</dt><dd id="blocked">–</dd><dt>两指位移</dt><dd id="fingers">–</dd><dt>根部位置 / m</dt><dd id="pose">–</dd><dt>姿态 / qw xyz</dt><dd id="rotation">–</dd></dl>
+<iframe id="overlay" src="/viewer/gamepad_overlay/index.html?view=overlay&source=canonical&theme=research" title="手柄实时信号"></iframe><h2>21 通道</h2><div id="signals"></div></aside></main>
+<script type="module" src="/web/app.js"></script></body></html>

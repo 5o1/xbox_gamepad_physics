@@ -101,3 +101,6 @@ src/xbox_gamepad_physics/_resource_lock.json
 .xbox_gamepad_physics/
 src/xbox_gamepad_physics/resource_data/common/
 src/xbox_gamepad_physics/resource_data/robotwin/
+
+# Machine-specific teleoperation connection settings (never distribute).
+/configs/local/teleop_site.env

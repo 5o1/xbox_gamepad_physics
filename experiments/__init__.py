@@ -8,6 +8,7 @@ from .drive_reach import run as drive_reach
 from .collision_check import run as collision_check
 from .drop import run as drop
 from .collision_overlay import run as collision_overlay
+from .teleop_replay import run as teleop_replay
 
 
 EXPERIMENTS: dict[str, Callable] = {
@@ -17,4 +18,5 @@ EXPERIMENTS: dict[str, Callable] = {
     "collision_check": collision_check,
     "drop": drop,
     "collision_overlay": collision_overlay,
+    "teleop_replay": teleop_replay,
 }
