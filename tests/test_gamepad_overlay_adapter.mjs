@@ -6,6 +6,7 @@ import {
   LAYOUT_ID,
   canonicalFrameToOverlayState,
   validateCanonicalFrame,
+  installCanonicalSource,
 } from '../viewer/gamepad_overlay/canonical_adapter.mjs';
 
 
@@ -54,4 +55,40 @@ test('canonical adapter preserves continuous button and dpad values', () => {
   assert.equal(output.DX, 4.4e-6);
   assert.equal(output.DY, -5.4e-7);
   assert.equal(output.A, 0.37);
+});
+
+test('canonical source delivers only validated 32-channel frames to its sink', async () => {
+  const saved={window:globalThis.window,document:globalThis.document,raf:globalThis.requestAnimationFrame,location:globalThis.location};
+  const states=[];let fallbackCalls=0;
+  globalThis.window={location:{search:'?source=canonical'},OverlayInput:{
+    createGamepadSource(){fallbackCalls++;throw new Error('browser/demo source must not be used');},
+  }};
+  globalThis.location=window.location;
+  const glow={left:false,right:false};
+  globalThis.document={getElementById(){return null;},querySelectorAll(selector){
+    const side=selector.includes('data-side="right"')?'right':'left';
+    return [{classList:{toggle(name,active){assert.equal(name,'signal-active');glow[side]=active;}}}];
+  }};
+  globalThis.requestAnimationFrame=callback=>setImmediate(callback);
+  try {
+    const adapter=installCanonicalSource();
+    window.OverlayInput.createGamepadSource({mode:'browser',onState:value=>states.push(value)}).start();
+    adapter.markReady();
+    const input=frame();input.values[CHANNEL_NAMES.indexOf('guide')]=.37;
+    input.values[CHANNEL_NAMES.indexOf('left_x')]=.6;
+    const mapped=await adapter.applyFrame(input);
+    assert.deepEqual(states,[mapped]);assert.equal(mapped.GUIDE,.37);assert.equal(mapped.LX,.6);
+    assert.equal(fallbackCalls,0);
+    assert.deepEqual(glow,{left:true,right:false});
+    await assert.rejects(adapter.applyFrame({A:1,DY:1}),/layout_id/);
+    await assert.rejects(adapter.applyFrame({...input,values:input.values.slice(0,31)}),/32 gamepad values/);
+    assert.equal(states.length,1,'invalid or non-canonical input cannot reach the renderer');
+    const right=frame();right.values[CHANNEL_NAMES.indexOf('right_y')]=-.7;
+    await adapter.applyFrame(right);
+    assert.deepEqual(glow,{left:false,right:true});
+    await adapter.applyFrame(frame());
+    assert.deepEqual(glow,{left:false,right:false});
+  } finally {
+    globalThis.window=saved.window;globalThis.document=saved.document;globalThis.requestAnimationFrame=saved.raf;globalThis.location=saved.location;
+  }
 });

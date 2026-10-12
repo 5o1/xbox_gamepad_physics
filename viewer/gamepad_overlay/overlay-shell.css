@@ -69,6 +69,10 @@ body {
     fill: none;
 }
 
+#overlayRoot .gamepad-button-pressed-fill.dpad-press-only {
+    fill: var(--btn-pressed, #c00);
+}
+
 #overlayRoot .dpad-press-only.is-pressed {
     fill: var(--btn-pressed, #c00);
     fill-opacity: 1;

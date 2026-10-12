@@ -1351,7 +1351,28 @@ class GamepadOverlay {
             drawCrossBorder: false,
         });
 
-        return {rootGroup, left, right};
+        // Guide occupies the existing gap between View/Select and Menu/Start.
+        // Reuse their geometry size and the normal theme/continuous-fill path.
+        const selectRegion = this.#model.buttons.left.select.region;
+        const startRegion = this.#model.buttons.right.start.region;
+        const guide = this.#createButton({
+            group: rootGroup,
+            id: "guideButton",
+            region: Region.fromCenter({
+                center: new Vector2({
+                    x: (selectRegion.center.x + startRegion.center.x) / 2,
+                    y: (selectRegion.center.y + startRegion.center.y) / 2,
+                }),
+                size: Vector2.splat(Math.min(selectRegion.size.x, selectRegion.size.y,
+                                            startRegion.size.x, startRegion.size.y)),
+            }),
+            shapeType: ShapeType.ELLIPSE,
+            includeBorder: true,
+            semanticClasses: ["side-center", "role-guide"],
+            semanticAttributes: {"data-side": "center", "data-role": "guide"},
+        });
+
+        return {rootGroup, left, right, guide};
     }
 
 }

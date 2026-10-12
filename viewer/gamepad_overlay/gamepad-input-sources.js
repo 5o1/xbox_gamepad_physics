@@ -400,6 +400,7 @@ class GamepadOverlayRenderer {
             [overlay.entities.right.entities.upButton, (state) => state.Y],
             [overlay.entities.left.entities.select, (state) => state.SELECT],
             [overlay.entities.right.entities.start, (state) => state.START],
+            [overlay.entities.guide, (state) => state.GUIDE],
             [overlay.entities.left.entities.leftBumper, (state) => state.LB],
             [overlay.entities.right.entities.rightBumper, (state) => state.RB],
             [this.leftStickControl, (state) => state.LS],

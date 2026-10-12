@@ -109,6 +109,17 @@ export function updateHud(frame, overlayState) {
     if (dot) {
         dot.style.transform = `translate(${overlayState.LX * 60}px, ${overlayState.LY * 60}px)`;
     }
+    for (const [side, x, y] of [
+        ["left", overlayState.LX, overlayState.LY],
+        ["right", overlayState.RX, overlayState.RY],
+    ]) {
+        const nodes = document.querySelectorAll(
+            `#overlayRoot [data-side="${side}"][data-role="analog-stick"], `
+            + `#overlayRoot [data-side="${side}"][data-role="analog-stick-ring"]`,
+        );
+        const active = Math.hypot(x, y) > 1e-4;
+        nodes.forEach(node => node.classList.toggle("signal-active", active));
+    }
 }
 
 export function installCanonicalSource() {
