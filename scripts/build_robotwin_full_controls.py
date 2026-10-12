@@ -414,6 +414,8 @@ def build(output: Path, *, kinematics: Path | None = None,
     ]
     required.extend(relative for record in collision_records.values() for variant in ("coacd", "sdf") for relative in record[variant])
     manifest = {
+        "default_collision": "sdf",
+        "min_sapien": "3.0.3",
         "collision_variants": {
             "coacd": {"source": "urdf"},
             "sdf": {"min_sapien": "3.0.3", "spacing_m": source["collision_policy"]["sdf"]["spacing_m"],

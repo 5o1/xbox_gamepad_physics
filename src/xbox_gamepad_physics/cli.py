@@ -47,6 +47,9 @@ def _status(args: argparse.Namespace) -> int:
         print(f"  available: {str(profile.available).lower()}")
         print(f"  dynamics_ready: {str(profile.dynamics_ready).lower()}")
         print(f"  entrypoint: {profile.entrypoint}")
+        if profile.default_collision:
+            print(f"  default_collision: {profile.default_collision}")
+            print(f"  min_sapien: {profile.min_sapien}")
         if profile.reason:
             print(f"  reason: {profile.reason}")
     return 0
@@ -61,6 +64,8 @@ def _verify(args: argparse.Namespace) -> int:
             f"{backend}/{args.profile}: ready "
             f"({len(profile.required_files)} required files)"
         )
+        if profile.default_collision:
+            print(f"  default_collision: {profile.default_collision}; min_sapien: {profile.min_sapien}")
     return 0
 
 

@@ -242,7 +242,7 @@ def ready_urdf():
 
 
 class RoboTwinRuntimeTest(unittest.TestCase):
-    def _load(self, *, use_multiple=True, task_wrapper=False, collision="coacd"):
+    def _load(self, *, use_multiple=True, task_wrapper=False, collision="coacd", version="3.0.3"):
         temporary = tempfile.TemporaryDirectory()
         self.addCleanup(temporary.cleanup)
         urdf = Path(temporary.name).resolve() / "mobility.urdf"
@@ -271,6 +271,7 @@ class RoboTwinRuntimeTest(unittest.TestCase):
             return urdf
 
         with (
+            mock.patch.object(loader_module.metadata, "version", return_value=version),
             mock.patch.object(
                 loader_module, "require_physics_ready", return_value=ready_profile(urdf)
             ),
@@ -280,7 +281,7 @@ class RoboTwinRuntimeTest(unittest.TestCase):
             mock.patch.object(loader_module, "resource_path", fake_resource_path),
             mock.patch.object(
                 loader_module, "_import_sapien",
-                **({"return_value": SimpleNamespace(physx=fake_physx)} if collision == "sdf"
+                **({"return_value": SimpleNamespace(physx=fake_physx)} if collision in ("sdf", None)
                    else {"side_effect": AssertionError("eager import")})
             ),
             mock.patch(
@@ -288,7 +289,8 @@ class RoboTwinRuntimeTest(unittest.TestCase):
             ),
         ):
             wrapper = loader_module.load_into_scene(
-                passed_scene, pose, fixed_root=True, profile="test_ready", collision=collision
+                passed_scene, pose, fixed_root=True, profile="test_ready",
+                **({"collision": collision} if collision is not None else {})
             )
         return wrapper, articulation, fake_loader, pose, urdf
 
@@ -315,10 +317,27 @@ class RoboTwinRuntimeTest(unittest.TestCase):
         self.assertEqual(articulation.links[0].shape.groups, [2, 3, 4 | 0x80000000, 0x5842])
 
     def test_sdf_unsupported_error_is_explicit(self):
-        with mock.patch.object(loader_module, "_import_sapien", return_value=SimpleNamespace(
+        with mock.patch.object(loader_module, "_validated_description"), mock.patch.object(loader_module.metadata, "version", return_value="3.0.3"), mock.patch.object(loader_module, "_import_sapien", return_value=SimpleNamespace(
             physx=SimpleNamespace(PhysxCollisionShapeTriangleMesh=type("Triangle", (), {})))):
             with self.assertRaisesRegex(SceneCompatibilityError, "SAPIEN >= 3.0.3"):
                 loader_module.load_into_scene(None, None, True, collision="sdf")
+
+    def test_default_loads_sdf(self):
+        _, _, loader, _, urdf = self._load(collision=None)
+        self.assertEqual(loader.paths, [])
+        self.assertEqual(loader.builder.link_builders[0].collision_records,
+                         [str(urdf.parent / "collision/sdf/shell_0.obj")])
+
+    def test_low_version_default_error_has_two_remedies(self):
+        with mock.patch.object(loader_module, "_validated_description"), mock.patch.object(loader_module.metadata, "version", return_value="3.0.0b1"), mock.patch.object(loader_module, "_import_sapien", return_value=SimpleNamespace()):
+            with self.assertRaisesRegex(SceneCompatibilityError, 'upgrade to SAPIEN 3.0.3 or explicitly pass collision="coacd"'):
+                loader_module.load_into_scene(None, None, True)
+
+    def test_explicit_coacd_works_on_both_versions(self):
+        for version in ("3.0.0b1", "3.0.3"):
+            with self.subTest(version=version):
+                _, _, loader, _, urdf = self._load(collision="coacd", version=version)
+                self.assertEqual(loader.paths, [str(urdf)])
 
     def test_invalid_collision_variant(self):
         with self.assertRaisesRegex(ValueError, "collision must be"):
@@ -384,7 +403,7 @@ class RoboTwinRuntimeTest(unittest.TestCase):
             ),
         ):
             loader_module.load_into_scene(
-                scene, pose, fixed_root=True, profile="test_ready"
+                scene, pose, fixed_root=True, profile="test_ready", collision="coacd"
             )
         self.assertEqual(articulation.root_poses, [pose])
 

@@ -7,7 +7,8 @@ usable for audits, exporters, and MuJoCo-only installations.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from importlib import import_module
+from importlib import import_module, metadata
+import re
 import inspect
 import math
 from pathlib import Path
@@ -363,14 +364,21 @@ def _configure_contact_material(
 
 
 def _sdf_physx():
-    physx = _import_sapien().physx
+    sapien = _import_sapien()
+    message = ("collision='sdf' requires SAPIEN >= 3.0.3 with SDF support; "
+               'upgrade to SAPIEN 3.0.3 or explicitly pass collision="coacd"')
+    installed = metadata.version("sapien")
+    number = re.match(r"(\d+)\.(\d+)\.(\d+)", installed)
+    if number is None or tuple(map(int, number.groups())) < (3, 0, 3):
+        raise SceneCompatibilityError(message + f" (installed {installed})")
+    physx = sapien.physx
     constructor = physx.PhysxCollisionShapeTriangleMesh.__init__
     try:
         has_parameter = "sdf" in inspect.signature(constructor).parameters
     except (TypeError, ValueError):
         has_parameter = "sdf:" in (constructor.__doc__ or "")
     if not has_parameter and not callable(getattr(physx, "set_sdf_config", None)):
-        raise SceneCompatibilityError("collision='sdf' requires SAPIEN >= 3.0.3 with SDF support")
+        raise SceneCompatibilityError(message)
     return physx
 
 
@@ -403,7 +411,7 @@ def load_into_scene(
     fixed_root: bool,
     profile: str = "full_controls",
     attach_visual: bool = True,
-    collision: str = "coacd",
+    collision: str = "sdf",
 ) -> XboxOneSArticulation:
     """Load the packaged Xbox One S URDF into a caller-owned SAPIEN scene.
 
@@ -421,12 +429,12 @@ def load_into_scene(
 
     if collision not in ("coacd", "sdf"):
         raise ValueError("collision must be 'coacd' or 'sdf'")
-    physx = _sdf_physx() if collision == "sdf" else None
     if type(fixed_root) is not bool:
         raise TypeError("fixed_root must be bool")
     if type(attach_visual) is not bool:
         raise TypeError("attach_visual must be bool")
     description = _validated_description(profile)
+    physx = _sdf_physx() if collision == "sdf" else None
     resolved_scene = _resolve_scene(scene)
     root_pose = _coerce_pose(pose)
     loader = resolved_scene.create_urdf_loader()

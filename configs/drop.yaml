@@ -7,7 +7,7 @@ scene:
 gamepad:
   fixed_root: false
   attach_visual: false
-  collision: coacd
+  collision: sdf
   pose: [0, 0, 0, 1, 0, 0, 0]
 params:
   orientation: face_up

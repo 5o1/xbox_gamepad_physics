@@ -86,16 +86,18 @@ python -m xbox_gamepad_physics verify --backend robotwin --profile left_stick
 
 ## RoboTwin / SAPIEN
 
-完整控件 profile 的默认碰撞选项为 `collision="coacd"`；使用
-`load_into_scene(scene, pose, fixed_root, profile="full_controls", collision="sdf")`
-或在实验 YAML 的 `gamepad` 下设置 `collision: sdf` 可选择 1 mm SDF。
+完整控件 profile 默认使用 `collision="sdf"`，RoboTwin extra 固定为 SAPIEN 3.0.3。
+默认加载1 mm SDF；显式传 `collision="coacd"` 或在实验 YAML 下设置
+`gamepad.collision: coacd` 可保留CoACD变体（支持3.0.0b1和3.0.3）。
 SDF 要求 SAPIEN ≥3.0.3，不支持与 `add_ground` 平面、另一个 SDF 物体碰撞；
-桌面用静态盒子。低版本选择 SDF 会明确报错。
+桌面用静态盒子。低版本默认调用会明确报错，要求升级到3.0.3或显式选择CoACD，不静默回退。
+历史的 `left_stick` 局部profile没有SDF声明，使用时显式选择 `collision="coacd"`。
 
 两种选项均过滤手柄内部碰撞：全部形状保留 g0/g1，设置
 `g2 |= 0x80000000`、`g3 = 0x5842`，外部物体的接触仍按 g0/g1 判断。
 十字键、摇杆孔口可触区域约 1–1.5 mm 的 CoACD 外胀已于 2026-10-11 暂时接受；
-后续仿真实验确认影响结果后再修。具体参数和按组件误差见 `references/full_controls.json`。
+Guide开口覆盖已由SDF对照确认；CoACD孔口优化留待下一阶段，本轮不修改几何。
+具体参数和按组件误差见 `references/full_controls.json`。
 
 RoboTwin 的公共接入约定与任务模板见 [`robotwin_backend.md`](robotwin_backend.md)。
 调用者持有场景和安装位姿；资产包只把 `pose` 应用到 `controller_body` 根 link。

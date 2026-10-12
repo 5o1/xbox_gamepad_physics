@@ -61,8 +61,10 @@ python -m xbox_gamepad_physics verify \
 
 ## RoboTwin / SAPIEN
 
-`full_controls` 默认使用闭合 meshbase 按组件分解的 CoACD 碰撞体；可在
-`load_into_scene(..., collision="sdf")` 或实验配置 `gamepad.collision: sdf` 中选择 SDF。
+`full_controls` 默认使用闭合meshbase的SDF碰撞体，RoboTwin extra固定为SAPIEN 3.0.3。
+CoACD作为显式变体保留：`load_into_scene(..., collision="coacd")` 或实验配置
+`gamepad.collision: coacd`，支持3.0.0b1和3.0.3。低版本默认调用报错，
+给出升级到3.0.3或显式选择CoACD两条出路，不静默回退。
 CoACD 固定为 1.0.14、seed 0、单线程；参数和实测误差见
 `references/full_controls.json`。SDF spacing 为 1 mm，需要 SAPIEN ≥3.0.3，不能与
 `add_ground` 平面或另一个 SDF 物体碰撞，支撑桌面应使用静态盒子。
@@ -70,7 +72,7 @@ CoACD 固定为 1.0.14、seed 0、单线程；参数和实测误差见
 两种变体均保留碰撞组 g0/g1，将 g2 加上 `0x80000000` 并设置 g3 为 `0x5842`。
 共享忽略位且 ID 相同的手柄内部形状不产生碰撞；手、桌面等外部形状仍按原有
 接触类型和亲和组碰撞。十字键、摇杆孔口可触区域约 1–1.5 mm 的外胀已由负责人
-于 2026-10-11 暂时接受，后续仿真实验证明确实影响结果后再修。
+于2026-10-11暂时接受；Guide开口覆盖现已由SDF对照确认，CoACD优化留待下一阶段。
 
 运动部件质量来自 meshbase 闭合体积、密度和填充系数；摇杆两层壳先求并集，
 完整惯量张量以连杆局部坐标系中的质心为参考点。总质量仍为 0.28 kg。

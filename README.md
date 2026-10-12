@@ -7,6 +7,10 @@
 GPU 节点，存档位置见 `references/archive/switch_pro_candidates.json` 和 `assets/asset_index.json`。
 仓库保留相关历史报告、图片和来源记录；旧型号已退出查看器可选入口。
 
+RoboTwin完整控件默认使用 **SDF碰撞体、SAPIEN 3.0.3**（`pip install -e ".[robotwin]"`）。
+CoACD仍可显式选择`collision="coacd"`，包括旧3.0.0b1环境；默认SDF在低版本会明确报错。
+SDF手柄的支撑桌面使用静态盒子，不能使用`add_ground`平面。
+
 ## 当前状态
 
 运行状态以 [资产索引](assets/asset_index.json) 为准；README 只提供入口和边界说明。

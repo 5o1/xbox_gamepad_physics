@@ -37,6 +37,8 @@ class BackendProfile:
     required_files: tuple[str, ...]
     reason: str | None
     manifest_path: Path
+    default_collision: str | None = None
+    min_sapien: str | None = None
 
     @property
     def physics_ready(self) -> bool:
@@ -70,6 +72,8 @@ def _validated_manifest(backend: str, profile: str, value: dict[str, Any]) -> Ba
         required_files=tuple(value["required_files"]),
         reason=value["reason"],
         manifest_path=resource_path(backend, profile),
+        default_collision=value.get("default_collision"),
+        min_sapien=value.get("min_sapien"),
     )
 
 
