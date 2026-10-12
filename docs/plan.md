@@ -54,7 +54,7 @@
 
 ### 2.3 发布有版本号的资源
 
-- [ ] 正式发布一次 GitHub Release 资源包，下游按版本号引用。
+- [x] 正式发布一次 GitHub Release 资源包，下游按版本号引用：`v0.2.0`（2026-10-13），资源包 `xbox_gamepad_physics-resources-0.2.0.zip` 及 `SHA256SUMS`。
 - [x] RoboTwin fork 中的 SAPIEN 3.0.3 升级（提交 `57d8e95`）：已合并进 `main` 并 push 到 `5o1/RoboTwin`（2026-10-12）。
 
 ### 下游使用时的约定
