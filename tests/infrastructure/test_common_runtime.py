@@ -276,7 +276,7 @@ class GamepadSignalControllerTests(unittest.TestCase):
         )
         self.assertAlmostEqual(outside.channel("left_x"), 2e-4)
         self.assertAlmostEqual(outside.channel("left_trigger"), 2e-4)
-        self.assertAlmostEqual(outside.channel("dpad_right"), 2e-4)
+        self.assertEqual(outside.channel("dpad_right"), 0.0)
 
     def test_controller_rejects_invalid_configuration_and_observations(self):
         with self.assertRaisesRegex(StateValidationError, "missing mechanism"):

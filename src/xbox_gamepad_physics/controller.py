@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 import math
+import json
+from pathlib import Path
 from typing import Iterable, Mapping
 
 from .errors import StateValidationError
@@ -14,6 +16,24 @@ from .state import (
     GamepadState,
     XBOX_ONE_S_CHANNELS,
 )
+
+
+def _dpad_threshold_from_record() -> float:
+    # Checkout uses the authorized reference record. Code-only installations
+    # read the corresponding signal_policy record from their motion resource.
+    reference = Path(__file__).resolve().parents[2] / "references/full_controls.json"
+    if reference.is_file():
+        record = json.loads(reference.read_text(encoding="utf-8"))
+    else:
+        from .resources import load_json_resource
+        record = load_json_resource("common", "xbox_one_s", "motion/full_controls.json")
+    try:
+        value = record["signal_policy"]["dpad_contact_closure"]["threshold"]
+    except KeyError as error:
+        raise StateValidationError("D-pad contact threshold is missing from the reference/motion resource; update the signal-policy record") from error
+    if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) or not 0 < value <= 1:
+        raise StateValidationError("D-pad contact threshold must be a finite normalized fraction in (0, 1]")
+    return float(value)
 
 
 def _finite_limits(lower: object, upper: object) -> bool:
@@ -320,6 +340,8 @@ class GamepadSignalController:
         self._split_mappings = split
         self._radial_source_groups = source_groups
         self._physical_event_mappings = events
+        self._dpad_contact_threshold = (_dpad_threshold_from_record()
+                                        if any(c.startswith("dpad_") for c in mapped_channels) else None)
 
     @classmethod
     def xbox_one_s(
@@ -428,6 +450,12 @@ class GamepadSignalController:
                 factor = group.radius / radius
                 values[first] *= factor
                 values[second] *= factor
+
+        # Independent contact closure after split/deadzone/radial processing.
+        # Keep continuous amplitudes; genuine diagonal contacts can both close.
+        for channel in ("dpad_up", "dpad_down", "dpad_left", "dpad_right"):
+            if channel in values and values[channel] < self._dpad_contact_threshold:
+                values[channel] = 0.0
 
         return GamepadState.from_mapping(
             values,

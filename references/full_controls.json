@@ -381,7 +381,7 @@
       "pair_bind_connect"
     ],
     "button_output": "continuous [0,1] travel fraction; consuming task chooses a digital threshold",
-    "stick_neutral_epsilon": 0.01,
+    "stick_neutral_epsilon": 0.02,
     "device_neutral_epsilon": 0.0001,
     "device_neutral_mode": "zero_inside_without_rescaling_outside",
     "device_neutral_applies_to": [
@@ -389,7 +389,7 @@
       "button normalized travel",
       "D-pad normalized rocker magnitude"
     ],
-    "derivation": "The 0.01 radial stick deadzone is the owner-selected simulation/game-input threshold. Stick values inside it are zeroed and values outside are not rescaled. The remaining 1e-4 device epsilon only clears solver residue on triggers, buttons and D-pad; it is not a measured hardware deadzone.",
+    "derivation": "2026-10-12 owner-selected 0.02 radial stick deadzone for simulation/game input. With the unchanged owner-selected PhysX tilt-joint friction coefficient 0.1, spring return can stop at normalized residuals about 0.005–0.0101; 0.02 leaves margin. This is a simulation setting, not a measured hardware value. Inside the radial deadzone output is zero, outside it values are not rescaled. The 2026-10-09 shake-experiment friction provenance is retained in control_groups.sticks.tilt_joint_friction_basis; the remaining 1e-4 device epsilon is unchanged.",
     "external_behavior_references": {
       "microsoft_xinput": {
         "url": "https://learn.microsoft.com/en-us/windows/win32/xinput/getting-started-with-xinput#dead-zone",
@@ -403,7 +403,25 @@
         "url": "https://w3c.github.io/gamepad/#remapping",
         "observation": "The Gamepad specification linearly normalizes logical axis values to [-1,1]; it does not define a gameplay dead-zone remap."
       }
-    }
+    },
+    "dpad_contact_closure": {
+      "threshold": 0.3,
+      "unit": "normalized fraction of full travel (dimensionless)",
+      "status": "未实测、测试值",
+      "hardware_measured": false,
+      "rule": "Independently suppress each split D-pad channel below threshold; preserve amplitude at/above threshold, including true diagonals.",
+      "reason": "30% separates small solver/contact cross-axis motion from intentional contact closure; selected for simulation testing, not inferred from measured Xbox switches.",
+      "uncertainty": "No physical switch closure-angle measurement; the fraction may vary by direction, hysteresis, manufacturing tolerance and wear. A shared threshold is provisional.",
+      "calibration": "Measure rocker angle/normalized travel while separately monitoring each electrical contact on repeated press/release cycles, including diagonals; estimate per-direction close/open thresholds and hysteresis, then replace this test value."
+    },
+    "stick_neutral_history": [
+      {
+        "value": 0.01,
+        "unit": "normalized radial magnitude",
+        "status": "previous owner-selected simulation setting",
+        "derivation": "The 0.01 radial stick deadzone is the owner-selected simulation/game-input threshold. Stick values inside it are zeroed and values outside are not rescaled. The remaining 1e-4 device epsilon only clears solver residue on triggers, buttons and D-pad; it is not a measured hardware deadzone."
+      }
+    ]
   },
   "known_unknowns": [
     "Target-controller component masses and inertias",

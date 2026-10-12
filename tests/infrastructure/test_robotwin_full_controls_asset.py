@@ -90,7 +90,7 @@ class RoboTwinFullControlsAssetTest(unittest.TestCase):
         self.assertEqual(len(controller.physical_event_mappings), 1)
         self.assertEqual(
             [group.neutral_epsilon for group in controller.radial_groups],
-            [0.01, 0.01],
+            [0.02, 0.02],
         )
         dynamics = {item.name: item for item in description.joint_dynamics}
         for name in (
