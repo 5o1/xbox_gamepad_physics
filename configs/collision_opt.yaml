@@ -1,0 +1,55 @@
+# P1 diagnostic config. Lengths in mm unless field explicitly says otherwise.
+inputs:
+  meshbase: assets/xbox_one_s/collision_meshbase/meshes
+  hulls: build/resources/common/xbox_one_s/collision/coacd
+  motion_contract: build/resources/common/xbox_one_s/motion/full_controls.json
+output: build/experiments/collision_opt_p1_20261013
+error_field:
+  density_points_per_mm2: 4
+  source_seed: 100
+  hull_seed: 200
+  coverage_tolerance_mm: 0.01
+  winding_inside_threshold: 0.5
+  hotspot_threshold_mm: 0.3
+  distribution_bins_mm: [0, 0.01, 0.05, 0.1, 0.3, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0]
+  comparison_tolerance_mm: 0.000001
+reproduction:
+  component: shell
+  expected_max_mm: 2.42
+  expected_p95_mm: 1.15
+  reporting_decimals: 2
+protection:
+  # Revised definition: subtract the original body union from every raw space.
+  approach_length_mm: 3.0
+  cross_section_inset_mm: 0.3
+  numerical_tolerance_mm: 0.01
+  top_normal_max_angle_deg: 45
+  near_top_depth_mm: 0.5
+  near_top_min_free_fraction: 0.95
+  approach_min_free_fraction: 0.05
+  sweep_rotation_step_deg: 4
+  radial_azimuth_step_deg: 15
+  cap_underside_max_angle_deg: 45
+  minimum_volume_mm3: 0.000001
+intrusion:
+  lp_tolerance_mm: 0.0000001
+  minimum_volume_mm3: 0.000001
+openings:
+  hotspot_threshold_mm: 0.3
+  xy_margin_mm: 3.0
+  minimum_z_mm: 12.0
+symmetry:
+  exact_threshold_mm: 0.001
+  approximate_threshold_mm: 0.5
+  density_points_per_mm2: 0.25
+  seed: 20261013
+cooking:
+  vertex_limit: 255
+  density_points_per_mm2: 4
+  seed: 20261013
+  evidence: build/experiments/collision_opt_p1_20261013/cooking.json
+baseline_control:
+  shell_components: [shell, shell_front_plate]
+  seed: 20261013
+  sample_budget: 5000
+  minimum_volume_mm3: 0.000001
