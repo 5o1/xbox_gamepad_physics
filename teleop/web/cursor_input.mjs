@@ -11,7 +11,7 @@ export function installCursor(canvas,{send,isConnected,mode,error}) {
     const active=armed;armed=false;keys.clear();motion=null;
     if(active)send('stop',{reason});
     if(document.pointerLockElement===canvas)document.exitPointerLock();
-    mode('已停住 · 点击画面锁定指针');
+    mode('Holding · click the view to lock the pointer');
   }
   canvas.addEventListener('click',async()=>{
     if(!armed&&isConnected()){
@@ -22,7 +22,7 @@ export function installCursor(canvas,{send,isConnected,mode,error}) {
   document.addEventListener('pointerlockchange',()=>{
     if(document.pointerLockElement===canvas&&isConnected()){
       armed=true;keys.clear();motion=null;canvas.focus();focusSeq=send('focus');
-      mode('夹爪光标 · 鼠标平移 / 左闭右开');
+      mode('Gripper cursor · mouse moves / left close, right open');
     } else if(armed)stop('pointer-unlocked');
   });
   document.addEventListener('pointerlockerror',()=>{error('Pointer Lock failed');stop('pointer-lock-error');});

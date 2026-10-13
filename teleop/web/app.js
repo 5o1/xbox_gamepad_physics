@@ -6,6 +6,7 @@ window.teleopStats=stats;
 let control, video, seq=0, welcome=false, configured=false, latest=null, lastId=-1;
 const metadata=new Map(), pending=new Map(), pingTimes=new Map();
 function text(id,value){document.getElementById(id).textContent=value;}
+function connection(value,state){text('connection',value);document.getElementById('connection').dataset.state=state;}
 function send(kind,body={}) {
   if(control?.readyState!==WebSocket.OPEN||!welcome)return null;
   const n=++seq, now=performance.now();
@@ -19,16 +20,16 @@ window.teleopCursor=cursor;
 function stop(reason){cursor.stop(reason);}
 for(const button of document.querySelectorAll('[data-view]'))button.addEventListener('click',()=>{send('view',{view:button.dataset.view});});
 for(const name of CHANNEL_NAMES.slice(0,21)) {const div=document.createElement('div');div.className='signal';div.id='channel-'+name;div.innerHTML=`<span>${name}</span><span>0</span>`;document.querySelector('#signals').append(div);}
-const decoder=new VideoDecoder({output(frame){stats.decoded.push({timestamp:frame.timestamp,time:performance.now()});if(latest){metadata.delete(latest.timestamp);latest.close();}latest=frame;},error(e){stats.errors.push(String(e));stop('decode-error');text('connection','解码失败');}});
+const decoder=new VideoDecoder({output(frame){stats.decoded.push({timestamp:frame.timestamp,time:performance.now()});if(latest){metadata.delete(latest.timestamp);latest.close();}latest=frame;},error(e){stats.errors.push(String(e));stop('decode-error');connection('Decode failed','lost');}});
 let updateCounter=0;
 function panel(m) {
-  text('gamepad-freeze',m.gamepad_frozen===false?'可移动':'冻结');
+  text('gamepad-freeze',m.gamepad_frozen===false?'Movable':'Frozen');
   const active=m.state==='main'?m.main:m.secondary;
-  text('active',m.state==='main'?'主夹爪':'副夹爪');text('state',m.state==='main'?'主可控':m.ghost?'主冻结 / 副幽灵':'主冻结 / 副正常');
-  text('blocked',m.ghost_blocked?'仍有重叠：'+m.geometry_blockers.join(', '):m.ghost?'幽灵准备中':'正常');
+  text('active',m.state==='main'?'Main gripper':'Secondary gripper');text('state',m.state==='main'?'Main active':m.ghost?'Main frozen / secondary ghost':'Main frozen / secondary active');
+  text('blocked',m.ghost_blocked?'Still overlapping: '+m.geometry_blockers.join(', '):m.ghost?'Ghost settling':'Normal');
   text('fingers',Object.values(active.joints).map(v=>(v*1000).toFixed(2)+' mm').join(' / '));
   text('pose',active.pose.slice(0,3).map(v=>v.toFixed(4)).join(' '));text('rotation',active.pose.slice(3).map(v=>v.toFixed(3)).join(' '));
-  text('step','step '+m.step);text('sequence','输入 '+m.last_input_seq);
+  text('step',m.step);text('sequence',m.last_input_seq);
   document.querySelectorAll('[data-view]').forEach(b=>b.classList.toggle('selected',b.dataset.view===m.view));
   const frame=m.canonical_state??{layout_id:'sdl3-gamepad-core-v1',values:CHANNEL_NAMES.map(n=>m.signals[n]??0),available_mask:CHANNEL_NAMES.map(n=>n in m.signals),task_mask:CHANNEL_NAMES.map(n=>n in m.signals),device_id:0};
   canonicalFrameToOverlayState(frame);
@@ -45,7 +46,7 @@ function present() {
       if(cursor.armed&&m.last_input_seq>=cursor.focusSeq&&m.hold_reason)stop('server-'+m.hold_reason);
       for(const [n,t] of pending){if(m.cancelled_seqs?.includes(n)){pending.delete(n);continue;}if(n<=m.last_input_seq){stats.latencies.push({seq:n,ms:now-t,presentedFrame:m.frame_id});pending.delete(n);}}
       const recent=stats.presented.filter(p=>p.time>=now-1000);text('fps',recent.length+' fps');
-      const latency=stats.latencies.at(-1);if(latency)text('latency','响应 '+latency.ms.toFixed(1)+' ms');
+      const latency=stats.latencies.at(-1);if(latency)text('latency',latency.ms.toFixed(1)+' ms');
       if(++updateCounter%3===0){const panelStart=performance.now();panel(m);stats.panelDurations.push(performance.now()-panelStart);}
     }
   }
@@ -55,8 +56,8 @@ requestAnimationFrame(present);
 control=new WebSocket(`ws://${location.host}/control`);
 window.teleopDisconnect=()=>control.close();
 let heartbeatEnabled=true;window.teleopPauseHeartbeat=()=>{heartbeatEnabled=false;};
-control.onmessage=e=>{const m=JSON.parse(e.data);if(m.kind==='welcome'){seq=m.seq_base;welcome=true;text('connection','已连接 · 720p');}if(m.kind==='pong'&&pingTimes.has(m.id)){stats.networkRtt.push(performance.now()-pingTimes.get(m.id));pingTimes.delete(m.id);}};
-control.onclose=()=>{stop('control-disconnect');welcome=false;text('mode','连接断开 · 控制停住');text('connection','已断线');};
+control.onmessage=e=>{const m=JSON.parse(e.data);if(m.kind==='welcome'){seq=m.seq_base;welcome=true;connection('Live · 720p','live');}if(m.kind==='pong'&&pingTimes.has(m.id)){stats.networkRtt.push(performance.now()-pingTimes.get(m.id));pingTimes.delete(m.id);}};
+control.onclose=()=>{stop('control-disconnect');welcome=false;text('mode','Disconnected · control held');connection('Disconnected','lost');};
 video=new WebSocket(`ws://${location.host}/video`);video.binaryType='arraybuffer';
 video.onmessage=e=>{const bytes=new Uint8Array(e.data), length=new DataView(e.data).getUint32(0), m=JSON.parse(new TextDecoder().decode(bytes.subarray(4,4+length))), data=bytes.subarray(4+length);
   stats.receivedBytes+=bytes.length;m.receivedLocal=performance.now();stats.received.push({id:m.frame_id,time:m.receivedLocal});
@@ -64,6 +65,6 @@ video.onmessage=e=>{const bytes=new Uint8Array(e.data), length=new DataView(e.da
   const timestamp=m.frame_id*16667;metadata.set(timestamp,m);
   decoder.decode(new EncodedVideoChunk({type:m.key?'key':'delta',timestamp,data}));
 };
-video.onclose=()=>{stop('video-disconnect');text('connection','画面断开');};
+video.onclose=()=>{stop('video-disconnect');connection('Video disconnected','lost');};
 setInterval(()=>{if(heartbeatEnabled&&control.readyState===WebSocket.OPEN&&welcome)control.send(JSON.stringify({kind:'heartbeat'}));},50);
 setInterval(()=>{if(heartbeatEnabled&&control.readyState===WebSocket.OPEN&&welcome){const id=performance.now();pingTimes.set(id,id);control.send(JSON.stringify({kind:'ping',id}));}},1000);

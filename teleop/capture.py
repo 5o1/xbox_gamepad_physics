@@ -44,7 +44,7 @@ async def run(args):
         await page.evaluate("teleopSend('keys',{keys:[]})")
         if args.blocked_ghost:
             await page.wait_for_function('teleopStats.lastFrame.ghost && teleopStats.lastFrame.ghost_blocked',timeout=3000)
-            await page.wait_for_function("document.querySelector('#blocked').textContent.startsWith('仍有重叠')",timeout=3000)
+            await page.wait_for_function("document.querySelector('#blocked').textContent.startsWith('Still overlapping')",timeout=3000)
         await page.screenshot(path=str(output/'ghost.png'))
         (output/'ghost_video.png').write_bytes(base64.b64decode((await page.evaluate("document.querySelector('#video').toDataURL('image/png')")).split(',',1)[1]))
         state=await page.evaluate('teleopStats.lastFrame')
