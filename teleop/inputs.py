@@ -54,7 +54,7 @@ class Inputs:
         if self.camera_relative:
             scale=self.input_config["fine" if fine else "coarse"]
             return Command(translation=depth_translation(self.view,self.keys),
-                           rotation=key_rotation(self.view,self.keys,pose,scale["rotation_degrees"],
+                           rotation=key_rotation(self.view,self.keys,self.cursor_config["initial_pose"],scale["rotation_degrees"],
                                                  self.cursor_config["front_reference_m"]),fine=fine)
         axes=[0,0,0]
         for key in self.keys:

@@ -18,11 +18,12 @@ def front_point(pose, reference):
     return tuple(p+v for p,v in zip(pose[:3],rotate_vector(pose[3:],reference)))
 
 
-def key_rotation(view, keys, pose, degrees, reference):
-    """Choose signs by the projected front; both axes pass through the root.
+def key_rotation(view, keys, reference_pose, degrees, reference):
+    """Fixed camera axes through the root, with continuous right-hand turns.
 
-    At a geometric extremum/parallel axis the tip cannot move in the requested
-    direction. Keep the specified axis; do not introduce an automatic roll axis.
+    W/S turn about camera right; A/D turn about camera up. Signs stay fixed
+    through projected tip extrema, so a held key can complete any number of turns.
+    Calibrate signs from the configured parking pose, never the moving target.
     """
     right, up, _ = camera_basis(view)
     result = [0.,0.,0.]
@@ -32,8 +33,8 @@ def key_rotation(view, keys, pose, degrees, reference):
         candidates=[]
         for sign in (1,-1):
             delta=rotation_quaternion([sign*x*math.radians(degrees) for x in axis])
-            q=quat_multiply(delta,pose[3:])
-            candidates.append(project(view,front_point([*pose[:3],*q],reference))[image_axis])
+            q=quat_multiply(delta,reference_pose[3:])
+            candidates.append(project(view,front_point([*reference_pose[:3],*q],reference))[image_axis])
         sign=1 if candidates[0]<=candidates[1] else -1
         amount=sign*(int(positive in keys)-int(negative in keys))
         result=[v+amount*a for v,a in zip(result,axis)]
