@@ -4,12 +4,49 @@ import json
 from pathlib import Path
 from types import SimpleNamespace
 import time
+import signal
+from threading import Event
 
 from .stream.ipc import Latest, SNAPSHOT_CAPACITY, FRAME_CAPACITY, packet
 from .views import VIEWS, RENDER_CANDIDATES
 
 
+def add_table_visuals(scene, fixture):
+    """Table and optional display ground: render components only, no rigid bodies.
+
+    The owner-selected ground top is below the physical tabletop; its box center
+    is top_z_m - half thickness. Both surfaces share the original table material.
+    """
+    import sapien
+    material=sapien.render.RenderMaterial(base_color=[.28,.31,.34,1],roughness=.85)
+    entities={}
+    table=scene.create_actor_builder()
+    table.add_box_visual(half_size=fixture['table_half_size_m'],material=material)
+    entity=sapien.Entity();entity.name='table_visual'
+    entity.add_component(table.build_render_component())
+    p=fixture['table_pose'];entity.set_pose(sapien.Pose(p[:3],p[3:]))
+    scene.add_entity(entity);entities['table']=entity
+    ground=fixture.get('ground_visual')
+    if ground:
+        builder=scene.create_actor_builder()
+        builder.add_box_visual(half_size=ground['half_size_m'],material=material)
+        entity=sapien.Entity();entity.name='ground_visual'
+        entity.add_component(builder.build_render_component())
+        entity.set_pose(sapien.Pose([p[0],p[1],ground['top_z_m']-ground['half_size_m'][2]]))
+        scene.add_entity(entity);entities['ground']=entity
+    return entities
+
+
+def render_camera_far(fixture):
+    """Cover the display ground instead of cutting it off at the old 3 m plane."""
+    ground=fixture.get('ground_visual')
+    return max(3.,2*max(ground['half_size_m'][:2])) if ground else 3.
+
+
 def run(args):
+    stopping=Event()
+    signal.signal(signal.SIGTERM,lambda *_:stopping.set())
+    signal.signal(signal.SIGINT,lambda *_:stopping.set())
     import numpy as np
     import cv2
     import sapien
@@ -20,6 +57,7 @@ def run(args):
     source = Latest(args.run/"snapshot.mmap", SNAPSHOT_CAPACITY)
     output = Latest(args.run/"frame.mmap", FRAME_CAPACITY)
     while not (data := source.read()):
+        if stopping.is_set():source.close();output.close();return
         time.sleep(.01)
     snapshot = json.loads(data[1])
     settings = RENDER_CANDIDATES[args.candidate]
@@ -62,20 +100,13 @@ def run(args):
         scene.add_entity(ball_entity)
     # Table is a visual-only box in this process.
     fixture = cfg["fixture"]
-    table = scene.create_actor_builder()
-    table.add_box_visual(half_size=fixture["table_half_size_m"],
-                         material=sapien.render.RenderMaterial(base_color=[.28,.31,.34,1],roughness=.85))
-    table_entity = sapien.Entity()
-    table_entity.add_component(table.build_render_component())
-    p = fixture["table_pose"]
-    table_entity.set_pose(sapien.Pose(p[:3],p[3:]))
-    scene.add_entity(table_entity)
-    camera = scene.add_camera("teleop",1280,720,np.deg2rad(45),.001,3)
+    table_visuals = add_table_visuals(scene,fixture)
+    camera = scene.add_camera("teleop",1280,720,np.deg2rad(45),.001,render_camera_far(fixture))
     view = None
     frame = 0
     deadline = time.monotonic()
     with (args.run/"render_timing.jsonl").open("w") as timing:
-        while True:
+        while not stopping.is_set():
             delay = deadline-time.monotonic()
             if delay > 0:
                 time.sleep(delay)
@@ -122,6 +153,7 @@ def run(args):
                                      "readback_ns":copied-rendered,"conversion_ns":readback-copied,
                                      "dtype":str(color.dtype),"total_ns":time.monotonic_ns()-start})+"\n")
             frame += 1
+    source.close();output.close()
 
 
 if __name__ == "__main__":

@@ -2,6 +2,7 @@
 import argparse
 import json
 from pathlib import Path
+from .record import iter_records,find_record
 
 
 def compare(paths,output):
@@ -27,10 +28,9 @@ def compare(paths,output):
 
 def safety(run,output):
     from experiments.teleop_replay import numeric_difference
-    timing=[json.loads(line) for line in (run/'physics_timing.jsonl').open()]
+    timing=list(iter_records(find_record(run,'physics_timing')))
     cases=[];previous=None;active_case=None;lag_rows=0;lag_examples=[];trailing_rows=0
-    for line in (run/'record.jsonl').open():
-        row=json.loads(line)
+    for row in iter_records(find_record(run)):
         if row['type']!='step':continue
         step=row['step']
         if step>=len(timing):

@@ -4,9 +4,9 @@ from __future__ import annotations
 
 from dataclasses import asdict, dataclass
 from enum import Enum
-import json
 import math
 import time
+from .record import write_row
 
 NORMAL_GROUP = (1, 1, 0x40000000, 0x4752)
 GHOST_GROUP = (0, 0, 0x40000000, 0x4752)
@@ -178,8 +178,8 @@ class Session:
             for link in art.get_links():
                 self.body_ids[link] = role + "/" + link.name
         if record:
-            record.write(json.dumps({"type": "header", "schema_version": SCHEMA_VERSION,
-                                      **(header or {})}) + "\n")
+            write_row(record,{"type": "header", "schema_version": SCHEMA_VERSION,
+                              **(header or {})})
 
     def step(self, command):
         started = time.perf_counter()
@@ -246,6 +246,6 @@ class Session:
         if hasattr(self, "input_metadata"):
             row["input"] = self.input_metadata
         if self.record:
-            self.record.write(json.dumps(row, allow_nan=False) + "\n")
+            write_row(self.record,row)
         self.index += 1
         return {"state": row, "frame": None}

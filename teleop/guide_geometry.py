@@ -1,6 +1,7 @@
 """Read cooked CoACD pocket surfaces at neutral and press-depth positions."""
 import argparse,json,math
 from pathlib import Path
+from .record import iter_records
 
 
 def run(output, reference_trace):
@@ -30,7 +31,7 @@ def run(output, reference_trace):
             high=min((-b[z>1e-10]/z[z>1e-10]).tolist(),default=float('inf'))
             if low<=high and math.isfinite(high):tops.append((high,i))
         return max(tops) if tops else (None,None)
-    trace=[json.loads(l) for l in reference_trace.open()]
+    trace=list(iter_records(reference_trace))
     held=[r for r in trace if r['probe']['phase']=='hold'][-125:]
     contact=[]
     for row in held:

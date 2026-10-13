@@ -3,6 +3,7 @@ import argparse
 import json
 import math
 from pathlib import Path
+from ..record import iter_records,find_record
 
 
 def summary(values,scale=1):
@@ -16,9 +17,9 @@ def run(args):
     presented=[r for r in browser['presented'] if browser['start_ms']<=r['time']<browser['start_ms']+60000]
     first,last=min(r['id'] for r in presented),max(r['id'] for r in presented)
     first_step,last_step=min(r['step'] for r in presented),max(r['step'] for r in presented)
-    physics=[json.loads(x) for x in (args.run/'physics_timing.jsonl').open()]
-    render=[json.loads(x) for x in (args.run/'render_timing.jsonl').open()]
-    encoded=[json.loads(x) for x in (args.run/'stream_timing.jsonl').open()]
+    physics=list(iter_records(find_record(args.run,'physics_timing')))
+    render=list(iter_records(find_record(args.run,'render_timing')))
+    encoded=list(iter_records(find_record(args.run,'stream_timing')))
     pr=[r for r in physics if first_step<=r['step']<=last_step]
     rr=[r for r in render if first<=r['frame_id']<=last]
     er=[r for r in encoded if first<=r['frame_id']<=last]

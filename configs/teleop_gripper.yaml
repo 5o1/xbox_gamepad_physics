@@ -12,6 +12,7 @@ gamepad:
 params:
   record: null
 stream:
+  record_format: binary  # Lossless .xgpr; optional jsonl retains the legacy writer.
   input_reference: camera  # Browser input; recorded Command stays in world coordinates.
   # Communication watchdog test setting; not a physical parameter.
   control_lease_seconds: 0.2
@@ -72,8 +73,10 @@ teleop:
     block_half_size_m: [0.010, 0.012, 0.030]
     block_mass_kg: 0.02
     block_pose: [0.130, 0, 0.0302, 1, 0, 0, 0]
-    table_half_size_m: [0.25, 0.25, 0.01]
+    table_half_size_m: [0.80, 0.80, 0.01]  # Visual margin for the pulled-back cameras (owner, 2026-10-13); top face unchanged.
     table_pose: [0, 0, -0.01, 1, 0, 0, 0]
+    # Display only, no collision (owner, 2026-10-13); top face 1 mm below the tabletop.
+    ground_visual: {half_size_m: [25, 25, 0.01], top_z_m: -0.001}
   grasp_test:
     settle_seconds: 0.5
     close_seconds: 1.0

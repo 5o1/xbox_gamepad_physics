@@ -4,6 +4,7 @@ from bisect import bisect_right
 import json
 import math
 from pathlib import Path
+from .record import iter_records,find_record
 
 
 def distribution(values):
@@ -77,8 +78,7 @@ def pose_motion(a,b):
 def analyze(args):
     browser=json.loads(args.browser.read_text())
     samples=[];events={}
-    for line in (args.run/'record.jsonl').open():
-        row=json.loads(line)
+    for row in iter_records(find_record(args.run)):
         if row['type']!='step':continue
         meta=row['input'];s={'step':row['step'],'time_ns':meta['physics_done_ns'],'pose':row['main']['pose'],
             'target':row['target_pose'],'finger_target':row['finger_target_m'],'command':row['command'],

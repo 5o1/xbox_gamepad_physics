@@ -4,16 +4,16 @@ import math
 # The fixed gamepad's button face lies in the world XY plane. World +Y is
 # screen-up for its perpendicular front view; the camera looks along -Z.
 VIEWS = {
-    "front": ([0, 0, .43], [0, 0, .03], 38, [0, 1, 0]),
-    "buttons_close": ([0, .015, .30], [0, .015, .03], 38, [0, 1, 0]),
-    "overall": ([.46, -.46, .38], [.07, 0, .07], 45, [0, 0, 1]),
-    "buttons": ([.01, -.01, .40], [0, 0, .03], 35, [0, 0, 1]),
-    "left": ([-.30, -.18, .17], [0, 0, .04], 42, [0, 0, 1]),
-    "right": ([.30, -.18, .17], [0, 0, .04], 42, [0, 0, 1]),
+    "front": ([0, 0, .49], [0, 0, .03], 38, [0, 1, 0]),
+    "buttons_close": ([0, .015, .3405], [0, .015, .03], 38, [0, 1, 0]),
+    "overall": ([.5185, -.529, .4265], [.07, 0, .07], 45, [0, 0, 1]),
+    "buttons": ([.0115, -.0115, .4555], [0, 0, .03], 35, [0, 0, 1]),
+    "left": ([-.345, -.207, .1895], [0, 0, .04], 42, [0, 0, 1]),
+    "right": ([.345, -.207, .1895], [0, 0, .04], 42, [0, 0, 1]),
     # Historical visual-review cameras, relative to the gamepad root height.
     "reference_front": ([0, -.45, .05], [-.032, .15, -.25], 37, [0, 0, 1]),
     "reference_head": ([-.032, -.45, .55], [-.032, .15, -.25], 37, [0, 0, 1]),
-    "triggers": ([0, .29, .18], [0, 0, .04], 38, [0, 0, 1]),
+    "triggers": ([0, .3335, .201], [0, 0, .04], 38, [0, 0, 1]),
 }
 RENDER_CANDIDATES = {
     "raster": {"shader": "default", "samples_per_pixel": 4, "denoiser": "oidn"},

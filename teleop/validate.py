@@ -5,10 +5,12 @@ from __future__ import annotations
 import argparse
 import copy
 import json
+from contextlib import closing
 from pathlib import Path
 
 from .gripper import ASSET_URDF, JOINTS, LINKS, derive_urdf, parse_builder
 from .session import pose_data
+from .record import iter_records
 
 
 def pose_error(a, b):
@@ -440,12 +442,11 @@ def k5(record_paths, output):
     results = []
     for path in record_paths:
         maximum, steps, groups_ok = 0, 0, True
-        with Path(path).open() as stream:
-            header = json.loads(next(stream))
+        with closing(iter_records(path)) as stream:
+            header = next(stream)
             gamepad_groups = [g for name, g in header["group_audit"]["external"] if name not in ("table", "block")]
             groups_ok &= all(g[2] & 0x80000000 and g[3] == 0x5842 for g in gamepad_groups)
-            for line in stream:
-                row = json.loads(line)
+            for row in stream:
                 maximum = max(maximum, row["gamepad_internal_pairs"])
                 steps += 1
                 expected = {"main": NORMAL_GROUP,

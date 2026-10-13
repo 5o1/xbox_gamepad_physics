@@ -16,11 +16,15 @@ from .commands import command_address
 from .h264 import AccessUnits, info
 from .ipc import Latest, SNAPSHOT_CAPACITY, FRAME_CAPACITY, packet, unpack
 
-from ..site import require
+from ..site import require,validate_tunnel_timeout,tunnel_timeout_argument,IdleWatchdog
+from ..record import DEFAULT_FORMAT,open_writer,record_path,write_row
 ROOT = Path(__file__).resolve().parents[2]
 
 
 async def serve(args):
+    timeout_value=getattr(args,'tunnel_timeout_s',None)
+    timeout=validate_tunnel_timeout(require('TELEOP_TUNNEL_TIMEOUT_S') if timeout_value is None else timeout_value)
+    watchdog=IdleWatchdog(timeout)
     args.run.mkdir(parents=True, exist_ok=False)
     endpoint = command_address(args.run)
     snapshot = Latest(args.run/"snapshot.mmap", SNAPSHOT_CAPACITY, True)
@@ -28,6 +32,30 @@ async def serve(args):
     env = dict(os.environ, PYTHONPATH=str(ROOT/"src")+os.pathsep+str(ROOT),CUDA_VISIBLE_DEVICES=str(args.gpu))
     children = []
     logs = []
+    stopped=asyncio.Event()
+    def request_stop(reason):
+        if stopped.is_set():return
+        now=time.monotonic()
+        detail={'run':args.run.name,'reason':reason,'timeout_s':timeout,
+                'started_monotonic_s':watchdog.started,'last_activity_monotonic_s':watchdog.last_activity,
+                'last_activity_kind':watchdog.last_kind,'stopped_monotonic_s':now,
+                'idle_seconds':now-watchdog.last_activity,'gateway_pid':os.getpid(),
+                'child_pids':[child.pid for child in children]}
+        (args.run/'stop_reason.json').write_text(json.dumps(detail,indent=2)+'\n')
+        print('teleop stop '+json.dumps(detail),flush=True)
+        stopped.set()
+    async def idle_monitor():
+        while not stopped.is_set():
+            if watchdog.expired():
+                request_stop('control-idle-timeout')
+                for child in children:
+                    if child.poll() is None:child.terminate()
+                return
+            await asyncio.sleep(.1)
+    monitor=asyncio.create_task(idle_monitor())
+    loop=asyncio.get_running_loop()
+    loop.add_signal_handler(signal.SIGTERM,lambda:request_stop('sigterm'))
+    loop.add_signal_handler(signal.SIGINT,lambda:request_stop('sigint'))
     def spawn(module, extra, log, python=None):
         stream = (args.run/log).open("w")
         logs.append(stream)
@@ -40,13 +68,22 @@ async def serve(args):
         tail=path.read_text(errors="replace")[-12000:] if path.exists() else "(log not created)"
         return RuntimeError(f"worker pid={child.pid} exited with status {child.returncode}; {path}\n{tail or '(empty child log)'}")
 
-    physics = spawn("teleop.server", ["--config",str(args.config),*(["--steps",str(args.steps)] if args.steps else []),
+    record_format=getattr(args,'record_format',None)
+    physics = spawn("teleop.server", ["--config",str(args.config),*(["--record-format",record_format] if record_format else []),*(["--steps",str(args.steps)] if args.steps else []),
                                       *(["--commands",str(args.commands)] if args.commands else []),
                                       *(["--ball-case",args.ball_case] if args.ball_case else []),
                                       *(["--ball-radius-m",str(args.ball_radius_m)] if args.ball_radius_m is not None else []),
                                       *(["--ball-plan",str(args.ball_plan)] if args.ball_plan else []),
                                       "--collision",args.collision],"physics.log",args.physics_python)
-    renderer = None if args.stream_off else spawn("teleop.render", ["--candidate", args.render_candidate], "renderer.log")
+    if record_format is None:
+        # The gateway environment intentionally has no YAML dependency. Read
+        # the physics owner's existing atomic completed-state publication.
+        while not (published := snapshot.read()):
+            if stopped.is_set():break
+            if physics.poll() is not None:raise worker_failure(physics,'physics.log')
+            await asyncio.sleep(.01)
+        record_format=json.loads(published[1])['config'].get('stream',{}).get('record_format',DEFAULT_FORMAT) if published else DEFAULT_FORMAT
+    renderer = None if args.stream_off or stopped.is_set() else spawn("teleop.render", ["--candidate", args.render_candidate], "renderer.log")
     print(f"teleop run={args.run} physics_pid={physics.pid} renderer_pid={renderer.pid if renderer else None}",flush=True)
     clients = {}
     control_peers = set()
@@ -54,9 +91,9 @@ async def serve(args):
     sock = socket.socket(socket.AF_UNIX,socket.SOCK_DGRAM)
     codec = None
     last_seq = 0
-    metrics = (args.run/"stream_timing.jsonl").open("w")
+    metrics = open_writer(record_path(args.run,'stream_timing',record_format),record_format)
     ffmpeg = None
-    if not args.stream_off:
+    if not args.stream_off and not stopped.is_set():
         ffmpeg = await asyncio.create_subprocess_exec(
             "ffmpeg","-hide_banner","-loglevel","warning","-threads","2","-filter_threads","2",
             "-f","rawvideo","-pixel_format","rgb24","-video_size","1280x720","-framerate","60","-i","pipe:0",
@@ -89,6 +126,7 @@ async def serve(args):
                 if item.type == web.WSMsgType.TEXT:
                     received_ns = time.monotonic_ns()
                     message = json.loads(item.data)
+                    watchdog.activity()
                     if message.get("kind") == "probe-clock":
                         # Measurement only: do not renew the control lease or consume a seq.
                         await ws.send_json({"kind":"probe-clock", "id":message["id"],
@@ -103,6 +141,7 @@ async def serve(args):
                         forward(message)
         finally:
             control_peers.discard(ws)
+            if not stopped.is_set():watchdog.activity('control-disconnect')
             last_seq += 1
             if physics.poll() is None:
                 forward({"kind":"disconnect","seq":last_seq})
@@ -121,7 +160,7 @@ async def serve(args):
 
     async def health(request):
         now = current()
-        return web.json_response({"run":args.run.name,"ready":bool(now) and physics.poll() is None and (renderer is None or renderer.poll() is None),"physics_alive":physics.poll() is None,
+        return web.json_response({"run":args.run.name,"ready":bool(now) and physics.poll() is None and (renderer is None or renderer.poll() is None),"tunnel_timeout_s":timeout,"gateway_pid":os.getpid(),"child_pids":[c.pid for c in children],"physics_alive":physics.poll() is None,
                                   "renderer_alive":renderer.poll() is None if renderer else None})
 
     async def raw_writer():
@@ -160,19 +199,15 @@ async def serve(args):
                     except (asyncio.TimeoutError,ConnectionError,RuntimeError):
                         await ws.close()
                         clients.pop(ws,None)
-                metrics.write(json.dumps({"frame_id":metadata["frame_id"],"step":metadata["step"],
+                write_row(metrics,{"frame_id":metadata["frame_id"],"step":metadata["step"],
                                           "encode_ns":metadata["encode_ns"],"send_ns":time.monotonic_ns()-send_start,
-                                          "bytes":len(message),"clients":len(clients)})+"\n")
+                                          "bytes":len(message),"clients":len(clients)})
 
     app = web.Application()
-    stopped = asyncio.Event()
-    loop = asyncio.get_running_loop()
-    loop.add_signal_handler(signal.SIGTERM,stopped.set)
-    loop.add_signal_handler(signal.SIGINT,stopped.set)
     async def shutdown(request):
         if request.query.get("run") != args.run.name:
             raise web.HTTPConflict(text="different run")
-        stopped.set()
+        request_stop('shutdown-request')
         return web.json_response({"stopping":True})
     app.router.add_post("/shutdown",shutdown)
     app.router.add_get("/control",control)
@@ -193,7 +228,7 @@ async def serve(args):
     try:
         await runner.setup()
         await web.TCPSite(runner,"127.0.0.1",args.port).start()
-        tasks = [] if args.stream_off else [asyncio.create_task(raw_writer()),asyncio.create_task(encoded_reader())]
+        tasks = [] if args.stream_off or stopped.is_set() else [asyncio.create_task(raw_writer()),asyncio.create_task(encoded_reader())]
         while physics.poll() is None and not stopped.is_set():
             if renderer is not None and renderer.poll() is not None:
                 raise worker_failure(renderer,"renderer.log")
@@ -206,6 +241,8 @@ async def serve(args):
             if args.steps is None or physics.returncode != 0:
                 raise worker_failure(physics,"physics.log")
     finally:
+        monitor.cancel()
+        await asyncio.gather(monitor,return_exceptions=True)
         for ws in list(clients)+list(control_peers):
             await ws.close()
         for task in tasks:
@@ -215,7 +252,8 @@ async def serve(args):
             if child.poll() is None:
                 child.terminate()
         for child in children:
-            child.wait(timeout=10)
+            # Physics handles SIGTERM and drains D's bounded record workers.
+            child.wait(timeout=35)
         if ffmpeg and ffmpeg.returncode is None:
             ffmpeg.stdin.close()
             try:
@@ -237,6 +275,8 @@ def main():
     parser.add_argument("--gpu",type=int,default=0)
     parser.add_argument("--steps",type=int)
     parser.add_argument("--commands",type=Path)
+    parser.add_argument("--record-format",choices=['binary','jsonl'],help='override stream.record_format')
+    parser.add_argument('--tunnel-timeout-s',type=tunnel_timeout_argument,default=int(require('TELEOP_TUNNEL_TIMEOUT_S')))
     parser.add_argument("--stream-off",action="store_true")
     from ..ball_probe import CASES
     parser.add_argument("--ball-case",choices=CASES)

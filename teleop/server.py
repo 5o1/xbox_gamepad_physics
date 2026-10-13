@@ -10,6 +10,7 @@ import time
 
 from .inputs import Inputs
 from .session import Command
+from .record import DEFAULT_FORMAT, open_writer, record_path, write_row
 from .stream.ipc import Latest, SNAPSHOT_CAPACITY
 from .stream.commands import command_address
 
@@ -50,6 +51,8 @@ def run(args):
         cfg["stream"]["preserve_gamepad_pose"]=True
     if args.ball_case:
         cfg["teleop"]["initial_pose"] = [1,1,1,1,0,0,0]
+    record_format=getattr(args,'record_format',None) or cfg.get('stream',{}).get('record_format',DEFAULT_FORMAT)
+    cfg.setdefault('stream',{})['record_format']=record_format
     (run_dir/"live_config.json").write_text(json.dumps(cfg, indent=2)+"\n")
     latest = Latest(run_dir/"snapshot.mmap", SNAPSHOT_CAPACITY)
     sock = socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM)
@@ -59,7 +62,7 @@ def run(args):
     controls = Inputs(cfg.get("stream", {}).get("input_repeat_seconds", .05),
                       cfg.get("stream", {}).get("control_lease_seconds", .2), camera_relative=True,
                       input_config=cfg["teleop"]["input"], cursor_config=cfg["stream"]["cursor"])
-    with (run_dir/"record.jsonl").open("w") as record, (run_dir/"physics_timing.jsonl").open("w") as timing:
+    with open_writer(record_path(run_dir,format=record_format),record_format,background=record_format=='binary') as record, open_writer(record_path(run_dir,'physics_timing',record_format),record_format,background=record_format=='binary') as timing:
         session = make_session(cfg, run_dir, record)
         from .ball_probe import BallProbe
         probe = BallProbe(session, run_dir, args.ball_case, args.ball_radius_m, args.ball_plan) if args.ball_case else None
@@ -111,11 +114,11 @@ def run(args):
                 snapshot["probe"] = probe_state
                 snapshot["view"] = probe_state["view"]
             latest.write(json.dumps(snapshot, separators=(",", ":")).encode())
-            timing.write(json.dumps({"step": row["step"], "boundary_ns": boundary_ns,
+            write_row(timing,{"step": row["step"], "boundary_ns": boundary_ns,
                                      "end_ns": time.monotonic_ns(), "physics_seconds":row["physics_seconds"],
                                      "last_input_seq": controls.applied_seq, "command":asdict(command),
                                      "last_activity_ns":controls.last_activity_ns, "command_ready_ns":command_ready_ns,
-                                     "input_events":controls.events, "hold":controls.hold, "hold_reason":controls.hold_reason, "lateness_s":max(0.,boundary_ns/1e9-deadline)})+"\n")
+                                     "input_events":controls.events, "hold":controls.hold, "hold_reason":controls.hold_reason, "lateness_s":max(0.,boundary_ns/1e9-deadline)})
     sock.close()
     latest.close()
 
@@ -126,6 +129,7 @@ def main():
     parser.add_argument("--run", type=Path, required=True)
     parser.add_argument("--steps", type=int)
     parser.add_argument("--commands", type=Path)
+    parser.add_argument("--record-format",choices=['binary','jsonl'],help='override stream.record_format')
     from .ball_probe import CASES
     parser.add_argument("--ball-case", choices=CASES)
     parser.add_argument("--ball-radius-m", type=float)

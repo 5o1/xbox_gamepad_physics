@@ -5,6 +5,7 @@ from pathlib import Path
 import subprocess
 import sys
 from .site import require
+from .record import find_record,read_header
 
 
 def write_replay_config(path, header, record):
@@ -67,17 +68,17 @@ def main():
         if mode=='off':cmd.append('--stream-off')
         subprocess.run(cmd,check=True)
     from .verify import compare
-    result=compare([args.root/'k8_stream_on/record.jsonl',args.root/'k8_stream_off/record.jsonl'],args.root/'k8_metrics.json')
+    result=compare([find_record(args.root/'k8_stream_on'),find_record(args.root/'k8_stream_off')],args.root/'k8_metrics.json')
     print(json.dumps(result))
     if not result['passed']:raise RuntimeError('streaming changed the physics trajectory')
     # Exercise the repository's registered experiment entry, not only direct imports.
     record=args.phase1_record
-    header=json.loads(record.open().readline())
+    header=read_header(record)
     cfg_path=args.root/'k9_config.yaml';write_replay_config(cfg_path,header,record)
     base=require('TELEOP_BASE_PYTHON')
     subprocess.run([base,'run_robotwin.py',str(cfg_path),'--output',str(args.root/'k9_replay')],check=True)
-    record=args.root/'k8_stream_off/record.jsonl'
-    header=json.loads(record.open().readline())
+    record=find_record(args.root/'k8_stream_off')
+    header=read_header(record)
     cfg_path=args.root/'k9_switch_config.yaml';write_replay_config(cfg_path,header,record)
     subprocess.run([base,'run_robotwin.py',str(cfg_path),'--output',str(args.root/'k9_switch_replay')],check=True)
     result=compare([record,args.root/'k9_switch_replay/replay.jsonl'],args.root/'k9_switch_metrics.json')

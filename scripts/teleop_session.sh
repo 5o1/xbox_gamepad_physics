@@ -3,12 +3,16 @@ set -euo pipefail
 CANDIDATE=${TELEOP_RENDER_CANDIDATE:-rt}
 COLLISION=sdf
 SAPIEN_VERSION=3.0.3
+STOP_EXISTING=0
+TUNNEL_TIMEOUT_OVERRIDE=''
 while [[ $# -gt 0 ]]; do
-  [[ $# -ge 2 ]] || { echo '用法: teleop_session.sh [--render raster|rt] [--collision sdf|coacd] [--sapien 3.0.3|3.0.0b1]' >&2; exit 2; }
+  if [[ $1 == --stop-existing ]]; then STOP_EXISTING=1; shift; continue; fi
+  [[ $# -ge 2 ]] || { echo '用法: teleop_session.sh [--render raster|rt] [--collision sdf|coacd] [--sapien 3.0.3|3.0.0b1] [--tunnel-timeout-s 10–300] [--stop-existing]' >&2; exit 2; }
   case $1 in
     --render) CANDIDATE=$2 ;;
     --collision) COLLISION=$2 ;;
     --sapien) SAPIEN_VERSION=$2 ;;
+    --tunnel-timeout-s) TUNNEL_TIMEOUT_OVERRIDE=$2 ;;
     *) echo "未知选项: $1" >&2; exit 2 ;;
   esac
   shift 2
@@ -21,8 +25,10 @@ TASK_ROOT=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
 SITE_CONFIG=${TELEOP_SITE_CONFIG:-$TASK_ROOT/configs/local/teleop_site.env}
 [[ -f $SITE_CONFIG ]] || { echo "缺少本地配置 $SITE_CONFIG；请复制并填写 $TASK_ROOT/configs/teleop_site.example.env" >&2; exit 2; }
 export TELEOP_SITE_CONFIG="$SITE_CONFIG"
+if [[ -n $TUNNEL_TIMEOUT_OVERRIDE ]]; then export TELEOP_TUNNEL_TIMEOUT_S=$TUNNEL_TIMEOUT_OVERRIDE; fi
 SITE_EXPORTS=$(PYTHONPATH="$TASK_ROOT" python3 -m teleop.site --shell)
 eval "$SITE_EXPORTS"
+read -r TUNNEL_ALIVE_INTERVAL TUNNEL_ALIVE_COUNT <<< "$(PYTHONPATH="$TASK_ROOT" python3 -c 'from teleop.site import require,tunnel_keepalive; print(*tunnel_keepalive(require("TELEOP_TUNNEL_TIMEOUT_S")))')"
 for key in TELEOP_GPU_HOST TELEOP_SSH_PORT TELEOP_SSH_USER TELEOP_SSH_IDENTITY TELEOP_LOGIN_PROFILE TELEOP_REMOTE_ROOT TELEOP_REMOTE_REPO TELEOP_RESOURCE_ROOT TELEOP_BASE_PYTHON TELEOP_STREAM_PYTHON TELEOP_ROBOTWIN_ROOT TELEOP_PORT TELEOP_WSL_PORT TELEOP_WSL_INTERFACE TELEOP_REMOTE_PORT TELEOP_GPU TELEOP_LOCAL_OUTPUT; do
   [[ -n ${!key:-} && ${!key} != *'<'* ]] || { echo "缺少配置 $key；请填写 $TASK_ROOT/configs/teleop_site.example.env" >&2; exit 2; }
 done
@@ -40,6 +46,38 @@ REMOTE_PORT=$TELEOP_REMOTE_PORT
 RUN_NAME=${TELEOP_RUN_NAME:-live-$(date +%Y%m%d-%H%M%S)}
 [[ "$RUN_NAME" =~ ^[A-Za-z0-9_-]+$ ]] || { echo '会话名称只接受字母、数字、下划线和短横线'; exit 2; }
 GPU=$TELEOP_GPU
+# Inspect before syncing or launching. Only the explicit flag may close an
+# identified teleop session; unrelated services are never killed.
+PORT_CHECK_CODE=$(cat <<'PY'
+import json, socket, sys, time, urllib.parse, urllib.request, shlex
+port, stop_existing = int(sys.argv[1]), bool(int(sys.argv[2]))
+def occupied():
+    try:
+        with socket.create_connection(('127.0.0.1',port),timeout=1):return True
+    except ConnectionRefusedError:return False
+opener=urllib.request.build_opener(urllib.request.ProxyHandler({}))
+if occupied():
+    base=f'http://127.0.0.1:{port}'
+    try:
+        with opener.open(base+'/health',timeout=3) as response:health=json.load(response)
+        if not isinstance(health.get('run'),str) or 'physics_alive' not in health:raise ValueError('not a teleop health endpoint')
+    except (OSError,ValueError) as error:
+        print(f'节点端口 {port} 已占用，无法识别遥操作会话：{error}；不会关闭。',file=sys.stderr);sys.exit(2)
+    run=health['run'];url=base+'/shutdown?'+urllib.parse.urlencode({'run':run})
+    command=shlex.join(['curl','--noproxy','*','-fsS','-X','POST',url])
+    print(f'节点端口 {port} 已被旧会话 {run} 占用。节点上关闭命令：\n{command}',flush=True)
+    if not stop_existing:
+        print('默认不自动关闭；确认后可加 --stop-existing 再启动。',file=sys.stderr);sys.exit(2)
+    with opener.open(urllib.request.Request(url,method='POST'),timeout=5) as response:response.read()
+    deadline=time.monotonic()+40
+    while occupied():
+        if time.monotonic()>=deadline:raise RuntimeError(f'旧会话 {run} 未在40 s内释放端口；不启动新会话')
+        time.sleep(.25)
+    print(f'旧会话 {run} 已关闭，端口 {port} 已释放。',flush=True)
+PY
+)
+printf -v PORT_CHECK ' %q' "$TELEOP_STREAM_PYTHON" -c "$PORT_CHECK_CODE" "$REMOTE_PORT" "$STOP_EXISTING"
+"$PROFILE" --wohint -n -o BatchMode=yes "$PORT_CHECK"
 LOCAL_OUTPUT=$TELEOP_LOCAL_OUTPUT
 [[ $LOCAL_OUTPUT == /* ]] || LOCAL_OUTPUT="$TASK_ROOT/$LOCAL_OUTPUT"
 mkdir -p "$LOCAL_OUTPUT"
@@ -51,7 +89,7 @@ rsync -a --from0 --files-from="$MANIFEST" -e "ssh -p $TELEOP_SSH_PORT -i '$TELEO
   "$TASK_ROOT/" "$TELEOP_SSH_USER@$TELEOP_GPU_HOST:$TELEOP_REMOTE_REPO/"
 # The private config is copied separately; it is absent from the Git manifest.
 rsync -a -e "ssh -p $TELEOP_SSH_PORT -i '$TELEOP_SSH_IDENTITY' -o IdentitiesOnly=yes -o PasswordAuthentication=no -o KbdInteractiveAuthentication=no -o PreferredAuthentications=publickey -o BatchMode=yes" "$SITE_CONFIG" "$TELEOP_SSH_USER@$TELEOP_GPU_HOST:$REMOTE_ROOT/site.env"
-printf -v START 'cd %q && export TELEOP_SITE_CONFIG=%q XBOX_GAMEPAD_PHYSICS_RESOURCES=%q && %q -u -m teleop.stream.gateway --run %q --gpu %q --port %q --render-candidate %q --collision %q --simulation-python %q' "$TELEOP_REMOTE_REPO" "$REMOTE_ROOT/site.env" "$TELEOP_RESOURCE_ROOT" "$TELEOP_STREAM_PYTHON" "$REMOTE_ROOT/$RUN_NAME" "$GPU" "$REMOTE_PORT" "$CANDIDATE" "$COLLISION" "$SIMULATION_PYTHON"
+printf -v START 'cd %q && export TELEOP_SITE_CONFIG=%q XBOX_GAMEPAD_PHYSICS_RESOURCES=%q && %q -u -m teleop.stream.gateway --run %q --gpu %q --port %q --render-candidate %q --collision %q --simulation-python %q --tunnel-timeout-s %q' "$TELEOP_REMOTE_REPO" "$REMOTE_ROOT/site.env" "$TELEOP_RESOURCE_ROOT" "$TELEOP_STREAM_PYTHON" "$REMOTE_ROOT/$RUN_NAME" "$GPU" "$REMOTE_PORT" "$CANDIDATE" "$COLLISION" "$SIMULATION_PYTHON" "$TELEOP_TUNNEL_TIMEOUT_S"
 "$PROFILE" --wohint -n -o BatchMode=yes "$START" > "$LOCAL_OUTPUT/$RUN_NAME.log" 2>&1 &
 SESSION_PID=$!
 cleanup() {
@@ -74,6 +112,7 @@ cleanup() {
 trap cleanup EXIT
 trap 'exit 130' INT
 trap 'exit 143' TERM
+trap 'exit 129' HUP
 # Opening a command session enables TCP_NODELAY at the OpenSSH server too.
 # The idle cat exits on tunnel EOF; fd 3 keeps stdin open without a busy process.
 TUNNEL_INPUT_FIFO="$LOCAL_OUTPUT/$RUN_NAME-tunnel.fifo"
@@ -81,6 +120,7 @@ mkfifo "$TUNNEL_INPUT_FIFO"
 exec 3<>"$TUNNEL_INPUT_FIFO"
 ssh -T -p "$TELEOP_SSH_PORT" -i "$TELEOP_SSH_IDENTITY" -o IdentitiesOnly=yes -o PasswordAuthentication=no -o KbdInteractiveAuthentication=no \
   -o PreferredAuthentications=publickey -o BatchMode=yes -o ExitOnForwardFailure=yes \
+  -o ServerAliveInterval="$TUNNEL_ALIVE_INTERVAL" -o ServerAliveCountMax="$TUNNEL_ALIVE_COUNT" \
   -L "0.0.0.0:$WSL_PORT:127.0.0.1:$REMOTE_PORT" "$TELEOP_SSH_USER@$TELEOP_GPU_HOST" 'cat >/dev/null' <&3 2>"$LOCAL_OUTPUT/$RUN_NAME-tunnel.log" &
 TUNNEL_PID=$!
 RELAY_SCRIPT=$(wslpath -w "$TASK_ROOT/teleop/windows_relay.ps1")
@@ -90,7 +130,8 @@ RELAY_PID=$!
 for attempt in {1..60}; do
   if curl --noproxy '*' -fsS "http://127.0.0.1:$WSL_PORT/health" 2>/dev/null | python3 -c 'import json,sys; h=json.load(sys.stdin); sys.exit(0 if h["ready"] and h.get("run")==sys.argv[1] else 1)' "$RUN_NAME" 2>/dev/null; then
     echo "Windows 浏览器打开 http://localhost:$LOCAL_PORT/ （Ctrl+C 停止本次会话）"
-    wait "$TUNNEL_PID"
+    # Either tunnel loss or remote watchdog completion enters the same EXIT cleanup.
+    wait -n "$SESSION_PID" "$TUNNEL_PID"
     exit 0
   fi
   if ! kill -0 "$SESSION_PID" 2>/dev/null; then

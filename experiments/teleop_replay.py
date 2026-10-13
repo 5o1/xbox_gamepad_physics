@@ -4,14 +4,18 @@ import json
 from pathlib import Path
 
 from teleop.session import Command, SCHEMA_VERSION
+from teleop.record import iter_records
 
 
 def read_record(path):
-    with Path(path).open() as stream:
-        header = json.loads(next(stream))
+    stream=iter_records(path)
+    try:
+        header = next(stream)
         if header.get("type") != "header" or header.get("schema_version") not in (1, 2, SCHEMA_VERSION):
             raise ValueError("unsupported teleop record schema")
-        rows = [json.loads(line) for line in stream]
+        rows = list(stream)
+    finally:
+        stream.close()
     for index, row in enumerate(rows):
         if row.get("type") != "step" or row.get("step") != index:
             raise ValueError(f"non-contiguous record at step {index}")

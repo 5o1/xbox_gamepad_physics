@@ -2,9 +2,52 @@
 import os
 from pathlib import Path
 import shlex
+import time
 
 ROOT = Path(__file__).resolve().parents[1]
 TEMPLATE = ROOT / 'configs/teleop_site.example.env'
+# Communication test settings, not physical parameters; owner may adjust them.
+TUNNEL_TIMEOUT_DEFAULT_S = 60
+TUNNEL_TIMEOUT_MIN_S = 10
+TUNNEL_TIMEOUT_MAX_S = 300
+
+
+def validate_tunnel_timeout(value):
+    """Integer seconds shared by OpenSSH keepalive and the session watchdog."""
+    try:
+        timeout=int(str(value))
+    except (ValueError,TypeError):
+        raise ValueError(f'TELEOP_TUNNEL_TIMEOUT_S must be integer seconds in {TUNNEL_TIMEOUT_MIN_S}–{TUNNEL_TIMEOUT_MAX_S}; got {value!r}') from None
+    if not TUNNEL_TIMEOUT_MIN_S<=timeout<=TUNNEL_TIMEOUT_MAX_S:
+        raise ValueError(f'TELEOP_TUNNEL_TIMEOUT_S allowed range {TUNNEL_TIMEOUT_MIN_S}–{TUNNEL_TIMEOUT_MAX_S} s; got {timeout}')
+    return timeout
+
+
+def tunnel_keepalive(timeout):
+    timeout=validate_tunnel_timeout(timeout)
+    count=next(n for n in (3,2,1) if timeout%n==0)
+    return timeout//count,count
+
+
+def tunnel_timeout_argument(value):
+    """Keep the allowed-range diagnostic when argparse handles invalid input."""
+    import argparse
+    try:return validate_tunnel_timeout(value)
+    except ValueError as error:raise argparse.ArgumentTypeError(str(error)) from None
+
+
+class IdleWatchdog:
+    """Messages and disconnects reset the same window; connecting alone does not.
+
+    A reconnect with a message continues the same session. This is independent
+    of the 0.2 s input lease; it only requests session termination on expiry.
+    """
+    def __init__(self,timeout,clock=time.monotonic):
+        self.timeout=validate_tunnel_timeout(timeout);self.clock=clock
+        self.started=self.last_activity=clock();self.last_kind='session-start'
+    def activity(self,kind='control-message'):
+        self.last_activity=self.clock();self.last_kind=kind
+    def expired(self):return self.clock()-self.last_activity>=self.timeout
 
 
 def settings(path=None):
@@ -22,6 +65,7 @@ def settings(path=None):
                 raise ValueError(f'{path}: expected TELEOP_ setting')
             result[key] = os.path.expanduser(os.path.expandvars(value))
     result.update({k:v for k,v in os.environ.items() if k.startswith('TELEOP_')})
+    result['TELEOP_TUNNEL_TIMEOUT_S']=str(validate_tunnel_timeout(result.get('TELEOP_TUNNEL_TIMEOUT_S',TUNNEL_TIMEOUT_DEFAULT_S)))
     return result
 
 
@@ -52,5 +96,9 @@ if __name__ == '__main__':
     p.add_argument('--shell', action='store_true')
     args = p.parse_args()
     # Export only settings; never evaluate commands from the config in Python.
-    for key, value in settings().items():
+    try:
+        values=settings()
+    except ValueError as error:
+        p.error(str(error))
+    for key, value in values.items():
         print(f'export {key}={shlex.quote(value)}')

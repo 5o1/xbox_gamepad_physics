@@ -11,6 +11,7 @@ import urllib.request
 from .ball_probe import CASES,case_spec,threshold,target_value
 from .ball_browser import check
 from .site import require,profile_command
+from .record import iter_records
 
 
 def acceptance_threshold(channel):
@@ -99,8 +100,9 @@ def run_case(name, output, remote_root, gpu, local_port, remote_port, radius_m=N
         except subprocess.TimeoutExpired:service.terminate();service.wait(timeout=5)
         tunnel.terminate();tunnel.wait(timeout=5);log.close();tlog.close()
         subprocess.run(['rsync','-a','--exclude=*.mmap','--exclude=record.jsonl','--exclude=physics_timing.jsonl','--exclude=render_timing.jsonl','--exclude=stream_timing.jsonl',
+                        '--exclude=record.xgpr','--exclude=physics_timing.xgpr','--exclude=render_timing.xgpr','--exclude=stream_timing.xgpr',
                         '-e',shlex.join(ssh),destination+':'+remote+'/',str(output/'server')+'/'],check=True)
-    rows=[json.loads(l) for l in (output/'server/ball_trace.jsonl').open()]
+    rows=list(iter_records(output/'server/ball_trace.jsonl'))
     result=evaluate(name,rows,browser);(output/'result.json').write_text(json.dumps(result,indent=2));return result
 
 
