@@ -1,88 +1,61 @@
-# RoboTwin 与 MuJoCo 导入约定
+# v0.3.0 安装与资源导入
 
-本仓库以 Python 包形式提供 Xbox One S 资产。wheel 只包含代码；运行时资源（运动契约、
-视觉、RoboTwin 与 MuJoCo profile）在构建时生成，或从 GitHub Release 的资源 zip 下载，
-统一缓存在资源根目录下的 `<backend>/<profile>/`。
+首发支持 Linux x86_64 + NVIDIA、Python 3.10、RoboTwin fork + SAPIEN 3.0.3。
+Release 附件为 wheel、输入 zip 和 `SHA256SUMS`，不上 PyPI。自有代码为 MIT，资产沿用
+第三方许可；CC BY 4.0 正文规范链接与署名见 `THIRD_PARTY_NOTICES.md`。
 
-## 资源根目录
+wheel 包含包内 DAG、生成器与版本化的小证据（references、specs 和 One S 资产索引切片）。
+输入 zip 只含审定输入：作者原 GLB、已批准静态 visual 快照及实际读取文件、meshbase、
+v0.2.0 冻结 CoACD 凸包、批准的 Cycles 场景及所需文件，以及这些输入的来源、署名和许可。
+静态 visual 和 meshbase 一样不在用户机器上重新导出，基础构建不需要 Blender。
+运动学、运动契约、sim_visual、URDF/manifest 和 SDF 网格均在本地生成；用户端不运行 CoACD。
 
-加载器按以下顺序确定资源根目录：
-
-1. 环境变量 `XBOX_GAMEPAD_PHYSICS_RESOURCES` 指定的目录。
-2. 在仓库检出中运行时：`<仓库>/build/resources/`。
-3. 作为依赖安装时：从当前目录向上找到含 `pyproject.toml` 或 `.git` 的工程根，使用
-   `<工程根>/.xbox_gamepad_physics/resources/`（请加入该工程的 `.gitignore`）。找不到工程根时报错。
-
-资源缺失或过期时自动处理：仓库检出中在本地按依赖图构建（需要 `[build]` extra），
-否则下载与包版本对应的 Release zip，校验 SHA-256 后解压。下载使用标准库默认的网络
-设置，遵循 `HTTPS_PROXY`、`NO_PROXY` 等标准代理变量。结果写入后不再重复构建：
-各构建节点记录输入内容，输入不变时直接跳过（本地实测第二次构建约 0.03 秒）。
-缓存不会写入用户主目录或 site-packages。
-
-多个实验共用同一台机器（例如 GPU 节点）时，可让它们指向同一缓存，只构建一次：
+## 安装与离线导入
 
 ```sh
-export XBOX_GAMEPAD_PHYSICS_RESOURCES=/path/to/shared/xbox_gamepad_physics_resources
+python3.10 -m pip install "./xbox_gamepad_physics-0.3.0-py3-none-any.whl[build,robotwin]"
+python3.10 -m xbox_gamepad_physics build-resources \
+  --archive ./xbox_gamepad_physics-resources-0.3.0.zip \
+  --resources ./gamepad_resources --offline
+export XBOX_GAMEPAD_PHYSICS_RESOURCES="$PWD/gamepad_resources"
+python3.10 -m xbox_gamepad_physics status --backend robotwin
+python3.10 -m xbox_gamepad_physics verify --backend robotwin --profile full_controls
 ```
 
-## 发布资源包
+`[build]` 声明 numpy、trimesh、Pillow 和 manifold3d；不含 CoACD。已有依赖的离线安装
+需要预备这些依赖 wheel。`--offline` 限制资源导入/构建联网，不代替 pip 的离线依赖准备。
+`verify` 检查 readiness 与必需文件，缺失时返回非零；它不执行真实仿真。
 
-1. `python scripts/package_release_resources.py`：完整构建资源，在 `dist/` 生成
-   `xbox_gamepad_physics-resources-<版本>.zip`、`SHA256SUMS`，并把下载锁写入
-   `src/xbox_gamepad_physics/_resource_lock.json`（该文件不进 Git）。版本号取自 `pyproject.toml`。
-2. 用 `python -m build` 生成 sdist 与 wheel。它先打 sdist，再从 sdist 构建 wheel，不受仓库里残留的
-   `build/lib`、`*.egg-info` 影响；不要在有旧构建产物的工作区直接用 `pip wheel .` 发布。
-3. 把 zip 上传到 GitHub Release `v<版本>`，与 wheel 一起发布。
+## 资源根目录与缓存
 
-## 安装与状态检查
+加载器依次使用：
 
-基础包不强制安装仿真器：
+1. `XBOX_GAMEPAD_PHYSICS_RESOURCES` 指定目录，或命令显式的 `--resources`。
+2. 仓库检出的 `build/resources/`。
+3. 当前下游工程的 `.xbox_gamepad_physics/resources/`；独立目录请显式指定资源根。
 
-```sh
-python -m pip install -e ".[build]"
-python -m xbox_gamepad_physics build-resources
-python -m xbox_gamepad_physics status
-```
+环境变量指定的根目录也会导入输入、检查缺失或过期节点并构建。输入保存在资源根的
+`inputs/`，构建器使用 wheel 内证据和冻结输入生成 runtime 输出；不会写入 site-packages。
+输入不变时第二次命中缓存；删除产物或改变证据只重建受影响节点及其下游。
+`--force` 可显式重建全部运行时产物，不会重新分解 CoACD。
 
-`build-resources` 也会在首次加载资源时自动执行；手动运行便于提前构建和查看进度，
-`--force` 强制全部重建。
+在线首次准备可下载 `_resource_lock.json` 指向的版本化输入 zip，然后本地构建。
+离线机器应提前取得本地 zip 并用上面的 `--archive ... --offline` 导入。在线入口关闭环境
+代理后先直连，确认失败且显式设置 `FALLBACK_PROXY_PORT` 时才回退。使用 fake-IP DNS 的
+站点应先提供真实解析或采用离线导入；本阶段没有访问尚未发布的 v0.3.0 在线附件。
 
-已有 RoboTwin 环境需要保持离线安装时，可以复用环境中的 setuptools：
+## 维护者打包
 
-```sh
-python -m pip install -e . --no-build-isolation
-```
+`python scripts/package_release_resources.py` 仅按白名单封装输入，生成输入 zip、
+`SHA256SUMS` 与 `_resource_lock.json`；不调用完整构建，也不调用 CoACD。
+随后构建 wheel，并让 `SHA256SUMS` 同时覆盖最终 wheel 和输入 zip，作为 Release 附件。
+发布前检查 wheel 中的小证据和生成器齐全、zip 中无运行时产物或其他型号。
+B1+B2 只产出待审文件，不上传、打 tag 或发布。
 
-可选依赖：
-
-```sh
-python -m pip install -e ".[mujoco]"
-python -m pip install -e ".[robotwin]"
-```
-
-MuJoCo/Filament 开发使用独立 Python 3.12 环境。GPU 节点当前验证路径为：
-
-```text
-/path/to/gpu-data/<gpu-project>/envs/concon-xbox-py312
-```
-
-该环境不继承 RoboTwin/SAPIEN 环境。Python 3.12 是低层
-`mujoco.rendering.filament` 的最低实际可用版本，因为它使用 Python 3.12 新增的
-`collections.abc.Buffer`。已验证版本见
-`requirements/mujoco-filament-py312.freeze.txt`。官方 MuJoCo 3.15.0 wheel 的基础依赖
-元数据遗漏了 `typing_extensions`，本项目的 `mujoco` extra 显式补充该运行时依赖。
-
-`status` 只报告 manifest。`verify` 会检查 readiness 标志和所有必需文件，并在任何物理资源
-缺失时返回非零状态：
-
-```sh
-python -m xbox_gamepad_physics verify --backend mujoco
-python -m xbox_gamepad_physics verify --backend robotwin
-python -m xbox_gamepad_physics verify --backend robotwin --profile left_stick
-```
-
-完整仿真资产使用可运行的 `full_controls`；其结构已满足仿真加载要求，但物理参数仍是未完成硬件校准的
-估计值。RoboTwin 另有 `left_stick`，只覆盖左摇杆物理闭环。
+仓库开发仍可 `python -m pip install -e ".[build]"`；setuptools 59 环境使用
+`--no-build-isolation`，`setup.py` 镜像保持版本、extras、package_data、入口与 MIT 同步。
+维护者只有在明确更新凸包时才使用 `[build,maintainer]` 和显式重生成命令，先归档旧快照。
+冻结 CoACD 来源为 v0.2.0 发布 zip、coacd 1.0.14；对应 meshbase 与参数随快照记录。
 
 ## RoboTwin / SAPIEN
 
@@ -124,6 +97,7 @@ gamepad = load_into_scene(
     pose=[0.0, 0.0, 0.8, 1.0, 0.0, 0.0, 0.0],
     fixed_root=True,
     profile="left_stick",
+    collision="coacd",
 )
 
 state = gamepad.gamepad_state()
@@ -161,141 +135,12 @@ xbox-gamepad-physics install-robotwin \
 这个命令只复制已审核的资源文件，不修改 RoboTwin Python 源码或任务注册。公共 backend
 接口不要求执行复制；任务代码可以直接调用 `load_into_scene(task.scene, ...)`。
 
-## MuJoCo 独立场景
+## MuJoCo 历史基线
 
-视觉阶段可以直接加载实验台场景；返回前已经执行 `mj_forward`，因此固定相机和所有
-visual geom 的世界位姿可立即用于首帧渲染：
-
-```python
-from xbox_gamepad_physics.mujoco import load_visual_scene
-
-visual = load_visual_scene(scene="table")
-assert visual.physics_ready is False
-```
-
-完整原生渲染与交互示例见 `examples/mujoco_visual.py`。当前 MuJoCo 原生渲染器使用
-2K base-color 纹理和标量 specular/shininess；normal、occlusion、roughness、metallic、
-emissive 贴图保留在共用视觉资源中，原生渲染器不会解释这些 PBR 纹理角色。
-
-Filament PBR 入口使用原 GLB 的 RGB、alpha、normal、occlusion、roughness、metallic 和
-emissive 语义：
-
-```python
-from xbox_gamepad_physics.mujoco import load_visual_scene
-
-reference = load_visual_scene(scene="reference", renderer="filament")
-table = load_visual_scene(scene="table", renderer="filament")
-```
-
-MuJoCo 3.15.0 的 `ModelRenderables` 没有把 `mjTEXROLE_OPACITY` 传给 Filament material，
-因此官方 wheel 会把 Xbox One S 的透明 ABXY 外壳画成不透明白色。当前 Filament 入口要求
-使用 [5o1/mujoco 的 `concon/filament-opacity-texture` 分支](https://github.com/5o1/mujoco/tree/concon/filament-opacity-texture)，
-修复提交为 `fbeb31381564ae71e9efcdf3189d1ffbf5033269`。该补丁只补齐通用 opacity role
-映射，不包含 Xbox 专用材质或颜色。
-
-离屏示例见 `examples/mujoco_filament_visual.py`：
-
-```sh
-python examples/mujoco_filament_visual.py \
-  --scene reference \
-  --output /tmp/xbox-filament
-```
-
-将纯视觉资产加入调用者自己的 `MjSpec`：
-
-```python
-import mujoco
-from xbox_gamepad_physics.mujoco import attach_visual_to_spec
-
-parent = mujoco.MjSpec.from_file("dual_hand_scene.xml")
-attachment = attach_visual_to_spec(
-    parent,
-    frame=parent.frame("gamepad_mount"),
-    prefix="xbox_visual_",
-)
-model, data = attachment.compile()
-```
-
-该入口只加入 16 个 `contype=0`、`conaffinity=0` 的视觉 geom。碰撞、质量、惯量、
-关节和接触参数将在物理资产阶段接入。
-
-### 物理场景接口
-
-`load_scene` 负责完整的 parse、compile、`MjData` 分配和命名绑定：
-
-```python
-from xbox_gamepad_physics.mujoco import load_scene
-
-loaded = load_scene(profile="full_controls", scene="fixed")
-model = loaded.model
-data = loaded.data
-gamepad = loaded.gamepad
-```
-
-standalone scene 可以是 XML 或自包含 MJZ。manifest 通过 `scenes` 映射声明 `fixed`、`free`
-等公开场景名。
-
-## MuJoCo 加入已有场景
-
-MuJoCo 在 `MjSpec` 阶段组合子模型：
-
-```python
-import mujoco
-from xbox_gamepad_physics.mujoco import attach_to_spec
-
-parent = mujoco.MjSpec.from_file("dual_hand_scene.xml")
-attachment = attach_to_spec(
-    parent,
-    frame="gamepad_mount",
-    prefix="xbox_",
-    profile="full_controls",
-)
-
-compiled = attachment.compile()
-model = compiled.model
-data = compiled.data
-gamepad = compiled.gamepad
-```
-
-调用者也可以自行编译 parent，再执行：
-
-```python
-model = parent.compile()
-data = mujoco.MjData(model)
-gamepad = attachment.bind(model, data)
-```
-
-`prefix` 使同一场景可以附加多个实例。joint 与 sensor 都通过编译后的名称绑定，父场景中
-body 的排列变化不会改变公共访问方式。
-
-## MuBlE
-
-MuBlE 是 MuJoCo 资产的消费者，不维护第三份 Xbox 物理资产。适配代码位于
-`xbox_gamepad_physics.muble`：它通过公开的 `MujocoGamepadHandle` 写入标准
-`GamepadState`，从编译后的 visual geom/body 名称推导 16 个部件的所属关系，并输出
-`muble/body-pose-trace-v1`。
-
-生成一个最小 pose probe：
-
-```sh
-python examples/muble_pose_probe.py --output /tmp/xbox_muble_trace.json
-```
-
-Blender 端直接打开已经验收的场景，并从包内共用视觉 manifest 读取原 Blender 对象名称、
-初始矩阵、尺度和坐标变换：
-
-```sh
-PYTHONPATH="$PWD/src" blender --background --python-use-system-env \
-  --python examples/muble_visual.py -- \
-  --approved-blend assets/xbox_one_s/render/Xbox_One_S_approved_cycles.blend \
-  --trace /tmp/xbox_muble_trace.json \
-  --frame 1 \
-  --save /tmp/xbox_muble_frame.blend
-```
-
-MuBlE 的桌面、机器人和灯光仍由 MuBlE 自己提供。调用者先打开 approved Xbox scene，
-再使用 MuBlE 的通用场景组合能力追加或链接所需环境；本仓库不复制
-`base_scene_panda.blend`，也不维护额外的 Xbox `blender_binding.json`。
+MuJoCo 不在 v0.3.0 发布范围内。冻结树保留在 Git 原地供历史比对，不进运行时 DAG、
+wheel 资源数据或输入 zip，也不恢复其生成器。`status` / `verify --backend mujoco` 与
+MuJoCo 加载入口会明确提示此范围；相关运行时、资产与 MuBlE 真实集成测试注明原因后跳过。
+旧示例与历史实验记录保留，不作为 v0.3.0 安装或验收入口。
 
 ## Backend manifest
 
@@ -313,24 +158,106 @@ required_files
 reason
 ```
 
-MuJoCo ready profile 还需要 `scenes` 和 `bindings`。RoboTwin ready profile 还需要逐关节
-`joint_dynamics`。完整控件的两个 backend manifest 通过 `motion_contract` 指向公共运动
+RoboTwin ready profile 还需要逐关节 `joint_dynamics`。完整控件的 backend manifest
+通过 `motion_contract` 指向公共运动
 契约，关节范围和信号约束不在 backend manifest 中重复维护。格式说明见
 `schemas/backend_manifest.schema.json`（文档，运行时不校验）。RoboTwin 的字段取值范围与有限性、URDF 显式惯量与限位等由生成器保证，
 并在资产测试中对构建结果检查一次；RoboTwin 加载器运行时只检查就绪状态、必需文件和关节名一致。
-公共运动契约和信号控制器仍校验各自的输入，冻结的 MuJoCo 层保留原有检查。
+公共运动契约和信号控制器仍校验各自的输入。
 
 ## 验证
 
-基础设施通过以下实验验证：
+基础设施测试检查资源完整性、具名关节绑定、调用边界和 MuJoCo 排除提示。发行前另从
+不含本仓库的临时工作目录，使用非 editable wheel、声明的 `[build]` 依赖和本地输入 zip
+完成离线构建，检查必需文件与缓存失效传播。wheel 应包含构建器及小证据，不含生成资源、
+历史 MuJoCo 树或其他型号档案。
 
-1. 在未安装 SAPIEN 或 MuJoCo 时导入基础包，确认没有隐式后端依赖。
-2. 使用 fake scene/spec 记录调用，确认 readiness 失败发生在 scene 修改之前。
-3. 使用临时绝对资源路径，确认 RoboTwin loader 不读取当前工作目录。
-4. 改变活动 joint 顺序，确认名称化访问仍返回正确 qpos。
-5. 构造缺失 inertial、joint limit、binding 和资源文件的 profile，确认全部 fail closed。
-6. 构造 MuJoCo parent spec attachment，确认 prefix 后的 joint/sensor 名称能够绑定。
-7. 构建 wheel，确认其中只有代码（以及发布时生成的 `_resource_lock.json`），不含资产或构建好的资源。
+这些检查不等于真实 SAPIEN 加载或渲染通过；Linux/NVIDIA + RoboTwin fork + SAPIEN 3.0.3
+的加载、交互、原生渲染留到 B4，用户视觉确认、真实手柄标定与接触实验分别验收。
 
-自动测试覆盖资源完整性、命名绑定和调用边界。各后端的用户视觉检查、真实手柄标定和
-机械臂接触实验继续按独立验收项推进。
+## 安装包中的 example、viewer 与 overlay（B3a）
+
+这些入口直接使用 wheel 内实现和静态模块，不需要本项目检出、CDN 或首次 npm 下载。
+
+```sh
+python3.10 -m pip install "./xbox_gamepad_physics-0.3.0-py3-none-any.whl[example]"
+xbox-gamepad-physics example export ./gamepad_example
+python3.10 ./gamepad_example/run_robotwin.py --help
+```
+
+导出目录含一个薄入口和 `smoke_full_controls.yaml`、`render_review.yaml`。实际运行需用户自己的
+SAPIEN 3.0.3/RoboTwin fork 环境及已准备资源；可加装 `[build,robotwin,example]`，先按资源导入
+说明离线构建，再执行：
+
+```sh
+python3.10 ./gamepad_example/run_robotwin.py ./gamepad_example/smoke_full_controls.yaml --resources ./gamepad_resources
+python3.10 ./gamepad_example/run_robotwin.py ./gamepad_example/render_review.yaml --resources ./gamepad_resources --output ./review_output
+```
+
+默认输出在用户 cwd 的 `build/runs/`，`--output` 可指定位置；记录包、SAPIEN 和资源版本。
+Git 仅在代码来自检出且 Git 可用时记录，缺 Git 不阻塞。渲染 example 沿用共享 RT 配置，
+原生 SAPIEN 场景不强制提供 RoboTwin 根；已有平台调用可继续显式传 `scene.robotwin_root`。
+真实加载、外观与交互验收留 B4。
+
+```sh
+xbox-gamepad-physics viewer --resources ./gamepad_resources --offline --blender /path/to/blender
+xbox-gamepad-physics overlay
+xbox-gamepad-physics overlay --trace-dir ./my_traces --port 8770
+```
+
+viewer 使用输入包的已审 `.blend`，Blender 4.5 可执行文件由用户通过 `--blender` 提供。
+未提供 Blender 时，静态页面仍可打开，Cycles 请求明确返回 503 并说明缺少 Blender；
+这不代表已有渲染画面。viewer 只准备同一 DAG 的运动学节点，基础静态服务不要求 SAPIEN。
+UI、overlay、Three.js 所需模块及其 MIT/Unlicense 许可随 wheel 分发。参考 PNG 是模型派生资产，随输入 zip 分发并附 CC BY 4.0 归属；viewer 从资源根的 `inputs/assets/xbox_one_s/render/` 读取，缺图时原位置显示“缺少输入资源”，页面仍可使用。
+
+overlay 默认打印带小型 canonical demo trace 的本地地址；demo 是合成示例，不冒充物理读回。
+自有 trace 放到 `--trace-dir` 后，在打印地址中改成 `trace=/traces/<文件>.json&autoplay=1`。
+显示阈值、连续幅值和上游信号映射均不改。
+
+检出中的 `python3 run_robotwin.py ...`、`npm run viewer`、`npm run gamepad-overlay` 保留薄入口。
+### 遥操作：默认单机，远程可选
+
+首发目标是 Linux x86_64 + NVIDIA、Python 3.10、SAPIEN 3.0.3。安装本地 Release wheel 的
+`[robotwin,teleop]` extras；teleop extra 同时包含离线资源构建所需的依赖。FFmpeg、NVIDIA
+驱动和 Vulkan 是系统前置条件：FFmpeg 必须带 `h264_nvenc` 并能在所选 GPU 实际编码；
+浏览器需要支持 H.264 WebCodecs 和 Pointer Lock。Node、Blender、SSH、WSL 都不是单机依赖。
+夹爪使用**用户自己的 RoboTwin aloha-agilex** URDF、其引用的 mesh 和根 `LICENSE`，
+路径为 `assets/embodiments/aloha-agilex/urdf/arx5_description_isaac.urdf`；这些外部资产不放入本包的 zip。
+
+```sh
+python3.10 -m pip install './xbox_gamepad_physics-0.3.0-py3-none-any.whl[robotwin,teleop]'
+xbox-gamepad-physics build-resources --archive ./xbox_gamepad_physics-resources-0.3.0.zip --resources ./gamepad_resources --offline
+xbox-gamepad-physics teleop --robotwin-root /path/to/RoboTwin --gpu 0 --resources ./gamepad_resources --output ./teleop_session --port 8775
+```
+
+默认 `--mode local`、仅监听 `127.0.0.1`，三个进程均使用当前 Python。
+`--output` 为本次新目录；已有目录和端口冲突会明确拒绝，不结束占用者。等物理、渲染和首个编码帧
+使 health 就绪后才打印 URL；`--open-browser` 可选。`--stream-python` 可选择已安装本 wheel 的
+推流解释器，`--simulation-python` 可显式选择物理/渲染解释器；未覆盖的解释器保持当前 Python。
+单机入口不读取 `configs/local/`。`--render-candidate rt|raster` 和 `--collision sdf|coacd` 可选，默认沿用 rt/SDF。
+
+远程机器应预装同一个 wheel 和资源。用用户自己的 OpenSSH alias 即可创建 localhost 隧道，
+不需要同步仓库；下列远程路径须替换为该机器上的真实路径：
+
+```sh
+xbox-gamepad-physics teleop --mode remote --ssh '<ssh-alias>' --remote-python /path/to/venv/bin/python --robotwin-root /path/to/RoboTwin --gpu 0 --resources /path/to/resources --output /path/to/new-session --port 8775 --local-port 8775
+# 也可用 user@host 加 --identity /path/to/key --ssh-port <port>。
+# 占位符模板：configs/teleop_remote.example.env；显式 --site <file> 才读取。
+```
+
+Windows relay 只用于 GPU + WSL + Windows 拓扑：remote 下显式加 `--windows-relay --wsl-interface <interface> --relay-port <port>`。
+负责人现有 `bash scripts/teleop_session.sh` 继续读取忽略的站点配置，作为 remote 薄入口；GPU 上需要预装本 wheel，
+不再 rsync 整个仓库。它保留 G 的端口身份检查、仅显式 `--stop-existing` 关闭确认的旧会话/隧道、FIFO EOF 清理和超时 watchdog。
+该站点适配器的 WSL/Windows 字段继续兼容原配置；可用 `--port`、`--local-port`、`--relay-port` 覆盖测试端口。
+local 不调用 G 的远程端口识别或清理。remote 的网关脱离 SSH 会话运行，输出写入远端会话目录的 `gateway.log`；HTTP shutdown、信号和隧道空闲超时共用退出路径。清理会检查本会话进程身份并明确报告失败。Linux/WSL 的正常起停、断开 SSH 后 watchdog 退出，以及主助手沙箱外执行的完整 Windows relay 起停均已通过；K3b 证据见 `build/experiments/release_v030_b3b/ruling1/K3B_RESULT.md`。证据与操作步骤见 `build/experiments/release_v030_b3b/ruling1/REPORT.md`。`--skip-windows-relay` 仅用于 K3a 验证，正常工作流不需要它。
+
+新 live 记录为 **schema 6**：G 的 held 速度/牵引逻辑和 H 的逐指速度驱动保持，网页显示实际关节行程，
+overlay 忠实呈现上游信号、阈值不变。schema 3/4 保留即时位置目标，schema 5 保留推进位置目标。
+回放在新场景执行记录命令，不把记录的位姿强灌回场景：
+
+```sh
+xbox-gamepad-physics teleop-replay ./record.xgpr --resources ./gamepad_resources --robotwin-root /path/to/RoboTwin --output ./replay --steps 300
+```
+
+去掉 `--steps` 则回放全部可读记录；JSONL 和二进制 xgpr 均支持。资源和 SAPIEN 版本须与源记录匹配；
+记录内的外部资产路径可由 `--robotwin-root` 重定位。`experiments/teleop_replay.py` 和旧 `teleop.*` 检出入口保留兼容包装。

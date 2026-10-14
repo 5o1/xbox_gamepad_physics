@@ -106,8 +106,9 @@ gamepad.set_gamepad_targets(state)
 非视觉运行脚本：
 
 ```sh
-python run_robotwin.py configs/smoke_full_controls.yaml \
-  --set params.steps=2000 --output /tmp/robotwin-full-controls
+xbox-gamepad-physics example export ./gamepad_example
+python3.10 ./gamepad_example/run_robotwin.py ./gamepad_example/smoke_full_controls.yaml \
+  --resources ./gamepad_resources --set params.steps=2000 --output /tmp/robotwin-full-controls
 ```
 
 ## MuJoCo
