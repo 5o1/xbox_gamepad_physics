@@ -8,7 +8,7 @@ from typing import Any
 
 from xbox_gamepad_physics.errors import AssetImportError
 
-from ._backend import require_mujoco
+from ._backend import require_mujoco, reject_release_backend
 from ._manifest import RuntimeManifest, load_runtime_manifest, resolve_resource
 from ._spec import compile_spec, load_spec, make_data
 from .handle import MujocoGamepadHandle, bind_handle
@@ -79,6 +79,8 @@ def attach_to_spec(
     repository readiness gate therefore raises before this function edits the
     parent spec.
     """
+
+    reject_release_backend()
 
     if (frame is None) == (site is None):
         raise ValueError("Exactly one of 'frame' and 'site' must be provided.")

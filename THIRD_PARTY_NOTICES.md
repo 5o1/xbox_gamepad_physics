@@ -4,8 +4,9 @@ This repository records provenance separately from mechanical acceptance. A
 visual asset appearing here does not mean that its scale, pivots, travel,
 forces, or controller revision have been verified.
 
-No license for the project's own source code is declared by this notice. The
-licenses below apply only to the identified third-party works and derivatives.
+The project's own source code is licensed under MIT; see `LICENSE`
+(Copyright (c) 2026 5o1). The licenses below continue to apply to the
+identified third-party works and derivatives.
 The selected Xbox One S source GLB, visual derivatives and packed Cycles scene are
 stored under `assets/xbox_one_s/`. Other original archives, Blender files, HDR environments,
 PDFs and large intermediates remain outside this Git repository.
@@ -24,9 +25,13 @@ PDFs and large intermediates remain outside this Git repository.
   `assets/xbox_one_s/collision_meshbase/` is a further derivative; its changes are
   listed in that directory's `README.md`. Superseded snapshots of it are kept unchanged
   in `assets/xbox_one_s/archive/` for provenance only; they are not in the release zip.
-- Release resource zip: the GitHub release zip contains these asset files, the
-  resources built from them and this notice; attribution and change notes travel
-  with it.
+- v0.3.0 input zip: contains only the approved Xbox One S source GLB, static
+  visual snapshot, collision meshbase, frozen v0.2.0 CoACD hulls, approved Cycles
+  scene and the provenance/license files needed for these inputs. Runtime
+  kinematics, motion, sim_visual, URDF/manifests and SDF meshes are generated
+  locally by the wheel. Frozen CoACD is a meshbase derivative, not an unchanged
+  author original; its source and parameters accompany that snapshot.
+- CC BY 4.0 legal text: <https://creativecommons.org/licenses/by/4.0/legalcode>.
 - Repository derivatives: rendered views and material/lighting comparisons in
   `build/experiments/xbox_one_s_batonyrobson_UNVERIFIED/`,
   `build/experiments/xbox_official_import_comparison/`, and
@@ -103,9 +108,12 @@ Industrial Room environment.
 - Distributed files: the SVG overlay core, renderer, Xbox layout and input
   renderer under `viewer/gamepad_overlay/`; exact hashes are recorded in
   `viewer/gamepad_overlay/upstream.json`.
-- Project changes: upstream rendering files remain byte-identical. The local
-  `canonical_adapter.mjs`, dashboard and research theme translate the project's
-  32-channel state into the upstream renderer input and add experiment telemetry.
+- Project changes: vendored rendering/input files have local patches for
+  continuous button values, exact state changes, D-pad highlight and Guide
+  display. `viewer/gamepad_overlay/upstream.json` records the upstream revision
+  and local patch history. The local `canonical_adapter.mjs`, dashboard and
+  research theme translate the project's 32-channel state into renderer input
+  and add experiment telemetry.
 
 ## Reference-only sources
 

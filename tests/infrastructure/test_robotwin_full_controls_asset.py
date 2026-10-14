@@ -15,7 +15,7 @@ for path in (SRC, SCRIPTS):
     if str(path) not in sys.path:
         sys.path.insert(0, str(path))
 
-BUILD_DEPS = all(importlib.util.find_spec(name) is not None for name in ("numpy", "trimesh", "coacd", "manifold3d"))
+BUILD_DEPS = all(importlib.util.find_spec(name) is not None for name in ("numpy", "trimesh", "manifold3d"))
 if BUILD_DEPS:
     from build_robotwin_full_controls import build  # noqa: E402
 from build_common_motion import build as build_motion
@@ -37,7 +37,7 @@ def _visual_root() -> Path:
 
 
 class RoboTwinFullControlsAssetTest(unittest.TestCase):
-    @unittest.skipIf(not BUILD_DEPS, "generator requires the [build] extra: numpy, trimesh, coacd and manifold3d")
+    @unittest.skipIf(not BUILD_DEPS, "generator requires the [build] extra: numpy, trimesh and manifold3d")
     def test_generated_profile_loads_and_matches_motion_contract(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

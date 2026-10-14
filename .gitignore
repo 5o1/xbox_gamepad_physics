@@ -104,3 +104,10 @@ src/xbox_gamepad_physics/resource_data/robotwin/
 
 # Machine-specific teleoperation connection settings (never distribute).
 /configs/local/teleop_site.env
+
+# Approved v0.2.0 frozen CoACD input snapshot.
+!assets/xbox_one_s/collision_coacd/meshes/*.obj
+
+# Reviewed offline Three.js module closure and MIT license shipped with the wheel.
+!src/xbox_gamepad_physics/web/static/vendor/
+!src/xbox_gamepad_physics/web/static/vendor/**

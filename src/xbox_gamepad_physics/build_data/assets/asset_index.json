@@ -1,0 +1,254 @@
+{
+  "schema_version": 1,
+  "asset_version": "v1-work-in-progress-2026-10-06",
+  "registry_role": "canonical_status_authority",
+  "path_bases": {
+    "metadata_links": "asset_index_directory",
+    "visual_manifest_path": "repository_root",
+    "viewer_adapter_acceptance": "repository_root",
+    "built_resources": "resource:<path> is relative to the resolved resource root (build-resources)"
+  },
+  "target_hardware": {
+    "model": "Xbox One S",
+    "basis": "explicit owner selection on 2026-10-08",
+    "physical_measurements_available": false
+  },
+  "primary_appearance_candidate_id": "xbox_one_s_batonyrobson_a62cf747",
+  "approved_target_appearance_candidate_id": "xbox_one_s_batonyrobson_a62cf747",
+  "approved_metric_geometry_variant_id": null,
+  "candidates": {
+    "xbox_one_s_batonyrobson_a62cf747": {
+      "title": "Xbox One S Controller/Gamepad (Animated)",
+      "author": "BatonyRobson",
+      "source": "../references/xbox_replacement_candidates.json",
+      "front_render": "xbox_one_s/render/boiler_room_vertical_fov35_strength_1p0.png",
+      "status": "target_appearance_approved_physical_calibration_pending",
+      "user_appearance_acknowledged": true,
+      "target_product_match_confirmed_by_user": true,
+      "source_revision_metadata_verified": false,
+      "dimensions_verified": false,
+      "mechanically_verified": false,
+      "approved_for_contact_or_training": false,
+      "target_appearance_approval": {
+        "approved": true,
+        "target_model": "Xbox One S",
+        "evidence": [
+          "user_target_xbox_one_s",
+          "batony_xbox_one_s_visual"
+        ],
+        "reason": "The owner selected Xbox One S and approved this downloaded asset as the target appearance."
+      },
+      "metric_geometry_approval": {
+        "approved": false,
+        "evidence": [],
+        "reason": "Local dimensions, hidden geometry and mechanical registration remain unmeasured."
+      },
+      "mesh_objects": 16,
+      "visual_manifest": {
+        "path": "assets/xbox_one_s/visual/inventory.json",
+        "artifacts": {}
+      }
+    }
+  },
+  "derived_variants": {
+    "xbox_one_s": {
+      "source_candidate_id": "xbox_one_s_batonyrobson_a62cf747",
+      "inventory": "xbox_one_s/visual/inventory.json",
+      "visual_manifest": {
+        "path": "assets/xbox_one_s/visual/inventory.json",
+        "artifacts": {
+          "static_visual_parts": {
+            "mode": "object_files",
+            "manifest_entry": "objects",
+            "metric_scale": {
+              "value": [
+                0.0560472180107161,
+                0.0560472180107161,
+                0.0560472180107161
+              ],
+              "unit": "m/native_unit",
+              "status": "derived",
+              "evidence": [
+                "microsoft_1708_dimensions",
+                "batony_xbox_one_s_visual"
+              ],
+              "harness": {
+                "kind": "python_derivation",
+                "path": "scripts/build_kinematics.py",
+                "entrypoint": "build"
+              },
+              "applicability": "Uniform width-fit scale for the kinematic viewer only; not approved target geometry.",
+              "derivation": {
+                "method": "Divide the Microsoft-published whole-controller width by the complete downloaded visual candidate X extent and apply the scalar uniformly on all axes.",
+                "inputs": [
+                  {
+                    "name": "target_width",
+                    "value": 0.153,
+                    "unit": "m",
+                    "evidence": [
+                      "microsoft_1708_dimensions"
+                    ]
+                  },
+                  {
+                    "name": "candidate_x_extent",
+                    "value": 2.729841113090515,
+                    "unit": "native_unit",
+                    "evidence": [
+                      "batony_xbox_one_s_visual"
+                    ]
+                  },
+                  {
+                    "name": "derived_meters_per_native_unit",
+                    "value": [
+                      0.0560472180107161,
+                      0.0560472180107161,
+                      0.0560472180107161
+                    ],
+                    "unit": "m/native_unit",
+                    "evidence": [
+                      "microsoft_1708_dimensions",
+                      "batony_xbox_one_s_visual"
+                    ]
+                  }
+                ],
+                "evidence": [
+                  "microsoft_1708_dimensions",
+                  "batony_xbox_one_s_visual"
+                ]
+              },
+              "uncertainty": {
+                "type": "bounded_error",
+                "range": [
+                  0,
+                  0.003230402507294998
+                ],
+                "unit": "m/native_unit",
+                "quantity": "Non-statistical maximum difference between the chosen width-fit scale and independent length/height extent-fit ratios; not a manufacturing tolerance.",
+                "confidence": {
+                  "kind": "non_statistical",
+                  "level": null,
+                  "meaning": "Bounds only the candidate whole-shape mismatch visible in three published overall extents; it excludes local-shape and revision error."
+                }
+              }
+            }
+          }
+        }
+      },
+      "purpose": "interactive kinematic preview",
+      "target_appearance_match": true,
+      "metric_geometry_match": null,
+      "mechanical_revision_match": null,
+      "collision_approved": false,
+      "approved_for_contact_or_training": false,
+      "viewer_entry": "../viewer/index.html",
+      "viewer_profile": {
+        "route": "/generated/kinematics/xbox_one_s.json"
+      },
+      "target_appearance_approval": {
+        "approved": true,
+        "target_model": "Xbox One S",
+        "evidence": [
+          "user_target_xbox_one_s",
+          "batony_xbox_one_s_visual"
+        ],
+        "reason": "This variant uses the owner-approved target appearance."
+      },
+      "metric_geometry_approval": {
+        "approved": false,
+        "evidence": [],
+        "reason": "Metric local geometry and mechanics remain unmeasured."
+      }
+    },
+    "xbox_one_s_collision_meshbase": {
+      "source_candidate_id": "xbox_one_s_batonyrobson_a62cf747",
+      "inventory": "xbox_one_s/collision_meshbase/manifest.json",
+      "purpose": "persistent collision mesh base input; closed per-component geometry",
+      "status": "collision mesh base; closed per-component; not a validated contact model",
+      "target_appearance_match": true,
+      "metric_geometry_match": null,
+      "mechanical_revision_match": null,
+      "collision_approved": false,
+      "approved_for_contact_or_training": false,
+      "metric_geometry_approval": {
+        "approved": false,
+        "evidence": [],
+        "reason": "Closed mesh-base geometry does not establish local physical calibration or contact validation."
+      }
+    }
+  },
+  "interactive_viewer": {
+    "entry": "../viewer/index.html",
+    "acceptance": "../specs/interactive_acceptance.json",
+    "design_sources": "../references/viewer_design.json",
+    "active_variant_id": "xbox_one_s",
+    "allowed_variant_ids": [],
+    "verification_scope": "The active viewer uses the approved Xbox One S appearance. Metric geometry, real-controller, contact and dynamics acceptance remain separate gates.",
+    "target_rig": null,
+    "real_controller_verified": false
+  },
+  "physical_asset": {
+    "specification": "../specs/xbox_v1.json",
+    "collision_asset": null,
+    "simulator_asset": null,
+    "meters_per_native_unit": null,
+    "contact_dynamics_validated": false,
+    "viewer_adapter": {
+      "status": "appearance_schema_2_implemented_canonical_physics_adapter_pending",
+      "canonical_schema_version": 2,
+      "viewer_schema_version": 2,
+      "implementation": "viewer/kinematics.mjs",
+      "physical_acceptance_allowed": false,
+      "interactive_acceptance": "specs/interactive_acceptance.json"
+    }
+  },
+  "partial_physics_profiles": {
+    "left_stick": {
+      "backend": "robotwin",
+      "profile": "left_stick",
+      "scope": "left-stick contact and left_x/left_y signal vertical slice only",
+      "status": "automated_and_user_visual_validation_passed",
+      "full_controller_ready": false,
+      "hardware_calibrated": false,
+      "source": "../references/left_stick.json",
+      "manifest": "resource:robotwin/left_stick/manifest.json",
+      "limitations": [
+        "Mass, damping and contact material include explicitly labeled simulation estimates.",
+        "The reference stick component has not been identified as the installed Xbox part.",
+        "Only the left-stick two-axis slice is implemented."
+      ]
+    }
+  },
+  "simulation_profiles": {
+    "robotwin_full_controls": {
+      "backend": "robotwin",
+      "profile": "full_controls",
+      "scope": "20-DOF full controller, 21 game channels and Pair physical event",
+      "status": "implemented_pending_user_review_and_hardware_calibration",
+      "hardware_calibrated": false,
+      "source": "../references/full_controls.json",
+      "manifest": "resource:robotwin/full_controls/manifest.json",
+      "consumer_integration": "../references/robotwin_backend_validation.json"
+    }
+  },
+  "evidence": {
+    "source_catalog": "../references/catalog.json",
+    "mechanical_structure": "../references/mechanical_structure.json",
+    "geometry_review": "../references/geometry_review.json",
+    "whole_controller_dimensions": "../references/1708_dimensions.json",
+    "target_model": {
+      "document": "../references/catalog.json",
+      "entry": "sources.user_target_xbox_one_s"
+    }
+  },
+  "reference_stick_envelope": {
+    "specification": "../references/stick_envelope.json",
+    "scope": "RKJXV122400R angular upper-envelope only; not installed Xbox motion or dynamics"
+  },
+  "reasons_not_yet_approved": {
+    "scale": "The primary appearance source has no approved dimensional registration to the target controller.",
+    "collision": "No contact-preserving whole-controller collision reconstruction has been verified.",
+    "simulator": "Target pivots, dynamics and full input-to-motion mapping remain unresolved; simulator defaults are forbidden.",
+    "physical_calibration": "The target model and appearance are selected; local dimensions, hidden geometry and mechanics remain unmeasured."
+  },
+  "publication_scope": "Xbox One S release slice; historical registry remains in the source repository."
+}

@@ -1,0 +1,204 @@
+{
+  "schema_version": 1,
+  "checked_on": "2026-10-08",
+  "sources": {
+    "user_target_xbox_one_s": {
+      "kind": "user_statement",
+      "locator": "Conversation confirmations on 2026-10-06 and 2026-10-08",
+      "statement": "Owner selected Xbox One S as the target hardware and accepted the BatonyRobson Xbox One S asset as the target appearance.",
+      "scope": "Target product and appearance identity selected by the owner; dimensions and physical parameters remain unmeasured"
+    },
+    "ifixit_1708_buttons": {
+      "url": "https://www.ifixit.com/Guide/Xbox+One+Wireless+Controller+Model+1708+Button+Replacement/98312",
+      "kind": "first_hand_disassembly",
+      "locator": "Steps 7, 8, 14 and 16; step 14 explicitly identifies the connect/sync button retained by the face plate",
+      "scope": "1708 D-pad removal, removable stick caps, bumper retention, connect/sync control identity and rubber button backing",
+      "limitation": "No force curves or joint frame dimensions. Do not import apparent screw-length typos as dimensions."
+    },
+    "w3c_gamepad_standard_mapping": {
+      "url": "https://www.w3.org/TR/2025/WD-gamepad-20250710/#remapping",
+      "kind": "primary_standard",
+      "locator": "Standard Gamepad table: buttons 0-16 and axes 0-3",
+      "scope": "Canonical logical ordering and normalized ranges for four axes and seventeen buttons",
+      "limitation": "W3C defines logical inputs, not an Xbox mechanical topology or this project's axes-then-buttons tensor concatenation."
+    },
+    "apple_1708_connect_button": {
+      "url": "https://support.apple.com/en-sg/111101",
+      "kind": "manufacturer_support",
+      "locator": "Supported controllers and Pair and connect the controller",
+      "scope": "Identifies Xbox Wireless Controller with Bluetooth Model 1708 and instructs pressing its Connect button",
+      "limitation": "Confirms control identity and function only; supplies no dimensions, force, travel or mechanism topology."
+    },
+    "microsoft_1708_dimensions": {
+      "url": "https://download.microsoft.com/download/7/C/A/7CA6D7FD-9758-4DA8-BD27-4FDAB0C18E1F/TDS_XboxOneControllerPlusCableforWindows.pdf",
+      "kind": "manufacturer_technical_datasheet",
+      "locator": "Page 1, Product Dimensions; FCC/IC ID identifies Model 1708",
+      "scope": "Model 1708 whole-controller width, length, height and battery-loaded mass recorded in references/1708_dimensions.json",
+      "limitation": "No dimensional tolerance is published. Whole-controller dimensions do not validate a third-party mesh's local geometry or mechanical revision."
+    },
+    "batony_xbox_one_s_visual": {
+      "url": "https://sketchfab.com/3d-models/xbox-one-s-controllergamepad-animated-a62cf7475b7d4ead9fbf1a86e5a2b6a4",
+      "kind": "licensed_visual_asset",
+      "author": "BatonyRobson",
+      "license": "CC BY 4.0",
+      "locator": "Downloaded 2K GLB SHA-256 5c5671c83a9cf15db4b8399e7010aa7d5cde915687ceb348b583eb00b0ed24e2; canonical static 16-part inventory in assets/xbox_one_s/visual/inventory.json",
+      "scope": "User-approved target appearance for the Xbox One S Controller, with sixteen named movable parts and embedded 2K materials.",
+      "limitation": "Selection as the target appearance supplies no metric dimensions, hidden geometry, pivots or mechanics; those require separate measurement or cited evidence."
+    },
+    "batony_artist_motion_prior": {
+      "url": "https://sketchfab.com/3d-models/xbox-one-s-controllergamepad-animated-a62cf7475b7d4ead9fbf1a86e5a2b6a4",
+      "kind": "artist_animation_prior",
+      "locator": "Blender 4.5.9 audit summarized in references/xbox_one_s_artist_animation_summary.json; full audit SHA-256 4c97d513d66f008e5cbc2b375d3c98692cfb495ecf32178c42d399304b31e6df retained on the GPU node",
+      "scope": "Candidate rest pivots, motion directions and displayed endpoint excursions for the explicitly uncalibrated kinematic preview.",
+      "limitation": "Artist keyframes are neither measurements nor manufacturer specifications. They provide no target-revision identity, forces, mass, inertia, friction, damping, activation threshold or real-time response."
+    },
+    "alpakka_specs": {
+      "url": "https://inputlabs.io/alpakka/manual/specs",
+      "locator": "Thumbsticks; Buttons (Front/Shoulders/Triggers)",
+      "kind": "reference_hardware",
+      "scope": "Alpakka reference design only, not the user's Xbox",
+      "limitation": "Digital trigger switches are not Xbox analog trigger assemblies."
+    },
+    "alps_stick": {
+      "url": "https://tech.alpsalpine.com/e/products/detail/RKJXV122400R/",
+      "locator": "Basic information and Mechanical performance",
+      "kind": "component_datasheet",
+      "scope": "RKJXV122400R component; Xbox component match unconfirmed",
+      "limitation": "Operating torque does not specify a spring curve; tolerances are not probability distributions."
+    },
+    "alps_front": {
+      "url": "https://tech.alpsalpine.com/e/products/detail/SKPMAME010/",
+      "locator": "Basic information: operating force, travel; Specifications: soft feeling type",
+      "kind": "component_datasheet",
+      "scope": "SKPMAME010 component used in Alpakka, not verified Xbox ABXY",
+      "limitation": "Force and travel scalars do not determine loading/unloading curves."
+    },
+    "alps_shoulder": {
+      "url": "https://tech.alpsalpine.com/e/products/detail/SKHHLNA010/",
+      "locator": "Basic information: side push, force, travel; member area: F-S Curve",
+      "kind": "component_datasheet",
+      "scope": "SKHHLNA010 switch, not the full shoulder lever",
+      "limitation": "F-S curve is listed but not accessed. Lever ratio and contact position remain unknown."
+    },
+    "phob_snapback": {
+      "url": "https://phobgcc.com/General_Info/Snapback_Filter.html",
+      "locator": "Filter components and Results",
+      "kind": "reference_hardware",
+      "scope": "PhobGCC response processing; mechanism reference, not Xbox firmware",
+      "limitation": "Digital filtering must not be confused with mechanical damping."
+    },
+    "urdf_joint": {
+      "url": "https://docs.ros.org/en/rolling/p/urdfdom/",
+      "locator": "URDF model representation",
+      "kind": "format_reference",
+      "scope": "Representation only; supplies no Xbox parameters",
+      "limitation": "A parsable description is not a calibrated physical asset."
+    },
+    "physx_material": {
+      "url": "https://nvidia-omniverse.github.io/PhysX/physx/5.6.1/_api_build/classPxMaterial.html",
+      "locator": "PxMaterial setStaticFriction, setDynamicFriction and setFrictionCombineMode; linked PxCombineMode enumeration",
+      "kind": "simulator_primary_documentation",
+      "scope": "PhysX contact-material representation: distinct static/dynamic coefficients and the average, min, multiply and max combine modes",
+      "limitation": "Defines simulator fields and constraints only; supplies no Xbox material coefficient or preferred combine mode."
+    },
+    "physx_shape_offsets": {
+      "url": "https://nvidia-omniverse.github.io/PhysX/physx/5.5.0/_api_build/classPxShape.html",
+      "locator": "PxShape::setContactOffset and PxShape::setRestOffset",
+      "kind": "simulator_primary_documentation",
+      "scope": "PhysX shape-offset constraints: contactOffset is finite and non-negative, while restOffset is finite and strictly less than contactOffset",
+      "verification_status": "automated_primary_page_fetch_verified_2026-10-06",
+      "limitation": "Defines backend validity only; it does not supply controller-specific contact offsets."
+    },
+    "sapien_collision_groups": {
+      "url": "https://sapien.ucsd.edu/docs/2.0/apidoc/sapien.core.html",
+      "locator": "set_collision_groups(group0, group1, group2, group3) four-word filtering rule",
+      "kind": "simulator_primary_documentation",
+      "scope": "SAPIEN four-uint32 collision-filter representation and its exact pairwise allow/ignore formula",
+      "verification_status": "unknown_automated_fetch_timed_out_2026-10-06; reviewer supplied the primary-page locator",
+      "limitation": "Defines filter semantics only; it does not choose group words for this controller."
+    },
+    "physx_rigid_body_collision": {
+      "url": "https://nvidia-omniverse.github.io/PhysX/physx/5.5.0/docs/RigidBodyCollision.html",
+      "locator": "Kinematic Triangle Meshes and Dynamic Triangle Meshes with SDFs",
+      "kind": "simulator_primary_documentation",
+      "scope": "Triangle-mesh simulation support matrix: static and kinematic meshes, query-only shapes, and non-kinematic dynamic meshes cooked with SDF for GPU dynamics",
+      "verification_status": "automated_primary_page_fetch_verified_2026-10-06",
+      "limitation": "Defines backend capability and cooking gates only; it supplies no controller collision mesh or SDF parameters."
+    }
+  },
+  "reference_values": {
+    "stick_direction_limit": {
+      "value": 23,
+      "unit": "deg",
+      "evidence": "alps_stick",
+      "locator": "Operating angle: each direction 23 degrees max",
+      "meaning": "component maximum, not measured enclosure limit"
+    },
+    "stick_operating_torque": {
+      "value": 0.014,
+      "lower": 0.004,
+      "upper": 0.024,
+      "unit": "N*m",
+      "evidence": "alps_stick",
+      "locator": "Directional operating force: 14 +/- 10 mN*m",
+      "conversion": "mN*m / 1000 -> N*m",
+      "meaning": "operating torque specification, NOT N*m/rad stiffness"
+    },
+    "stick_click_force": {
+      "value": 7.4,
+      "lower": 4.4,
+      "upper": 10.4,
+      "unit": "N",
+      "evidence": "alps_stick",
+      "locator": "Push operating force: 7.4 +/- 3 N",
+      "meaning": "center push specification"
+    },
+    "stick_click_travel": {
+      "value": 0.0004,
+      "lower": 0.0001,
+      "upper": 0.0009,
+      "unit": "m",
+      "evidence": "alps_stick",
+      "locator": "Travel: 0.4 (+0.5,-0.3) mm",
+      "conversion": "mm / 1000 -> m",
+      "meaning": "center push specification"
+    },
+    "stick_return_precision": {
+      "value": 5,
+      "unit": "deg",
+      "evidence": "alps_stick",
+      "locator": "Lever return precision: +/-5 degrees",
+      "meaning": "plus/minus precision bound, NOT HID deadzone"
+    },
+    "front_force": {
+      "value": 1.57,
+      "unit": "N",
+      "evidence": "alps_front",
+      "locator": "Operating force",
+      "meaning": "reference switch operating force"
+    },
+    "front_travel": {
+      "value": 0.0013,
+      "unit": "m",
+      "evidence": "alps_front",
+      "locator": "Travel: 1.3 mm",
+      "conversion": "mm / 1000 -> m",
+      "meaning": "reference switch travel, not cap height"
+    },
+    "shoulder_force": {
+      "value": 1.57,
+      "unit": "N",
+      "evidence": "alps_shoulder",
+      "locator": "Operating force",
+      "meaning": "switch force, not finger force on lever"
+    },
+    "shoulder_travel": {
+      "value": 0.00025,
+      "unit": "m",
+      "evidence": "alps_shoulder",
+      "locator": "Travel: 0.25 mm",
+      "conversion": "mm / 1000 -> m",
+      "meaning": "switch travel, not lever travel"
+    }
+  }
+}

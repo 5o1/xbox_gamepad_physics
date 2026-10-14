@@ -3,14 +3,15 @@
 from __future__ import annotations
 
 from functools import lru_cache
+from contextlib import nullcontext
 import hashlib
-import importlib.util
 from importlib.metadata import version, PackageNotFoundError
 import json
 import os
 import re
 import sys
 import tempfile
+import shutil
 import urllib.request
 import zipfile
 from pathlib import Path, PurePath
@@ -79,13 +80,18 @@ def _resolve_root() -> tuple[Path, str, Path | None]:
     )
 
 
-@lru_cache(maxsize=None)
-def _builder(repo: Path):
-    spec = importlib.util.spec_from_file_location("_xbox_resource_builder", repo / "scripts/build_resources.py")
-    module = importlib.util.module_from_spec(spec)
-    sys.modules[spec.name] = module
-    spec.loader.exec_module(module)
-    return module
+def _builder(repo: Path | None = None):
+    from .builders import build_resources as builder
+    return builder
+
+
+def _build(root: Path, repo: Path | None = None, *, force: bool = False):
+    return _builder(repo).build(output=root, inputs=_inputs(root, repo), force=force)
+
+
+def _inputs(root: Path, repo: Path | None = None) -> Path:
+    # A checkout may use the same approved inputs directly, without a release zip.
+    return root / "inputs" if (root / ".input-release.json").is_file() else (repo or root / "inputs")
 
 
 def missing_resources(root: Path) -> list[str]:
@@ -97,10 +103,8 @@ def missing_resources(root: Path) -> list[str]:
         "common/xbox_one_s/motion/full_controls.json",
         "common/xbox_one_s/visual/manifest.json",
         "common/xbox_one_s/collision/manifest.json",
-        "mujoco/visual_v0/visual_manifest.json",
         "robotwin/left_stick/manifest.json",
         "robotwin/full_controls/manifest.json",
-        "mujoco/full_controls/manifest.json",
     }
     for relative in tuple(expected):
         path = root / relative
@@ -120,104 +124,135 @@ def missing_resources(root: Path) -> list[str]:
                     expected.add("common/xbox_one_s/visual/" + name)
         except (OSError, ValueError, TypeError, KeyError, AttributeError) as error:
             raise ResourceFormatError(f"cannot inspect resource {path}: {error}") from error
-    marker = root / ".release.json"
-    if marker.is_file():
-        try:
-            record = json.loads(marker.read_text(encoding="utf-8"))
-            expected.update(record["files"])
-        except (OSError, ValueError, TypeError, KeyError) as error:
-            raise ResourceFormatError(f"invalid download receipt {marker}: {error}") from error
     return sorted(name for name in expected if not (root / name).is_file())
 
 
 def resource_status() -> dict:
     """Inspect resolution and staleness without acquiring or changing resources."""
     root, mode, repo = _resolve_root()
-    missing = missing_resources(root)
-    if repo is not None:
-        statuses = _builder(repo).node_status(root, repo=repo)
-    else:
-        # Installed mode: the release zip is replaced as a whole, so report it as one unit.
-        marker = root / ".release.json"
-        release = json.loads(marker.read_text(encoding="utf-8"))["version"] if marker.is_file() else None
-        statuses = [{"name": "release", "version": release,
-                     "stale": bool(missing) or release != package_version(), "missing": missing}]
-    return {"root": str(root), "mode": mode, "nodes": statuses, "missing": missing}
+    statuses = _builder(repo).node_status(root, inputs=_inputs(root, repo))
+    return {"root": str(root), "mode": mode, "nodes": statuses,
+            "missing": missing_resources(root)}
 
 
-def _download_current(root: Path) -> bool:
-    if missing_resources(root):
+def _lock() -> dict:
+    path = PACKAGE_ROOT / "_resource_lock.json"
+    if not path.is_file():
+        raise ResourceNotFoundError("package has no _resource_lock.json; import the matching input archive after release packaging")
+    lock = json.loads(path.read_text(encoding="utf-8"))
+    if lock["version"] != package_version() or lock.get("kind") != "inputs":
+        raise ResourceFormatError("resource lock must describe the matching version's input zip")
+    return lock
+
+
+def _input_current(root: Path, *, optional_files: tuple[str, ...] = ()) -> bool:
+    marker = root / ".input-release.json"
+    if not marker.is_file():
         return False
-    marker = root / ".release.json"
-    return not marker.exists() or json.loads(marker.read_text(encoding="utf-8"))["version"] == package_version()
+    try:
+        receipt = json.loads(marker.read_text(encoding="utf-8"))
+        lock = _lock()
+        return (receipt["version"] == lock["version"] and receipt["sha256"] == lock["sha256"]
+                and receipt["files"] == lock["files"]
+                and all((root / "inputs" / name).is_file() for name in receipt["files"] if name not in optional_files))
+    except (OSError, ValueError, KeyError):
+        return False
+
+
+def _import_archive(root: Path, archive: Path, lock: dict, *, locked: bool = False) -> None:
+    if hashlib.sha256(archive.read_bytes()).hexdigest() != lock["sha256"]:
+        raise ResourceFormatError("input zip SHA-256 mismatch")
+    with (nullcontext() if locked else cache_lock(root)):
+        with tempfile.TemporaryDirectory(prefix=root.name + ".import-", dir=root.parent) as directory:
+            staged = Path(directory) / "resources"
+            if root.exists():
+                shutil.copytree(root, staged)
+            else:
+                staged.mkdir()
+            inputs = staged / "inputs"
+            if inputs.exists():
+                shutil.rmtree(inputs)
+            inputs.mkdir()
+            with zipfile.ZipFile(archive) as zipped:
+                names = []
+                for member in zipped.infolist():
+                    name = member.filename.replace("\\", "/")
+                    path = PurePath(name)
+                    if (path.is_absolute() or ".." in path.parts or ":" in name
+                            or (member.external_attr >> 16) & 0o170000 == 0o120000):
+                        raise UnsafeResourcePathError(f"unsafe input zip member: {name}")
+                    names.append(name)
+                if sorted(names) != sorted(lock["files"]):
+                    raise ResourceFormatError("input zip members differ from the release whitelist")
+                zipped.extractall(inputs)
+            receipt = {key: lock[key] for key in ("version", "sha256", "files")}
+            (staged / ".input-release.json").write_text(json.dumps(receipt, indent=2) + "\n", encoding="utf-8")
+            publish_directory(staged, root)
 
 
 def _download(root: Path) -> None:
-    url = release_url()
+    """Download inputs direct first; use configured fallback only after failure."""
+    lock = _lock()
+    with cache_lock(root):
+        if _input_current(root):
+            return
+        with tempfile.TemporaryDirectory(prefix=root.name + ".download-", dir=root.parent) as directory:
+            archive = Path(directory) / "inputs.zip"
+            direct = urllib.request.build_opener(urllib.request.ProxyHandler({}))
+            try:
+                response = direct.open(lock["url"], timeout=60)
+            except OSError as error:
+                port = os.environ.get("FALLBACK_PROXY_PORT")
+                if not port:
+                    raise ResourceNotFoundError(f"direct input download failed: {error}; import with build-resources --archive <zip> --resources {root} --offline") from error
+                print(f"direct input download failed: {error}; trying configured fallback", file=sys.stderr)
+                proxy = f"http://127.0.0.1:{int(port)}"
+                response = urllib.request.build_opener(urllib.request.ProxyHandler({"http": proxy, "https": proxy})).open(lock["url"], timeout=60)
+            with response, archive.open("wb") as stream:
+                shutil.copyfileobj(response, stream)
+            _import_archive(root, archive, lock, locked=True)
+
+
+def _acquire_inputs(root: Path, repo: Path | None, *, archive: Path | None = None,
+             offline: bool = False, optional_files: tuple[str, ...] = ()) -> None:
+    if archive is not None:
+        try:
+            _import_archive(root, Path(archive).expanduser().resolve(), _lock())
+        except ResourceError:
+            raise
+        except (OSError, ValueError, KeyError, zipfile.BadZipFile) as error:
+            raise ResourceFormatError(f"cannot import input archive: {error}") from error
+    elif not _input_current(root, optional_files=optional_files) and (repo is None or (root / ".input-release.json").exists()):
+        if offline:
+            raise ResourceNotFoundError(f"offline inputs missing or incomplete; use build-resources --archive <zip> --resources {root} --offline")
+        _download(root)
+
+
+def _prepare(root: Path, repo: Path | None, *, archive: Path | None = None,
+             offline: bool = False, force: bool = False) -> None:
+    _acquire_inputs(root, repo, archive=archive, offline=offline)
     try:
-        lock_path = PACKAGE_ROOT / "_resource_lock.json"
-        if not lock_path.is_file():
-            raise ResourceNotFoundError(f"package has no _resource_lock.json; the release packaging step has not recorded zip integrity")
-        lock = json.loads(lock_path.read_text(encoding="utf-8"))
-        if lock["version"] != package_version():
-            raise ResourceFormatError("resource lock version differs from installed package")
-        url = lock["url"]
-        with cache_lock(root):
-            if _download_current(root):
-                return
-            with tempfile.TemporaryDirectory(prefix=root.name + ".download-", dir=root.parent) as directory:
-                temporary = Path(directory)
-                archive = temporary / "release.zip"
-                digest = hashlib.sha256()
-                with urllib.request.urlopen(url, timeout=60) as response, archive.open("wb") as stream:
-                    total = response.headers.get("Content-Length", "unknown")
-                    received = 0
-                    while True:
-                        chunk = response.read(1024 * 1024)
-                        if not chunk:
-                            break
-                        digest.update(chunk)
-                        stream.write(chunk)
-                        received += len(chunk)
-                        print(f"resources download: {received}/{total} bytes", file=sys.stderr)
-                if digest.hexdigest() != lock["sha256"]:
-                    raise ResourceFormatError("resource zip SHA-256 mismatch")
-                staged = temporary / "resources"
-                staged.mkdir()
-                with zipfile.ZipFile(archive) as zipped:
-                    # Validating the archive boundary is required before extraction.
-                    for member in zipped.infolist():
-                        name = member.filename.replace("\\", "/")
-                        path = PurePath(name)
-                        if path.is_absolute() or ".." in path.parts or ":" in name or (member.external_attr >> 16) & 0o170000 == 0o120000:
-                            raise UnsafeResourcePathError(f"unsafe release zip member: {name}")
-                    zipped.extractall(staged)
-                missing = missing_resources(staged)
-                if missing:
-                    raise ResourceFormatError(f"release zip lacks resources: {missing}")
-                files = sorted(p.relative_to(staged).as_posix() for p in staged.rglob("*") if p.is_file())
-                (staged / ".release.json").write_text(json.dumps({"version": lock["version"], "files": files}) + "\n", encoding="utf-8")
-                publish_directory(staged, root)
-    except (ResourceError, OSError, ValueError, TypeError, KeyError, zipfile.BadZipFile) as error:
-        kind = ResourceFormatError if isinstance(error, (ResourceFormatError, zipfile.BadZipFile)) else ResourceNotFoundError
-        raise kind(f"resource download failed: {error}; URL: {url}; manually extract the release zip into {root}") from error
+        _build(root, repo, force=force)
+    except ResourceError:
+        raise
+    except (OSError, ValueError, KeyError, zipfile.BadZipFile) as error:
+        raise ResourceFormatError(f"cannot prepare resources at {root}: {error}") from error
+
+
+def prepare_inputs(*, resources: Path | None = None, archive: Path | None = None,
+                   offline: bool = False, optional_files: tuple[str, ...] = ()) -> tuple[Path, Path]:
+    """Acquire reviewed inputs; a viewer may tolerate its optional reference image missing."""
+    root, _, repo = _resolve_root() if resources is None else (Path(resources).expanduser().resolve(), "explicit", _repository())
+    _acquire_inputs(root, repo, archive=archive, offline=offline, optional_files=optional_files)
+    return root, _inputs(root, repo)
 
 
 @lru_cache(maxsize=1)
 def resource_root() -> Path:
-    """Resolve and prepare once per process; never cache in HOME or the package."""
-    root, mode, repo = _resolve_root()
-    if mode == "environment" and root.is_dir():
-        return root
-    if mode == "repository":
-        _builder(repo).build(output=root, repo=repo)
-    elif not _download_current(root):
-        if repo is not None:
-            _builder(repo).build(output=root, repo=repo)
-        else:
-            _download(root)
+    """Resolve and prepare; existing environment roots also run the DAG."""
+    root, _, repo = _resolve_root()
+    _prepare(root, repo)
     return root
-
 
 
 def _safe_component(value: str, label: str) -> str:
@@ -265,6 +300,8 @@ def resource_path(
     """
 
     safe_backend = _safe_component(backend, "backend")
+    if safe_backend == "mujoco":
+        raise ResourceNotFoundError("MuJoCo 不在 v0.3.0 发布范围内")
     safe_profile = _safe_component(profile, "profile")
     relative_parts = _safe_relative_parts(parts)
 
@@ -290,11 +327,7 @@ def resource_path(
         # Repair declared files deleted after first use; the resolved location
         # remains cached even when cwd or environment variables change.
         if relative in missing_resources(root):
-            repo = _repository()
-            if repo is not None:
-                _builder(repo).build(output=root, repo=repo)
-            else:
-                _download(root)
+            _prepare(root, _repository())
         if candidate.is_file():
             return candidate
         raise ResourceNotFoundError(f"packaged resource does not exist: {relative}")
@@ -319,11 +352,10 @@ def load_json_resource(
     return value
 
 
-def build_resources(*, force: bool = False) -> Path:
-    """Explicit local build, requiring the repository's source and scripts."""
-    root, _, repo = _resolve_root()
-    if repo is None:
-        raise ResourceNotFoundError("build-resources requires a repository checkout with assets/ and scripts/build_resources.py")
-    _builder(repo).build(output=root, force=force, repo=repo)
+def build_resources(*, force: bool = False, archive: Path | None = None,
+                    resources: Path | None = None, offline: bool = False) -> Path:
+    """Import a matching input zip and locally build all RoboTwin resources."""
+    root, _, repo = _resolve_root() if resources is None else (Path(resources).expanduser().resolve(), "explicit", _repository())
+    _prepare(root, repo, archive=archive, offline=offline, force=force)
     resource_root.cache_clear()
     return root

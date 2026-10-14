@@ -1,4 +1,13 @@
+include LICENSE THIRD_PARTY_NOTICES.md
 include src/xbox_gamepad_physics/_resource_lock.json
-# Code-only distributions: never pick up built resources or stale build output.
+recursive-include src/xbox_gamepad_physics/build_data *
+# Runtime products and historical MuJoCo baselines stay outside distributions.
 prune src/xbox_gamepad_physics/resource_data
 prune build
+
+recursive-include src/xbox_gamepad_physics/examples/templates *
+recursive-include src/xbox_gamepad_physics/web/static *
+
+recursive-include src/xbox_gamepad_physics/teleop/web *
+recursive-include src/xbox_gamepad_physics/teleop/templates *
+include src/xbox_gamepad_physics/teleop/windows_relay.ps1

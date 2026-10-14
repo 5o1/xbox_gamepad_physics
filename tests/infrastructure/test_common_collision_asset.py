@@ -8,7 +8,7 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "scripts"))
-DEPS = ("numpy", "trimesh", "scipy", "coacd", "manifold3d")
+DEPS = ("numpy", "trimesh", "scipy")
 MISSING = [name for name in DEPS if importlib.util.find_spec(name) is None]
 
 

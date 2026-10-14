@@ -1,0 +1,36 @@
+{
+  "status": "reference_component_constraint_not_installed_xbox_joint",
+  "part_number": "RKJXV122400R",
+  "product_url": "https://tech.alpsalpine.com/e/products/detail/RKJXV122400R/",
+  "drawing_url": "https://tech.alpsalpine.com/cms.media/product_detail_fig_rkjxk_d_42_en_7a28fabdb7.gif",
+  "drawing_sha256": "ad0369661b5baae1a9db37bc2a825dd32c408dc60f7f26eeb312a0ec12fe179c",
+  "checked_on": "2026-10-06",
+  "download": "Direct NETWORK_INTERFACE, no proxy, real IP 13.225.134.62 obtained through DNS-over-HTTPS at 223.5.5.5",
+  "evidence": {
+    "angular_bound": "Product page: each direction 23 degrees max. Drawing: side-view sweep labeled Any direction and 46 degrees max.",
+    "dimensions": "Drawing in mm; top-view width 18.2 and depth 21.7; height to top frame 11.2. These are not pivot coordinates.",
+    "axes": "Top view labels two orthogonal potentiometers VR1 and VR2; exact internal gimbal sequence is not dimensioned."
+  },
+  "half_sweep_max_deg": 23,
+  "meaning": "Outer bound for reference lever inclination, not a measured equality, minimum achievable sweep, Xbox gate shape or fitted joint limit",
+  "representation": {
+    "convention": "Neutral lever direction +Z; mathematical coordinates Rx(qx)Ry(qy). Coordinate convention only, not identification of physical hinge frames.",
+    "inclination": "atan2(sqrt(dx^2+dy^2), dz), with d = Rx(qx)Ry(qy)[0,0,1]",
+    "boundary_coordinates": "For azimuth phi and inclination t: qy=asin(sin(t)*cos(phi)), qx=atan2(-sin(t)*sin(phi), cos(t))",
+    "decision": "Check actual lever inclination; do not accept an independent rectangular pair of angle bounds as a circular-direction bound.",
+    "boundary_samples": "Diagnostic points on a mathematical upper envelope, not proof that physical component reaches these points",
+    "harness": "scripts/stick_envelope.py and tests/test_stick_envelope.py"
+  },
+  "unknown": {
+    "xbox_component_match": null,
+    "pivot_position_m": null,
+    "internal_hinge_offsets_m": null,
+    "xbox_aperture_shape": null,
+    "actual_maximum_tilt_rad": null,
+    "click_translation_axis_under_tilt": null,
+    "force_displacement_curve": null,
+    "damping": null,
+    "hid_mapping": null
+  },
+  "simulation_ready": false
+}

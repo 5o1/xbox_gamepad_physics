@@ -27,6 +27,7 @@ PROFILE = (
 )
 
 
+@unittest.skip("MuJoCo 不在 v0.3.0 发布范围内；冻结树仅保留为历史基线")
 class MujocoFullControlsAssetTest(unittest.TestCase):
     @unittest.skip("MuJoCo is frozen: its generators read common resources that are now built into the resource cache, not tracked under resource_data/")
     def test_generated_profile_is_fresh(self):

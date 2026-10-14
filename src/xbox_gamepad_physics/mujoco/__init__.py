@@ -1,8 +1,5 @@
-"""MuJoCo integration for the Xbox One S physical asset.
-
-Importing this package is safe without MuJoCo installed. Runtime calls fail
-with a project-specific dependency error until the optional backend is present,
-and with a readiness error while physical MJCF/MJZ resources remain ungenerated.
+"""Historical MuJoCo API. Imports remain lazy; loading reports that
+MuJoCo 不在 v0.3.0 发布范围内. Frozen resources remain in Git only.
 """
 
 from .attach import CompiledAttachment, GamepadAttachment, attach_to_spec

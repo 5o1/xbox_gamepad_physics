@@ -1,0 +1,528 @@
+{
+  "schema_version": 1,
+  "snapshot": "v0.2.0",
+  "source": "https://github.com/5o1/xbox_gamepad_physics/releases/tag/v0.2.0",
+  "source_archive": "xbox_gamepad_physics-resources-0.2.0.zip",
+  "units": "m",
+  "coordinate_frame": "simulation",
+  "meshbase": "../collision_meshbase",
+  "license": "CC-BY-4.0",
+  "coacd": {
+    "version": "1.0.14",
+    "parameters": {
+      "threshold": 0.05,
+      "max_convex_hull": -1,
+      "preprocess_mode": "auto",
+      "preprocess_resolution": 50,
+      "resolution": 2000,
+      "mcts_nodes": 20,
+      "mcts_iterations": 150,
+      "mcts_max_depth": 3,
+      "pca": false,
+      "merge": true,
+      "decimate": false,
+      "max_ch_vertex": 255,
+      "extrude": false,
+      "extrude_margin": 0.01,
+      "apx_mode": "ch",
+      "seed": 0,
+      "real_metric": false
+    },
+    "threads": 1
+  },
+  "collision_policy": {
+    "method": "\u5148\u4fee\u6210\u95ed\u5408\u7684 meshbase\uff0c\u518d\u6309\u7ec4\u4ef6\u3001\u6309\u58f3\u505a CoACD\uff1b\u9ed8\u8ba4 CoACD \u66ff\u6362\u57fa\u672c\u4f53\uff0cSDF \u4f5c\u4e3a\u52a0\u8f7d\u9009\u9879",
+    "coordinate_frame": "simulation (x,-z,y), Z up; metres; meshbase already converted",
+    "coacd": {
+      "version": "1.0.14",
+      "threads": 1,
+      "parameters": {
+        "seed": 0,
+        "max_ch_vertex": 255
+      },
+      "thresholds": {
+        "shell": [
+          0.03
+        ],
+        "dpad": [
+          0.03
+        ],
+        "left_stick": [
+          0.03,
+          0.05
+        ],
+        "right_stick": [
+          0.03,
+          0.05
+        ]
+      },
+      "default_threshold": 0.05,
+      "defaults": "All other parameters use coacd 1.0.14 defaults, including preprocess_mode=auto, decimate=False, max_convex_hull=-1.",
+      "max_ch_vertex_note": "Explicit 255 matches all Phase A runs; CoACD uses it only when decimate=True, so it is inactive here."
+    },
+    "sdf": {
+      "spacing_m": 0.001,
+      "min_sapien": "3.0.3",
+      "limitations": [
+        "\u4e0d\u80fd\u4e0e add_ground \u5e73\u9762\u78b0\u649e",
+        "\u4e0d\u80fd\u4e0e\u53e6\u4e00\u4e2a SDF \u7269\u4f53\u78b0\u649e"
+      ]
+    },
+    "sources": [
+      {
+        "authors": "Wei et al.",
+        "venue": "SIGGRAPH 2022",
+        "title": "Approximate Convex Decomposition for 3D Meshes with Collision-Aware Concavity and Tree Search",
+        "url": "https://arxiv.org/abs/2205.02961"
+      },
+      "build/experiments/collision_sweep_20261011/REPORT.md",
+      "build/experiments/meshbase_selfx_fix_20261011/"
+    ],
+    "uncertainty_by_component": {
+      "shell": {
+        "outward_max_mm": 2.419362210627059,
+        "outward_p95_mm": 1.1463177929243897,
+        "inward_max_mm": 0.0,
+        "inward_p95_mm": 0.0,
+        "source": "build/experiments/collision_sweep_20261011/coacd/shell_repaired_t0.03_cap-1_prepauto/metrics.json"
+      },
+      "shell_front_plate": {
+        "outward_max_mm": 1.134930600853068,
+        "outward_p95_mm": 0.637757822210735,
+        "inward_max_mm": 0.0,
+        "inward_p95_mm": 0.0,
+        "source": "build/experiments/collision_sweep_20261011/coacd/shell_front_plate_t0.05_cap-1/metrics.json"
+      },
+      "a": {
+        "outward_max_mm": 0.11174749009506481,
+        "outward_p95_mm": 0.01807929833734583,
+        "inward_max_mm": 0.0,
+        "inward_p95_mm": 0.0,
+        "source": "build/experiments/collision_sweep_20261011/coacd/a_t0.05_cap-1/metrics.json"
+      },
+      "b": {
+        "outward_max_mm": null,
+        "outward_p95_mm": null,
+        "inward_max_mm": null,
+        "inward_p95_mm": null,
+        "note": "\u672a\u6d4b\uff0c\u7ed3\u6784\u4e0e\u5df2\u6d4b\u540c\u7c7b\u7ec4\u4ef6\u76f8\u540c"
+      },
+      "left_shoulder": {
+        "outward_max_mm": null,
+        "outward_p95_mm": null,
+        "inward_max_mm": null,
+        "inward_p95_mm": null,
+        "note": "\u672a\u6d4b\uff0c\u7ed3\u6784\u4e0e\u5df2\u6d4b\u540c\u7c7b\u7ec4\u4ef6\u76f8\u540c"
+      },
+      "right_shoulder": {
+        "outward_max_mm": null,
+        "outward_p95_mm": null,
+        "inward_max_mm": null,
+        "inward_p95_mm": null,
+        "note": "\u672a\u6d4b\uff0c\u7ed3\u6784\u4e0e\u5df2\u6d4b\u540c\u7c7b\u7ec4\u4ef6\u76f8\u540c"
+      },
+      "pair": {
+        "outward_max_mm": null,
+        "outward_p95_mm": null,
+        "inward_max_mm": null,
+        "inward_p95_mm": null,
+        "note": "\u672a\u6d4b\uff0c\u7ed3\u6784\u4e0e\u5df2\u6d4b\u540c\u7c7b\u7ec4\u4ef6\u76f8\u540c"
+      },
+      "dpad": {
+        "outward_max_mm": 0.09755073743423565,
+        "outward_p95_mm": 0.05994924954776181,
+        "inward_max_mm": 0.0,
+        "inward_p95_mm": 0.0,
+        "source": "build/experiments/collision_sweep_20261011/coacd/dpad_t0.03_cap-1/metrics.json"
+      },
+      "view": {
+        "outward_max_mm": null,
+        "outward_p95_mm": null,
+        "inward_max_mm": null,
+        "inward_p95_mm": null,
+        "note": "\u672a\u6d4b\uff0c\u7ed3\u6784\u4e0e\u5df2\u6d4b\u540c\u7c7b\u7ec4\u4ef6\u76f8\u540c"
+      },
+      "menu": {
+        "outward_max_mm": null,
+        "outward_p95_mm": null,
+        "inward_max_mm": null,
+        "inward_p95_mm": null,
+        "note": "\u672a\u6d4b\uff0c\u7ed3\u6784\u4e0e\u5df2\u6d4b\u540c\u7c7b\u7ec4\u4ef6\u76f8\u540c"
+      },
+      "left_stick": [
+        {
+          "outward_max_mm": 0.3270989125258722,
+          "outward_p95_mm": 0.15104965635630643,
+          "inward_max_mm": 0.0,
+          "inward_p95_mm": 0.0,
+          "source": "build/experiments/collision_sweep_20261011/coacd/left_stick__0_t0.03_cap-1/metrics.json"
+        },
+        {
+          "outward_max_mm": 0.2622071861302301,
+          "outward_p95_mm": 0.1130672348593472,
+          "inward_max_mm": 0.0,
+          "inward_p95_mm": 0.0,
+          "source": "build/experiments/collision_sweep_20261011/coacd/left_stick__1_t0.05_cap-1/metrics.json"
+        }
+      ],
+      "right_stick": {
+        "outward_max_mm": null,
+        "outward_p95_mm": null,
+        "inward_max_mm": null,
+        "inward_p95_mm": null,
+        "note": "\u672a\u6d4b\uff0c\u7ed3\u6784\u4e0e\u5df2\u6d4b\u540c\u7c7b\u7ec4\u4ef6\u76f8\u540c"
+      },
+      "left_trigger": {
+        "outward_max_mm": 0.7010723115477656,
+        "outward_p95_mm": 0.3715632919190885,
+        "inward_max_mm": 0.0,
+        "inward_p95_mm": 0.0,
+        "source": "build/experiments/collision_sweep_20261011/coacd/left_trigger_t0.05_cap-1/metrics.json"
+      },
+      "right_trigger": {
+        "outward_max_mm": null,
+        "outward_p95_mm": null,
+        "inward_max_mm": null,
+        "inward_p95_mm": null,
+        "note": "\u672a\u6d4b\uff0c\u7ed3\u6784\u4e0e\u5df2\u6d4b\u540c\u7c7b\u7ec4\u4ef6\u76f8\u540c"
+      },
+      "x": {
+        "outward_max_mm": null,
+        "outward_p95_mm": null,
+        "inward_max_mm": null,
+        "inward_p95_mm": null,
+        "note": "\u672a\u6d4b\uff0c\u7ed3\u6784\u4e0e\u5df2\u6d4b\u540c\u7c7b\u7ec4\u4ef6\u76f8\u540c"
+      },
+      "guide": {
+        "outward_max_mm": null,
+        "outward_p95_mm": null,
+        "inward_max_mm": null,
+        "inward_p95_mm": null,
+        "note": "\u672a\u6d4b\uff0c\u7ed3\u6784\u4e0e\u5df2\u6d4b\u540c\u7c7b\u7ec4\u4ef6\u76f8\u540c"
+      },
+      "y": {
+        "outward_max_mm": null,
+        "outward_p95_mm": null,
+        "inward_max_mm": null,
+        "inward_p95_mm": null,
+        "note": "\u672a\u6d4b\uff0c\u7ed3\u6784\u4e0e\u5df2\u6d4b\u540c\u7c7b\u7ec4\u4ef6\u76f8\u540c"
+      }
+    },
+    "uncertainty_applicability": "Stage A sampled distances relative to meshbase, not a mechanical replica or hardware clearance measurement; repaired shell uses its rerun.",
+    "accepted_known_error": {
+      "decision_date": "2026-10-11",
+      "decision_by": "owner",
+      "description": "\u5341\u5b57\u952e\u3001\u6447\u6746\u5b54\u53e3\u53ef\u89e6\u533a\u57df\u7ea6 1\u20131.5 mm \u5916\u80c0\u6682\u65f6\u63a5\u53d7\uff1b\u4ee5\u540e\u4eff\u771f\u5b9e\u9a8c\u786e\u8ba4\u5f71\u54cd\u7ed3\u679c\u518d\u4fee"
+    },
+    "internal_filter": {
+      "g0_g1": "preserve existing",
+      "g2_or": 2147483648,
+      "g3": 22594,
+      "source": "build/experiments/collision_v2_review/REPORT.md"
+    },
+    "contact_material": "reuse references/left_stick.json contact estimate"
+  },
+  "components": {
+    "shell": {
+      "coacd": [
+        "coacd/shell.obj"
+      ],
+      "shell_count": 1,
+      "hull_count": 121,
+      "max_hull_vertices": 106,
+      "shells": [
+        {
+          "shell": 0,
+          "face_count": 4164,
+          "threshold": 0.03,
+          "hull_count": 121
+        }
+      ],
+      "file": "meshes/shell.obj"
+    },
+    "shell_front_plate": {
+      "coacd": [
+        "coacd/shell_front_plate.obj"
+      ],
+      "shell_count": 1,
+      "hull_count": 10,
+      "max_hull_vertices": 30,
+      "shells": [
+        {
+          "shell": 0,
+          "face_count": 158,
+          "threshold": 0.05,
+          "hull_count": 10
+        }
+      ],
+      "file": "meshes/shell_front_plate.obj"
+    },
+    "a": {
+      "coacd": [
+        "coacd/a.obj"
+      ],
+      "shell_count": 1,
+      "hull_count": 1,
+      "max_hull_vertices": 41,
+      "shells": [
+        {
+          "shell": 0,
+          "face_count": 80,
+          "threshold": 0.05,
+          "hull_count": 1
+        }
+      ],
+      "file": "meshes/a.obj"
+    },
+    "b": {
+      "coacd": [
+        "coacd/b.obj"
+      ],
+      "shell_count": 1,
+      "hull_count": 3,
+      "max_hull_vertices": 54,
+      "shells": [
+        {
+          "shell": 0,
+          "face_count": 80,
+          "threshold": 0.05,
+          "hull_count": 3
+        }
+      ],
+      "file": "meshes/b.obj"
+    },
+    "left_shoulder": {
+      "coacd": [
+        "coacd/left_shoulder.obj"
+      ],
+      "shell_count": 1,
+      "hull_count": 3,
+      "max_hull_vertices": 26,
+      "shells": [
+        {
+          "shell": 0,
+          "face_count": 80,
+          "threshold": 0.05,
+          "hull_count": 3
+        }
+      ],
+      "file": "meshes/left_shoulder.obj"
+    },
+    "right_shoulder": {
+      "coacd": [
+        "coacd/right_shoulder.obj"
+      ],
+      "shell_count": 1,
+      "hull_count": 10,
+      "max_hull_vertices": 28,
+      "shells": [
+        {
+          "shell": 0,
+          "face_count": 80,
+          "threshold": 0.05,
+          "hull_count": 10
+        }
+      ],
+      "file": "meshes/right_shoulder.obj"
+    },
+    "pair": {
+      "coacd": [
+        "coacd/pair.obj"
+      ],
+      "shell_count": 1,
+      "hull_count": 1,
+      "max_hull_vertices": 48,
+      "shells": [
+        {
+          "shell": 0,
+          "face_count": 94,
+          "threshold": 0.05,
+          "hull_count": 1
+        }
+      ],
+      "file": "meshes/pair.obj"
+    },
+    "dpad": {
+      "coacd": [
+        "coacd/dpad.obj"
+      ],
+      "shell_count": 1,
+      "hull_count": 5,
+      "max_hull_vertices": 24,
+      "shells": [
+        {
+          "shell": 0,
+          "face_count": 198,
+          "threshold": 0.03,
+          "hull_count": 5
+        }
+      ],
+      "file": "meshes/dpad.obj"
+    },
+    "view": {
+      "coacd": [
+        "coacd/view.obj"
+      ],
+      "shell_count": 1,
+      "hull_count": 1,
+      "max_hull_vertices": 32,
+      "shells": [
+        {
+          "shell": 0,
+          "face_count": 60,
+          "threshold": 0.05,
+          "hull_count": 1
+        }
+      ],
+      "file": "meshes/view.obj"
+    },
+    "menu": {
+      "coacd": [
+        "coacd/menu.obj"
+      ],
+      "shell_count": 1,
+      "hull_count": 1,
+      "max_hull_vertices": 32,
+      "shells": [
+        {
+          "shell": 0,
+          "face_count": 60,
+          "threshold": 0.05,
+          "hull_count": 1
+        }
+      ],
+      "file": "meshes/menu.obj"
+    },
+    "left_stick": {
+      "coacd": [
+        "coacd/left_stick.obj"
+      ],
+      "shell_count": 2,
+      "hull_count": 29,
+      "max_hull_vertices": 59,
+      "shells": [
+        {
+          "shell": 0,
+          "face_count": 350,
+          "threshold": 0.03,
+          "hull_count": 9
+        },
+        {
+          "shell": 1,
+          "face_count": 336,
+          "threshold": 0.05,
+          "hull_count": 20
+        }
+      ],
+      "file": "meshes/left_stick.obj"
+    },
+    "right_stick": {
+      "coacd": [
+        "coacd/right_stick.obj"
+      ],
+      "shell_count": 2,
+      "hull_count": 28,
+      "max_hull_vertices": 60,
+      "shells": [
+        {
+          "shell": 0,
+          "face_count": 350,
+          "threshold": 0.03,
+          "hull_count": 9
+        },
+        {
+          "shell": 1,
+          "face_count": 336,
+          "threshold": 0.05,
+          "hull_count": 19
+        }
+      ],
+      "file": "meshes/right_stick.obj"
+    },
+    "left_trigger": {
+      "coacd": [
+        "coacd/left_trigger.obj"
+      ],
+      "shell_count": 1,
+      "hull_count": 10,
+      "max_hull_vertices": 24,
+      "shells": [
+        {
+          "shell": 0,
+          "face_count": 76,
+          "threshold": 0.05,
+          "hull_count": 10
+        }
+      ],
+      "file": "meshes/left_trigger.obj"
+    },
+    "right_trigger": {
+      "coacd": [
+        "coacd/right_trigger.obj"
+      ],
+      "shell_count": 1,
+      "hull_count": 9,
+      "max_hull_vertices": 25,
+      "shells": [
+        {
+          "shell": 0,
+          "face_count": 76,
+          "threshold": 0.05,
+          "hull_count": 9
+        }
+      ],
+      "file": "meshes/right_trigger.obj"
+    },
+    "x": {
+      "coacd": [
+        "coacd/x.obj"
+      ],
+      "shell_count": 1,
+      "hull_count": 1,
+      "max_hull_vertices": 41,
+      "shells": [
+        {
+          "shell": 0,
+          "face_count": 80,
+          "threshold": 0.05,
+          "hull_count": 1
+        }
+      ],
+      "file": "meshes/x.obj"
+    },
+    "guide": {
+      "coacd": [
+        "coacd/guide.obj"
+      ],
+      "shell_count": 1,
+      "hull_count": 1,
+      "max_hull_vertices": 49,
+      "shells": [
+        {
+          "shell": 0,
+          "face_count": 142,
+          "threshold": 0.05,
+          "hull_count": 1
+        }
+      ],
+      "file": "meshes/guide.obj"
+    },
+    "y": {
+      "coacd": [
+        "coacd/y.obj"
+      ],
+      "shell_count": 1,
+      "hull_count": 2,
+      "max_hull_vertices": 34,
+      "shells": [
+        {
+          "shell": 0,
+          "face_count": 80,
+          "threshold": 0.05,
+          "hull_count": 2
+        }
+      ],
+      "file": "meshes/y.obj"
+    }
+  }
+}

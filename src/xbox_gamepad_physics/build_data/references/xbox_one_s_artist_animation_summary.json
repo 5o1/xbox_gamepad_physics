@@ -1,0 +1,956 @@
+{
+  "schema_version": 1,
+  "status": "artist_motion_prior_not_physical_calibration",
+  "source": "../xbox/xbox_one_s_controllergamepad_animated.glb",
+  "source_sha256": "5c5671c83a9cf15db4b8399e7010aa7d5cde915687ceb348b583eb00b0ed24e2",
+  "full_audit_sha256": "4c97d513d66f008e5cbc2b375d3c98692cfb495ecf32178c42d399304b31e6df",
+  "full_audit_storage": "maintainer archive: artist_animation_audit_relative_to_frame0_UNCALIBRATED.json (not distributed)",
+  "coordinate_unit": "source_native_unit",
+  "time_unit": "artist_frame_not_seconds",
+  "toolchain": {
+    "blender_version": [
+      4,
+      5,
+      9
+    ],
+    "blender_version_string": "4.5.9 LTS",
+    "blender_build_hash": "8bf95cbd38d1",
+    "python_version": "3.11.11 (main, Apr 25 2025, 12:39:20) [GCC 11.2.1 20220127 (Red Hat 11.2.1-9)]"
+  },
+  "actions": [
+    {
+      "name": "Test",
+      "frame_range": [
+        0.0,
+        108.0
+      ],
+      "keyframe_count": 210,
+      "bones": [
+        {
+          "bone": "A Button_08",
+          "baseline_frame": 0,
+          "rest_head_world_native": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rest_tail_world_native": [
+            0.0,
+            1.0000001192092896,
+            -1.685874195800352e-07
+          ],
+          "baseline_pose_origin_world_native": [
+            0.7141162753105164,
+            0.23420481383800507,
+            0.3649822771549225
+          ],
+          "peak_translation": {
+            "frame": 19.0,
+            "vector_native": [
+              9.906895570566121e-08,
+              1.0405898365206667e-10,
+              -0.01599997840821743
+            ],
+            "magnitude_native": 0.01599997840852414,
+            "direction_world": [
+              6.1918180872594985e-06,
+              6.503695254777861e-09,
+              -0.9999999999808307
+            ]
+          },
+          "peak_rotation": {
+            "frame": 0.0,
+            "angle_rad": 0.0,
+            "axis_world": [
+              -4.788311555662924e-15,
+              -3.555710481367887e-15,
+              -2.5748954563583476e-15
+            ],
+            "observed_axis_component_ranges": null
+          },
+          "effective_rotation_pivot_fit": null,
+          "end_frame_residual": {
+            "frame": 108.0,
+            "translation_native": 1.0198175306867059e-07,
+            "rotation_rad": 0.0
+          }
+        },
+        {
+          "bone": "B Button_09",
+          "baseline_frame": 0,
+          "rest_head_world_native": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rest_tail_world_native": [
+            0.0,
+            1.0000001192092896,
+            -1.685874195800352e-07
+          ],
+          "baseline_pose_origin_world_native": [
+            0.9058640003204346,
+            0.4097847640514374,
+            0.33962151408195496
+          ],
+          "peak_translation": {
+            "frame": 27.0,
+            "vector_native": [
+              1.0217760149089372e-07,
+              -6.0282694391844416e-09,
+              -0.024564430117607117
+            ],
+            "magnitude_native": 0.024564430117820366,
+            "direction_world": [
+              4.1595754919129415e-06,
+              -2.4540644379985876e-07,
+              -0.9999999999913187
+            ]
+          },
+          "peak_rotation": {
+            "frame": 0.0,
+            "angle_rad": 0.0,
+            "axis_world": [
+              -1.2765495905215632e-15,
+              1.720474899496332e-15,
+              1.2547141399325314e-15
+            ],
+            "observed_axis_component_ranges": null
+          },
+          "effective_rotation_pivot_fit": null,
+          "end_frame_residual": {
+            "frame": 108.0,
+            "translation_native": 1.1418965406814521e-07,
+            "rotation_rad": 0.0
+          }
+        },
+        {
+          "bone": "Bumper_L_04",
+          "baseline_frame": 0,
+          "rest_head_world_native": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rest_tail_world_native": [
+            0.0,
+            1.0000001192092896,
+            -1.685874195800352e-07
+          ],
+          "baseline_pose_origin_world_native": [
+            -0.647698700428009,
+            0.789380669593811,
+            0.15344594419002533
+          ],
+          "peak_translation": {
+            "frame": 28.0,
+            "vector_native": [
+              -4.4837548784926184e-08,
+              -0.03975798189640045,
+              3.234725198808519e-08
+            ],
+            "magnitude_native": 0.03975798189643889,
+            "direction_world": [
+              -1.1277621912932724e-06,
+              -0.9999999999990331,
+              8.136039719607227e-07
+            ]
+          },
+          "peak_rotation": {
+            "frame": 0.0,
+            "angle_rad": 0.0,
+            "axis_world": [
+              -1.6723001970827753e-14,
+              -8.677523895836772e-15,
+              5.068136936601381e-16
+            ],
+            "observed_axis_component_ranges": null
+          },
+          "effective_rotation_pivot_fit": null,
+          "end_frame_residual": {
+            "frame": 108.0,
+            "translation_native": 2.7501428729216855e-08,
+            "rotation_rad": 0.0
+          }
+        },
+        {
+          "bone": "Bumper_R_03",
+          "baseline_frame": 0,
+          "rest_head_world_native": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rest_tail_world_native": [
+            0.0,
+            1.0000001192092896,
+            -1.685874195800352e-07
+          ],
+          "baseline_pose_origin_world_native": [
+            0.647698700428009,
+            0.789380669593811,
+            0.15344595909118652
+          ],
+          "peak_translation": {
+            "frame": 18.0,
+            "vector_native": [
+              7.437171234414564e-08,
+              -0.03975803777575493,
+              1.7568147825386404e-08
+            ],
+            "magnitude_native": 0.03975803777582837,
+            "direction_world": [
+              1.8706082217508553e-06,
+              -0.9999999999981528,
+              4.418766319515719e-07
+            ]
+          },
+          "peak_rotation": {
+            "frame": 0.0,
+            "angle_rad": 0.0,
+            "axis_world": [
+              -1.6723001970827753e-14,
+              -8.677523895836772e-15,
+              5.068136936601381e-16
+            ],
+            "observed_axis_component_ranges": null
+          },
+          "effective_rotation_pivot_fit": null,
+          "end_frame_residual": {
+            "frame": 108.0,
+            "translation_native": 7.148334572546106e-08,
+            "rotation_rad": 0.0
+          }
+        },
+        {
+          "bone": "ConnectButton_05",
+          "baseline_frame": 0,
+          "rest_head_world_native": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rest_tail_world_native": [
+            0.0,
+            1.0000001192092896,
+            -1.685874195800352e-07
+          ],
+          "baseline_pose_origin_world_native": [
+            -0.24002379179000854,
+            0.8715201616287231,
+            0.22451364994049072
+          ],
+          "peak_translation": {
+            "frame": 7.0,
+            "vector_native": [
+              -3.2474218869538163e-09,
+              0.01859740912914276,
+              1.3391804998263979e-08
+            ],
+            "magnitude_native": 0.018597409129147868,
+            "direction_world": [
+              -1.7461689767657506e-07,
+              0.9999999999997254,
+              7.200898203220628e-07
+            ]
+          },
+          "peak_rotation": {
+            "frame": 0.0,
+            "angle_rad": 0.0,
+            "axis_world": [
+              -1.1393931452627001e-14,
+              -6.165376640211023e-15,
+              6.592019088930015e-16
+            ],
+            "observed_axis_component_ranges": null
+          },
+          "effective_rotation_pivot_fit": null,
+          "end_frame_residual": {
+            "frame": 108.0,
+            "translation_native": 7.148033073710537e-05,
+            "rotation_rad": 0.0
+          }
+        },
+        {
+          "bone": "DPad_016",
+          "baseline_frame": 0,
+          "rest_head_world_native": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rest_tail_world_native": [
+            0.0,
+            1.0000001192092896,
+            -1.685874195800352e-07
+          ],
+          "baseline_pose_origin_world_native": [
+            -0.36241084337234497,
+            -0.0322631411254406,
+            0.19999995827674866
+          ],
+          "peak_translation": {
+            "frame": 29.0,
+            "vector_native": [
+              -0.04023538529872894,
+              -1.017941713143955e-07,
+              -0.05989353731274605
+            ],
+            "magnitude_native": 0.072153461746342,
+            "direction_world": [
+              -0.5576362425988352,
+              -1.4108009352656763e-06,
+              -0.8300854299036109
+            ]
+          },
+          "peak_rotation": {
+            "frame": 9.0,
+            "angle_rad": 0.17453241348266602,
+            "axis_world": [
+              3.1315387332142564e-06,
+              -1.000001072883606,
+              -1.4285178906447982e-07
+            ],
+            "observed_axis_component_ranges": [
+              [
+                -1.000251293182373,
+                1.000704288482666
+              ],
+              [
+                -1.0006717443466187,
+                1.0002427101135254
+              ],
+              [
+                -3.627505520853447e-06,
+                1.3024349755141884e-05
+              ]
+            ]
+          },
+          "effective_rotation_pivot_fit": {
+            "effective_pivot_world_native": [
+              -0.3624140191491478,
+              -0.03226337283254687,
+              0.20000158663596587
+            ],
+            "solution_kind": "multi_axis_common_point",
+            "unobservable_axis_world": null,
+            "sample_threshold_rad": 0.0087266206741333,
+            "sample_count": 150,
+            "normal_matrix_rank_score": 0.8416967859630372,
+            "translation_fit_rms_native": 3.2201752144331706e-07,
+            "translation_fit_max_native": 6.402547275506024e-07,
+            "artist_baseline_origin_world_native": [
+              -0.36241084337234497,
+              -0.0322631411254406,
+              0.19999995827674866
+            ],
+            "baseline_origin_translation_fit_rms_native": 4.783560228802642e-08,
+            "baseline_origin_translation_fit_max_native": 6.738451075114706e-08,
+            "interpretation": "Artist rigid-transform pivot/axis-line fit only; not a measured mechanical joint."
+          },
+          "end_frame_residual": {
+            "frame": 108.0,
+            "translation_native": 3.435092649085801e-08,
+            "rotation_rad": 0.0
+          }
+        },
+        {
+          "bone": "Menu_L_013",
+          "baseline_frame": 0,
+          "rest_head_world_native": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rest_tail_world_native": [
+            0.0,
+            1.0000001192092896,
+            -1.685874195800352e-07
+          ],
+          "baseline_pose_origin_world_native": [
+            -0.20236794650554657,
+            0.4251628816127777,
+            0.36633944511413574
+          ],
+          "peak_translation": {
+            "frame": 11.0,
+            "vector_native": [
+              -7.586305805773463e-09,
+              -3.6580232176675054e-09,
+              -0.022599194198846817
+            ],
+            "magnitude_native": 0.022599194198848385,
+            "direction_world": [
+              -3.3568921701465126e-07,
+              -1.6186520570073742e-07,
+              -0.9999999999999306
+            ]
+          },
+          "peak_rotation": {
+            "frame": 0.0,
+            "angle_rad": 0.0,
+            "axis_world": [
+              5.305199223922994e-16,
+              -1.0648866449145542e-15,
+              -4.62205656405056e-16
+            ],
+            "observed_axis_component_ranges": null
+          },
+          "effective_rotation_pivot_fit": null,
+          "end_frame_residual": {
+            "frame": 108.0,
+            "translation_native": 9.338266891920149e-09,
+            "rotation_rad": 0.0
+          }
+        },
+        {
+          "bone": "Menu_R_00",
+          "baseline_frame": 0,
+          "rest_head_world_native": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rest_tail_world_native": [
+            0.0,
+            1.0000001192092896,
+            -1.685874195800352e-07
+          ],
+          "baseline_pose_origin_world_native": [
+            0.2008119523525238,
+            0.4249629080295563,
+            0.36633947491645813
+          ],
+          "peak_translation": {
+            "frame": 17.0,
+            "vector_native": [
+              -7.606653085190374e-09,
+              -2.0650766430208023e-08,
+              -0.022599205374717712
+            ],
+            "magnitude_native": 0.022599205374728426,
+            "direction_world": [
+              -3.365894047627231e-07,
+              -9.137828559804476e-07,
+              -0.9999999999995259
+            ]
+          },
+          "peak_rotation": {
+            "frame": 0.0,
+            "angle_rad": 0.0,
+            "axis_world": [
+              5.305199223922994e-16,
+              -1.0648866449145542e-15,
+              -4.62205656405056e-16
+            ],
+            "observed_axis_component_ranges": null
+          },
+          "effective_rotation_pivot_fit": null,
+          "end_frame_residual": {
+            "frame": 108.0,
+            "translation_native": 2.6746604510483633e-08,
+            "rotation_rad": 0.0
+          }
+        },
+        {
+          "bone": "Stick_L_015",
+          "baseline_frame": 0,
+          "rest_head_world_native": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rest_tail_world_native": [
+            0.0,
+            1.0000001192092896,
+            -1.685874195800352e-07
+          ],
+          "baseline_pose_origin_world_native": [
+            -0.6786306500434875,
+            0.4305945932865143,
+            0.2163151651620865
+          ],
+          "peak_translation": {
+            "frame": 35.0,
+            "vector_native": [
+              0.005751226097345352,
+              -0.03311850130558014,
+              0.3129348158836365
+            ],
+            "magnitude_native": 0.31473498490392826,
+            "direction_world": [
+              0.018273234223074673,
+              -0.10522662841466272,
+              0.9942803656833978
+            ]
+          },
+          "peak_rotation": {
+            "frame": 28.0,
+            "angle_rad": 0.433321475982666,
+            "axis_world": [
+              -0.9865034222602844,
+              -0.16001136600971222,
+              -0.034745700657367706
+            ],
+            "observed_axis_component_ranges": [
+              [
+                -1.0001827478408813,
+                1.0000029802322388
+              ],
+              [
+                -0.9999998211860657,
+                1.0000008344650269
+              ],
+              [
+                -0.09442654997110367,
+                0.08836966753005981
+              ]
+            ]
+          },
+          "effective_rotation_pivot_fit": {
+            "effective_pivot_world_native": [
+              -0.6786313729486473,
+              0.4305950657894947,
+              0.21631545503422314
+            ],
+            "solution_kind": "multi_axis_common_point",
+            "unobservable_axis_world": null,
+            "sample_threshold_rad": 0.021666073799133302,
+            "sample_count": 185,
+            "normal_matrix_rank_score": 0.6302384891062195,
+            "translation_fit_rms_native": 2.2161141462105054e-07,
+            "translation_fit_max_native": 3.40811945829052e-07,
+            "artist_baseline_origin_world_native": [
+              -0.6786306500434875,
+              0.4305945932865143,
+              0.2163151651620865
+            ],
+            "baseline_origin_translation_fit_rms_native": 8.251690834931965e-08,
+            "baseline_origin_translation_fit_max_native": 1.2170461198947415e-07,
+            "interpretation": "Artist rigid-transform pivot/axis-line fit only; not a measured mechanical joint."
+          },
+          "end_frame_residual": {
+            "frame": 108.0,
+            "translation_native": 9.852932970847541e-08,
+            "rotation_rad": 0.0
+          }
+        },
+        {
+          "bone": "Stick_R_014",
+          "baseline_frame": 0,
+          "rest_head_world_native": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rest_tail_world_native": [
+            0.0,
+            1.0000001192092896,
+            -1.685874195800352e-07
+          ],
+          "baseline_pose_origin_world_native": [
+            0.3667924702167511,
+            0.008727213367819786,
+            0.2081812620162964
+          ],
+          "peak_translation": {
+            "frame": 59.0,
+            "vector_native": [
+              0.11050109565258026,
+              4.54526833948421e-08,
+              -0.1267678141593933
+            ],
+            "magnitude_native": 0.16816828133501643,
+            "direction_world": [
+              0.6570864301838556,
+              2.7028095330470515e-07,
+              -0.7538152447836035
+            ]
+          },
+          "peak_rotation": {
+            "frame": 49.0,
+            "angle_rad": 0.4014259874820709,
+            "axis_world": [
+              -0.9999995231628418,
+              2.1982694775601885e-08,
+              8.090022873830094e-08
+            ],
+            "observed_axis_component_ranges": [
+              [
+                -0.9999995231628418,
+                1.0003118515014648
+              ],
+              [
+                -1.0000022649765015,
+                1.0000001192092896
+              ],
+              [
+                -0.09589540213346481,
+                0.09589549154043198
+              ]
+            ]
+          },
+          "effective_rotation_pivot_fit": {
+            "effective_pivot_world_native": [
+              0.36679275748208245,
+              0.008727175544714014,
+              0.2081815315410906
+            ],
+            "solution_kind": "multi_axis_common_point",
+            "unobservable_axis_world": null,
+            "sample_threshold_rad": 0.020071299374103548,
+            "sample_count": 184,
+            "normal_matrix_rank_score": 0.7333324007726179,
+            "translation_fit_rms_native": 1.140839222546165e-07,
+            "translation_fit_max_native": 1.8026034982384494e-07,
+            "artist_baseline_origin_world_native": [
+              0.3667924702167511,
+              0.008727213367819786,
+              0.2081812620162964
+            ],
+            "baseline_origin_translation_fit_rms_native": 4.621705043977274e-08,
+            "baseline_origin_translation_fit_max_native": 6.935263262918851e-08,
+            "interpretation": "Artist rigid-transform pivot/axis-line fit only; not a measured mechanical joint."
+          },
+          "end_frame_residual": {
+            "frame": 108.0,
+            "translation_native": 3.0111579009288563e-08,
+            "rotation_rad": 0.0
+          }
+        },
+        {
+          "bone": "Trigger_L_012",
+          "baseline_frame": 0,
+          "rest_head_world_native": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rest_tail_world_native": [
+            0.0,
+            1.0000001192092896,
+            -1.685874195800352e-07
+          ],
+          "baseline_pose_origin_world_native": [
+            -0.8149912357330322,
+            0.6426562666893005,
+            0.03739475458860397
+          ],
+          "peak_translation": {
+            "frame": 49.599998474121094,
+            "vector_native": [
+              -7.704816340492471e-08,
+              0.01693752594292164,
+              0.18866118788719177
+            ],
+            "magnitude_native": 0.1894199662128556,
+            "direction_world": [
+              -4.0675840538554373e-07,
+              0.08941784903439667,
+              0.995994200923829
+            ]
+          },
+          "peak_rotation": {
+            "frame": 48.0,
+            "angle_rad": 0.29531940817832947,
+            "axis_world": [
+              -1.0000008344650269,
+              9.653872012904685e-08,
+              -6.981439781839072e-08
+            ],
+            "observed_axis_component_ranges": [
+              [
+                -1.0006471872329712,
+                -0.999988853931427
+              ],
+              [
+                -1.4750962691323366e-05,
+                7.11104746642377e-07
+              ],
+              [
+                -1.5793765442140284e-06,
+                6.133594979473855e-06
+              ]
+            ]
+          },
+          "effective_rotation_pivot_fit": {
+            "effective_pivot_world_native": [
+              -2.419785283487716e-07,
+              0.6426588234826821,
+              0.03739477812231899
+            ],
+            "solution_kind": "single_axis_minimum_norm_line_point",
+            "unobservable_axis_world": [
+              -0.9999999999999392,
+              -3.4842617001177183e-07,
+              -1.3110011226985272e-08
+            ],
+            "sample_threshold_rad": 0.014765970408916473,
+            "sample_count": 86,
+            "normal_matrix_rank_score": 1.3415151680323727e-12,
+            "translation_fit_rms_native": 4.341367984727369e-07,
+            "translation_fit_max_native": 7.970740926184189e-07,
+            "artist_baseline_origin_world_native": [
+              -0.8149912357330322,
+              0.6426562666893005,
+              0.03739475458860397
+            ],
+            "baseline_origin_translation_fit_rms_native": 5.884111917330164e-08,
+            "baseline_origin_translation_fit_max_native": 9.523371838316404e-08,
+            "interpretation": "Artist rigid-transform pivot/axis-line fit only; not a measured mechanical joint."
+          },
+          "end_frame_residual": {
+            "frame": 108.0,
+            "translation_native": 4.735151586523965e-08,
+            "rotation_rad": 0.0
+          }
+        },
+        {
+          "bone": "Trigger_R_011",
+          "baseline_frame": 0,
+          "rest_head_world_native": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rest_tail_world_native": [
+            0.0,
+            1.0000001192092896,
+            -1.685874195800352e-07
+          ],
+          "baseline_pose_origin_world_native": [
+            0.8149913549423218,
+            0.6426563858985901,
+            0.03739475458860397
+          ],
+          "peak_translation": {
+            "frame": 25.0,
+            "vector_native": [
+              3.470358933554962e-08,
+              0.016937529668211937,
+              0.18866099417209625
+            ],
+            "magnitude_native": 0.18941977360683995,
+            "direction_world": [
+              1.832099610021732e-07,
+              0.08941795962319914,
+              0.9959941909955049
+            ]
+          },
+          "peak_rotation": {
+            "frame": 25.0,
+            "angle_rad": 0.29531940817832947,
+            "axis_world": [
+              -1.0000009536743164,
+              -1.106528202399204e-06,
+              4.1288885199719516e-08
+            ],
+            "observed_axis_component_ranges": [
+              [
+                -1.000742793083191,
+                -0.9999451637268066
+              ],
+              [
+                -1.7829517673817463e-05,
+                8.661829298262091e-08
+              ],
+              [
+                -4.118449396628421e-06,
+                8.212098691728897e-06
+              ]
+            ]
+          },
+          "effective_rotation_pivot_fit": {
+            "effective_pivot_world_native": [
+              -5.880519661919999e-07,
+              0.6426577254620082,
+              0.03739509912436971
+            ],
+            "solution_kind": "single_axis_minimum_norm_line_point",
+            "unobservable_axis_world": [
+              -0.9999999999995657,
+              -9.14851146225497e-07,
+              1.7753009442397106e-07
+            ],
+            "sample_threshold_rad": 0.014765970408916473,
+            "sample_count": 171,
+            "normal_matrix_rank_score": 2.2911044486129045e-12,
+            "translation_fit_rms_native": 4.340503494769535e-07,
+            "translation_fit_max_native": 6.794019105027378e-07,
+            "artist_baseline_origin_world_native": [
+              0.8149913549423218,
+              0.6426563858985901,
+              0.03739475458860397
+            ],
+            "baseline_origin_translation_fit_rms_native": 6.732989323082395e-08,
+            "baseline_origin_translation_fit_max_native": 1.1610156246759907e-07,
+            "interpretation": "Artist rigid-transform pivot/axis-line fit only; not a measured mechanical joint."
+          },
+          "end_frame_residual": {
+            "frame": 108.0,
+            "translation_native": 7.985995880400647e-08,
+            "rotation_rad": 0.0
+          }
+        },
+        {
+          "bone": "X Button_07",
+          "baseline_frame": 0,
+          "rest_head_world_native": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rest_tail_world_native": [
+            0.0,
+            1.0000001192092896,
+            -1.685874195800352e-07
+          ],
+          "baseline_pose_origin_world_native": [
+            0.5231809020042419,
+            0.42513391375541687,
+            0.3789822459220886
+          ],
+          "peak_translation": {
+            "frame": 8.0,
+            "vector_native": [
+              4.3076084921267466e-08,
+              3.326722008978322e-08,
+              -0.013933981768786907
+            ],
+            "magnitude_native": 0.013933981768893204,
+            "direction_world": [
+              3.091441171355075e-06,
+              2.3874884179948e-06,
+              -0.9999999999923714
+            ]
+          },
+          "peak_rotation": {
+            "frame": 0.0,
+            "angle_rad": 0.0,
+            "axis_world": [
+              -1.2765495905215632e-15,
+              1.720474899496332e-15,
+              1.2547141399325314e-15
+            ],
+            "observed_axis_component_ranges": null
+          },
+          "effective_rotation_pivot_fit": null,
+          "end_frame_residual": {
+            "frame": 108.0,
+            "translation_native": 6.417985930758057e-08,
+            "rotation_rad": 0.0
+          }
+        },
+        {
+          "bone": "XBoxButton_06",
+          "baseline_frame": 0,
+          "rest_head_world_native": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rest_tail_world_native": [
+            0.0,
+            1.0000001192092896,
+            -1.685874195800352e-07
+          ],
+          "baseline_pose_origin_world_native": [
+            -2.2025572832262696e-07,
+            0.7263537645339966,
+            0.3268950879573822
+          ],
+          "peak_translation": {
+            "frame": 8.0,
+            "vector_native": [
+              -2.1696999752407464e-10,
+              -1.7292688170300607e-08,
+              -0.012938707135617733
+            ],
+            "magnitude_native": 0.01293870713562929,
+            "direction_world": [
+              -1.6769063187666164e-08,
+              -1.336508198928297e-06,
+              -0.9999999999991068
+            ]
+          },
+          "peak_rotation": {
+            "frame": 0.0,
+            "angle_rad": 0.0,
+            "axis_world": [
+              5.305199223922994e-16,
+              -1.0648866449145542e-15,
+              -4.62205656405056e-16
+            ],
+            "observed_axis_component_ranges": null
+          },
+          "effective_rotation_pivot_fit": null,
+          "end_frame_residual": {
+            "frame": 108.0,
+            "translation_native": 1.7329135959909828e-08,
+            "rotation_rad": 0.0
+          }
+        },
+        {
+          "bone": "Y Button_010",
+          "baseline_frame": 0,
+          "rest_head_world_native": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rest_tail_world_native": [
+            0.0,
+            1.0000001192092896,
+            -1.685874195800352e-07
+          ],
+          "baseline_pose_origin_world_native": [
+            0.7159602642059326,
+            0.6026138067245483,
+            0.3617636561393738
+          ],
+          "peak_translation": {
+            "frame": 38.0,
+            "vector_native": [
+              7.681259717173816e-08,
+              5.932430013899648e-08,
+              -0.021917235106229782
+            ],
+            "magnitude_native": 0.021917235106444673,
+            "direction_world": [
+              3.504666386918108e-06,
+              2.7067419704574146e-06,
+              -0.9999999999901954
+            ]
+          },
+          "peak_rotation": {
+            "frame": 0.0,
+            "angle_rad": 0.0,
+            "axis_world": [
+              -4.788311555662924e-15,
+              -3.555710481367887e-15,
+              -2.5748954563583476e-15
+            ],
+            "observed_axis_component_ranges": null
+          },
+          "effective_rotation_pivot_fit": null,
+          "end_frame_residual": {
+            "frame": 108.0,
+            "translation_native": 9.865796557004938e-08,
+            "rotation_rad": 0.0
+          }
+        }
+      ]
+    }
+  ],
+  "adoption_policy": {
+    "allowed": "Use as an explicitly labelled appearance-matched v0 motion prior or to identify which source parts move.",
+    "forbidden": "Do not claim these values are measured Xbox 1708 pivots, travel, timing, force or dynamics.",
+    "metric_conversion": "Requires a separately evidenced uniform-scale derivation; this report does not assign metres."
+  },
+  "harness_checks": {
+    "input_status_checked": true,
+    "full_report_hash_recorded": true,
+    "toolchain_identity_recorded": true,
+    "all_actions_nonempty": true
+  }
+}

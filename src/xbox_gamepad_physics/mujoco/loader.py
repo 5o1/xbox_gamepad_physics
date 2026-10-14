@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from ._backend import require_mujoco
+from ._backend import require_mujoco, reject_release_backend
 from ._manifest import load_runtime_manifest, resolve_resource, scene_resource
 from ._spec import compile_spec, load_spec, make_data
 from .handle import MujocoGamepadHandle, bind_handle
@@ -40,6 +40,8 @@ def load_scene(
     fails explicitly until the selected profile contains generated and
     validated physical resources, named bindings, and a standalone scene.
     """
+
+    reject_release_backend()
 
     manifest = load_runtime_manifest(profile)
     relative = scene_resource(manifest, scene)

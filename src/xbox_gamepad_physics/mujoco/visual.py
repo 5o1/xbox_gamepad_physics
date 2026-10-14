@@ -14,7 +14,7 @@ from typing import Any
 from xbox_gamepad_physics.errors import AssetImportError
 from xbox_gamepad_physics.resources import resource_path
 
-from ._backend import require_mujoco
+from ._backend import require_mujoco, reject_release_backend
 from ._spec import compile_spec, load_spec, make_data
 
 
@@ -90,6 +90,8 @@ def load_visual_scene(
 ) -> LoadedVisualScene:
     """Load the table review scene or the standalone visual asset."""
 
+    reject_release_backend()
+
     root, manifest = _visual_root()
     record = _renderer_record(manifest, renderer)
     relative = (
@@ -125,6 +127,8 @@ def attach_visual_to_spec(
     renderer: str = "classic",
 ) -> VisualAttachment:
     """Attach the render-only asset to exactly one parent frame or site."""
+
+    reject_release_backend()
 
     if (frame is None) == (site is None):
         raise ValueError("Exactly one of 'frame' and 'site' must be provided.")

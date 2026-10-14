@@ -1,0 +1,614 @@
+{
+  "schema_version": 2,
+  "asset_registry_binding": {
+    "path": "assets/asset_index.json",
+    "registry_role": "canonical_status_authority"
+  },
+  "target_model": {
+    "value": "Xbox One S",
+    "unit": null,
+    "status": "owner_selected_unmeasured",
+    "evidence": [
+      "user_target_xbox_one_s"
+    ],
+    "applicability": "Target product and appearance identity; no physical measurement is currently available."
+  },
+  "status": "incomplete_not_for_dynamics_or_RL",
+  "input_schema": {
+    "name": "w3c_browser_transport_axes_then_buttons",
+    "evidence": [
+      "w3c_gamepad_standard_mapping"
+    ],
+    "channels": [
+      {
+        "name": "lx",
+        "kind": "axis",
+        "tensor_index": 0,
+        "standard_index": 0,
+        "range": [
+          -1,
+          1
+        ]
+      },
+      {
+        "name": "ly",
+        "kind": "axis",
+        "tensor_index": 1,
+        "standard_index": 1,
+        "range": [
+          -1,
+          1
+        ]
+      },
+      {
+        "name": "rx",
+        "kind": "axis",
+        "tensor_index": 2,
+        "standard_index": 2,
+        "range": [
+          -1,
+          1
+        ]
+      },
+      {
+        "name": "ry",
+        "kind": "axis",
+        "tensor_index": 3,
+        "standard_index": 3,
+        "range": [
+          -1,
+          1
+        ]
+      },
+      {
+        "name": "a",
+        "kind": "button",
+        "tensor_index": 4,
+        "standard_index": 0,
+        "range": [
+          0,
+          1
+        ]
+      },
+      {
+        "name": "b",
+        "kind": "button",
+        "tensor_index": 5,
+        "standard_index": 1,
+        "range": [
+          0,
+          1
+        ]
+      },
+      {
+        "name": "x",
+        "kind": "button",
+        "tensor_index": 6,
+        "standard_index": 2,
+        "range": [
+          0,
+          1
+        ]
+      },
+      {
+        "name": "y",
+        "kind": "button",
+        "tensor_index": 7,
+        "standard_index": 3,
+        "range": [
+          0,
+          1
+        ]
+      },
+      {
+        "name": "left_shoulder",
+        "kind": "button",
+        "tensor_index": 8,
+        "standard_index": 4,
+        "range": [
+          0,
+          1
+        ]
+      },
+      {
+        "name": "right_shoulder",
+        "kind": "button",
+        "tensor_index": 9,
+        "standard_index": 5,
+        "range": [
+          0,
+          1
+        ]
+      },
+      {
+        "name": "left_trigger",
+        "kind": "button",
+        "tensor_index": 10,
+        "standard_index": 6,
+        "range": [
+          0,
+          1
+        ]
+      },
+      {
+        "name": "right_trigger",
+        "kind": "button",
+        "tensor_index": 11,
+        "standard_index": 7,
+        "range": [
+          0,
+          1
+        ]
+      },
+      {
+        "name": "view",
+        "kind": "button",
+        "tensor_index": 12,
+        "standard_index": 8,
+        "range": [
+          0,
+          1
+        ]
+      },
+      {
+        "name": "menu",
+        "kind": "button",
+        "tensor_index": 13,
+        "standard_index": 9,
+        "range": [
+          0,
+          1
+        ]
+      },
+      {
+        "name": "left_stick_click",
+        "kind": "button",
+        "tensor_index": 14,
+        "standard_index": 10,
+        "range": [
+          0,
+          1
+        ]
+      },
+      {
+        "name": "right_stick_click",
+        "kind": "button",
+        "tensor_index": 15,
+        "standard_index": 11,
+        "range": [
+          0,
+          1
+        ]
+      },
+      {
+        "name": "dpad_up",
+        "kind": "button",
+        "tensor_index": 16,
+        "standard_index": 12,
+        "range": [
+          0,
+          1
+        ]
+      },
+      {
+        "name": "dpad_down",
+        "kind": "button",
+        "tensor_index": 17,
+        "standard_index": 13,
+        "range": [
+          0,
+          1
+        ]
+      },
+      {
+        "name": "dpad_left",
+        "kind": "button",
+        "tensor_index": 18,
+        "standard_index": 14,
+        "range": [
+          0,
+          1
+        ]
+      },
+      {
+        "name": "dpad_right",
+        "kind": "button",
+        "tensor_index": 19,
+        "standard_index": 15,
+        "range": [
+          0,
+          1
+        ]
+      },
+      {
+        "name": "guide",
+        "kind": "button",
+        "tensor_index": 20,
+        "standard_index": 16,
+        "range": [
+          0,
+          1
+        ]
+      }
+    ],
+    "note": "This repository defines the tensor order; W3C defines the axis and button indices."
+  },
+  "physical_only_controls": {
+    "pair": {
+      "aliases": [
+        "Pair",
+        "Bind",
+        "Connect",
+        "Sync"
+      ],
+      "standard_gamepad_channel": null,
+      "evidence": [
+        "apple_1708_connect_button",
+        "ifixit_1708_buttons"
+      ]
+    }
+  },
+  "physical_topology": {
+    "status": "unknown",
+    "bodies": [],
+    "reason": "No measured Xbox One S rigid-body graph is available."
+  },
+  "parts": {
+    "shell": {
+      "motion_model": {
+        "status": "unknown",
+        "joints": [],
+        "required_control_effects": [],
+        "physical_only": false,
+        "evidence": [],
+        "reason": "No measured Xbox One S mechanism topology for shell; visual animation is not treated as physical evidence."
+      }
+    },
+    "a": {
+      "motion_model": {
+        "status": "unknown",
+        "joints": [],
+        "required_control_effects": [
+          {
+            "channel": "a",
+            "evidence": [
+              "w3c_gamepad_standard_mapping"
+            ]
+          }
+        ],
+        "physical_only": false,
+        "evidence": [],
+        "reason": "No measured Xbox One S mechanism topology for a; visual animation is not treated as physical evidence."
+      }
+    },
+    "b": {
+      "motion_model": {
+        "status": "unknown",
+        "joints": [],
+        "required_control_effects": [
+          {
+            "channel": "b",
+            "evidence": [
+              "w3c_gamepad_standard_mapping"
+            ]
+          }
+        ],
+        "physical_only": false,
+        "evidence": [],
+        "reason": "No measured Xbox One S mechanism topology for b; visual animation is not treated as physical evidence."
+      }
+    },
+    "x": {
+      "motion_model": {
+        "status": "unknown",
+        "joints": [],
+        "required_control_effects": [
+          {
+            "channel": "x",
+            "evidence": [
+              "w3c_gamepad_standard_mapping"
+            ]
+          }
+        ],
+        "physical_only": false,
+        "evidence": [],
+        "reason": "No measured Xbox One S mechanism topology for x; visual animation is not treated as physical evidence."
+      }
+    },
+    "y": {
+      "motion_model": {
+        "status": "unknown",
+        "joints": [],
+        "required_control_effects": [
+          {
+            "channel": "y",
+            "evidence": [
+              "w3c_gamepad_standard_mapping"
+            ]
+          }
+        ],
+        "physical_only": false,
+        "evidence": [],
+        "reason": "No measured Xbox One S mechanism topology for y; visual animation is not treated as physical evidence."
+      }
+    },
+    "left_stick": {
+      "motion_model": {
+        "status": "unknown",
+        "joints": [],
+        "required_control_effects": [
+          {
+            "channel": "lx",
+            "evidence": [
+              "w3c_gamepad_standard_mapping"
+            ]
+          },
+          {
+            "channel": "ly",
+            "evidence": [
+              "w3c_gamepad_standard_mapping"
+            ]
+          },
+          {
+            "channel": "left_stick_click",
+            "evidence": [
+              "w3c_gamepad_standard_mapping"
+            ]
+          }
+        ],
+        "physical_only": false,
+        "evidence": [],
+        "reason": "No measured Xbox One S mechanism topology for left_stick; visual animation is not treated as physical evidence."
+      }
+    },
+    "right_stick": {
+      "motion_model": {
+        "status": "unknown",
+        "joints": [],
+        "required_control_effects": [
+          {
+            "channel": "rx",
+            "evidence": [
+              "w3c_gamepad_standard_mapping"
+            ]
+          },
+          {
+            "channel": "ry",
+            "evidence": [
+              "w3c_gamepad_standard_mapping"
+            ]
+          },
+          {
+            "channel": "right_stick_click",
+            "evidence": [
+              "w3c_gamepad_standard_mapping"
+            ]
+          }
+        ],
+        "physical_only": false,
+        "evidence": [],
+        "reason": "No measured Xbox One S mechanism topology for right_stick; visual animation is not treated as physical evidence."
+      }
+    },
+    "dpad": {
+      "motion_model": {
+        "status": "unknown",
+        "joints": [],
+        "required_control_effects": [
+          {
+            "channel": "dpad_up",
+            "evidence": [
+              "w3c_gamepad_standard_mapping"
+            ]
+          },
+          {
+            "channel": "dpad_down",
+            "evidence": [
+              "w3c_gamepad_standard_mapping"
+            ]
+          },
+          {
+            "channel": "dpad_left",
+            "evidence": [
+              "w3c_gamepad_standard_mapping"
+            ]
+          },
+          {
+            "channel": "dpad_right",
+            "evidence": [
+              "w3c_gamepad_standard_mapping"
+            ]
+          }
+        ],
+        "physical_only": false,
+        "evidence": [],
+        "reason": "No measured Xbox One S mechanism topology for dpad; visual animation is not treated as physical evidence."
+      }
+    },
+    "left_shoulder": {
+      "motion_model": {
+        "status": "unknown",
+        "joints": [],
+        "required_control_effects": [
+          {
+            "channel": "left_shoulder",
+            "evidence": [
+              "w3c_gamepad_standard_mapping"
+            ]
+          }
+        ],
+        "physical_only": false,
+        "evidence": [],
+        "reason": "No measured Xbox One S mechanism topology for left_shoulder; visual animation is not treated as physical evidence."
+      }
+    },
+    "right_shoulder": {
+      "motion_model": {
+        "status": "unknown",
+        "joints": [],
+        "required_control_effects": [
+          {
+            "channel": "right_shoulder",
+            "evidence": [
+              "w3c_gamepad_standard_mapping"
+            ]
+          }
+        ],
+        "physical_only": false,
+        "evidence": [],
+        "reason": "No measured Xbox One S mechanism topology for right_shoulder; visual animation is not treated as physical evidence."
+      }
+    },
+    "left_trigger": {
+      "motion_model": {
+        "status": "unknown",
+        "joints": [],
+        "required_control_effects": [
+          {
+            "channel": "left_trigger",
+            "evidence": [
+              "w3c_gamepad_standard_mapping"
+            ]
+          }
+        ],
+        "physical_only": false,
+        "evidence": [],
+        "reason": "No measured Xbox One S mechanism topology for left_trigger; visual animation is not treated as physical evidence."
+      }
+    },
+    "right_trigger": {
+      "motion_model": {
+        "status": "unknown",
+        "joints": [],
+        "required_control_effects": [
+          {
+            "channel": "right_trigger",
+            "evidence": [
+              "w3c_gamepad_standard_mapping"
+            ]
+          }
+        ],
+        "physical_only": false,
+        "evidence": [],
+        "reason": "No measured Xbox One S mechanism topology for right_trigger; visual animation is not treated as physical evidence."
+      }
+    },
+    "view": {
+      "motion_model": {
+        "status": "unknown",
+        "joints": [],
+        "required_control_effects": [
+          {
+            "channel": "view",
+            "evidence": [
+              "w3c_gamepad_standard_mapping"
+            ]
+          }
+        ],
+        "physical_only": false,
+        "evidence": [],
+        "reason": "No measured Xbox One S mechanism topology for view; visual animation is not treated as physical evidence."
+      }
+    },
+    "menu": {
+      "motion_model": {
+        "status": "unknown",
+        "joints": [],
+        "required_control_effects": [
+          {
+            "channel": "menu",
+            "evidence": [
+              "w3c_gamepad_standard_mapping"
+            ]
+          }
+        ],
+        "physical_only": false,
+        "evidence": [],
+        "reason": "No measured Xbox One S mechanism topology for menu; visual animation is not treated as physical evidence."
+      }
+    },
+    "guide": {
+      "motion_model": {
+        "status": "unknown",
+        "joints": [],
+        "required_control_effects": [
+          {
+            "channel": "guide",
+            "evidence": [
+              "w3c_gamepad_standard_mapping"
+            ]
+          }
+        ],
+        "physical_only": false,
+        "evidence": [],
+        "reason": "No measured Xbox One S mechanism topology for guide; visual animation is not treated as physical evidence."
+      }
+    },
+    "pair": {
+      "motion_model": {
+        "status": "unknown",
+        "joints": [],
+        "required_control_effects": [],
+        "physical_only": true,
+        "evidence": [],
+        "reason": "No measured Xbox One S mechanism topology for pair; visual animation is not treated as physical evidence."
+      }
+    }
+  },
+  "unresolved_parameters": [
+    {
+      "id": "metric_geometry_registration",
+      "value": null,
+      "reason": "The selected Xbox One S mesh has no measured local-dimension registration."
+    },
+    {
+      "id": "metric_scale",
+      "value": null,
+      "reason": "Local dimensions have not been measured on the target controller."
+    },
+    {
+      "id": "physical_topology",
+      "value": null,
+      "reason": "No target rigid-body and joint graph has been established."
+    },
+    {
+      "id": "mass_properties",
+      "value": null,
+      "reason": "Mass, centre of mass and inertia have not been measured."
+    },
+    {
+      "id": "collision_geometry",
+      "value": null,
+      "reason": "No collision representation has passed contact validation."
+    },
+    {
+      "id": "contact_materials",
+      "value": null,
+      "reason": "Friction and restitution have not been measured."
+    },
+    {
+      "id": "control_mechanics",
+      "value": null,
+      "reason": "Axes, travel, force curves and restoring behaviour remain unresolved."
+    },
+    {
+      "id": "root_attachment",
+      "value": null,
+      "reason": "The fixture and controller attachment are not yet designed."
+    }
+  ],
+  "readiness": {
+    "dynamics_ready": false,
+    "contact_validated": false,
+    "blockers": [
+      "metric_geometry_registration",
+      "metric_scale",
+      "physical_topology",
+      "mass_properties",
+      "collision_geometry",
+      "contact_materials",
+      "control_mechanics",
+      "root_attachment"
+    ]
+  }
+}
