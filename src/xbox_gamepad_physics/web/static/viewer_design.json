@@ -1,0 +1,18 @@
+{
+  "dependencies": {
+    "three": "0.180.0",
+    "tarball": "https://registry.npmjs.org/three/-/three-0.180.0.tgz",
+    "sha256": "ad66d724565ee29a2467277fa84daa5ed0211d6b8d446e9ef29f6bae0cd14144",
+    "extracted_files": {
+      "package.json": "aa42494664dba4cf76d89c6975ee38321a402f09a048672e190bad6f13beec93",
+      "build/three.module.js": "c8211c69345d2e9949dc7a8ac969380497aa0600a5a8ac6a459c8cd02dd9cb8a",
+      "build/three.core.js": "eb077d2417f61d3e6d9264c317cabc4ea35769ed6b0ab533067292a550784c20",
+      "examples/jsm/controls/OrbitControls.js": "b97879c748170baadeb3fb84cea1ffdf4674e283dc06042f34e2acb95a76042c",
+      "examples/jsm/loaders/GLTFLoader.js": "67ac5551fdafa6e349bd80c8f8e5e39c136d6b2fb1ad647db9abb21dc86f9e4a",
+      "examples/jsm/utils/BufferGeometryUtils.js": "fda7e946b8e0b5ab39b779206589e7a1079a22eb24efb89d7223e03fdfb1f751"
+    },
+    "extracted_file_hash_method": "SHA-256 of exact bytes extracted from the hash-verified npm tarball on the GPU node",
+    "license": "MIT; upstream package LICENSE retained on GPU node",
+    "download": "GPU NETWORK_INTERFACE direct, no proxy, registry IP 104.16.10.34 obtained using DNS-over-HTTPS"
+  }
+}

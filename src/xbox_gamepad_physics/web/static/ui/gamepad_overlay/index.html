@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Xbox Gamepad Signal Controller</title>
+    <link rel="stylesheet" href="overlay-shell.css">
+    <link rel="stylesheet" href="dashboard.css">
+    <script src="overlay-core.js"></script>
+    <script src="overlay-spec.js"></script>
+    <script src="overlay-app.js"></script>
+    <script src="gamepad-input-sources.js"></script>
+    <script src="overlay-renderer-svg.js"></script>
+</head>
+<body>
+    <header>
+        <div>
+            <h1>左摇杆信号映射</h1>
+            <div class="subtitle">机械关节运动与标准虚拟手柄输出同步显示</div>
+        </div>
+        <div class="pipeline">qpos [rad] → GamepadSignalController → sdl3-gamepad-core-v1</div>
+    </header>
+    <main>
+        <section class="card overlay-card">
+            <div class="active-key">黄色表示当前激活</div>
+            <svg id="overlayRoot" aria-label="Virtual Xbox gamepad overlay"></svg>
+        </section>
+        <aside class="card telemetry">
+            <h2>当前帧</h2>
+            <div class="rows">
+                <div class="row"><span class="label">角度 θ</span><span class="value" id="theta">–</span></div>
+                <div class="row"><span class="label">left_stick_x</span><span class="value" id="qx">–</span></div>
+                <div class="row"><span class="label">left_stick_y</span><span class="value" id="qy">–</span></div>
+                <div class="row"><span class="label">left_x</span><span class="value" id="leftX">0.0000</span></div>
+                <div class="row"><span class="label">left_y</span><span class="value" id="leftY">0.0000</span></div>
+                <div class="row"><span class="label">signal radius</span><span class="value" id="radius">0.0000</span></div>
+            </div>
+            <div class="signal-plane"><div id="signalDot"></div></div>
+        </aside>
+    </main>
+    <footer>
+        <span>阶段：<span class="phase" id="phase">initializing</span></span>
+        <span>frame <span id="frameIndex">–</span> · Xbox One S · device_id=1</span>
+    </footer>
+    <script type="module">
+        import {installCanonicalSource} from "./canonical_adapter.mjs";
+
+        const adapter = installCanonicalSource();
+        window.__gamepadOverlayAdapter = adapter;
+        const query = new URLSearchParams(location.search);
+        if (query.get("view") === "overlay") {
+            document.documentElement.classList.add("overlay-only");
+            document.body.classList.add("overlay-only");
+        }
+        if (!query.has("theme")) query.set("theme", "research");
+        if (!query.has("source")) query.set("source", "canonical");
+        history.replaceState(null, "", `${location.pathname}?${query}`);
+        await window.OverlayApp.init({svgId: "overlayRoot"});
+        adapter.markReady();
+        document.body.dataset.ready = "true";
+
+        const traceUrl = query.get("trace");
+        if (traceUrl && query.get("autoplay") === "1") {
+            const trace = await fetch(traceUrl).then(response => {
+                if (!response.ok) throw new Error(`Trace fetch failed: ${response.status}`);
+                return response.json();
+            });
+            let index = 0;
+            const step = async () => {
+                await adapter.applyFrame(trace.frames[index]);
+                index = (index + 1) % trace.frames.length;
+                setTimeout(step, 1000 / trace.fps);
+            };
+            step();
+        }
+    </script>
+</body>
+</html>

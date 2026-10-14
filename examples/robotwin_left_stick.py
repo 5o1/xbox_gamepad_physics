@@ -43,6 +43,7 @@ def main() -> None:
         pose=sapien.Pose(),
         fixed_root=True,
         profile="left_stick",
+        collision="coacd",
     )
     limit = math.radians(23.0)
 

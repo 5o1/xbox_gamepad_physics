@@ -19,7 +19,7 @@ def violations(source, path):
     tree = ast.parse(source)
     aliases = {a.asname or a.name: a.name for n in ast.walk(tree)
                if isinstance(n, ast.ImportFrom) for a in n.names}
-    permitted = next((n for n in tree.body if path == "experiments/scene.py"
+    permitted = next((n for n in tree.body if path == "src/xbox_gamepad_physics/examples/scene.py"
                       and isinstance(n, ast.FunctionDef) and n.name == "create_render_scene"), None)
     result = []
     for node in ast.walk(tree):
@@ -52,8 +52,8 @@ class RenderEntryTest(unittest.TestCase):
         self.assertEqual(violations("scene = sapien.Scene()", "probe.py"), [])
         self.assertEqual(len(violations("from sapien import SapienRenderer as R\nx=R()", "bad.py")), 1)
         self.assertEqual(len(violations("scene.add_point_light([],[])", "bad.py")), 1)
-        self.assertEqual(violations('def create_render_scene():\n scene.set_ambient_light([])', "experiments/scene.py"), [])
-        self.assertEqual(len(violations('def other():\n scene.set_ambient_light([])', "experiments/scene.py")), 1)
+        self.assertEqual(violations('def create_render_scene():\n scene.set_ambient_light([])', "src/xbox_gamepad_physics/examples/scene.py"), [])
+        self.assertEqual(len(violations('def other():\n scene.set_ambient_light([])', "src/xbox_gamepad_physics/examples/scene.py")), 1)
 
 
 if __name__ == "__main__":

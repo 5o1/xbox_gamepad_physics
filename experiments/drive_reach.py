@@ -1,7 +1,5 @@
 """K4: drive each joint to both endpoints for one second with a fixed root."""
-def internal_contact_pairs(scene, articulation):
-    links = set(articulation.get_links())
-    return sum(1 for contact in scene.get_contacts() if all(body in links for body in contact.bodies))
+from xbox_gamepad_physics.teleop.contacts import internal_contact_pairs
 
 
 def run(cfg, ctx):

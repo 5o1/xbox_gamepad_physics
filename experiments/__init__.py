@@ -1,22 +1,8 @@
-"""Checkout-only experiments; add each experiment's run function here."""
+"""Checkout experiments; registration never imports a selected implementation."""
+from xbox_gamepad_physics.examples import EXPERIMENTS, lazy_experiment
 
-from typing import Callable
+def register_checkout_experiments():
+    for name in ("drive_reach", "collision_check", "drop", "collision_overlay", "teleop_replay"):
+        EXPERIMENTS.setdefault(name, lazy_experiment(__name__ + "." + name))
 
-from .render_review import run as render_review
-from .smoke import run as smoke
-from .drive_reach import run as drive_reach
-from .collision_check import run as collision_check
-from .drop import run as drop
-from .collision_overlay import run as collision_overlay
-from .teleop_replay import run as teleop_replay
-
-
-EXPERIMENTS: dict[str, Callable] = {
-    "smoke": smoke,
-    "render_review": render_review,
-    "drive_reach": drive_reach,
-    "collision_check": collision_check,
-    "drop": drop,
-    "collision_overlay": collision_overlay,
-    "teleop_replay": teleop_replay,
-}
+register_checkout_experiments()

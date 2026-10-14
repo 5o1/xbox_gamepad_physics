@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from contextlib import contextmanager
+import os
 import importlib.util
 import json
 from pathlib import Path
@@ -18,6 +20,16 @@ sys.path[:0] = [str(ROOT), str(ROOT / "src")]
 
 from experiments import EXPERIMENTS
 from experiments import runner
+
+
+@contextmanager
+def working_directory(path):
+    previous = Path.cwd()
+    os.chdir(path)
+    try:
+        yield
+    finally:
+        os.chdir(previous)
 
 
 class ConfigurationTest(unittest.TestCase):
@@ -83,6 +95,7 @@ class RunnerTest(unittest.TestCase):
             with (
                 mock.patch.dict(EXPERIMENTS, {"fake": fake_run}),
                 mock.patch.object(runner, "ROOT", root),
+                working_directory(root),
                 mock.patch.object(runner, "create_scene", return_value=scene) as create,
                 mock.patch("xbox_gamepad_physics.robotwin.load_into_scene", return_value=gamepad) as load,
             ):
@@ -102,7 +115,7 @@ class RunnerTest(unittest.TestCase):
                 metrics = json.loads((output / "metrics.json").read_text())
                 self.assertEqual(metrics, {"passed": True, "steps": 20})
                 meta = json.loads((output / "meta.json").read_text())
-                self.assertEqual(set(meta), {"git_commit", "git_dirty", "python", "sapien", "resource_root", "command"})
+                self.assertEqual(set(meta), {"git_commit", "git_dirty", "python", "sapien", "resource_root", "command", "package_version", "resource_version", "resource_version_source"})
                 self.assertEqual(meta["command"][0], sys.executable)
                 self.assertIn("params.steps=20", meta["command"])
                 self.assertTrue(Path(meta["resource_root"]).is_absolute())
