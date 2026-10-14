@@ -1,0 +1,105 @@
+experiment: teleop_replay
+profile: full_controls
+scene:
+  timestep: 0.004
+  ground: false
+  render: false
+gamepad:
+  fixed_root: true
+  attach_visual: false
+  collision: sdf
+  pose: [0.4, 0, 0.1, 1, 0, 0, 0]
+params:
+  record: null
+stream:
+  record_format: binary  # Lossless .xgpr; optional jsonl retains the legacy writer.
+  input_reference: camera  # Browser input; recorded Command stays in world coordinates.
+  # Communication watchdog test setting; not a physical parameter.
+  control_lease_seconds: 0.2
+  input_repeat_seconds: 0.05
+  cursor:
+    # Interaction test settings, not physical gripper parameters.
+    mouse_mm_per_pixel: 0.10  # 10-20 pixels gives 1-2 mm.
+    fine_mouse_scale: 0.25   # Shift: 40-80 pixels gives 1-2 mm.
+    front_reference_m: [0.08457, 0, 0]  # URDF finger-joint origins' forward x.
+    # Live-only parking pose: front points toward the tabletop, clear of it.
+    initial_pose: [0.10, 0, 0.20, 0.7071067811865476, 0, 0.7071067811865476, 0]
+teleop:
+  parameter_status: '测试值，不是实物参数'
+  robotwin_root: null  # local 必须显式传 --robotwin-root；remote 可由显式站点配置提供。
+  initial_pose: [0, 0, 0.04, 1, 0, 0, 0]
+  initial_opening_m: 0.02
+  ghost_minimum_seconds: 0.5
+  freeze:
+    # Test margin, not a physical parameter: positive-width LIMITED joint at q=0.
+    limit_margin_m: 0.00001
+  contact_offset_m: 0.0002
+  rest_offset_m: 0.0
+  # Numerical convergence test setting; not a physical gripper parameter.
+  solver_iterations: {position: 64, velocity: 16}
+  material: {static_friction: 0.8, dynamic_friction: 0.6, restitution: 0.0}
+  root_drive:
+    stiffness_n_m: 3000.0
+    damping_ns_m: 40.0
+    force_limit_n: 15.0
+    stiffness_nm_rad: 3.0
+    damping_nms_rad: 0.05
+    torque_limit_nm: 0.3
+  finger_drive:
+    # 测试值，数值界限：每步位移不超过 contact_offset；不是实物参数；负责人决定，2026-10-14
+    speed_m_s: 0.05
+    # 裁定 3：测试值，非实物参数。运动用纯速度驱动，不积累位置弹簧误差。
+    motion_stiffness_n_m: 0.0
+    motion_damping_ns_m: 160.0  # 8 N / 0.05 m/s；堵转时达到原 8 N 上限。
+    # 到达命令目标的一步行程范围内，切换为原位置保持参数。
+    stiffness_n_m: 1800.0
+    damping_ns_m: 12.0
+    force_limit_n: 8.0
+  input:
+    frame: world  # Command vectors after camera-to-world conversion; replay contract.
+    # 测试值，非实物参数。Schema 4 held keys integrate velocity every physics step.
+    velocity:
+      coarse: {translation_m_s: 0.1, rotation_degrees_s: 100.0}
+      fine: {translation_m_s: 0.02, rotation_degrees_s: 20.0}
+    # 测试值，非实物参数。GPU free-space steady maxima: 1.574335 mm / 1.791205 deg.
+    # Limits = max(10 mm, 3*position error), max(5 deg, 3*angle error), 2026-10-14.
+    traction: {translation_limit_m: 0.01, rotation_limit_degrees: 5.373614426539382}
+    fine: {translation_m: 0.001, rotation_degrees: 1.0, opening_m: 0.001}
+    coarse: {translation_m: 0.005, rotation_degrees: 5.0, opening_m: 0.005}
+    closed_target_m: -0.002
+    open_target_m: 0.04765
+    keymap:
+      mouse_move: camera_plane_cursor
+      left_mouse: close_to_preload_target
+      right_mouse: open_to_target
+      W: pitch_front_up_about_camera_right
+      S: pitch_front_down_about_camera_right
+      A: yaw_front_left_about_camera_up
+      D: yaw_front_right_about_camera_up
+      Q: toward_camera
+      E: away_from_camera
+      Shift: fine
+      G: toggle_gamepad_edge
+      Tab: toggle_edge
+      Esc: stop
+  fixture:
+    block_half_size_m: [0.010, 0.012, 0.030]
+    block_mass_kg: 0.02
+    block_pose: [0.130, 0, 0.0302, 1, 0, 0, 0]
+    table_half_size_m: [0.80, 0.80, 0.01]  # Visual margin for the pulled-back cameras (owner, 2026-10-13); top face unchanged.
+    table_pose: [0, 0, -0.01, 1, 0, 0, 0]
+    # Display only, no collision (owner, 2026-10-13); top face 1 mm below the tabletop.
+    ground_visual: {half_size_m: [25, 25, 0.01], top_z_m: -0.001}
+  grasp_test:
+    settle_seconds: 0.5
+    close_seconds: 1.0
+    lift_seconds: 2.0
+    lift_m: 0.1
+    settle_hold_seconds: 1.0
+  a_press_test:
+    initial_clearance_m: 0.015
+    travel_m: 0.020
+    approach_seconds: 2.0
+    settle_seconds: 0.5
+    hold_seconds: 0.5
+    pressed_threshold: 0.95

@@ -53,16 +53,20 @@ class RatchetTest(unittest.TestCase):
         pad=Mock();pad.articulation=art
         state=Mock();state.channel.side_effect=lambda name: .6 if name=='south' else 0
         pad.gamepad_state.return_value=state
-        switch.active=pad;switch.frozen=True
-        data={'pose':[0,0,.03,1,0,0,0],'joints':{'a_press':.001},'drive_targets':{'a_press':0}}
-        with patch('teleop.gamepad.articulation_data',return_value=data):
-            event=switch.toggle();self.assertEqual(art.root.joint.type,'free')
-            self.assertEqual(event['signal_delta'],dict.fromkeys(XBOX_ONE_S_CHANNELS,0))
-            self.assertIs(switch.active,pad)
-            art.set_qpos.assert_not_called();art.set_qvel.assert_not_called()
-            art.set_root_pose.assert_not_called()
-            switch.toggle();self.assertEqual(art.root.joint.type,'fixed')
-            self.assertEqual(art.root.wake_up.call_count,2)
+        switch.active=pad;pad.root_fixed=True
+        expected={'from':'fixed','to':'moving','pose':[0,0,.03,1,0,0,0],
+                  'joint_positions':{'a_press':.001},'drive_targets':{'a_press':0},
+                  'signal_delta':dict.fromkeys(XBOX_ONE_S_CHANNELS,0)}
+        pad.set_root_fixed.return_value=expected
+        self.assertIs(switch.toggle(),expected)
+        pad.set_root_fixed.assert_called_once_with(False)
+        self.assertIs(switch.last_transition,expected)
+        self.assertIs(switch.active,pad)
+        art.set_qpos.assert_not_called();art.set_qvel.assert_not_called()
+        art.set_root_pose.assert_not_called();art.root.wake_up.assert_not_called()
+        self.assertEqual(art.root.joint.type,'fixed')
+        pad.root_fixed=False
+        switch.toggle();pad.set_root_fixed.assert_called_with(True)
 
 
 class ReplayConfigurationTest(unittest.TestCase):

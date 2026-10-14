@@ -9,7 +9,7 @@ from pathlib import Path
 import sys
 from typing import Sequence
 
-from .errors import XboxGamepadPhysicsError
+from .errors import XboxGamepadPhysicsError, ResourceNotFoundError
 from .profiles import load_profile, require_physics_ready
 from .resources import build_resources, resource_root, resource_status
 
@@ -18,10 +18,13 @@ _BACKENDS = ("robotwin", "mujoco")
 
 
 def _selected_backends(value: str) -> tuple[str, ...]:
-    return _BACKENDS if value == "all" else (value,)
+    if value == "mujoco":
+        raise ResourceNotFoundError("MuJoCo 不在 v0.3.0 发布范围内")
+    return ("robotwin",) if value == "all" else (value,)
 
 
 def _status(args: argparse.Namespace) -> int:
+    _selected_backends(args.backend)
     resources = resource_status()
     if not args.json:
         _print_resources(resources)
@@ -56,8 +59,8 @@ def _status(args: argparse.Namespace) -> int:
 
 
 def _verify(args: argparse.Namespace) -> int:
-    _print_resources(resource_status())
     selected = _selected_backends(args.backend)
+    _print_resources(resource_status())
     for backend in selected:
         profile = require_physics_ready(backend, args.profile)
         print(
@@ -77,7 +80,7 @@ def _print_resources(value: dict) -> None:
 
 
 def _build_resources(args: argparse.Namespace) -> int:
-    print(f"resource root: {build_resources(force=args.force)}")
+    print(f"resource root: {build_resources(force=args.force, archive=args.archive, resources=args.resources, offline=args.offline)}")
     return 0
 
 
@@ -97,6 +100,12 @@ def _install_robotwin(args: argparse.Namespace) -> int:
     return 0
 
 
+def _export_example(args):
+    from .examples.export import export_example
+    print(f"example exported: {export_example(args.directory)}")
+    return 0
+
+
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="xbox-gamepad-physics",
@@ -106,6 +115,9 @@ def _parser() -> argparse.ArgumentParser:
 
     build = subparsers.add_parser("build-resources", help="build stale project-local resources")
     build.add_argument("--force", action="store_true")
+    build.add_argument("--archive", type=Path, help="import the matching input zip")
+    build.add_argument("--resources", type=Path, help="writable local resource root")
+    build.add_argument("--offline", action="store_true", help="never download inputs")
     build.set_defaults(handler=_build_resources)
 
     status = subparsers.add_parser(
@@ -140,6 +152,21 @@ def _parser() -> argparse.ArgumentParser:
     )
     install.add_argument("--overwrite", action="store_true")
     install.set_defaults(handler=_install_robotwin)
+    example = subparsers.add_parser("example", help="export standalone RoboTwin examples")
+    commands = example.add_subparsers(dest="example_command", required=True)
+    export = commands.add_parser("export", help="export runner and two YAML files")
+    export.add_argument("directory", type=Path)
+    export.set_defaults(handler=_export_example)
+    from .teleop.launch import add_arguments, add_replay_arguments
+    add_arguments(subparsers.add_parser("teleop", help="local GPU teleoperation; optional SSH remote mode"))
+    add_replay_arguments(subparsers.add_parser("teleop-replay", help="replay schema 3–6 commands in a fresh scene"))
+    from .web.server import add_viewer_arguments, add_overlay_arguments, viewer_command, overlay_command
+    viewer = subparsers.add_parser("viewer", help="start the installed Cycles viewer")
+    add_viewer_arguments(viewer)
+    viewer.set_defaults(handler=viewer_command)
+    overlay = subparsers.add_parser("overlay", help="start the installed canonical overlay")
+    add_overlay_arguments(overlay)
+    overlay.set_defaults(handler=overlay_command)
     return parser
 
 

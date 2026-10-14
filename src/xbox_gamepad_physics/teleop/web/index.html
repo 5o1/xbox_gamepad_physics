@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Xbox One S · Teleoperation</title><link rel="stylesheet" href="/web/style.css"></head>
+<body><header><div class="title"><span class="asset">Xbox One S</span><span class="sep">/</span><span>Floating-gripper teleoperation</span></div><span id="connection" data-state="pending">Connecting</span></header>
+<main><section class="stage"><nav id="views"><button data-view="front">Face</button><button data-view="buttons_close">Face close-up</button><button data-view="overall">Overview</button><button data-view="buttons">Buttons top</button><button data-view="left">Left</button><button data-view="right">Right</button><button data-view="triggers">Triggers</button></nav>
+<div class="video-wrap"><canvas id="video" width="1280" height="720" tabindex="0" aria-label="Click to lock the pointer; the gripper becomes the cursor"></canvas><div id="mode">Click the view to lock the pointer</div></div>
+<div class="statistics"><div><span class="label">Frame rate</span><span id="fps">–</span></div><div><span class="label">Input latency</span><span id="latency">–</span></div><div><span class="label">Physics step</span><span id="step">–</span></div><div><span class="label">Input seq</span><span id="sequence">–</span></div></div>
+<ul class="keys">
+<li><span><kbd>Mouse</kbd></span>Move in the view plane</li>
+<li><span><kbd>LMB</kbd><kbd>RMB</kbd></span>Close / open fingers</li>
+<li><span><kbd>W</kbd><kbd>S</kbd></span>Pitch about the root</li>
+<li><span><kbd>A</kbd><kbd>D</kbd></span>Yaw about the root</li>
+<li><span><kbd>Q</kbd><kbd>E</kbd></span>Toward / away from camera</li>
+<li><span><kbd>Shift</kbd></span>Fine steps</li>
+<li><span><kbd>Tab</kbd></span>Switch main / secondary gripper</li>
+<li><span><kbd>G</kbd></span>Freeze / release gamepad</li>
+<li><span><kbd>Esc</kbd></span>Unlock and hold; then change view</li>
+</ul></section>
+<aside><h2>Gripper</h2><dl><dt>Controlling</dt><dd id="active">–</dd><dt>Gamepad</dt><dd id="gamepad-freeze">–</dd><dt>Mode</dt><dd id="state">–</dd><dt>Ghost check</dt><dd id="blocked">–</dd><dt>Finger travel</dt><dd id="fingers">–</dd><dt>Root / m</dt><dd id="pose">–</dd><dt>Quat wxyz</dt><dd id="rotation">–</dd></dl>
+<h2>Gamepad signal</h2><iframe id="overlay" src="/viewer/gamepad_overlay/index.html?view=overlay&source=canonical&theme=research" title="Live gamepad signals"></iframe><h2>Channels <span class="count">21</span></h2><div id="signals"></div></aside></main>
+<script type="module" src="/web/app.js"></script></body></html>
