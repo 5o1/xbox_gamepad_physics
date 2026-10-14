@@ -21,7 +21,7 @@ class GPUSelectionTest(unittest.TestCase):
 
     def test_out_of_range_and_hidden_devices(self):
         for index, mask in ((1, '3'), (0, ''), (0, '-1'), (1, '3,-1,2')):
-            with self.subTest(index=index, mask=mask), self.assertRaisesRegex(ValueError, '超出'):
+            with self.subTest(index=index, mask=mask), self.assertRaisesRegex(ValueError, 'outside'):
                 gpu_environment(index, {'CUDA_VISIBLE_DEVICES': mask})
         for index in (-1, True, '0'):
             with self.subTest(index=index), self.assertRaises(ValueError):

@@ -78,7 +78,7 @@ def validate_finger_speed(cfg, dt):
     offset = cfg["contact_offset_m"]
     if not all(math.isfinite(v) and v > 0 for v in (speed, dt, offset)):
         raise ValueError("finger speed_m_s, timestep and contact_offset_m must be finite and positive")
-    # 负责人裁定 1，2026-10-14：容纳 SAPIEN float32 timestep 的表示误差。
+    # Project owner ruling 1, 2026-10-14: allow for SAPIEN float32 timestep representation error.
     if speed * dt > offset * (1 + 1e-6):
         raise ValueError("finger speed_m_s * timestep must not exceed contact_offset_m * (1 + 1e-6)")
 

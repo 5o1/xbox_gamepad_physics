@@ -116,7 +116,7 @@
     }
   },
   "collision_policy": {
-    "method": "先修成闭合的 meshbase，再按组件、按壳做 CoACD；默认 CoACD 替换基本体，SDF 作为加载选项",
+    "method": "Repair the meshbase into closed shells, then apply CoACD per component and per shell; CoACD replaces primitives by default, with SDF available as a loading option",
     "coordinate_frame": "simulation (x,-z,y), Z up; metres; meshbase already converted",
     "coacd": {
       "version": "1.0.14",
@@ -149,8 +149,8 @@
       "spacing_m": 0.001,
       "min_sapien": "3.0.3",
       "limitations": [
-        "不能与 add_ground 平面碰撞",
-        "不能与另一个 SDF 物体碰撞"
+        "Cannot collide with an add_ground plane",
+        "Cannot collide with another SDF object"
       ]
     },
     "sources": [
@@ -190,28 +190,28 @@
         "outward_p95_mm": null,
         "inward_max_mm": null,
         "inward_p95_mm": null,
-        "note": "未测，结构与已测同类组件相同"
+        "note": "Unmeasured; structure matches measured components of the same type"
       },
       "left_shoulder": {
         "outward_max_mm": null,
         "outward_p95_mm": null,
         "inward_max_mm": null,
         "inward_p95_mm": null,
-        "note": "未测，结构与已测同类组件相同"
+        "note": "Unmeasured; structure matches measured components of the same type"
       },
       "right_shoulder": {
         "outward_max_mm": null,
         "outward_p95_mm": null,
         "inward_max_mm": null,
         "inward_p95_mm": null,
-        "note": "未测，结构与已测同类组件相同"
+        "note": "Unmeasured; structure matches measured components of the same type"
       },
       "pair": {
         "outward_max_mm": null,
         "outward_p95_mm": null,
         "inward_max_mm": null,
         "inward_p95_mm": null,
-        "note": "未测，结构与已测同类组件相同"
+        "note": "Unmeasured; structure matches measured components of the same type"
       },
       "dpad": {
         "outward_max_mm": 0.09755073743423565,
@@ -225,14 +225,14 @@
         "outward_p95_mm": null,
         "inward_max_mm": null,
         "inward_p95_mm": null,
-        "note": "未测，结构与已测同类组件相同"
+        "note": "Unmeasured; structure matches measured components of the same type"
       },
       "menu": {
         "outward_max_mm": null,
         "outward_p95_mm": null,
         "inward_max_mm": null,
         "inward_p95_mm": null,
-        "note": "未测，结构与已测同类组件相同"
+        "note": "Unmeasured; structure matches measured components of the same type"
       },
       "left_stick": [
         {
@@ -255,7 +255,7 @@
         "outward_p95_mm": null,
         "inward_max_mm": null,
         "inward_p95_mm": null,
-        "note": "未测，结构与已测同类组件相同"
+        "note": "Unmeasured; structure matches measured components of the same type"
       },
       "left_trigger": {
         "outward_max_mm": 0.7010723115477656,
@@ -269,35 +269,35 @@
         "outward_p95_mm": null,
         "inward_max_mm": null,
         "inward_p95_mm": null,
-        "note": "未测，结构与已测同类组件相同"
+        "note": "Unmeasured; structure matches measured components of the same type"
       },
       "x": {
         "outward_max_mm": null,
         "outward_p95_mm": null,
         "inward_max_mm": null,
         "inward_p95_mm": null,
-        "note": "未测，结构与已测同类组件相同"
+        "note": "Unmeasured; structure matches measured components of the same type"
       },
       "guide": {
         "outward_max_mm": null,
         "outward_p95_mm": null,
         "inward_max_mm": null,
         "inward_p95_mm": null,
-        "note": "未测，结构与已测同类组件相同"
+        "note": "Unmeasured; structure matches measured components of the same type"
       },
       "y": {
         "outward_max_mm": null,
         "outward_p95_mm": null,
         "inward_max_mm": null,
         "inward_p95_mm": null,
-        "note": "未测，结构与已测同类组件相同"
+        "note": "Unmeasured; structure matches measured components of the same type"
       }
     },
     "uncertainty_applicability": "Stage A sampled distances relative to meshbase, not a mechanical replica or hardware clearance measurement; repaired shell uses its rerun.",
     "accepted_known_error": {
       "decision_date": "2026-10-11",
       "decision_by": "owner",
-      "description": "十字键、摇杆孔口可触区域约 1–1.5 mm 外胀暂时接受；以后仿真实验确认影响结果再修"
+      "description": "Approximately 1–1.5 mm of outward expansion in the touchable D-pad and stick-opening regions is provisionally accepted; revise after simulation experiments establish its effect on results"
     },
     "internal_filter": {
       "g0_g1": "preserve existing",
@@ -318,7 +318,7 @@
       "triggers": 0.35,
       "sticks": 0.81
     },
-    "method": "meshbase 闭合体积 × 密度 × 组件填充系数；机身取剩余质量",
+    "method": "Closed meshbase volume × density × component fill factor; the body receives the remaining mass",
     "minimum_moving_mass_kg": 0.0002,
     "minimum_diagonal_inertia_kg_m2": 1e-10,
     "stick_fill_derivation": {
@@ -407,7 +407,7 @@
     "dpad_contact_closure": {
       "threshold": 0.3,
       "unit": "normalized fraction of full travel (dimensionless)",
-      "status": "未实测、测试值",
+      "status": "Unmeasured; test value",
       "hardware_measured": false,
       "rule": "Independently suppress each split D-pad channel below threshold; preserve amplitude at/above threshold, including true diagonals.",
       "reason": "30% separates small solver/contact cross-axis motion from intentional contact closure; selected for simulation testing, not inferred from measured Xbox switches.",

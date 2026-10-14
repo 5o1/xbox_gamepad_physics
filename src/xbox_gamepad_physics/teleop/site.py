@@ -170,22 +170,22 @@ def check_local_port(port,cfg,stop_existing=False,emit=print):
         with socket.socket() as probe:
             probe.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             try:probe.bind(('0.0.0.0',int(port)))
-            except OSError:raise ValueError(f'本机端口 {port} 被占用但不能确定所属 PID；拒绝启动') from None
+            except OSError:raise ValueError(f'Local port {port} is occupied but its owning PID cannot be identified; refusing to start') from None
         return []
-    for owner in owners:emit(f'本机端口 {port}：PID {owner["pid"]}，启动 {owner["started"]}，命令 {owner["command"]}')
-    if not stop_existing:raise ValueError(f'本机端口 {port} 已占用；默认不结束进程。确认项目旧隧道后可用 --stop-existing')
+    for owner in owners:emit(f'Local port {port}: PID {owner["pid"]}, started {owner["started"]}, command {owner["command"]}')
+    if not stop_existing:raise ValueError(f'Local port {port} is occupied; the default keeps the process running. Use --stop-existing after confirming it is an old project tunnel')
     if not all(is_project_tunnel(owner,port,cfg) for owner in owners):
-        raise ValueError(f'本机端口 {port} 有非项目隧道或无法确认的进程；不结束、不启动')
+        raise ValueError(f'Local port {port} is occupied by a non-project tunnel or an unverified process; refusing to stop it or start')
     for owner in owners:
         current=next((o for o in local_port_owners(port) if o['pid']==owner['pid']),None)
         if current is None:continue
         if current['start_ticks']!=owner['start_ticks'] or not is_project_tunnel(current,port,cfg):
-            raise ValueError('端口所属进程已变化；拒绝按旧 PID 结束')
+            raise ValueError('The port owner has changed; refusing to terminate the old PID')
         os.kill(owner['pid'],signal.SIGTERM)
-        emit(f'已向确认的项目旧隧道 PID {owner["pid"]} 发送 SIGTERM')
+        emit(f'Sent SIGTERM to verified old project tunnel PID {owner["pid"]}.')
     deadline=time.monotonic()+5
     while local_port_owners(port):
-        if time.monotonic()>=deadline:raise ValueError(f'旧隧道未在 5 s 内释放本机端口 {port}；拒绝启动')
+        if time.monotonic()>=deadline:raise ValueError(f'The old tunnel did not release local port {port} within 5 s; refusing to start')
         time.sleep(.05)
     return owners
 

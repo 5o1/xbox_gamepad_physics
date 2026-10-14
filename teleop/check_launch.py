@@ -29,7 +29,7 @@ def main():
         child=subprocess.Popen(['bash','-lc',command],stdin=slave,stdout=slave,stderr=slave,preexec_fn=terminal)
         os.close(slave);output=bytearray();deadline=time.monotonic()+90
         try:
-            while 'Windows 浏览器打开'.encode() not in output:
+            while 'Open in the Windows browser'.encode() not in output:
                 if time.monotonic()>deadline:raise TimeoutError('launcher did not print browser address')
                 if select.select([master],[],[],.5)[0]:
                     try:data=os.read(master,65536)

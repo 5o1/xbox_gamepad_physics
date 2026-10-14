@@ -60,7 +60,7 @@ for(const [button,file] of [['front','front.png'],['angle','angle.png']]){
  await evaluateCdp(client,`document.querySelector('#${button}').click();new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)))`);
  const shot=await call('Page.captureScreenshot',{format:'png'});await writeFile(join(output.directory,file),Buffer.from(shot.data,'base64'));
 }
-await evaluateCdp(client,"document.querySelector('#front').click();window.setDepthDiagnostic(true);document.querySelector('#status').textContent='仅诊断：启用透明材质深度写入，尚未验收';new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)))");
+await evaluateCdp(client,"document.querySelector('#front').click();window.setDepthDiagnostic(true);document.querySelector('#status').textContent='Diagnostic only: transparent material depth writes enabled; not yet accepted';new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)))");
 const diagnostic=await call('Page.captureScreenshot',{format:'png'});
 await writeFile(join(output.directory,'depth_write_diagnostic.png'),Buffer.from(diagnostic.data,'base64'));
 }catch(error){primaryError=error;throw error;}

@@ -1,9 +1,9 @@
-# Viewer 与信号 overlay
+# Viewer and signal overlay
 
-用户安装后直接运行 `xbox-gamepad-physics viewer --resources ./gamepad_resources --offline --blender /path/to/blender`，或 `xbox-gamepad-physics overlay`。无需 CDN/npm 下载。Blender 4.5 由用户提供；缺少时静态 UI 可用、Cycles 请求明确报错。overlay 含合成 demo trace，可用 --trace-dir 指定用户数据，显示连续上游信号。
+After installation, run `xbox-gamepad-physics viewer --resources ./gamepad_resources --offline --blender /path/to/blender` or `xbox-gamepad-physics overlay`. No CDN or npm downloads are required. Supply Blender 4.5 yourself; without it, the static UI remains available and Cycles requests report an explicit error. The overlay includes a synthetic demo trace. Use `--trace-dir` for your own data to display continuous upstream signals.
 
-检出中的 npm run viewer / npm run gamepad-overlay 仍可用。Python 服务端、worker 与 example 的实现分别在包内 web/ 和 examples/；本目录保留 UI 开发源与历史独立诊断页。发行的 UI 是这些源文件的静态复制，Three 只收实际模块闭包，打包前同步并验证复制内容；不要把 node_modules 或历史在线参考页整体收入 wheel。
+In a checkout, `npm run viewer` and `npm run gamepad-overlay` remain available. The Python server, worker and example implementations live in the package's `web/` and `examples/` directories. This directory contains UI development sources and historical standalone diagnostic pages. The distributed UI is a static copy of these sources. Three.js includes only the required module closure; synchronize and verify the copies before packaging. Do not include all of `node_modules` or historical online reference pages in the wheel.
 
-资源使用已审输入与同一 kinematics DAG，不再另写 build/generated。真实 Blender/SAPIEN 渲染和交互在 B4 验证。
+Resources use approved inputs and the same kinematics DAG, without writing a separate `build/generated` tree. Real Blender/SAPIEN rendering and interaction are validated in B4.
 
-参考 PNG 只随输入 zip 分发（CC BY 4.0），不收入 wheel。viewer 保持 `/accepted-reference/boiler_room_vertical_fov35_strength_1p0.png` 路由，从资源根 `inputs/assets/xbox_one_s/render/` 读取；缺图显示“缺少输入资源”，不影响页面。
+The reference PNG is distributed only in the input zip (CC BY 4.0), not in the wheel. The viewer retains the `/accepted-reference/boiler_room_vertical_fov35_strength_1p0.png` route and reads from `inputs/assets/xbox_one_s/render/` under the resource root. If the image is absent, it displays "Missing input resources" and the page remains usable.

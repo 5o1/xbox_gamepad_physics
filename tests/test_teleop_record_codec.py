@@ -24,11 +24,11 @@ def strict_equal(test,a,b):
 
 class RecordCodecTest(unittest.TestCase):
     def rows(self):
-        return [{'type':'header','schema_version':3,'config':{'label':'配置'}},
+        return [{'type':'header','schema_version':3,'config':{'label':'configuration'}},
             {'type':'step','step':0,'target_pose':[1.,-0.,.12345678901234567],'command':{'opening':0,'fine':False},
              'state':'main','contacts':[],'input':{'seq':1,'received_ns':None},'frozen':{'pose':[1.,0.,0.]},'count':2},
             {'type':'step','step':1,'target_pose':[1.,0.,.12345678901234567],'command':{'opening':1.,'fine':True},
-             'state':'secondary','contacts':[{'bodies':['指','pad'],'points':[{'impulse_ns':[.1,0.,0.]}]}],
+             'state':'secondary','contacts':[{'bodies':['finger','pad'],'points':[{'impulse_ns':[.1,0.,0.]}]}],
              'input':{'seq':2,'received_ns':263705647542995},'frozen':{'pose':[1.,0.,0.]},'count':2},
             {'type':'step','step':2,'target_pose':[1.,0.,2.,3.],'command':{'opening':0,'fine':False},
              'contacts':[],'input':{},'frozen':None,'count':2.0,'new_field':{'mask':[True,0,1.]}},

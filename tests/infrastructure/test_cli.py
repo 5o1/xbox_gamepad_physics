@@ -46,7 +46,7 @@ class CliTest(unittest.TestCase):
             with redirect_stderr(errors):
                 result = main([command, "--backend", "mujoco"])
             self.assertEqual(result, 2)
-            self.assertIn("MuJoCo 不在 v0.3.0 发布范围内", errors.getvalue())
+            self.assertIn("MuJoCo is outside the v0.3.0 release scope", errors.getvalue())
 
     def test_verify_accepts_ready_robotwin_left_stick_profile(self):
         output = io.StringIO()

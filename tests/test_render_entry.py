@@ -6,10 +6,10 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
 WHITELIST = {
-    "scripts/archive/": "历史独立探针按裁定保留，不再作为现行渲染入口。",
-    "scripts/render_robotwin_full_controls_review.py": "已审渲染和检查视频的生成脚本；按裁定5保留已审结果来源，迁移到公共入口另行安排。",
-    "examples/robotwin_visual.py": "已确认外观的原始独立示例；裁定要求现有 examples 保持原样。",
-    "examples/robotwin_left_stick.py": "现有左摇杆独立交互示例；裁定要求保留其自身场景配置。",
+    "scripts/archive/": "Historical standalone probes are retained per the ruling and are no longer current rendering entry points.",
+    "scripts/render_robotwin_full_controls_review.py": "Generator for reviewed renders and inspection videos; retained per ruling 5 as provenance for approved results. Migration to the public entry point is scheduled separately.",
+    "examples/robotwin_visual.py": "Original standalone example with an approved appearance; the ruling requires existing examples to remain unchanged.",
+    "examples/robotwin_left_stick.py": "Existing standalone left-stick interaction example; the ruling requires its own scene configuration to be preserved.",
 }
 SETTINGS = {"set_camera_shader_dir", "SapienRenderer", "RenderSystem",
             "add_directional_light", "add_point_light", "set_ambient_light", "set_global_config"}
@@ -37,7 +37,7 @@ def violations(source, path):
 class RenderEntryTest(unittest.TestCase):
     def test_repository_uses_shared_render_entry(self):
         if not (ROOT / '.git').exists():
-            self.skipTest('运行镜像不含Git元数据；提交文件扫描在本地checkout运行')
+            self.skipTest('The runtime image lacks Git metadata; scan tracked files in a local checkout')
         files = subprocess.check_output(
             ["git", "ls-files", "--cached", "--others", "--exclude-standard", "-z"], cwd=ROOT
         ).decode().split("\0")
@@ -46,7 +46,7 @@ class RenderEntryTest(unittest.TestCase):
             if not name.endswith(".py") or any(name == item or (item.endswith("/") and name.startswith(item)) for item in WHITELIST):
                 continue
             errors.extend(violations((ROOT/name).read_text(), name))
-        self.assertEqual(errors, [], "绕过公共渲染入口:\n" + "\n".join(errors))
+        self.assertEqual(errors, [], "Bypasses the public rendering entry point:\n" + "\n".join(errors))
 
     def test_guard_distinguishes_physics_and_catches_aliases(self):
         self.assertEqual(violations("scene = sapien.Scene()", "probe.py"), [])

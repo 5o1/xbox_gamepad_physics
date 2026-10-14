@@ -11,7 +11,7 @@ def gpu_environment(index, environ=None):
     This resolves identifiers without initializing CUDA in the parent process.
     """
     if type(index) is not int or index < 0:
-        raise ValueError('--gpu 必须是调用者可见设备中的非负整数序号')
+        raise ValueError('--gpu must be a nonnegative integer index into the caller-visible devices')
     env = dict(os.environ if environ is None else environ)
     mask = env.get('CUDA_VISIBLE_DEVICES')
     if mask is None:
@@ -24,7 +24,7 @@ def gpu_environment(index, environ=None):
                 break
             devices.append(item)
         if index >= len(devices):
-            raise ValueError(f'--gpu {index} 超出 CUDA_VISIBLE_DEVICES 的可见设备范围（{len(devices)}项）')
+            raise ValueError(f'--gpu {index} is outside the CUDA_VISIBLE_DEVICES range ({len(devices)} devices)')
         device = devices[index]
     env['CUDA_VISIBLE_DEVICES'] = device
     return env

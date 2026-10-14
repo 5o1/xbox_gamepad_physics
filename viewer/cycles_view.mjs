@@ -2,7 +2,7 @@
 export class CyclesView {
   constructor(host) {
     this.domElement=document.createElement('canvas');
-    this.image=document.createElement('img');this.image.alt='Blender Cycles 手柄预览';
+    this.image=document.createElement('img');this.image.alt='Blender Cycles controller preview';
     this.image.style.cssText='position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;border-radius:0';
     host.style.cssText='position:relative;display:grid;place-items:center';host.append(this.domElement,this.image);
     this.pending=null;this.running=false;this.frame=0;this.request=0;this.lastError=null;

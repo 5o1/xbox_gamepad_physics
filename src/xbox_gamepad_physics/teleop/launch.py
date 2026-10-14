@@ -14,7 +14,7 @@ def add_arguments(parser):
     parser.add_argument('--robotwin-root',type=Path)
     parser.add_argument('--resources',type=Path)
     parser.add_argument('--output',type=Path,help='new session directory; must not exist')
-    parser.add_argument('--gpu',type=int,help='调用者 CUDA_VISIBLE_DEVICES 中的序号；未设遮罩时为物理编号')
+    parser.add_argument('--gpu',type=int,help='Index into caller-visible CUDA_VISIBLE_DEVICES; physical device index when no mask is set')
     parser.add_argument('--port',type=int,default=None,help='GPU loopback HTTP port, default 8775')
     parser.add_argument('--config',type=Path)
     parser.add_argument('--open-browser',action='store_true')
@@ -33,7 +33,7 @@ def add_arguments(parser):
     remote.add_argument('--remote-python',help='remote interpreter containing the same wheel')
     remote.add_argument('--local-port',type=int)
     remote.add_argument('--windows-relay',action='store_true')
-    remote.add_argument('--skip-windows-relay',action='store_true',help='仅验证用：跳过 Windows relay，以 WSL loopback 访问 health')
+    remote.add_argument('--skip-windows-relay',action='store_true',help='Validation only: skip the Windows relay and access health via WSL loopback')
     remote.add_argument('--wsl-interface')
     remote.add_argument('--relay-port',type=int)
     remote.add_argument('--local-output',type=Path,help='remote client logs and temporary FIFO')
@@ -47,9 +47,9 @@ def command(args):
             from .remote import run
             return run(args)
         if args.site or args.ssh or args.windows_relay or args.skip_windows_relay or args.stop_existing:
-            raise ValueError('SSH、站点配置、relay 和 --stop-existing 仅用于 --mode remote')
+            raise ValueError('SSH, site configuration, relay, and --stop-existing require --mode remote')
         for name in ('robotwin_root','resources','output','gpu'):
-            if getattr(args,name) is None:raise ValueError('local 必须显式传入 --'+name.replace('_','-'))
+            if getattr(args,name) is None:raise ValueError('local requires an explicit --'+name.replace('_','-'))
         if args.stream_python and Path(args.stream_python).resolve()!=Path(sys.executable).resolve():
             # Select an already installed interpreter, without mutating environments.
             argv=sys.argv[1:]

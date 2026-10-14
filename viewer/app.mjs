@@ -60,7 +60,7 @@ function poseMatrix(nodeName,state=session.frame.values){
   if(!steps.length)return {matrix:rest.clone(),evaluation};
   const pivot=new T.Vector3(...steps[0].pivot),matrix=new T.Matrix4().makeTranslation(...pivot.toArray());
   for(const step of steps){
-    const p=new T.Vector3(...step.pivot);if(p.distanceTo(pivot)>1e-7)throw Error(`同一可见节点的关节 pivot 不一致：${nodeName}`);
+    const p=new T.Vector3(...step.pivot);if(p.distanceTo(pivot)>1e-7)throw Error(`Joint pivots differ for the same visible node: ${nodeName}`);
     const axis=new T.Vector3(...step.axis);
     matrix.multiply(step.type==='revolute'?new T.Matrix4().makeRotationAxis(axis,step.q):new T.Matrix4().makeTranslation(...axis.multiplyScalar(step.q).toArray()));
   }
@@ -90,7 +90,7 @@ renderer.domElement.addEventListener('pointerdown',event=>{
   if(!ready||event.button!==0)return;pointerRay(event);const hits=ray.intersectObjects([...parts.values()],true),hit=hits[0];if(!hit)return;
   selected=hit.object.userData.profileNode;const nodeRecord=profile.nodes.find(node=>node.source_node===selected),candidates=profile.joints.filter(joint=>joint.node===selected),selectedChannel=Number(el('channel').value);
   let joint=candidates.find(candidate=>jointChannels(candidate).includes(selectedChannel))??candidates.find(candidate=>jointChannels(candidate).length);
-  el('selection').textContent=JSON.stringify({node:nodeRecord,selected_joint:joint??null,parameter:joint?evidence.parameters[joint.parameter_ref]:null,warning:'运动学预览不是目标手柄的实测机械参数'},null,2);
+  el('selection').textContent=JSON.stringify({node:nodeRecord,selected_joint:joint??null,parameter:joint?evidence.parameters[joint.parameter_ref]:null,warning:'This kinematic preview does not provide measured mechanical parameters for the target controller'},null,2);
   if(session.mode!=='mouse'||!joint)return;
   const local=parts.get(selected).worldToLocal(hit.point.clone()),control=nodeRecord.control;
   if(el('drag2d').checked&&['left_stick','right_stick'].includes(control)){
@@ -109,10 +109,10 @@ renderer.domElement.addEventListener('pointermove',event=>{
   if(drag.kind==='two'){
     const state=Float32Array.from(session.frame.values),project=values=>{const trial=Float32Array.from(state);drag.channels.forEach((channel,index)=>trial[channel]=values[index]);return projectPickedPoint(drag.node,drag.local,trial);};
     const result=solveDrag2D(project,drag.channels.map(channel=>state[channel]),[event.clientX,event.clientY],{constrain:projectUnitDisk});drag.channels.forEach((channel,index)=>state[channel]=result.values[index]);updateMouseState(state);
-    status(`二维拖动投影误差 ${result.errorPx.toFixed(2)} px；${lastEvaluation.projections.length?'当前状态已投影到运动边界':'未触发边界投影'}`);return;
+    status(`2D drag projection error ${result.errorPx.toFixed(2)} px; ${lastEvaluation.projections.length?'Current state projected onto the motion boundary':'No boundary projection'}`);return;
   }
   const channel=drag.channel,[low,high]=profile.channels[channel].range,projection=oneAxisProjection(drag.node,drag.local,drag.base,channel),a=projection.low_screen,[dx,dy]=projection.screen_displacement_px,denominator=projection.denominator;
-  if(denominator<1e-5){status('当前视角下该运动在屏幕上的投影退化，请旋转视角。');return;}
+  if(denominator<1e-5){status('The screen projection of this motion is degenerate at the current view. Rotate the view.');return;}
   const t=Math.max(0,Math.min(1,((event.clientX-a[0])*dx+(event.clientY-a[1])*dy)/denominator)),state=Float32Array.from(drag.base);state[channel]=low+t*(high-low);updateMouseState(state);
 });
 function release(event){if(!drag||event.pointerId!==drag.pointer)return;const channels=drag.kind==='two'?drag.channels:[drag.channel];drag=null;orbit.enabled=true;if(!el('hold').checked){const state=Float32Array.from(session.frame.values);channels.forEach(channel=>state[channel]=0);updateMouseState(state);}}
@@ -125,29 +125,29 @@ for(const type of ['pointerdown','pointerup','pointercancel','pointerleave'])el(
 function formatValues(){
   if(!profile||!lastEvaluation)return '';
   const raw=session.frame.values,represented=lastEvaluation.represented,rows=displayNames.map((name,index)=>`${name.padEnd(7)} ${raw[index].toFixed(3).padStart(7)} ${represented[index].toFixed(3).padStart(7)}`);
-  const projected=lastEvaluation.projections.length?`\n边界投影：${lastEvaluation.projections.map(item=>item.constraint).join(', ')}`:'\n边界投影：无';
-  return `${session.mode} | valid=${session.frame.valid} | ${session.frame.reason??''}\n通道       原始输入  实际表示\n${rows.join('\n')}${projected}\nPair事件：${lastEvaluation.representedEvents.pair_bind_connect.toFixed(3)}`;
+  const projected=lastEvaluation.projections.length?`\nBoundary projection: ${lastEvaluation.projections.map(item=>item.constraint).join(', ')}`:'\nBoundary projection: none';
+  return `${session.mode} | valid=${session.frame.valid} | ${session.frame.reason??''}\nChannel    Raw input  Represented state\n${rows.join('\n')}${projected}\nPair event: ${lastEvaluation.representedEvents.pair_bind_connect.toFixed(3)}`;
 }
 function updateReadouts(){
   const valuesText=formatValues(),rawText=JSON.stringify(session.frame.raw??null,null,2);if(el('values').textContent!==valuesText)el('values').textContent=valuesText;if(el('raw').textContent!==rawText)el('raw').textContent=rawText;
 }
 
 async function load(){
-  const renderResponse=await fetch('/approved/approved_render.json');if(!renderResponse.ok)throw Error('无法读取用户确认的渲染方案');approvedRender=await renderResponse.json();
+  const renderResponse=await fetch('/approved/approved_render.json');if(!renderResponse.ok)throw Error('Cannot read the user-approved rendering configuration');approvedRender=await renderResponse.json();
   const [registryResponse,inventoryResponse]=await Promise.all([fetch('/registry/asset_index.json'),fetch('/assets/inventory.json')]);
-  if(!registryResponse.ok||!inventoryResponse.ok)throw Error('资产注册表或外部清单不可用');
+  if(!registryResponse.ok||!inventoryResponse.ok)throw Error('Asset registry or external inventory unavailable');
   const registry=await registryResponse.json();await inventoryResponse.json();activeVariantId=registry.interactive_viewer?.active_variant_id;
-  const variant=registry.derived_variants?.[activeVariantId],binding=variant?.viewer_profile;if(!binding)throw Error('当前 variant 没有 schema-2 viewer profile');
+  const variant=registry.derived_variants?.[activeVariantId],binding=variant?.viewer_profile;if(!binding)throw Error('Current variant has no schema-2 viewer profile');
   const profileResponse=await fetch(binding.route);if(!profileResponse.ok)throw Error(`viewer profile HTTP ${profileResponse.status}`);profile=await profileResponse.json();
-  const evidenceRelative=profile.parameter_source;if(!evidenceRelative.startsWith('/generated/'))throw Error('参数证据路径不安全');const evidenceResponse=await fetch(evidenceRelative);if(!evidenceResponse.ok)throw Error(`参数证据 HTTP ${evidenceResponse.status}`);evidence=await evidenceResponse.json();
-  const glbResponse=await fetch('/assets/'+encodeURIComponent(profile.visual.file));if(!glbResponse.ok)throw Error(`GLB HTTP ${glbResponse.status}`);const glbBytes=await glbResponse.arrayBuffer(),glbHash=await digest(glbBytes);if(glbHash!==profile.visual.sha256)throw Error('GLB 哈希不匹配');
+  const evidenceRelative=profile.parameter_source;if(!evidenceRelative.startsWith('/generated/'))throw Error('Unsafe parameter evidence path');const evidenceResponse=await fetch(evidenceRelative);if(!evidenceResponse.ok)throw Error(`Parameter evidence HTTP ${evidenceResponse.status}`);evidence=await evidenceResponse.json();
+  const glbResponse=await fetch('/assets/'+encodeURIComponent(profile.visual.file));if(!glbResponse.ok)throw Error(`GLB HTTP ${glbResponse.status}`);const glbBytes=await glbResponse.arrayBuffer(),glbHash=await digest(glbBytes);if(glbHash!==profile.visual.sha256)throw Error('GLB hash mismatch');
   const gltf=await new Promise((resolve,reject)=>new GLTFLoader().parse(glbBytes,'/assets/',resolve,reject));model=gltf.scene;model.rotation.x=profile.visual.gltf_to_viewer_rotation_x_rad;model.scale.setScalar(profile.visual.meters_per_native_unit);scene.add(model);model.updateMatrixWorld(true);
   // Reuse the original, previously audited material. Blender's static export
   // changed KHR_materials_specular from intensity-in-alpha to specular color.
   const sourceUrl='/source/xbox_one_s_controllergamepad_animated.glb';
   const sourceResponse=await fetch(sourceUrl);if(!sourceResponse.ok)throw Error(`Source GLB HTTP ${sourceResponse.status}`);
   const sourceBytes=await sourceResponse.arrayBuffer(),sourceHash=await digest(sourceBytes);
-  if(sourceHash!==profile.source_bindings.source_glb_sha256)throw Error('原始材质 GLB 哈希不匹配');
+  if(sourceHash!==profile.source_bindings.source_glb_sha256)throw Error('Original material GLB hash mismatch');
   const sourceGltf=await new GLTFLoader().parseAsync(sourceBytes,'/source/');
   const sourceMaterial=await sourceGltf.parser.getDependency('material',0);
   // Retain the source material metadata for inspection and picking. The visible
@@ -157,7 +157,7 @@ async function load(){
   for(const material of exportedMaterials)material.dispose();
   sourceGltf.scene.traverse(object=>{if(object.isMesh)object.geometry.dispose();});
   for(const record of profile.nodes){
-    const node=model.getObjectByName(record.source_node);if(!node)throw Error(`GLB 缺少节点：${record.source_node}`);node.updateMatrix();restMatrices.set(record.source_node,node.matrix.clone());node.matrixAutoUpdate=false;
+    const node=model.getObjectByName(record.source_node);if(!node)throw Error(`GLB missing node: ${record.source_node}`);node.updateMatrix();restMatrices.set(record.source_node,node.matrix.clone());node.matrixAutoUpdate=false;
     node.traverse(object=>{if(object.isMesh)object.userData.profileNode=record.source_node;});parts.set(record.source_node,node);
   }
   verifiedBindings={
@@ -169,7 +169,7 @@ async function load(){
   };
   validateProfile(profile,evidence,new Set(parts.keys()));ready=true;session.updateFromPartPose(neutralState(),performance.now(),configuredChannels(profile));applyPose();resetCamera();
   el('limits').textContent=JSON.stringify({acceptance:profile.acceptance,unknown_physical_parameters:evidence.unknown_physical_parameters,scale_fit:evidence.scale_fit},null,2);
-  status(`已核验 16 部件材质 GLB、schema-2 运动学配置和参数证据；variant=${activeVariantId}`);document.body.dataset.ready='true';document.body.dataset.variantId=activeVariantId;
+  status(`Verified 16-part material GLB, schema-2 kinematics configuration and parameter evidence; variant=${activeVariantId}`);document.body.dataset.ready='true';document.body.dataset.variantId=activeVariantId;
 }
 
 function valuesChanged(before,after){return before.length!==after.length||before.some((value,index)=>value!==after[index]);}

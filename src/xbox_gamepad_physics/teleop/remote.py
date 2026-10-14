@@ -24,14 +24,14 @@ if occupied():
     try:
         with opener.open(f'http://127.0.0.1:{port}/health',timeout=3) as r:h=json.load(r)
         assert isinstance(h.get('run'),str) and 'physics_alive' in h
-    except Exception as e:raise SystemExit(f'端口 {port} 已占用且无法确认遥操作会话；不关闭：{e}')
-    print(f'端口 {port} 已由会话 {h["run"]} 占用',flush=True)
-    if not stop:raise SystemExit('默认不关闭；确认后使用 --stop-existing')
+    except Exception as e:raise SystemExit(f'Port {port} is occupied by an unverified teleop session; refusing to stop it: {e}')
+    print(f'Port {port} is occupied by session {h["run"]}',flush=True)
+    if not stop:raise SystemExit('The default keeps the existing session running; use --stop-existing after confirming its identity')
     url=f'http://127.0.0.1:{port}/shutdown?'+urllib.parse.urlencode({'run':h['run']})
     opener.open(urllib.request.Request(url,method='POST'),timeout=5).close()
     deadline=time.monotonic()+40
     while occupied():
-        if time.monotonic()>deadline:raise SystemExit('旧会话未退出；不启动')
+        if time.monotonic()>deadline:raise SystemExit('The previous session has not exited; refusing to start')
         time.sleep(.25)
 '''
 
@@ -48,7 +48,7 @@ def run(args):
         v=getattr(args,name,None)
         if v is not None:return v
         v=cfg.get(key) if key else None
-        if v and ('<' in v or '>' in v):raise ValueError('请填写 '+key)
+        if v and ('<' in v or '>' in v):raise ValueError('Please provide '+key)
         return v if v not in (None,'') else default
     robotwin=value('robotwin_root','TELEOP_ROBOTWIN_ROOT')
     resources=value('resources','TELEOP_RESOURCE_ROOT')
@@ -56,12 +56,12 @@ def run(args):
     output=value('output')
     if output is None and cfg.get('TELEOP_REMOTE_ROOT'):
         name=os.environ.get('TELEOP_RUN_NAME') or time.strftime('live-%Y%m%d-%H%M%S')
-        if not name or any(c not in 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-' for c in name):raise ValueError('会话名称无效')
+        if not name or any(c not in 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-' for c in name):raise ValueError('Invalid session name')
         output=cfg['TELEOP_REMOTE_ROOT'].rstrip('/')+'/'+name
     remote_python=value('remote_python','TELEOP_STREAM_PYTHON')
     simulation_python=value('simulation_python','TELEOP_BASE_PYTHON',remote_python)
     for name,v in [('robotwin-root',robotwin),('resources',resources),('gpu',gpu),('output',output),('remote-python',remote_python)]:
-        if v is None:raise ValueError('remote 必须提供 --'+name+' 或显式 --site 配置')
+        if v is None:raise ValueError('remote requires --'+name+' or an explicit --site configuration')
     port=int(value('port','TELEOP_REMOTE_PORT',8775));local_port=int(value('local_port','TELEOP_LOCAL_PORT',cfg.get('TELEOP_WSL_PORT',port)))
     windows=(args.windows_relay or bool(args.site and cfg.get('TELEOP_WSL_INTERFACE'))) and not getattr(args,'skip_windows_relay',False)
     relay_port=int(value('relay_port','TELEOP_PORT',local_port))
@@ -69,7 +69,7 @@ def run(args):
     interval,count=tunnel_keepalive(timeout)
     alias=args.ssh or cfg.get('TELEOP_SSH_ALIAS')
     destination=alias or (cfg.get('TELEOP_SSH_USER','')+'@'+cfg.get('TELEOP_GPU_HOST',''))
-    if not destination or destination=='@' or '<' in destination:raise ValueError('remote 必须提供 --ssh alias 或完整站点 SSH 配置')
+    if not destination or destination=='@' or '<' in destination:raise ValueError('remote requires --ssh alias or a complete site SSH configuration')
     identity=value('identity','TELEOP_SSH_IDENTITY');ssh_port=value('ssh_port','TELEOP_SSH_PORT')
     ssh=['ssh','-o','BatchMode=yes','-o','ExitOnForwardFailure=yes']
     if identity:ssh+=['-i',str(Path(identity).expanduser()),'-o','IdentitiesOnly=yes','-o','PasswordAuthentication=no','-o','KbdInteractiveAuthentication=no','-o','PreferredAuthentications=publickey']
@@ -106,7 +106,7 @@ def run(args):
                '--run',str(output),'--',*command]
         response=subprocess.run([*transport,shlex.join(start)],capture_output=True,text=True,timeout=20)
         if response.returncode:
-            raise RuntimeError('远端启动失败：'+response.stdout+response.stderr)
+            raise RuntimeError('Remote startup failed: '+response.stdout+response.stderr)
         started=json.loads(response.stdout)
         if started['run']!=run_name:raise RuntimeError('remote launch returned a different run')
         launched=True
@@ -124,7 +124,7 @@ def run(args):
         processes.append(tunnel);writer=fifo.open('w')
         if windows:
             interface=value('wsl_interface','TELEOP_WSL_INTERFACE')
-            if not interface:raise ValueError('Windows relay 需要 --wsl-interface')
+            if not interface:raise ValueError('Windows relay requires --wsl-interface')
             rows=subprocess.check_output(['ip','-4','-o','address','show','dev',interface],text=True).split()
             address=rows[rows.index('inet')+1].split('/')[0]
             script=subprocess.check_output(['wslpath','-w',str(Path(__file__).with_name('windows_relay.ps1'))],text=True).strip()
@@ -137,15 +137,15 @@ def run(args):
         deadline=time.monotonic()+120
         while True:
             if any(proc.poll() is not None for proc in processes):
-                lost_transport=True;raise RuntimeError('隧道或 relay 提前退出；查看 '+str(logroot))
+                lost_transport=True;raise RuntimeError('Tunnel or relay exited early; see '+str(logroot))
             try:
                 status=health()
                 if status.get('ready') and status.get('run')==run_name:break
             except OSError:pass
-            if time.monotonic()>deadline:raise TimeoutError('远端 health 未在120秒内就绪；查看 '+str(logroot))
+            if time.monotonic()>deadline:raise TimeoutError('Remote health was not ready within 120 seconds; see '+str(logroot))
             time.sleep(.2)
         browser_url=f'http://localhost:{relay_port}/' if windows else url
-        print(('Windows 浏览器打开 ' if windows else 'Teleop remote ready ')+browser_url+' （Ctrl+C 停止本次会话）',flush=True)
+        print(('Open in the Windows browser ' if windows else 'Teleop remote ready ')+browser_url+' (Ctrl+C stops this session)',flush=True)
         if args.open_browser:
             import webbrowser
             webbrowser.open(browser_url)
@@ -180,12 +180,12 @@ def run(args):
                     (logroot/(run_name+'-cleanup.json')).write_text(json.dumps(status,indent=2)+'\n')
                     print('remote cleanup '+json.dumps(status),flush=True)
                     if status.get('forced_cleanup'):
-                        print('本会话未自行退出，已按已记录的进程身份清理。',file=sys.stderr)
+                        print('This session did not exit on its own; cleaned up using the recorded process identity.',file=sys.stderr)
                         return_code=2
                 if response.returncode:
-                    print('远端 shutdown/清理失败（非零或非200）：'+response.stdout+response.stderr,file=sys.stderr)
+                    print('Remote shutdown/cleanup failed (nonzero exit or non-200 response): '+response.stdout+response.stderr,file=sys.stderr)
                     return_code=2
             except (OSError,subprocess.TimeoutExpired,ValueError) as error:
-                print('无法确认远端会话已退出：'+str(error),file=sys.stderr)
+                print('Unable to confirm that the remote session has exited: '+str(error),file=sys.stderr)
                 return_code=2
     return return_code

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -15,20 +15,20 @@
 <body>
     <header>
         <div>
-            <h1>左摇杆信号映射</h1>
-            <div class="subtitle">机械关节运动与标准虚拟手柄输出同步显示</div>
+            <h1>Left stick signal mapping</h1>
+            <div class="subtitle">Synchronized mechanical joint motion and standard virtual gamepad output</div>
         </div>
         <div class="pipeline">qpos [rad] → GamepadSignalController → sdl3-gamepad-core-v1</div>
     </header>
     <main>
         <section class="card overlay-card">
-            <div class="active-key">黄色表示当前激活</div>
+            <div class="active-key">Yellow indicates active controls</div>
             <svg id="overlayRoot" aria-label="Virtual Xbox gamepad overlay"></svg>
         </section>
         <aside class="card telemetry">
-            <h2>当前帧</h2>
+            <h2>Current frame</h2>
             <div class="rows">
-                <div class="row"><span class="label">角度 θ</span><span class="value" id="theta">–</span></div>
+                <div class="row"><span class="label">Angle θ</span><span class="value" id="theta">–</span></div>
                 <div class="row"><span class="label">left_stick_x</span><span class="value" id="qx">–</span></div>
                 <div class="row"><span class="label">left_stick_y</span><span class="value" id="qy">–</span></div>
                 <div class="row"><span class="label">left_x</span><span class="value" id="leftX">0.0000</span></div>
@@ -39,7 +39,7 @@
         </aside>
     </main>
     <footer>
-        <span>阶段：<span class="phase" id="phase">initializing</span></span>
+        <span>Phase: <span class="phase" id="phase">initializing</span></span>
         <span>frame <span id="frameIndex">–</span> · Xbox One S · device_id=1</span>
     </footer>
     <script type="module">

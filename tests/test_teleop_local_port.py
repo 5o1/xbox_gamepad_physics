@@ -14,8 +14,8 @@ class LocalPortTest(unittest.TestCase):
             listener.bind(('127.0.0.1',0));listener.listen();port=listener.getsockname()[1]
             owners=local_port_owners(port)
             self.assertTrue(any(o['pid']==os.getpid() and o['command'] and o['started'] for o in owners))
-            with self.assertRaisesRegex(ValueError,'默认不结束'):check_local_port(port,CFG,emit=lambda _:None)
-            with self.assertRaisesRegex(ValueError,'非项目隧道'):check_local_port(port,CFG,True,emit=lambda _:None)
+            with self.assertRaisesRegex(ValueError,'default keeps'):check_local_port(port,CFG,emit=lambda _:None)
+            with self.assertRaisesRegex(ValueError,'non-project tunnel'):check_local_port(port,CFG,True,emit=lambda _:None)
             self.assertTrue(local_port_owners(port))
         self.assertEqual(check_local_port(port,CFG,emit=lambda _:None),[])
 

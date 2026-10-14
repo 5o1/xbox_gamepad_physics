@@ -25,8 +25,8 @@ stream:
     # Live-only parking pose: front points toward the tabletop, clear of it.
     initial_pose: [0.10, 0, 0.20, 0.7071067811865476, 0, 0.7071067811865476, 0]
 teleop:
-  parameter_status: '测试值，不是实物参数'
-  robotwin_root: null  # local 必须显式传 --robotwin-root；remote 可由显式站点配置提供。
+  parameter_status: 'Test values, not measured hardware parameters'
+  robotwin_root: null  # local requires an explicit --robotwin-root; remote may use an explicit site configuration.
   initial_pose: [0, 0, 0.04, 1, 0, 0, 0]
   initial_opening_m: 0.02
   ghost_minimum_seconds: 0.5
@@ -46,22 +46,22 @@ teleop:
     damping_nms_rad: 0.05
     torque_limit_nm: 0.3
   finger_drive:
-    # 测试值，数值界限：每步位移不超过 contact_offset；不是实物参数；负责人决定，2026-10-14
+    # Test value with a numerical bound: displacement per step must not exceed contact_offset; not a hardware parameter; project owner decision, 2026-10-14
     speed_m_s: 0.05
-    # 裁定 3：测试值，非实物参数。运动用纯速度驱动，不积累位置弹簧误差。
+    # Ruling 3: test values, not hardware parameters. Motion uses a pure velocity drive without accumulating position spring error.
     motion_stiffness_n_m: 0.0
-    motion_damping_ns_m: 160.0  # 8 N / 0.05 m/s；堵转时达到原 8 N 上限。
-    # 到达命令目标的一步行程范围内，切换为原位置保持参数。
+    motion_damping_ns_m: 160.0  # 8 N / 0.05 m/s; reaches the original 8 N limit when stalled.
+    # Switch to the original position-hold parameters within one step of travel from the command target.
     stiffness_n_m: 1800.0
     damping_ns_m: 12.0
     force_limit_n: 8.0
   input:
     frame: world  # Command vectors after camera-to-world conversion; replay contract.
-    # 测试值，非实物参数。Schema 4 held keys integrate velocity every physics step.
+    # Test values, not hardware parameters. Schema 4 held keys integrate velocity every physics step.
     velocity:
       coarse: {translation_m_s: 0.1, rotation_degrees_s: 100.0}
       fine: {translation_m_s: 0.02, rotation_degrees_s: 20.0}
-    # 测试值，非实物参数。GPU free-space steady maxima: 1.574335 mm / 1.791205 deg.
+    # Test values, not hardware parameters. GPU free-space steady maxima: 1.574335 mm / 1.791205 deg.
     # Limits = max(10 mm, 3*position error), max(5 deg, 3*angle error), 2026-10-14.
     traction: {translation_limit_m: 0.01, rotation_limit_degrees: 5.373614426539382}
     fine: {translation_m: 0.001, rotation_degrees: 1.0, opening_m: 0.001}

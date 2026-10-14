@@ -165,7 +165,7 @@ def analyze_along_command(replay, prior_safety, output):
                         result['reverse_without_direct_contact_steps'] += not sample['contacts']
                         if result['maximum_reverse_motion'] is None or along < result['maximum_reverse_motion']['v_along_m_s']:
                             result['maximum_reverse_motion'] = sample
-                        reverse.write(json.dumps({'classification': '外力压过驱动的被动运动（裁定6分类）',
+                        reverse.write(json.dumps({'classification': 'Passive motion caused by external force overpowering the drive (ruling 6 classification)',
                                                   'sample': sample, 'all_recorded_contacts': row['contacts']}, allow_nan=False)+'\n')
     rows.close()
     result['passed'] = (result['carried_drive_readback_passed'] and prior['all_finite']

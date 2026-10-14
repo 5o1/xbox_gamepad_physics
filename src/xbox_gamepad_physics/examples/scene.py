@@ -13,7 +13,7 @@ def require_sapien():
     except ModuleNotFoundError as error:
         if error.name != "sapien":
             raise
-        raise MissingBackendDependencyError("此 example 需要 SAPIEN 3.0.3；请安装 wheel 的 [robotwin] extra。") from error
+        raise MissingBackendDependencyError("This example requires SAPIEN 3.0.3; install the wheel with the [robotwin] extra.") from error
     return sapien
 
 

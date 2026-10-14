@@ -25,5 +25,5 @@ class SiteTest(unittest.TestCase):
 
     def test_local_file_is_ignored(self):
         if not (ROOT / '.git').exists():
-            self.skipTest('运行镜像不含Git元数据；ignore规则在本地checkout验证')
+            self.skipTest('The runtime image lacks Git metadata; verify ignore rules in a local checkout')
         self.assertEqual(subprocess.call(['git','check-ignore','-q','configs/local/teleop_site.env'],cwd=ROOT),0)

@@ -91,7 +91,7 @@ class MuBlEPoseExportUnitTest(unittest.TestCase):
         )
 
 
-@unittest.skip("MuJoCo 不在 v0.3.0 发布范围内；MuBlE 真实 MuJoCo 集成随之跳过")
+@unittest.skip("MuJoCo is outside the v0.3.0 release scope; real MuBlE/MuJoCo integration is therefore skipped")
 class MuBlEPoseExportTest(unittest.TestCase):
     def test_public_mujoco_handle_exports_muble_trace(self):
         from xbox_gamepad_physics.mujoco import load_scene

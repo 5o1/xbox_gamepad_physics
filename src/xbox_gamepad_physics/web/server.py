@@ -153,10 +153,10 @@ class Handler(SimpleHTTPRequestHandler):
                 and not Path(self.translate_path(self.path)).is_file()):
             # Keep the image slot usable even when this optional input is absent.
             image = ('<svg xmlns="http://www.w3.org/2000/svg" width="600" height="340" '
-                     'viewBox="0 0 600 340" role="img" aria-label="缺少输入资源">'
+                     'viewBox="0 0 600 340" role="img" aria-label="Missing input resources">'
                      '<rect width="600" height="340" fill="#252b34"/>'
                      '<text x="300" y="170" text-anchor="middle" fill="#f5c97b" '
-                     'font-family="sans-serif" font-size="28">缺少输入资源</text></svg>').encode("utf-8")
+                     'font-family="sans-serif" font-size="28">Missing input resources</text></svg>').encode("utf-8")
             self.send_response(200)
             self.send_header("Content-Type", "image/svg+xml; charset=utf-8")
             self.send_header("Content-Length", str(len(image)))
@@ -276,7 +276,7 @@ def add_viewer_arguments(parser):
     parser.add_argument("--offline", action="store_true")
     parser.add_argument("--blender", help="Blender 4.5 executable; absent worker reports HTTP503")
     parser.add_argument("--port", type=int, default=8766)
-    parser.add_argument("--gpu", type=int, default=0, help="调用者可见设备中的序号，默认0")
+    parser.add_argument("--gpu", type=int, default=0, help="Index among devices visible to the caller (default: 0)")
 
 
 def viewer_command(args):

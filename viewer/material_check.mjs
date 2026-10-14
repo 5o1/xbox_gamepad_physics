@@ -36,6 +36,6 @@ try{
  window.setDepthDiagnostic=enabled=>{gltf.scene.traverse(o=>{if(o.isMesh)o.material.depthWrite=enabled;});};
  window.materialAudit={checks,records,threeRevision:T.REVISION,environment:'RoomEnvironment',toneMapping:'ACESFilmic',geometryAndMaterialsModified:false};
  document.querySelector('#audit').textContent=JSON.stringify(window.materialAudit,null,2);
- status.textContent='已核对 16 个网格：底色、法线、金属度、粗糙度、AO、高光强度及发光贴图均接入。';document.body.dataset.ready='true';
+ status.textContent='Verified 16 meshes: base color, normal, metallic, roughness, AO, specular intensity and emissive textures are connected.';document.body.dataset.ready='true';
 }catch(error){status.textContent=String(error);document.body.dataset.error=String(error);throw error;}
 renderer.setAnimationLoop(()=>{orbit.update();renderer.render(scene,camera);});

@@ -4,7 +4,7 @@ scene:
   timestep: 0.004166666666666667
   ground: false
   render: true
-  robotwin_root: null # 原生 SAPIEN example 不需要 RoboTwin 根；平台集成时可显式指定
+  robotwin_root: null # Native SAPIEN examples do not require a RoboTwin root; platform integrations may specify one explicitly
 gamepad:
   fixed_root: true
   attach_visual: true

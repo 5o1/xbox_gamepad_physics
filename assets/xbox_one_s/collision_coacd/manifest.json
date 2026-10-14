@@ -31,7 +31,7 @@
     "threads": 1
   },
   "collision_policy": {
-    "method": "\u5148\u4fee\u6210\u95ed\u5408\u7684 meshbase\uff0c\u518d\u6309\u7ec4\u4ef6\u3001\u6309\u58f3\u505a CoACD\uff1b\u9ed8\u8ba4 CoACD \u66ff\u6362\u57fa\u672c\u4f53\uff0cSDF \u4f5c\u4e3a\u52a0\u8f7d\u9009\u9879",
+    "method": "Repair the meshbase into closed shells, then apply CoACD per component and per shell; CoACD replaces primitives by default, with SDF available as a loading option",
     "coordinate_frame": "simulation (x,-z,y), Z up; metres; meshbase already converted",
     "coacd": {
       "version": "1.0.14",
@@ -64,8 +64,8 @@
       "spacing_m": 0.001,
       "min_sapien": "3.0.3",
       "limitations": [
-        "\u4e0d\u80fd\u4e0e add_ground \u5e73\u9762\u78b0\u649e",
-        "\u4e0d\u80fd\u4e0e\u53e6\u4e00\u4e2a SDF \u7269\u4f53\u78b0\u649e"
+        "Cannot collide with an add_ground plane",
+        "Cannot collide with another SDF object"
       ]
     },
     "sources": [
@@ -105,28 +105,28 @@
         "outward_p95_mm": null,
         "inward_max_mm": null,
         "inward_p95_mm": null,
-        "note": "\u672a\u6d4b\uff0c\u7ed3\u6784\u4e0e\u5df2\u6d4b\u540c\u7c7b\u7ec4\u4ef6\u76f8\u540c"
+        "note": "Unmeasured; structure matches measured components of the same type"
       },
       "left_shoulder": {
         "outward_max_mm": null,
         "outward_p95_mm": null,
         "inward_max_mm": null,
         "inward_p95_mm": null,
-        "note": "\u672a\u6d4b\uff0c\u7ed3\u6784\u4e0e\u5df2\u6d4b\u540c\u7c7b\u7ec4\u4ef6\u76f8\u540c"
+        "note": "Unmeasured; structure matches measured components of the same type"
       },
       "right_shoulder": {
         "outward_max_mm": null,
         "outward_p95_mm": null,
         "inward_max_mm": null,
         "inward_p95_mm": null,
-        "note": "\u672a\u6d4b\uff0c\u7ed3\u6784\u4e0e\u5df2\u6d4b\u540c\u7c7b\u7ec4\u4ef6\u76f8\u540c"
+        "note": "Unmeasured; structure matches measured components of the same type"
       },
       "pair": {
         "outward_max_mm": null,
         "outward_p95_mm": null,
         "inward_max_mm": null,
         "inward_p95_mm": null,
-        "note": "\u672a\u6d4b\uff0c\u7ed3\u6784\u4e0e\u5df2\u6d4b\u540c\u7c7b\u7ec4\u4ef6\u76f8\u540c"
+        "note": "Unmeasured; structure matches measured components of the same type"
       },
       "dpad": {
         "outward_max_mm": 0.09755073743423565,
@@ -140,14 +140,14 @@
         "outward_p95_mm": null,
         "inward_max_mm": null,
         "inward_p95_mm": null,
-        "note": "\u672a\u6d4b\uff0c\u7ed3\u6784\u4e0e\u5df2\u6d4b\u540c\u7c7b\u7ec4\u4ef6\u76f8\u540c"
+        "note": "Unmeasured; structure matches measured components of the same type"
       },
       "menu": {
         "outward_max_mm": null,
         "outward_p95_mm": null,
         "inward_max_mm": null,
         "inward_p95_mm": null,
-        "note": "\u672a\u6d4b\uff0c\u7ed3\u6784\u4e0e\u5df2\u6d4b\u540c\u7c7b\u7ec4\u4ef6\u76f8\u540c"
+        "note": "Unmeasured; structure matches measured components of the same type"
       },
       "left_stick": [
         {
@@ -170,7 +170,7 @@
         "outward_p95_mm": null,
         "inward_max_mm": null,
         "inward_p95_mm": null,
-        "note": "\u672a\u6d4b\uff0c\u7ed3\u6784\u4e0e\u5df2\u6d4b\u540c\u7c7b\u7ec4\u4ef6\u76f8\u540c"
+        "note": "Unmeasured; structure matches measured components of the same type"
       },
       "left_trigger": {
         "outward_max_mm": 0.7010723115477656,
@@ -184,35 +184,35 @@
         "outward_p95_mm": null,
         "inward_max_mm": null,
         "inward_p95_mm": null,
-        "note": "\u672a\u6d4b\uff0c\u7ed3\u6784\u4e0e\u5df2\u6d4b\u540c\u7c7b\u7ec4\u4ef6\u76f8\u540c"
+        "note": "Unmeasured; structure matches measured components of the same type"
       },
       "x": {
         "outward_max_mm": null,
         "outward_p95_mm": null,
         "inward_max_mm": null,
         "inward_p95_mm": null,
-        "note": "\u672a\u6d4b\uff0c\u7ed3\u6784\u4e0e\u5df2\u6d4b\u540c\u7c7b\u7ec4\u4ef6\u76f8\u540c"
+        "note": "Unmeasured; structure matches measured components of the same type"
       },
       "guide": {
         "outward_max_mm": null,
         "outward_p95_mm": null,
         "inward_max_mm": null,
         "inward_p95_mm": null,
-        "note": "\u672a\u6d4b\uff0c\u7ed3\u6784\u4e0e\u5df2\u6d4b\u540c\u7c7b\u7ec4\u4ef6\u76f8\u540c"
+        "note": "Unmeasured; structure matches measured components of the same type"
       },
       "y": {
         "outward_max_mm": null,
         "outward_p95_mm": null,
         "inward_max_mm": null,
         "inward_p95_mm": null,
-        "note": "\u672a\u6d4b\uff0c\u7ed3\u6784\u4e0e\u5df2\u6d4b\u540c\u7c7b\u7ec4\u4ef6\u76f8\u540c"
+        "note": "Unmeasured; structure matches measured components of the same type"
       }
     },
     "uncertainty_applicability": "Stage A sampled distances relative to meshbase, not a mechanical replica or hardware clearance measurement; repaired shell uses its rerun.",
     "accepted_known_error": {
       "decision_date": "2026-10-11",
       "decision_by": "owner",
-      "description": "\u5341\u5b57\u952e\u3001\u6447\u6746\u5b54\u53e3\u53ef\u89e6\u533a\u57df\u7ea6 1\u20131.5 mm \u5916\u80c0\u6682\u65f6\u63a5\u53d7\uff1b\u4ee5\u540e\u4eff\u771f\u5b9e\u9a8c\u786e\u8ba4\u5f71\u54cd\u7ed3\u679c\u518d\u4fee"
+      "description": "Approximately 1–1.5 mm of outward expansion in the touchable D-pad and stick-opening regions is provisionally accepted; revise after simulation experiments establish its effect on results"
     },
     "internal_filter": {
       "g0_g1": "preserve existing",

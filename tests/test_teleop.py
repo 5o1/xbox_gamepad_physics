@@ -77,7 +77,7 @@ class CommandConfigTest(unittest.TestCase):
         self.assertIn(cfg["experiment"], EXPERIMENTS)
         self.assertEqual(cfg["gamepad"]["collision"], "sdf")
         self.assertFalse(cfg["scene"]["render"])
-        self.assertIn("测试值", cfg["teleop"]["parameter_status"])
+        self.assertIn("Test values", cfg["teleop"]["parameter_status"])
         for key in ("force_limit_n", "torque_limit_nm"):
             self.assertTrue(0 < cfg["teleop"]["root_drive"][key] < math.inf)
         self.assertTrue(0 < cfg["teleop"]["finger_drive"]["force_limit_n"] < math.inf)

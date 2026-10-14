@@ -8,7 +8,7 @@ from xbox_gamepad_physics.errors import PhysicsNotReadyError
 
 
 def reject_release_backend() -> NoReturn:
-    raise PhysicsNotReadyError("MuJoCo 不在 v0.3.0 发布范围内")
+    raise PhysicsNotReadyError("MuJoCo is outside the v0.3.0 release scope")
 
 
 def require_mujoco() -> NoReturn:
