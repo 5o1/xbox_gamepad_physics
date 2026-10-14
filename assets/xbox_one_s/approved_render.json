@@ -2,22 +2,50 @@
   "user_selected_reference": "render/boiler_room_vertical_fov35_strength_1p0.png",
   "reference_sha256": "260187ba839674ce2ed49d5d37c3eeb5ca95206fccb7c13ce2655d7001204907",
   "packed_scene": "render/Xbox_One_S_approved_cycles.blend",
-  "packed_scene_sha256": "44fe631eb0ee395a70891ba6228bd9a6d4105343d97d263dfc416f2acf4ad8b0",
+  "packed_scene_sha256": "1ff81e02d4d41dc22e59f14b181d2119851e913c3c955628f74f3d2a0aaa210b",
   "source_scene_sha256": "8f517046e08da298a35fa2d42c803b09e88ede897afe07e982769b21c9f27432",
   "hdri_sha256": "8b4c9147603de5aa166046845104a019e339da9b450d54c8d9786ae5758e32f7",
   "renderer": "CYCLES",
   "environment": "Poly Haven Boiler Room",
   "environment_strength": 1.0,
   "camera": {
-    "position": [-0.037516698241233826, -0.5597505569458008, 4.206621170043945],
-    "target": [-0.037516698241233826, 0.24024944007396698, -0.2933788597583771],
+    "position": [
+      -0.037516698241233826,
+      -0.5597505569458008,
+      4.206621170043945
+    ],
+    "target": [
+      -0.037516698241233826,
+      0.24024944007396698,
+      -0.2933788597583771
+    ],
     "fov_degrees": 35,
     "sensor_fit": "VERTICAL"
   },
-  "color_management": {"view_transform": "Standard", "look": "None", "exposure": 0, "gamma": 1},
-  "camera_background_linear": [0.0111807, 0.0111807, 0.0111807],
+  "color_management": {
+    "view_transform": "Standard",
+    "look": "None",
+    "exposure": 0,
+    "gamma": 1
+  },
+  "camera_background_linear": [
+    0.0111807,
+    0.0111807,
+    0.0111807
+  ],
   "samples": 64,
   "denoising": true,
-  "resolution": [1600, 900],
-  "recipe": "scripts/render_reference_matched_probe.py; original recipe recorded in commit f44da6c; select Boiler Room strength 1.0 only"
+  "resolution": [
+    1600,
+    900
+  ],
+  "recipe": "scripts/render_reference_matched_probe.py; original recipe recorded in commit f44da6c; select Boiler Room strength 1.0 only",
+  "prior_packed_scene_sha256": "44fe631eb0ee395a70891ba6228bd9a6d4105343d97d263dfc416f2acf4ad8b0",
+  "reference_file_sha256": "a40450fff362093a691fc8d065a46edd2dcdc09f0a6952f1da9431edf981ed60",
+  "privacy_revision": {
+    "date": "2026-10-14",
+    "reference_sha256_role": "Historical approved PNG identity before private text-metadata removal; retained as scene approval binding. reference_file_sha256 identifies the current pixel-identical PNG.",
+    "changes": "Only four path metadata fields cleaned, including stale bytes after string terminators; all mesh/UV/topology and packed image bytes unchanged.",
+    "validation": "Ruling 4: five fresh interleaved renders per file; 10 old-old and 25 new-old comparisons pass level, median-ratio and heatmap criteria."
+  }
 }
