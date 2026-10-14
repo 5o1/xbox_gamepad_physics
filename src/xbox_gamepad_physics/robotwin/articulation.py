@@ -11,9 +11,9 @@ from dataclasses import dataclass
 import math
 from typing import Any, Iterable, Mapping
 
-from .errors import JointConfigurationError
+from .errors import JointConfigurationError, SceneCompatibilityError
 from xbox_gamepad_physics.controller import GamepadSignalController
-from xbox_gamepad_physics.state import GamepadState
+from xbox_gamepad_physics.state import GamepadState, XBOX_ONE_S_CHANNELS
 
 
 def joint_name(joint: Any) -> str:
@@ -54,8 +54,11 @@ class XboxOneSArticulation:
         articulation: Any,
         expected_joint_names: Iterable[str],
         signal_controller: GamepadSignalController,
+        *,
+        scene: Any = None,
     ):
         self._articulation = articulation
+        self._scene = scene
         get_active_joints = getattr(articulation, "get_active_joints", None)
         if not callable(get_active_joints):
             raise JointConfigurationError(
@@ -107,6 +110,74 @@ class XboxOneSArticulation:
         """Underlying SAPIEN object for scene-level operations."""
 
         return self._articulation
+
+    @property
+    def root_fixed(self) -> bool:
+        """Whether the existing articulation root is fixed (read-only)."""
+        kind = self._articulation.root.joint.type
+        # SAPIEN 3.0.3 reads the free root's eUNDEFINED as "undefined";
+        # its setter accepts "free". Keep the established setter spelling.
+        if kind not in ("fixed", "free", "undefined"):
+            raise SceneCompatibilityError(f"unsupported root joint type {kind!r}")
+        return kind == "fixed"
+
+    def set_root_fixed(self, fixed: bool) -> dict[str, Any] | None:
+        """Fix/release this articulation between two completed ``scene.step()`` calls.
+
+        CPU PhysX only; SAPIEN ``PhysxGpuSystem`` (including batched physics)
+        raises SceneCompatibilityError before changing anything. GPU rendering
+        with CPU physics is supported. Do not call concurrently with a step.
+
+        Pose, joint positions/velocities and drive targets are retained. Fixing
+        sets PhysX eFIX_BASE: the solver uses zero base velocity on the next
+        step; the immediate velocity getter may still contain the old value.
+        Releasing explicitly zeros root linear/angular velocity before waking
+        the root. This preserves the existing teleop/replay operation order.
+
+        Return None without writes/wake-up when already in the requested state.
+        Otherwise return the legacy teleop record: from/to roles (moving/fixed),
+        pre-switch pose [x,y,z,qw,qx,qy,qz], named joint_positions, drive_targets,
+        and after-minus-before signal_delta for all canonical channels.
+        See docs/robotwin_backend.md for upstream evidence and the known tilt
+        stick deflection. ``fixed_root`` at load time remains the initial state.
+        """
+        if type(fixed) is not bool:
+            raise TypeError("fixed must be bool")
+        was_fixed = self.root_fixed
+        if fixed == was_fixed:
+            return None
+        from sapien.physx import PhysxGpuSystem
+
+        art = self._articulation
+        scene = self._scene if self._scene is not None else art.root.entity.scene
+        if isinstance(scene.physx_system, PhysxGpuSystem):
+            raise SceneCompatibilityError(
+                "set_root_fixed requires CPU PhysX; SAPIEN PhysxGpuSystem/batched "
+                "GPU physics cannot use this root velocity/transition API"
+            )
+        before = self.gamepad_state()
+        pose = art.get_root_pose()
+        record = {
+            "from": "fixed" if was_fixed else "moving",
+            "to": "fixed" if fixed else "moving",
+            "pose": [float(x) for x in (*pose.p, *pose.q)],
+            "joint_positions": self.joint_positions(),
+            "drive_targets": {
+                j.name: float(j.get_drive_target()[0]) for j in art.get_active_joints()
+            },
+        }
+        art.root.joint.type = "fixed" if fixed else "free"
+        if self.root_fixed != fixed:
+            raise SceneCompatibilityError("SAPIEN did not apply the requested root joint type")
+        if not fixed:
+            art.set_root_linear_velocity([0, 0, 0])
+            art.set_root_angular_velocity([0, 0, 0])
+        art.root.wake_up()
+        after = self.gamepad_state()
+        record["signal_delta"] = {
+            n: after.channel(n) - before.channel(n) for n in XBOX_ONE_S_CHANNELS
+        }
+        return record
 
     @property
     def joint_names(self) -> tuple[str, ...]:

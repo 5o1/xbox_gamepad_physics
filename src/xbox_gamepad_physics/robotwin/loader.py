@@ -305,11 +305,14 @@ def _configure_joints(
     dynamics: tuple[JointDynamics, ...],
     joint_motion: tuple[MotionJoint, ...],
     signal_controller: GamepadSignalController,
+    *,
+    scene: Any = None,
 ) -> XboxOneSArticulation:
     wrapper = XboxOneSArticulation(
         articulation,
         (configuration.name for configuration in dynamics),
         signal_controller,
+        scene=scene,
     )
     joints = {joint_name(joint): joint for joint in articulation.get_active_joints()}
     motion_by_name = {item.name: item for item in joint_motion}
@@ -477,4 +480,5 @@ def load_into_scene(
         description.joint_dynamics,
         description.joint_motion,
         description.signal_controller,
+        scene=resolved_scene,
     )
