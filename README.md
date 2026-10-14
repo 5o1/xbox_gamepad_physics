@@ -11,7 +11,7 @@ Keyboard and mouse teleoperation of a floating gripper interacting with the
 Xbox One S gamepad (v0.3.0, SDF + SAPIEN 3.0.3). Full Release video:
 [`xbox_teleop_demo_v0.3.0.mp4`](https://github.com/5o1/xbox_gamepad_physics/releases/download/v0.3.0/xbox_teleop_demo_v0.3.0.mp4).
 
-<!-- Inline player: drag the video below this line in the GitHub web editor -->
+https://github.com/user-attachments/assets/437b2daa-8db3-4d99-9adf-82efef8c7dae
 
 ## Features
 
