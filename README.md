@@ -11,6 +11,13 @@ RoboTwin完整控件默认使用 **SDF碰撞体、SAPIEN 3.0.3**；v0.3.0 使用
 CoACD仍可显式选择`collision="coacd"`，包括旧3.0.0b1环境；默认SDF在低版本会明确报错。
 SDF手柄的支撑桌面使用静态盒子，不能使用`add_ground`平面。
 
+## 演示
+
+键鼠遥操作悬浮夹爪、操作 Xbox One S 手柄（v0.3.0，SDF + SAPIEN 3.0.3）。完整视频见 Release 附件
+[`xbox_teleop_demo_v0.3.0.mp4`](https://github.com/5o1/xbox_gamepad_physics/releases/download/v0.3.0/xbox_teleop_demo_v0.3.0.mp4)。
+
+<!-- 内嵌播放器：在 GitHub 网页编辑器中把视频拖到这一行下方 -->
+
 ## 当前状态
 
 运行状态以 [资产索引](assets/asset_index.json) 为准；README 只提供入口和边界说明。
