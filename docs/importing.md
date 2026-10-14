@@ -1,4 +1,4 @@
-# v0.3.0 安装与资源导入
+# v0.3 安装与资源导入
 
 首发支持 Linux x86_64 + NVIDIA、Python 3.10、RoboTwin fork + SAPIEN 3.0.3。
 Release 附件为 wheel、输入 zip 和 `SHA256SUMS`，不上 PyPI。自有代码为 MIT，资产沿用
@@ -13,9 +13,9 @@ v0.2.0 冻结 CoACD 凸包、批准的 Cycles 场景及所需文件，以及这�
 ## 安装与离线导入
 
 ```sh
-python3.10 -m pip install "./xbox_gamepad_physics-0.3.0-py3-none-any.whl[build,robotwin]"
+python3.10 -m pip install "./xbox_gamepad_physics-0.3.1-py3-none-any.whl[build,robotwin]"
 python3.10 -m xbox_gamepad_physics build-resources \
-  --archive ./xbox_gamepad_physics-resources-0.3.0.zip \
+  --archive ./xbox_gamepad_physics-resources-0.3.1.zip \
   --resources ./gamepad_resources --offline
 export XBOX_GAMEPAD_PHYSICS_RESOURCES="$PWD/gamepad_resources"
 python3.10 -m xbox_gamepad_physics status --backend robotwin
@@ -137,10 +137,10 @@ xbox-gamepad-physics install-robotwin \
 
 ## MuJoCo 历史基线
 
-MuJoCo 不在 v0.3.0 发布范围内。冻结树保留在 Git 原地供历史比对，不进运行时 DAG、
+MuJoCo 不在 v0.3 发布范围内。冻结树保留在 Git 原地供历史比对，不进运行时 DAG、
 wheel 资源数据或输入 zip，也不恢复其生成器。`status` / `verify --backend mujoco` 与
 MuJoCo 加载入口会明确提示此范围；相关运行时、资产与 MuBlE 真实集成测试注明原因后跳过。
-旧示例与历史实验记录保留，不作为 v0.3.0 安装或验收入口。
+旧示例与历史实验记录保留，不作为 v0.3 安装或验收入口。
 
 ## Backend manifest
 
@@ -180,7 +180,7 @@ RoboTwin ready profile 还需要逐关节 `joint_dynamics`。完整控件的 bac
 这些入口直接使用 wheel 内实现和静态模块，不需要本项目检出、CDN 或首次 npm 下载。
 
 ```sh
-python3.10 -m pip install "./xbox_gamepad_physics-0.3.0-py3-none-any.whl[example]"
+python3.10 -m pip install "./xbox_gamepad_physics-0.3.1-py3-none-any.whl[example]"
 xbox-gamepad-physics example export ./gamepad_example
 python3.10 ./gamepad_example/run_robotwin.py --help
 ```
@@ -225,8 +225,8 @@ overlay 默认打印带小型 canonical demo trace 的本地地址；demo 是合
 路径为 `assets/embodiments/aloha-agilex/urdf/arx5_description_isaac.urdf`；这些外部资产不放入本包的 zip。
 
 ```sh
-python3.10 -m pip install './xbox_gamepad_physics-0.3.0-py3-none-any.whl[robotwin,teleop]'
-xbox-gamepad-physics build-resources --archive ./xbox_gamepad_physics-resources-0.3.0.zip --resources ./gamepad_resources --offline
+python3.10 -m pip install './xbox_gamepad_physics-0.3.1-py3-none-any.whl[robotwin,teleop]'
+xbox-gamepad-physics build-resources --archive ./xbox_gamepad_physics-resources-0.3.1.zip --resources ./gamepad_resources --offline
 xbox-gamepad-physics teleop --robotwin-root /path/to/RoboTwin --gpu 0 --resources ./gamepad_resources --output ./teleop_session --port 8775
 ```
 

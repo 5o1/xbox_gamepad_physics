@@ -1,5 +1,5 @@
 """Historical MuJoCo API. Imports remain lazy; loading reports that
-MuJoCo is outside the v0.3.0 release scope. Frozen resources remain in Git only.
+MuJoCo is outside the v0.3 release scope. Frozen resources remain in Git only.
 """
 
 from .attach import CompiledAttachment, GamepadAttachment, attach_to_spec

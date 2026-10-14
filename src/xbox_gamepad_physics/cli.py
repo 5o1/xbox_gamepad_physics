@@ -19,7 +19,7 @@ _BACKENDS = ("robotwin", "mujoco")
 
 def _selected_backends(value: str) -> tuple[str, ...]:
     if value == "mujoco":
-        raise ResourceNotFoundError("MuJoCo is outside the v0.3.0 release scope")
+        raise ResourceNotFoundError("MuJoCo is outside the v0.3 release scope")
     return ("robotwin",) if value == "all" else (value,)
 
 

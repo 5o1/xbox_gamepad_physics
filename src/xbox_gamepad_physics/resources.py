@@ -301,7 +301,7 @@ def resource_path(
 
     safe_backend = _safe_component(backend, "backend")
     if safe_backend == "mujoco":
-        raise ResourceNotFoundError("MuJoCo is outside the v0.3.0 release scope")
+        raise ResourceNotFoundError("MuJoCo is outside the v0.3 release scope")
     safe_profile = _safe_component(profile, "profile")
     relative_parts = _safe_relative_parts(parts)
 

@@ -1,15 +1,15 @@
 # RoboTwin backend 接入
 
-## v0.3.0 安装与构建
+## v0.3 安装与构建
 
 首发面向 Linux x86_64 + NVIDIA、Python 3.10、RoboTwin fork + SAPIEN 3.0.3。
 从 Release 取得 wheel、输入 zip 和 `SHA256SUMS`，安装 wheel 的 `[build,robotwin]`
 依赖；不通过 PyPI 分发。
 
 ```sh
-python -m pip install "./xbox_gamepad_physics-0.3.0-py3-none-any.whl[build,robotwin]"
+python -m pip install "./xbox_gamepad_physics-0.3.1-py3-none-any.whl[build,robotwin]"
 python -m xbox_gamepad_physics build-resources \
-  --archive ./xbox_gamepad_physics-resources-0.3.0.zip \
+  --archive ./xbox_gamepad_physics-resources-0.3.1.zip \
   --resources ./gamepad_resources --offline
 export XBOX_GAMEPAD_PHYSICS_RESOURCES="$PWD/gamepad_resources"
 python -m xbox_gamepad_physics verify --backend robotwin --profile full_controls
@@ -21,7 +21,7 @@ v0.2.0 CoACD 和批准的 Cycles 场景及其必要归属。首次使用在用�
 第二次检查缓存，缺失或过期时只重建相关下游。环境变量目录同样执行 prepare。
 完整导入和维护者说明见 [`importing.md`](importing.md)。
 
-MuJoCo 不在 v0.3.0 发布范围内。B1+B2 验证资源构建；新 wheel 的真实 SAPIEN 加载、
+MuJoCo 不在 v0.3 发布范围内。B1+B2 验证资源构建；新 wheel 的真实 SAPIEN 加载、
 交互与原生渲染在 B4 的 GPU 环境单独验收。
 
 ## 接口边界
@@ -93,7 +93,7 @@ articulation；第二次 `setup_demo()` 会重建 scene/handle，并从中立手
 这些入口直接使用 wheel 内实现和静态模块，不需要本项目检出、CDN 或首次 npm 下载。
 
 ```sh
-python3.10 -m pip install "./xbox_gamepad_physics-0.3.0-py3-none-any.whl[example]"
+python3.10 -m pip install "./xbox_gamepad_physics-0.3.1-py3-none-any.whl[example]"
 xbox-gamepad-physics example export ./gamepad_example
 python3.10 ./gamepad_example/run_robotwin.py --help
 ```
@@ -138,8 +138,8 @@ overlay 默认打印带小型 canonical demo trace 的本地地址；demo 是合
 路径为 `assets/embodiments/aloha-agilex/urdf/arx5_description_isaac.urdf`；这些外部资产不放入本包的 zip。
 
 ```sh
-python3.10 -m pip install './xbox_gamepad_physics-0.3.0-py3-none-any.whl[robotwin,teleop]'
-xbox-gamepad-physics build-resources --archive ./xbox_gamepad_physics-resources-0.3.0.zip --resources ./gamepad_resources --offline
+python3.10 -m pip install './xbox_gamepad_physics-0.3.1-py3-none-any.whl[robotwin,teleop]'
+xbox-gamepad-physics build-resources --archive ./xbox_gamepad_physics-resources-0.3.1.zip --resources ./gamepad_resources --offline
 xbox-gamepad-physics teleop --robotwin-root /path/to/RoboTwin --gpu 0 --resources ./gamepad_resources --output ./teleop_session --port 8775
 ```
 

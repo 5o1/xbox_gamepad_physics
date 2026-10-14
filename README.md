@@ -24,7 +24,7 @@ Xbox One S gamepad (v0.3.0, SDF + SAPIEN 3.0.3). Full Release video:
 
 ## Requirements
 
-The v0.3.0 runtime targets Linux x86_64 with NVIDIA graphics, Python 3.10,
+The runtime targets Linux x86_64 with NVIDIA graphics, Python 3.10,
 the [RoboTwin fork](https://github.com/5o1/RoboTwin), and SAPIEN 3.0.3.
 Optional tools depend on the entry point:
 
@@ -41,13 +41,13 @@ provided separately.
 ## Install
 
 Download the wheel and resource zip from the
-[v0.3.0 Release](https://github.com/5o1/xbox_gamepad_physics/releases/tag/v0.3.0).
+[latest Release](https://github.com/5o1/xbox_gamepad_physics/releases/latest).
 The package is distributed through Release attachments rather than PyPI.
 
 ```sh
-python3.10 -m pip install "./xbox_gamepad_physics-0.3.0-py3-none-any.whl[build,robotwin]"
+python3.10 -m pip install "./xbox_gamepad_physics-0.3.1-py3-none-any.whl[build,robotwin]"
 python3.10 -m xbox_gamepad_physics build-resources \
-  --archive ./xbox_gamepad_physics-resources-0.3.0.zip \
+  --archive ./xbox_gamepad_physics-resources-0.3.1.zip \
   --resources ./gamepad_resources --offline
 export XBOX_GAMEPAD_PHYSICS_RESOURCES="$PWD/gamepad_resources"
 python3.10 -m xbox_gamepad_physics verify --backend robotwin --profile full_controls
@@ -158,7 +158,7 @@ boundary adapter. See [full controls](docs/full_controls.md) for the interface a
 - Freezing a tilted gamepad can produce stick signals of approximately 0.03.
 - SDF does not collide with `add_ground` planes or another SDF object; use a
   static box for the supporting table.
-- MuJoCo is outside the v0.3.0 release scope. Its frozen files are historical.
+- MuJoCo is outside the v0.3 release scope. Its frozen files are historical.
 
 Loading and signal round trips do not establish contact-physics readiness or RL
 results. See [release status and limitations](docs/plan.md) for the recorded scope.

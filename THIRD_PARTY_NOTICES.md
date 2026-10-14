@@ -25,7 +25,7 @@ PDFs and large intermediates remain outside this Git repository.
   `assets/xbox_one_s/collision_meshbase/` is a further derivative; its changes are
   listed in that directory's `README.md`. Superseded snapshots of it are kept unchanged
   in `assets/xbox_one_s/archive/` for provenance only; they are not in the release zip.
-- v0.3.0 input zip: contains only the approved Xbox One S source GLB, static
+- v0.3 input zip: contains only the approved Xbox One S source GLB, static
   visual snapshot, collision meshbase, frozen v0.2.0 CoACD hulls, approved Cycles
   scene and the provenance/license files needed for these inputs. Runtime
   kinematics, motion, sim_visual, URDF/manifests and SDF meshes are generated
