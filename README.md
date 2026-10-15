@@ -38,6 +38,46 @@ Node and Blender are not required for packaged local teleoperation. Python
 extras install Python dependencies; external tools and RoboTwin assets must be
 provided separately.
 
+## Backend and rendering support
+
+| Backend | Version | Raster | Ray tracing | Status⁶ |
+| --- | --- | --- | --- | --- |
+| SAPIEN | 3.0.3 | Yes¹ | Optional² | Ready |
+| Blender | 4.5.9 | — | Cycles³ | Reference |
+| MuJoCo | 3.16 | Yes⁴ | — | Not released |
+| Isaac Sim | — | Untested | Untested | In dev⁵ |
+
+¹ SAPIEN raster needs the frozen `visual_meshbase` face groups to display ABXY lettering. Use `load_into_scene`; direct mesh or URDF imports bypass material setup. SDF and CoACD are available; SDF requires SAPIEN 3.0.3 and a static box for support.
+
+² Ray tracing is optional. Enable OIDN denoising; firefly noise is a known issue. ABXY legends can look faint under ray tracing depending on view (most visibly A); raster shows them clearly. Review images use the existing review configuration, with 4 samples per pixel and path depth 8. Applying review rendering settings changes SAPIEN's global camera shader settings.
+
+³ Cycles uses the approved viewer scene, with 64 samples and denoising. It is an appearance reference.
+
+⁴ MuJoCo classic images are experimental, using `visual_meshbase` and constant alpha 64/255 for translucent groups. The experiment is not part of the release; its lighting and material support differ from the PBR renderers.
+
+⁵ Isaac Sim support is in development. No reference image is supplied.
+
+⁶ Appearance support does not establish contact, dynamics, or real-device validation. Reference images were rendered on 2026-10-16 with the v0.4.0 pipeline.
+
+<table>
+<tr>
+<td><a href="docs/media/backends/a_sapien_raster_full.webp"><img src="docs/media/backends/a_sapien_raster_full.webp" width="320" alt="SAPIEN raster full view"></a><br>SAPIEN · raster<br>Full · 2026-10-16</td>
+<td><a href="docs/media/backends/a_sapien_raster_abxy.webp"><img src="docs/media/backends/a_sapien_raster_abxy.webp" width="320" alt="SAPIEN raster ABXY close-up"></a><br>SAPIEN · raster<br>ABXY · 2026-10-16</td>
+</tr>
+<tr>
+<td><a href="docs/media/backends/b_sapien_rt_full.webp"><img src="docs/media/backends/b_sapien_rt_full.webp" width="320" alt="SAPIEN ray tracing full view"></a><br>SAPIEN · ray tracing (OIDN)<br>Full · 2026-10-16</td>
+<td><a href="docs/media/backends/b_sapien_rt_abxy.webp"><img src="docs/media/backends/b_sapien_rt_abxy.webp" width="320" alt="SAPIEN ray tracing ABXY close-up"></a><br>SAPIEN · ray tracing (OIDN)<br>ABXY · 2026-10-16</td>
+</tr>
+<tr>
+<td><a href="docs/media/backends/c_cycles_full.webp"><img src="docs/media/backends/c_cycles_full.webp" width="320" alt="Cycles reference full view"></a><br>Blender · Cycles<br>Full · 2026-10-16</td>
+<td><a href="docs/media/backends/c_cycles_abxy.webp"><img src="docs/media/backends/c_cycles_abxy.webp" width="320" alt="Cycles reference ABXY close-up"></a><br>Blender · Cycles<br>ABXY · 2026-10-16</td>
+</tr>
+<tr>
+<td><a href="docs/media/backends/d_mujoco_classic_full.webp"><img src="docs/media/backends/d_mujoco_classic_full.webp" width="320" alt="Experimental MuJoCo classic full view"></a><br>MuJoCo · classic<br>Full · 2026-10-16</td>
+<td><a href="docs/media/backends/d_mujoco_classic_abxy.webp"><img src="docs/media/backends/d_mujoco_classic_abxy.webp" width="320" alt="Experimental MuJoCo classic ABXY close-up"></a><br>MuJoCo · classic<br>ABXY · 2026-10-16</td>
+</tr>
+</table>
+
 ## Install
 
 Download the wheel and resource zip from the
