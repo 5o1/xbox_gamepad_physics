@@ -18,6 +18,8 @@ def input_files(root: Path = ROOT) -> list[tuple[Path,str]]:
            asset+'source/xbox_one_s_controllergamepad_animated.glb',
            asset+'visual/Xbox_One_S_BatonyRobson_STATIC_VISUAL_UNCALIBRATED.glb',
            asset+'visual/inventory.json',asset+'collision_meshbase/README.md',
+           asset+'visual_meshbase/visual_meshbase.glb',asset+'visual_meshbase/materials.json',
+           asset+'visual_meshbase/manifest.json',asset+'visual_meshbase/README.md',
            asset+'collision_meshbase/manifest.json',asset+'collision_coacd/README.md',
            asset+'collision_coacd/manifest.json',asset+'render/README.md',
            asset+'render/Xbox_One_S_approved_cycles.blend',

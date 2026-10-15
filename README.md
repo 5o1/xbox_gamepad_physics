@@ -100,6 +100,35 @@ Call `set_root_fixed(bool)` only between completed physics steps; it supports
 CPU PhysX, including GPU rendering, and rejects GPU/batched PhysX. Full
 integration details are in [RoboTwin backend documentation](docs/robotwin_backend.md).
 
+## Integration checklist
+
+1. Use Linux x86_64 with NVIDIA graphics, Python 3.10 and SAPIEN 3.0.3
+   (required for SDF). Install the wheel with `[build,robotwin]`, import the input
+   zip offline, and run `xbox-gamepad-physics doctor`.
+2. Load through `xbox_gamepad_physics.robotwin.load_into_scene` into your own
+   scene and choose its pose. Direct mesh or URDF loading loses the appearance
+   materials, SDF configuration and signal mapping. Generated resource directories
+   are internal build products; their README files point back to this API.
+3. Interact through the returned handle and adapt signals by channel name.
+   Use a static box as the supporting table: SDF does not contact `add_ground`
+   planes. Call `diagnose_scene(scene)` to inspect integration mistakes without
+   changing the scene.
+4. Keep your existing scene, lights and cameras. The default raster renderer
+   displays ABXY lettering using the frozen split visual mesh. For a new scene,
+   use the public `robotwin.create_scene` API. The optional
+   `robotwin.apply_review_rendering` reproduces review rendering by changing
+   SAPIEN **global** camera shader and ray tracing settings, affecting all cameras;
+   call it only when you intend that change.
+5. Run `xbox-gamepad-physics guide` for the full instructions or
+   `xbox-gamepad-physics example export ./gamepad_example` for a standalone runner.
+   Import public APIs from `robotwin`; do not depend on internal `examples`
+   modules for downstream integration.
+
+The loader reserves collision `groups[2]` bit31 (`0x80000000`) and sets
+`groups[3] = 0x5842` to filter contacts between gamepad shapes. It preserves
+`groups[0]` and `groups[1]`. Check your application's collision group allocation:
+reusing this bit and identifier on other objects can suppress intended contacts.
+
 ## Entry points
 
 Examples export a runner and two configurations into a directory you choose:

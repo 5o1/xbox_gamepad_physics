@@ -41,17 +41,33 @@ def _visual_resources(directory=None):
     return root,manifest
 
 
-def _render_material(render, root, manifest):
-    textures={name:render.RenderTexture2D(str(root/path),mipmap_levels=12,
+def _render_material(render, root, manifest, *, opacity=1, textures=None):
+    textures=textures if textures is not None else {name:render.RenderTexture2D(str(root/path),mipmap_levels=12,
                 srgb=name in ('base_color_texture','emission_texture'))
               for name,path in manifest['sapien_material']['textures'].items()}
     record=manifest['sapien_material']
-    material=render.RenderMaterial(base_color=record['base_color'],emission=record['emission'],
+    base_color=[*record['base_color'][:3],opacity]
+    material=render.RenderMaterial(base_color=base_color,emission=record['emission'],
             specular=record['specular'],roughness=record['roughness'],metallic=record['metallic'],
             ior=record['ior'],transmission=0)
     for name,texture in textures.items():
         setattr(material,name,texture)
     return material
+
+
+def _render_materials(render, root, manifest):
+    opaque=_render_material(render,root,manifest)
+    # In SAPIEN 3.0.3 constant alpha selects the transparent pass; texture RGBA
+    # supplies coverage unchanged. Do not multiply the texture alpha again.
+    opacity=manifest.get('constant_opacity',{}).get('value',1)
+    textures={name:getattr(opaque,name) for name in manifest['sapien_material']['textures']}
+    return {'OPAQUE':opaque,'BLEND':_render_material(render,root,manifest,opacity=opacity,textures=textures)}
+
+
+def _part_shapes(render, root, part, scale, materials):
+    groups=part.get('groups',[{'file':part['file'],'alpha_mode':'OPAQUE'}])
+    return [render.RenderShapeTriangleMesh(str(root/group['file']),scale=[scale]*3,
+            material=materials[group['alpha_mode']]) for group in groups]
 
 
 def _part_records(manifest):
@@ -89,7 +105,7 @@ def attach_visual_to_articulation(articulation, binding: Mapping, *, directory=N
     sapien=import_module('sapien')
     render=sapien.render
     root,manifest=_visual_resources(directory)
-    material=_render_material(render,root,manifest)
+    materials=_render_materials(render,root,manifest)
     records=_part_records(manifest)
     scale=manifest['meters_per_native_unit']
     conversion=sapien.Pose(q=[math.sqrt(.5),math.sqrt(.5),0,0])
@@ -111,14 +127,12 @@ def attach_visual_to_articulation(articulation, binding: Mapping, *, directory=N
         body=render.RenderBodyComponent()
         for part_name,pivot in items:
             record=records[part_name]
-            shape=render.RenderShapeTriangleMesh(
-                str(root/record['file']),scale=[scale]*3,material=material
-            )
-            if pivot is None:
-                shape.local_pose=conversion
-            else:
-                shape.local_pose=sapien.Pose(p=[-float(value) for value in pivot])*conversion
-            body.attach(shape)
+            for shape in _part_shapes(render,root,record,scale,materials):
+                if pivot is None:
+                    shape.local_pose=conversion
+                else:
+                    shape.local_pose=sapien.Pose(p=[-float(value) for value in pivot])*conversion
+                body.attach(shape)
         entity=_link_entity(_link(articulation,link_name),link_name)
         entity.add_component(body)
         components[link_name]=body
@@ -135,12 +149,13 @@ def load_visual_into_scene(scene, pose=None, *, directory=None):
     render=sapien.render
     target=getattr(scene,'scene',scene)
     root,manifest=_visual_resources(directory)
-    material=_render_material(render,root,manifest)
+    materials=_render_materials(render,root,manifest)
     scale=manifest['meters_per_native_unit']
     entities={}
     for part in manifest['parts']:
-        shape=render.RenderShapeTriangleMesh(str(root/part['file']),scale=[scale]*3,material=material)
-        body=render.RenderBodyComponent();body.attach(shape)
+        body=render.RenderBodyComponent()
+        for shape in _part_shapes(render,root,part,scale,materials):
+            body.attach(shape)
         entity=sapien.Entity();entity.name=part['name'];entity.add_component(body)
         target.add_entity(entity);entities[part['name']]=entity
     visual=XboxOneSVisual(entities,manifest,sapien)

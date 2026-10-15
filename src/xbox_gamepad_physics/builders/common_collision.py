@@ -13,6 +13,7 @@ import numpy as np
 import trimesh
 
 from .paths import ROOT, DATA_ROOT
+from .usage import document_outputs
 FROZEN = ROOT / "assets/xbox_one_s/collision_coacd"
 MESHBASE = ROOT / "assets/xbox_one_s/collision_meshbase"
 POLICY = DATA_ROOT / "references/full_controls.json"
@@ -133,6 +134,7 @@ def build(output=DEFAULT_OUTPUT, *, meshbase=MESHBASE, frozen=FROZEN, policy=POL
         manifest["components"][component]=record
         manifest["required_files"].extend([*record["coacd"],*record["sdf"]])
     (output/"manifest.json").write_text(json.dumps(manifest,indent=2)+"\n")
+    document_outputs(output)
     return manifest
 
 

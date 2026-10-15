@@ -15,7 +15,7 @@ export XBOX_GAMEPAD_PHYSICS_RESOURCES="$PWD/gamepad_resources"
 python -m xbox_gamepad_physics verify --backend robotwin --profile full_controls
 ```
 
-wheel 自带 DAG、生成器与小证据；输入 zip 保存原 GLB、冻结 static visual、meshbase、
+wheel 自带 DAG、生成器与小证据；输入 zip 保存原 GLB、冻结 static visual、visual_meshbase、collision meshbase、
 v0.2.0 CoACD 和批准的 Cycles 场景及其必要归属。首次使用在用户资源目录生成运动学、
 运动契约、视觉、URDF/manifest 与 SDF 网格，基础构建不需要 Blender，不运行 CoACD。
 第二次检查缓存，缺失或过期时只重建相关下游。环境变量目录同样执行 prepare。
@@ -42,6 +42,20 @@ gamepad = load_into_scene(
 包内代码不导入 RoboTwin 的任务模块，也不修改任务注册表。它只依赖调用时传入的
 SAPIEN scene。`GamepadState`、通道 mask 和信号映射位于后端无关的公共层；返回的
 `XboxOneSArticulation` 提供具名关节访问、状态读写和 drive target 接口。
+
+资源目录中的网格和 URDF 是内部构建产物。直接导入会绕过外观材质、SDF 配置与信号映射；
+应使用 `load_into_scene`。英文完整接入指引见 `xbox-gamepad-physics guide`，环境、资源与
+可选 extras 检查见 `xbox-gamepad-physics doctor`；场景建好后可调用公开的
+`diagnose_scene(scene)`，它只报告、不修改场景，并识别直接导入和 SDF 配平面等常见错误。
+
+新建实验台使用公开的 `xbox_gamepad_physics.robotwin.create_scene`；下游不要导入内部
+`examples` 模块。默认光栅渲染即可显示 ABXY 字样。复现审查图时才显式调用公开的
+`apply_review_rendering`：它修改 SAPIEN **全局**相机着色器和光追设置，会影响所有相机，
+不适合作为向已有实验台注入手柄的隐式步骤。`load_into_scene` 不选择全局渲染设置。
+
+加载器保留碰撞 `groups[0]`、`groups[1]`，占用 `groups[2]` 的 bit31
+（`0x80000000`）并设置 `groups[3]=0x5842`，用于屏蔽手柄内部碰撞。
+调用方若给其他对象复用同一 bit 和标识，会产生接触过滤冲突，须检查自己的分组分配。
 
 ## 位姿所有权
 
@@ -185,7 +199,11 @@ from xbox_gamepad_physics.robotwin import load_into_scene
 
 scene = sapien.Scene()  # CPU PhysX；渲染可以使用 GPU
 scene.set_timestep(1 / 250)
-scene.add_ground(0)
+table = scene.create_actor_builder()
+table.add_box_collision(half_size=[0.5, 0.5, 0.025])
+table.add_box_visual(half_size=[0.5, 0.5, 0.025])
+support = table.build_static(name="support_table")
+support.set_pose(sapien.Pose([0, 0, -0.025]))
 pad = load_into_scene(scene, sapien.Pose([0, 0, 0.4]), fixed_root=False,
                       collision="sdf")
 transition = pad.set_root_fixed(True)

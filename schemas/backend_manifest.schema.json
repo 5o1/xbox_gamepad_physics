@@ -48,6 +48,17 @@
     "reason": {
       "type": ["string", "null"]
     },
+    "usage": {
+      "description": "Public integration guidance attached to generated internal artifacts.",
+      "type": "object",
+      "properties": {
+        "warning": {"type": "string"},
+        "entrypoint": {"const": "xbox_gamepad_physics.robotwin.load_into_scene"},
+        "example": {"type": "string"},
+        "guide": {"const": "xbox-gamepad-physics guide"},
+        "example_export": {"type": "string"}
+      }
+    },
     "motion_contract": {
       "type": "string",
       "pattern": "^common/xbox_one_s/motion/[A-Za-z0-9._-]+\\.json$"

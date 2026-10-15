@@ -12,6 +12,7 @@ from .build_kinematics import build as build_kinematics
 
 
 from .paths import DATA_ROOT, ROOT
+from .usage import document_outputs
 SOURCE = DATA_ROOT / "references" / "left_stick.json"
 VISUAL_MANIFEST = (
     ROOT
@@ -377,6 +378,7 @@ def build(output: Path, *, kinematics: Path | None = None,
         "visual_binding": visual_binding,
     }
     (output / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+    document_outputs(output)
 
     print(json.dumps({"output": str(output), "profile": source["profile"], "joints": 2, "gate_segments": count}))
 

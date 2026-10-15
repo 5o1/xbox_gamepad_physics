@@ -1,4 +1,17 @@
-"""Public API for the Xbox One S physical asset package."""
+"""Xbox One S physical assets: three integration steps.
+
+1. Install the Release wheel with [build,robotwin], import the input zip with
+   `xbox-gamepad-physics build-resources --archive INPUT.zip --offline`, and set
+   XBOX_GAMEPAD_PHYSICS_RESOURCES to the prepared directory.
+2. Import load_into_scene from xbox_gamepad_physics.robotwin and load into your
+   existing scene with your pose and fixed_root choice. Do not load raw URDF or
+   meshes: they omit appearance materials, SDF setup and signal mapping.
+3. Read gamepad_state() / set_gamepad_targets() by channel name and step your
+   scene. Use a static box for SDF support, not add_ground.
+
+Run `xbox-gamepad-physics guide` for integration and rendering options,
+`example export DIRECTORY` for runnable examples, and `doctor` for checks.
+"""
 
 from .controller import (
     AxisSignalMapping,

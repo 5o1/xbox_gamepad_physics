@@ -106,12 +106,48 @@ def _export_example(args):
     return 0
 
 
+def _guide(args):
+    from .integration import GUIDE
+    print(GUIDE)
+    return 0
+
+
+def _doctor(args):
+    from .integration import diagnose_environment
+    result = diagnose_environment()
+    if args.json:
+        print(json.dumps(result, indent=2))
+    else:
+        print(f"Python: {result['python']} (supported baseline: 3.10)")
+        print(f"SAPIEN: {result['sapien'] or 'not installed'} (supported version: 3.0.3; {'matched' if result['supported_sapien'] else 'outside supported baseline'})")
+        print(f"SDF version capability (>=3.0.3): {'available' if result['sdf_supported'] else 'unavailable'}")
+        resources = result['resources']
+        print(f"Resources: {'ready' if resources['ready'] else 'not ready'}")
+        if 'root' in resources:
+            print(f"  root: {resources['root']}")
+            print(f"  missing: {', '.join(resources['missing']) or 'none'}")
+            print(f"  stale: {', '.join(node['name'] for node in resources['nodes'] if node['stale']) or 'none'}")
+        if 'error' in resources:
+            print(f"  {resources['error']}")
+        for name, extra in result['extras'].items():
+            missing = [dep for dep, version in extra['distributions'].items() if version is None]
+            print(f"[{name}]: {'installed' if extra['installed'] else 'missing ' + ', '.join(missing)}")
+        print("Next: xbox-gamepad-physics guide; example export DIRECTORY")
+    return 0 if result['sdf_supported'] and result['resources']['ready'] else 1
+
+
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="xbox-gamepad-physics",
-        description="Inspect or load the packaged Xbox One S physical asset.",
+        description="Start with guide, example export DIRECTORY, and doctor. Inspect or load the packaged Xbox One S physical asset.",
     )
     subparsers = parser.add_subparsers(dest="command", required=True)
+
+    guide = subparsers.add_parser("guide", help="read the integration guide")
+    guide.set_defaults(handler=_guide)
+    doctor = subparsers.add_parser("doctor", help="check Python, SAPIEN, resources and optional extras")
+    doctor.add_argument("--json", action="store_true")
+    doctor.set_defaults(handler=_doctor)
 
     build = subparsers.add_parser("build-resources", help="build stale project-local resources")
     build.add_argument("--force", action="store_true")

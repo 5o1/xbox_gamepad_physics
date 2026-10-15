@@ -6,63 +6,31 @@ from pathlib import Path
 import sys
 
 
-def require_sapien():
-    from xbox_gamepad_physics.errors import MissingBackendDependencyError
-    try:
-        import sapien
-    except ModuleNotFoundError as error:
-        if error.name != "sapien":
-            raise
-        raise MissingBackendDependencyError("This example requires SAPIEN 3.0.3; install the wheel with the [robotwin] extra.") from error
-    return sapien
+from xbox_gamepad_physics.robotwin.scene import require_sapien
+from xbox_gamepad_physics.robotwin import (
+    apply_review_rendering,
+    create_scene as _create_scene,
+)
 
 
 def create_render_scene(cfg: dict, *, shader="rt", samples_per_pixel=4, denoiser="oidn"):
-    """RoboTwin's renderer and default lights, shared by all rendering processes.
+    """Compatibility wrapper retaining the historical, global review defaults.
 
-    Defaults retain the repository's verified RT setup. Raster consumers select
-    shader="default"; their lighting and material/texture limits stay identical.
-    RoboTwin's import-time assets require its root as the working directory.
+    New integrations should import create_scene/apply_review_rendering from
+    xbox_gamepad_physics.robotwin. Review rendering changes all scene cameras.
     """
-    if shader not in ("rt", "default") or samples_per_pixel < 1:
-        raise ValueError("expected rt/default shader and positive samples_per_pixel")
-    # Keep all renderer configuration inside this public entry.
-    # Optional platform root preserves checkout/teleop callers. Native example
-    # scenes use SAPIEN directly and do not need a RoboTwin working directory.
     if cfg.get("robotwin_root"):
         robotwin = Path(cfg["robotwin_root"]).expanduser().resolve(strict=True)
         sys.path[:0] = [str(robotwin)]
         os.chdir(robotwin)
-
-    sapien = require_sapien()
-    from sapien.render import set_global_config
-
-    # Verified RoboTwin RT setup. Do not replace this with bare sapien.Scene().
-    engine = sapien.Engine()
-    set_global_config(max_num_materials=50000, max_num_textures=50000)
-    renderer = sapien.SapienRenderer()
-    engine.set_renderer(renderer)
-    sapien.render.set_camera_shader_dir(shader)
-    sapien.render.set_ray_tracing_samples_per_pixel(samples_per_pixel)
-    sapien.render.set_ray_tracing_path_depth(8)
-    sapien.render.set_ray_tracing_denoiser(denoiser)
-    scene = engine.create_scene(sapien.SceneConfig())
-    scene.set_timestep(cfg["timestep"])
-    scene.set_ambient_light([0.5, 0.5, 0.5])
-    scene.add_directional_light([0, 0.5, -1], [0.5, 0.5, 0.5], shadow=True)
-    scene.add_point_light([1, 0, 1.8], [1, 1, 1], shadow=True)
-    scene.add_point_light([-1, 0, 1.8], [1, 1, 1], shadow=True)
-    return scene
+    apply_review_rendering(shader=shader, samples_per_pixel=samples_per_pixel, denoiser=denoiser)
+    return _create_scene(timestep=cfg["timestep"])
 
 
 def create_scene(cfg: dict):
-    if cfg["render"]:
-        scene = create_render_scene(cfg)
-    else:
-        sapien = require_sapien()
-
-        scene = sapien.Scene()
-        scene.set_timestep(cfg["timestep"])
+    """Compatibility wrapper for exported example configurations."""
+    scene = (create_render_scene(cfg) if cfg["render"] else
+             _create_scene(timestep=cfg["timestep"], render=False))
     if cfg["ground"]:
         scene.add_ground(0)
     return scene

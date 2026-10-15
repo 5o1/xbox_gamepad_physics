@@ -1,4 +1,4 @@
-"""Export existing static geometry and original PBR material for simulators.
+"""Export reviewed visual meshbase groups and original PBR maps for simulators.
 
 No mesh reduction, UV edits, rescaling or physical parameter creation.
 The scalar maps separate glTF G=roughness and B=metallic for SAPIEN's R-channel inputs.
@@ -16,6 +16,7 @@ from PIL import Image
 from .build_kinematics import build as build_kinematics
 
 from .paths import DATA_ROOT, ROOT
+from .usage import document_outputs
 
 
 def read_glb(path):
@@ -37,12 +38,14 @@ def build(output: Path = DEFAULT_OUTPUT, *, kinematics: Path | None = None, inpu
     source=inputs/'assets/xbox_one_s/source/xbox_one_s_controllergamepad_animated.glb'
     static=inputs/'assets/xbox_one_s/visual/Xbox_One_S_BatonyRobson_STATIC_VISUAL_UNCALIBRATED.glb'
     inventory=json.loads((inputs/'assets/xbox_one_s/visual/inventory.json').read_text())
+    meshbase=inputs/'assets/xbox_one_s/visual_meshbase'
+    materials=json.loads((meshbase/'materials.json').read_text())
     inventory_by_stem={Path(item['file']).stem:item for item in inventory['objects']}
     profile=json.loads(kinematics.read_text()) if kinematics is not None else build_kinematics(inputs=inputs)[1]
     assert hashlib.sha256(source.read_bytes()).hexdigest()==profile['source_bindings']['source_glb_sha256']
     assert hashlib.sha256(static.read_bytes()).hexdigest()==profile['visual']['sha256']
     authored,authored_bin=read_glb(source)
-    geometry,geometry_bin=read_glb(static)
+    geometry,geometry_bin=read_glb(meshbase/'visual_meshbase.glb')
     output.mkdir(parents=True,exist_ok=True)
     textures=output/'textures';textures.mkdir(exist_ok=True)
     material=authored['materials'][0]
@@ -79,7 +82,9 @@ def build(output: Path = DEFAULT_OUTPUT, *, kinematics: Path | None = None, inpu
     (output/'meshes.bin').write_bytes(packed)
     view_order=sorted(views)
     view_map={old:index for index,old in enumerate(view_order)}
-    accessors=copy.deepcopy(geometry['accessors'])
+    accessor_order=sorted(indices)
+    accessor_map={old:index for index,old in enumerate(accessor_order)}
+    accessors=[copy.deepcopy(geometry['accessors'][index]) for index in accessor_order]
     for accessor in accessors:
         assert 'sparse' not in accessor
         accessor['bufferView']=view_map[accessor['bufferView']]
@@ -88,7 +93,14 @@ def build(output: Path = DEFAULT_OUTPUT, *, kinematics: Path | None = None, inpu
         if 'mesh' not in node:continue
         assert not any(key in node for key in ('matrix','translation','rotation','scale'))
         mesh=copy.deepcopy(geometry['meshes'][node['mesh']])
-        for primitive in mesh['primitives']:primitive.pop('material',None)
+        groups=[]
+        for primitive in mesh['primitives']:
+            alpha_mode=geometry['materials'][primitive.pop('material')]['alphaMode']
+            groups.append({'alpha_mode':alpha_mode,
+                           'constant_opacity':materials['constant_opacity']['value'] if alpha_mode=='BLEND' else 1,
+                           'triangles':geometry['accessors'][primitive['indices']]['count']//3})
+            primitive['attributes']={name:accessor_map[index] for name,index in primitive['attributes'].items()}
+            primitive['indices']=accessor_map[primitive['indices']]
         document={
             'asset':{'version':'2.0','generator':'Xbox One S simulator visual export'},
             'buffers':[{'uri':'meshes.bin','byteLength':len(packed)}],
@@ -100,18 +112,29 @@ def build(output: Path = DEFAULT_OUTPUT, *, kinematics: Path | None = None, inpu
         filename=node['name']+'.gltf'
         source_record=inventory_by_stem[node['name']]
         (output/filename).write_text(json.dumps(document,separators=(',',':'))+'\n')
+        for primitive,group in zip(mesh['primitives'],groups):
+            group_file=node['name']+'_'+group['alpha_mode']+'.gltf'
+            grouped=copy.deepcopy(document)
+            grouped['meshes'][0]['primitives']=[primitive]
+            (output/group_file).write_text(json.dumps(grouped,separators=(',',':'))+'\n')
+            group['file']=group_file
         primitive=mesh['primitives'][0]
         parts.append({'name':node['name'],'file':filename,
                       'source_name':source_record['name'],
                       'source_object':source_record['source_object'],
                       'source_matrix_world':source_record['source_matrix_world'],
-                      'vertices':geometry['accessors'][primitive['attributes']['POSITION']]['count'],
-                      'triangles':geometry['accessors'][primitive['indices']]['count']//3})
+                      'vertices':accessors[primitive['attributes']['POSITION']]['count'],
+                      'triangles':sum(group['triangles'] for group in groups),
+                      'groups':groups})
     assert len(parts)==16
     manifest={
         'asset_id':'xbox_one_s','stage':'visual','dynamics_ready':False,
         'source_sha256':profile['source_bindings']['source_glb_sha256'],
         'geometry_sha256':profile['visual']['sha256'],
+        'geometry_source':'assets/xbox_one_s/visual_meshbase/visual_meshbase.glb',
+        'geometry_sha256_scope':'STATIC_VISUAL ancestor before the reviewed face-group split',
+        'opacity_source':'assets/xbox_one_s/visual_meshbase/materials.json#constant_opacity',
+        'constant_opacity':materials['constant_opacity'],
         'coordinate_frame':'gltf_y_up','meters_per_native_unit':profile['visual']['meters_per_native_unit'],
         'blender_source_to_simulation_rotation_x_rad':profile['visual']['gltf_to_viewer_rotation_x_rad'],
         'scale_status':'existing width-fit visual estimate; not measured local geometry',
@@ -128,9 +151,10 @@ def build(output: Path = DEFAULT_OUTPUT, *, kinematics: Path | None = None, inpu
         },
         'license':'CC-BY-4.0','author':'BatonyRobson',
         'source_url':'https://sketchfab.com/3d-models/xbox-one-s-controllergamepad-animated-a62cf7475b7d4ead9fbf1a86e5a2b6a4',
-        'changes':'Geometry/UV/normals copied from existing static bake. Original material/images restored. Scalar channels separated without changing their values.',
+        'changes':'Reviewed visual_meshbase face groups copied with geometry/UV/normals unchanged. Original material/images retained. Scalar channels separated without changing their values. BLEND constant opacity routes the SAPIEN pass; source texture alpha is preserved.',
     }
     (output/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
+    document_outputs(output)
     print(json.dumps({'parts':len(parts),'textures':len(texture_files),'mesh_bytes':len(packed),'output':str(output)}))
 
 

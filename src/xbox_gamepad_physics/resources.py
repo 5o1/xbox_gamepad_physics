@@ -117,6 +117,8 @@ def missing_resources(root: Path) -> list[str]:
             if relative == "common/xbox_one_s/visual/manifest.json":
                 for part in value.get("parts", []):
                     expected.add("common/xbox_one_s/visual/" + part["file"])
+                    for group in part.get("groups", []):
+                        expected.add("common/xbox_one_s/visual/" + group["file"])
                 expected.add("common/xbox_one_s/visual/meshes.bin")
                 for name in value.get("source_textures", []):
                     expected.add("common/xbox_one_s/visual/" + name["file"])

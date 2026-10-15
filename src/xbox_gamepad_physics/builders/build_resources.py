@@ -19,6 +19,7 @@ from .paths import DATA_ROOT, ROOT
 BUILDER_ROOT = Path(__file__).resolve().parent
 from xbox_gamepad_physics._resource_cache import cache_lock, publish_directory
 from xbox_gamepad_physics.errors import ResourceError
+from .usage import write_resource_readme
 
 # Output directory of each node, relative to the resource root.
 RESOURCE_OUTPUTS = {
@@ -78,6 +79,9 @@ def nodes(inputs: Path, *, evidence: Path = DATA_ROOT) -> tuple[Node, ...]:
             asset("assets/xbox_one_s/source/xbox_one_s_controllergamepad_animated.glb"),
             asset("assets/xbox_one_s/visual/Xbox_One_S_BatonyRobson_STATIC_VISUAL_UNCALIBRATED.glb"),
             asset("assets/xbox_one_s/visual/inventory.json"),
+            asset("assets/xbox_one_s/visual_meshbase/visual_meshbase.glb"),
+            asset("assets/xbox_one_s/visual_meshbase/materials.json"),
+            asset("assets/xbox_one_s/visual_meshbase/manifest.json"),
         ), ("kinematics",), RESOURCE_OUTPUTS["sim_visual"],
              lambda out, root: _generator("export_sim_visual_assets", out, kinematics=kin(root), inputs=inputs),
              code("export_sim_visual_assets")),
@@ -122,7 +126,7 @@ def _files(path: Path) -> list[Path]:
 
 def _fingerprint(node: Node, repo: Path, root: Path, table: dict[str, Node]) -> dict:
     result = {}
-    for relative in (*node.inputs, *node.sources, str(Path(__file__).resolve())):
+    for relative in (*node.inputs, *node.sources, str(Path(__file__).resolve()), str(BUILDER_ROOT / "usage.py")):
         for path in _files(repo / relative):
             # Logical names keep build receipts independent of installation paths.
             if path.is_relative_to(BUILDER_ROOT.parent):
@@ -137,6 +141,8 @@ def _fingerprint(node: Node, repo: Path, root: Path, table: dict[str, Node]) -> 
             result[label] = hashlib.sha256(path.read_bytes()).hexdigest()
     for name in node.upstream:
         for path in _files(root / table[name].output):
+            if path.name == "README.md":
+                continue
             result["upstream/" + path.relative_to(root).as_posix()] = hashlib.sha256(path.read_bytes()).hexdigest()
     return {"inputs": result, "upstream": list(node.upstream), "output": node.output}
 
@@ -189,6 +195,7 @@ def build(output: Path = ROOT / "build/resources", *, force: bool = False,
             statuses = node_status(output, repo=repo, graph=graph)
             selected = {s["name"] for s in statuses if force or s["stale"]}
             if not selected:
+                write_resource_readme(output)
                 for node in graph:
                     print(f"{node.name}: skip (stamp hit)", file=sys.stderr)
                 print(f"resources: {time.perf_counter() - started:.3f}s", file=sys.stderr)
@@ -200,6 +207,7 @@ def build(output: Path = ROOT / "build/resources", *, force: bool = False,
                 else:
                     staged.mkdir()
                 (staged / ".stamps").mkdir(exist_ok=True)
+                write_resource_readme(staged)
                 for node in graph:
                     tick = time.perf_counter()
                     if node.name not in selected:

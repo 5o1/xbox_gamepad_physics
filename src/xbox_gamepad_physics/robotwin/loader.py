@@ -475,10 +475,14 @@ def load_into_scene(
         from .visual import attach_visual_to_articulation
 
         attach_visual_to_articulation(articulation, description.visual_binding)
-    return _configure_joints(
+    wrapper = _configure_joints(
         articulation,
         description.joint_dynamics,
         description.joint_motion,
         description.signal_controller,
         scene=resolved_scene,
     )
+    from .diagnostics import _mark_loaded
+    _mark_loaded(resolved_scene, articulation, profile=profile, collision=collision,
+                 attach_visual=attach_visual)
+    return wrapper

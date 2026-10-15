@@ -13,6 +13,7 @@ import trimesh
 
 from .build_kinematics import build as build_kinematics
 from .common_collision import shell_meshes
+from .usage import document_outputs
 
 
 from .paths import DATA_ROOT, ROOT
@@ -454,6 +455,7 @@ def build(output: Path, *, kinematics: Path | None = None,
     (output / "manifest.json").write_text(
         json.dumps(manifest, indent=2) + "\n", encoding="utf-8"
     )
+    document_outputs(output)
     print(json.dumps({
         "output": str(output),
         "joints": len(dynamics),

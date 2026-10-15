@@ -113,6 +113,10 @@ class ResourceResolutionTest(unittest.TestCase):
             calls.clear()
             builder.build(cache, repo=repo, graph=graph)
             self.assertEqual(calls, [])
+            # Generated guidance is not an upstream build input.
+            (cache / "first/README.md").write_text("consumer notes\n")
+            builder.build(cache, repo=repo, graph=graph)
+            self.assertEqual(calls, [])
             source = repo / "first.txt"
             old = source.stat()
             source.write_text("two")

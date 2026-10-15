@@ -5,9 +5,11 @@ Release 附件为 wheel、输入 zip 和 `SHA256SUMS`，不上 PyPI。自有代�
 第三方许可；CC BY 4.0 正文规范链接与署名见 `THIRD_PARTY_NOTICES.md`。
 
 wheel 包含包内 DAG、生成器与版本化的小证据（references、specs 和 One S 资产索引切片）。
-输入 zip 只含审定输入：作者原 GLB、已批准静态 visual 快照及实际读取文件、meshbase、
+输入 zip 只含审定输入：作者原 GLB、已批准静态 visual 快照及实际读取文件、冻结 visual_meshbase、collision meshbase、
 v0.2.0 冻结 CoACD 凸包、批准的 Cycles 场景及所需文件，以及这些输入的来源、署名和许可。
 静态 visual 和 meshbase 一样不在用户机器上重新导出，基础构建不需要 Blender。
+外观节点消费冻结的 visual_meshbase，保留 6,590 个不透明面与仅在 ABXY 的 256 个半透明面；
+SAPIEN 材质按 `materials.json` 用常数 64/255 选择透明 pass，源贴图 alpha 保持原样。
 运动学、运动契约、sim_visual、URDF/manifest 和 SDF 网格均在本地生成；用户端不运行 CoACD。
 
 ## 安装与离线导入
@@ -25,6 +27,13 @@ python3.10 -m xbox_gamepad_physics verify --backend robotwin --profile full_cont
 `[build]` 声明 numpy、trimesh、Pillow 和 manifold3d；不含 CoACD。已有依赖的离线安装
 需要预备这些依赖 wheel。`--offline` 限制资源导入/构建联网，不代替 pip 的离线依赖准备。
 `verify` 检查 readiness 与必需文件，缺失时返回非零；它不执行真实仿真。
+
+安装后先运行 `xbox-gamepad-physics guide` 和 `xbox-gamepad-physics doctor`。
+生成资源根目录、外观、URDF 和碰撞目录自动附英文 README，URDF 文件头与 manifest 的
+`usage` 也指向公开的 `load_into_scene`。直接加载网格或 URDF 会绕过材质、SDF 和信号映射。
+新建场景使用 `robotwin.create_scene`，下游不应依赖内部 `examples` 模块；已有场景直接注入。
+默认光栅即可，复现审查图才调用可选的 `robotwin.apply_review_rendering`，它会修改 SAPIEN
+全局相机着色器与光追设置并影响全部相机。公开 `diagnose_scene(scene)` 只读检查场景接入问题。
 
 ## 资源根目录与缓存
 
@@ -68,6 +77,8 @@ SDF 要求 SAPIEN ≥3.0.3，不支持与 `add_ground` 平面、另一个 SDF �
 
 两种选项均过滤手柄内部碰撞：全部形状保留 g0/g1，设置
 `g2 |= 0x80000000`、`g3 = 0x5842`，外部物体的接触仍按 g0/g1 判断。
+本包因此占用 `groups[2]` 的 bit31 和 `groups[3]=0x5842`；若其他对象复用该组合，
+可能被误判为同组而屏蔽预期接触，需与下游碰撞分组分配协调。
 十字键、摇杆孔口可触区域约 1–1.5 mm 的 CoACD 外胀已于 2026-10-11 暂时接受；
 Guide开口覆盖已由SDF对照确认；CoACD孔口优化留待下一阶段，本轮不修改几何。
 具体参数和按组件误差见 `references/full_controls.json`。

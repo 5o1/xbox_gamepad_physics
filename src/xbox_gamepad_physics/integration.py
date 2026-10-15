@@ -1,0 +1,90 @@
+"""Integration instructions and read-only environment diagnostics."""
+
+from importlib import metadata
+import platform
+import re
+
+from .errors import XboxGamepadPhysicsError
+from .resources import resource_status
+
+
+GUIDE = """Xbox One S integration guide
+
+1. Environment and installation
+   Supported: Linux x86_64 + NVIDIA, Python 3.10, RoboTwin fork / SAPIEN 3.0.3.
+   SDF requires SAPIEN 3.0.3. Install the Release wheel with [build,robotwin]:
+     python3.10 -m pip install './xbox_gamepad_physics-VERSION-py3-none-any.whl[build,robotwin]'
+     xbox-gamepad-physics build-resources --archive INPUT.zip --resources ./gamepad_resources --offline
+   Set XBOX_GAMEPAD_PHYSICS_RESOURCES to the prepared directory.
+   Run xbox-gamepad-physics doctor to inspect versions, resources and extras.
+
+2. Load into your existing scene
+   from xbox_gamepad_physics.robotwin import load_into_scene
+   gamepad = load_into_scene(scene, pose=[0, 0, 0.8, 1, 0, 0, 0], fixed_root=True)
+   print(gamepad.gamepad_state().channel('left_x'))
+   For a new standalone scene use the public robotwin.create_scene().
+   Do not import internal examples modules. Export runnable examples with:
+     xbox-gamepad-physics example export ./gamepad_example
+
+3. Interaction
+   Read gamepad_state(); set_gamepad_state(state) writes joint positions;
+   set_gamepad_targets(state) writes drives, followed by your scene.step().
+   Adapt by channel name, never tensor index. Pair is a separate physical event.
+   Your scene owns timestep, lights, cameras and object poses.
+
+4. Rendering
+   Default raster rendering supports the frozen materials and ABXY lettering.
+   load_into_scene does not select shaders or change global render settings.
+   Optional: robotwin.apply_review_rendering() reproduces the review RT settings.
+   It changes SAPIEN GLOBAL camera shaders and other rendering settings, affecting
+   ALL cameras in ALL scenes in the process. Use it only for review reproduction,
+   before renderer/camera creation, never as a required integration step.
+
+5. Common pitfalls
+   Resource meshes and URDF are internal build artifacts. Direct loading omits
+   appearance materials, SDF configuration and signal mapping.
+   SDF cannot collide with add_ground planes or another SDF: use a static box.
+   Internal collision filtering reserves groups[2] bit31 and groups[3]=0x5842;
+   sharing these with external objects can suppress intended contacts.
+   robotwin.diagnose_scene(scene) reports official loads, suspected raw imports,
+   planes below SDF gamepads and the active global camera shader without edits.
+   Successful loading/signals are separate from contact or dynamics validation.
+"""
+
+
+_EXTRAS = {
+    "build": ("numpy", "trimesh", "Pillow", "manifold3d"),
+    "robotwin": ("sapien",),
+    "example": ("PyYAML", "numpy", "Pillow", "transforms3d"),
+    "teleop": ("aiohttp", "PyYAML", "numpy", "Pillow", "transforms3d", "opencv-python", "trimesh", "manifold3d"),
+    "maintainer": ("coacd",),
+}
+
+
+def _version(name):
+    try:
+        return metadata.version(name)
+    except metadata.PackageNotFoundError:
+        return None
+
+
+def diagnose_environment():
+    """Inspect installed distributions and resource readiness without building."""
+    python = platform.python_version()
+    sapien = _version("sapien")
+    parsed = re.match(r"(\d+)\.(\d+)\.(\d+)", sapien or "")
+    sdf = bool(parsed and tuple(map(int, parsed.groups())) >= (3, 0, 3))
+    try:
+        resources = resource_status()
+        resources["ready"] = (not resources["missing"] and
+                              not any(node["stale"] for node in resources["nodes"]))
+    except (XboxGamepadPhysicsError, ImportError, OSError, ValueError) as error:
+        resources = {"ready": False, "error": str(error)}
+    extras = {}
+    for extra, distributions in _EXTRAS.items():
+        versions = {name: _version(name) for name in distributions}
+        extras[extra] = {"installed": all(versions.values()), "distributions": versions}
+    return {"python": python, "supported_python": python.startswith("3.10."),
+            "sapien": sapien, "supported_sapien": sapien == "3.0.3",
+            "sdf_supported": sdf,
+            "resources": resources, "extras": extras}
