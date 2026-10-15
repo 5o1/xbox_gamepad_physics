@@ -1,0 +1,363 @@
+{
+  "asset_id": "xbox_one_s",
+  "stage": "visual_meshbase",
+  "frozen": true,
+  "status": "frozen_owner_reviewed",
+  "author": "BatonyRobson",
+  "license": "CC-BY-4.0",
+  "source_url": "https://sketchfab.com/3d-models/xbox-one-s-controllergamepad-animated-a62cf7475b7d4ead9fbf1a86e5a2b6a4",
+  "derived_from": {
+    "source": "assets/xbox_one_s/visual/Xbox_One_S_BatonyRobson_STATIC_VISUAL_UNCALIBRATED.glb",
+    "inventory": "assets/xbox_one_s/visual/inventory.json",
+    "generator": "scripts/build_visual_meshbase.py",
+    "algorithm_version": 2,
+    "reviewed_candidate": "build/experiments/visual_meshbase_20261015/candidate_v2/visual_meshbase_candidate.glb"
+  },
+  "alpha_rule": {
+    "version": 2,
+    "exact_below": 255,
+    "halo_below": 250,
+    "halo_texels": 1,
+    "coverage": "Closed triangle/texel-square SAT, including touching and degenerate UVs",
+    "uv_origin": "Top left; no image or UV flip",
+    "precision": "float64 UV times original image resolution; SAT projection tolerance 1e-9 texel units",
+    "enumeration": "floor(triangle minimum)-1 through ceil(triangle maximum), inclusive",
+    "wrap": "REPEAT modulo original image dimensions on both axes",
+    "halo": "Union of 3x3 texel neighbourhoods of exact covered cells, including centre",
+    "decision": "BLEND if exact_min<255 OR halo_min<250; otherwise OPAQUE",
+    "mixed_diagnostic": "exact_min<=242 AND exact_max>=253; report without subdivision",
+    "subdivision": false,
+    "merge_vertices": false,
+    "revision_basis": "Owner ruling 3, after observing v1. Under the stated bilinear halo-weight<=1/2 assumption, alpha>=250 loses at most (255-250)/255/2, about 0.9804%. Not fitted to the observed 253; not a general mip/anisotropy guarantee."
+  },
+  "parts": [
+    {
+      "name": "00_A_Button_VISUAL_UNCALIBRATED",
+      "mesh_name": "A Button_XBox Gamepad by Batony Robson_0.001",
+      "triangles": 146,
+      "opaque": 82,
+      "blend": 64,
+      "mixed": 0
+    },
+    {
+      "name": "01_B_Button_VISUAL_UNCALIBRATED",
+      "mesh_name": "B Button_XBox Gamepad by Batony Robson_0.001",
+      "triangles": 190,
+      "opaque": 126,
+      "blend": 64,
+      "mixed": 0
+    },
+    {
+      "name": "02_Bumper_L_VISUAL_UNCALIBRATED",
+      "mesh_name": "Bumper_L_XBox Gamepad by Batony Robson_0.001",
+      "triangles": 62,
+      "opaque": 62,
+      "blend": 0,
+      "mixed": 0
+    },
+    {
+      "name": "03_Bumper_R_VISUAL_UNCALIBRATED",
+      "mesh_name": "Bumper_R_XBox Gamepad by Batony Robson_0.001",
+      "triangles": 62,
+      "opaque": 62,
+      "blend": 0,
+      "mixed": 0
+    },
+    {
+      "name": "04_Connect_Button_VISUAL_UNCALIBRATED",
+      "mesh_name": "Connect Button_XBox Gamepad by Batony Robson_0.001",
+      "triangles": 78,
+      "opaque": 78,
+      "blend": 0,
+      "mixed": 0
+    },
+    {
+      "name": "05_Controller_Body_VISUAL_UNCALIBRATED",
+      "mesh_name": "Controller Body_XBox Gamepad by Batony Robson_0.001",
+      "triangles": 4348,
+      "opaque": 4348,
+      "blend": 0,
+      "mixed": 0
+    },
+    {
+      "name": "06_D-Pad_VISUAL_UNCALIBRATED",
+      "mesh_name": "D-Pad_XBox Gamepad by Batony Robson_0.001",
+      "triangles": 162,
+      "opaque": 162,
+      "blend": 0,
+      "mixed": 0
+    },
+    {
+      "name": "07_Menu_L_VISUAL_UNCALIBRATED",
+      "mesh_name": "Menu_L_XBox Gamepad by Batony Robson_0.001",
+      "triangles": 60,
+      "opaque": 60,
+      "blend": 0,
+      "mixed": 0
+    },
+    {
+      "name": "08_Menu_R_VISUAL_UNCALIBRATED",
+      "mesh_name": "Menu_R_XBox Gamepad by Batony Robson_0.001",
+      "triangles": 60,
+      "opaque": 60,
+      "blend": 0,
+      "mixed": 0
+    },
+    {
+      "name": "09_Stick_L_VISUAL_UNCALIBRATED",
+      "mesh_name": "Stick_L_XBox Gamepad by Batony Robson_0.001",
+      "triangles": 606,
+      "opaque": 606,
+      "blend": 0,
+      "mixed": 0
+    },
+    {
+      "name": "10_Stick_R_VISUAL_UNCALIBRATED",
+      "mesh_name": "Stick_R_XBox Gamepad by Batony Robson_0.001",
+      "triangles": 606,
+      "opaque": 606,
+      "blend": 0,
+      "mixed": 0
+    },
+    {
+      "name": "11_Trigger_L_VISUAL_UNCALIBRATED",
+      "mesh_name": "Trigger_L_XBox Gamepad by Batony Robson_0.001",
+      "triangles": 65,
+      "opaque": 65,
+      "blend": 0,
+      "mixed": 0
+    },
+    {
+      "name": "12_Trigger_R_VISUAL_UNCALIBRATED",
+      "mesh_name": "Trigger_R_XBox Gamepad by Batony Robson_0.001",
+      "triangles": 65,
+      "opaque": 65,
+      "blend": 0,
+      "mixed": 0
+    },
+    {
+      "name": "13_X_Button_VISUAL_UNCALIBRATED",
+      "mesh_name": "X Button_XBox Gamepad by Batony Robson_0.001",
+      "triangles": 112,
+      "opaque": 48,
+      "blend": 64,
+      "mixed": 0
+    },
+    {
+      "name": "14_XboxButton_VISUAL_UNCALIBRATED",
+      "mesh_name": "XboxButton_XBox Gamepad by Batony Robson_0.001",
+      "triangles": 118,
+      "opaque": 118,
+      "blend": 0,
+      "mixed": 0
+    },
+    {
+      "name": "15_Y_Button_VISUAL_UNCALIBRATED",
+      "mesh_name": "Y Button_XBox Gamepad by Batony Robson_0.001",
+      "triangles": 106,
+      "opaque": 42,
+      "blend": 64,
+      "mixed": 0
+    }
+  ],
+  "statistics": {
+    "triangles": 6846,
+    "opaque": 6590,
+    "blend": 256,
+    "mixed": 0,
+    "blend_coverage": {
+      "faces": 256,
+      "exact_alpha_min": 64,
+      "exact_alpha_max": 64,
+      "image_size": [
+        2048,
+        2048
+      ]
+    }
+  },
+  "seam_gate": {
+    "passed": true,
+    "algorithm": "Exact-position edge grouping within each original primitive; every unlike-class pair must have disjoint original endpoint indices. Also reject original vertex indices incident to both classes.",
+    "coordinate_tolerance": 0,
+    "merge_vertices": false,
+    "boundary_pairs": 0,
+    "existing_seam_pairs": 0,
+    "unsafe_edges": [],
+    "shared_vertices_cut": [],
+    "boundaries": [],
+    "parts": [
+      {
+        "mesh_index": 0,
+        "name": "00_A_Button_VISUAL_UNCALIBRATED",
+        "boundary_pairs": 0,
+        "unsafe_boundary_pairs": 0,
+        "shared_vertices_cut": 0
+      },
+      {
+        "mesh_index": 1,
+        "name": "01_B_Button_VISUAL_UNCALIBRATED",
+        "boundary_pairs": 0,
+        "unsafe_boundary_pairs": 0,
+        "shared_vertices_cut": 0
+      },
+      {
+        "mesh_index": 2,
+        "name": "02_Bumper_L_VISUAL_UNCALIBRATED",
+        "boundary_pairs": 0,
+        "unsafe_boundary_pairs": 0,
+        "shared_vertices_cut": 0
+      },
+      {
+        "mesh_index": 3,
+        "name": "03_Bumper_R_VISUAL_UNCALIBRATED",
+        "boundary_pairs": 0,
+        "unsafe_boundary_pairs": 0,
+        "shared_vertices_cut": 0
+      },
+      {
+        "mesh_index": 4,
+        "name": "04_Connect_Button_VISUAL_UNCALIBRATED",
+        "boundary_pairs": 0,
+        "unsafe_boundary_pairs": 0,
+        "shared_vertices_cut": 0
+      },
+      {
+        "mesh_index": 5,
+        "name": "05_Controller_Body_VISUAL_UNCALIBRATED",
+        "boundary_pairs": 0,
+        "unsafe_boundary_pairs": 0,
+        "shared_vertices_cut": 0
+      },
+      {
+        "mesh_index": 6,
+        "name": "06_D-Pad_VISUAL_UNCALIBRATED",
+        "boundary_pairs": 0,
+        "unsafe_boundary_pairs": 0,
+        "shared_vertices_cut": 0
+      },
+      {
+        "mesh_index": 7,
+        "name": "07_Menu_L_VISUAL_UNCALIBRATED",
+        "boundary_pairs": 0,
+        "unsafe_boundary_pairs": 0,
+        "shared_vertices_cut": 0
+      },
+      {
+        "mesh_index": 8,
+        "name": "08_Menu_R_VISUAL_UNCALIBRATED",
+        "boundary_pairs": 0,
+        "unsafe_boundary_pairs": 0,
+        "shared_vertices_cut": 0
+      },
+      {
+        "mesh_index": 9,
+        "name": "09_Stick_L_VISUAL_UNCALIBRATED",
+        "boundary_pairs": 0,
+        "unsafe_boundary_pairs": 0,
+        "shared_vertices_cut": 0
+      },
+      {
+        "mesh_index": 10,
+        "name": "10_Stick_R_VISUAL_UNCALIBRATED",
+        "boundary_pairs": 0,
+        "unsafe_boundary_pairs": 0,
+        "shared_vertices_cut": 0
+      },
+      {
+        "mesh_index": 11,
+        "name": "11_Trigger_L_VISUAL_UNCALIBRATED",
+        "boundary_pairs": 0,
+        "unsafe_boundary_pairs": 0,
+        "shared_vertices_cut": 0
+      },
+      {
+        "mesh_index": 12,
+        "name": "12_Trigger_R_VISUAL_UNCALIBRATED",
+        "boundary_pairs": 0,
+        "unsafe_boundary_pairs": 0,
+        "shared_vertices_cut": 0
+      },
+      {
+        "mesh_index": 13,
+        "name": "13_X_Button_VISUAL_UNCALIBRATED",
+        "boundary_pairs": 0,
+        "unsafe_boundary_pairs": 0,
+        "shared_vertices_cut": 0
+      },
+      {
+        "mesh_index": 14,
+        "name": "14_XboxButton_VISUAL_UNCALIBRATED",
+        "boundary_pairs": 0,
+        "unsafe_boundary_pairs": 0,
+        "shared_vertices_cut": 0
+      },
+      {
+        "mesh_index": 15,
+        "name": "15_Y_Button_VISUAL_UNCALIBRATED",
+        "boundary_pairs": 0,
+        "unsafe_boundary_pairs": 0,
+        "shared_vertices_cut": 0
+      }
+    ],
+    "required_for_every_future_split": true
+  },
+  "checks": {
+    "k1": {
+      "passed": true,
+      "method": "Direct binary prefix, attribute, image, node and disjoint face-cover comparison",
+      "evidence": "build/experiments/visual_meshbase_20261015/ruling3/k1.json",
+      "regeneration_evidence": "build/experiments/visual_meshbase_20261015/ruling6/regeneration_comparison.json"
+    },
+    "seam_gate": {
+      "passed": true,
+      "evidence": "build/experiments/visual_meshbase_20261015/ruling3/seam_gate.json"
+    },
+    "k1b": {
+      "passed": true,
+      "method": "Blender 4.5.9 official glTF importer: 20538 face corners; position, UV, normal, tangent and sign exactly equal.",
+      "evidence": "build/experiments/visual_meshbase_20261015/ruling3/k1b.json"
+    },
+    "k2_cycles": {
+      "passed": true,
+      "method": "Five fresh interleaved renders per asset; all three preregistered criteria passed, including spatial review.",
+      "evidence": "build/experiments/visual_meshbase_20261015/ruling3/v2_cycles_k2/k2_statistics.json",
+      "spatial_review": "build/experiments/visual_meshbase_20261015/ruling3/k2_manual_review.json"
+    },
+    "sapien_raster": {
+      "passed": true,
+      "result": "Ruling5: BLEND constant 64/255 restores ABXY; 12955 changed pixels, zero outside ABXY ROI.",
+      "evidence": "build/experiments/visual_meshbase_20261015/ruling5/REPORT.md",
+      "statistics": "build/experiments/visual_meshbase_20261015/ruling5/full_frame_statistics.json"
+    },
+    "mujoco_classic": {
+      "passed": true,
+      "result": "Official 3.16 ruling5: RGB texture plus BLEND rgba.a=64/255 restores ABXY; 13254 changed pixels, zero outside ABXY ROI.",
+      "evidence": "build/experiments/visual_meshbase_20261015/ruling5/REPORT.md",
+      "statistics": "build/experiments/visual_meshbase_20261015/ruling5/full_frame_statistics.json"
+    },
+    "scope": "Historical import/render checks apply to this unchanged reviewed GLB; regeneration alone does not grant future appearance approval."
+  },
+  "evidence": {
+    "algorithm": "build/experiments/visual_meshbase_20261015/ALGORITHM_V2_PREREGISTERED.md",
+    "report": "build/experiments/visual_meshbase_20261015/REPORT.md",
+    "ruling3": "build/experiments/visual_meshbase_20261015/ruling3/V2_REPORT.md",
+    "ruling5": "build/experiments/visual_meshbase_20261015/ruling5/REPORT.md",
+    "freeze_report": "docs/reports/visual_meshbase_freeze_20261016.md"
+  },
+  "coordinate_frame": "unchanged glTF Y up, native units",
+  "meters_per_native_unit": null,
+  "changes": "Split original triangle indices into OPAQUE/BLEND without changing source attributes, images or nodes.",
+  "previous_versions": [],
+  "adoption": "Repository-only; not consumed by DAG, loaders or resource packages.",
+  "files": [
+    "visual_meshbase.glb",
+    "materials.json",
+    "manifest.json",
+    "README.md"
+  ],
+  "approval": {
+    "date": "2026-10-16",
+    "ruling": 6,
+    "decision": "Owner confirmed ruling5 comparison images and approved the v2 freeze; repository-only, without DAG/loader/package integration."
+  }
+}

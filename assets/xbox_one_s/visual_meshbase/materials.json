@@ -1,0 +1,268 @@
+{
+  "status": "frozen_owner_reviewed",
+  "source": "reviewed STATIC_VISUAL, not reconstructed author material",
+  "authored_material": {
+    "alphaMode": "BLEND",
+    "doubleSided": true,
+    "emissiveFactor": [
+      1,
+      1,
+      1
+    ],
+    "emissiveTexture": {
+      "index": 0
+    },
+    "extensions": {
+      "KHR_materials_emissive_strength": {
+        "emissiveStrength": 10
+      },
+      "KHR_materials_specular": {
+        "specularColorTexture": {
+          "index": 1
+        }
+      }
+    },
+    "name": "XBox_Gamepad_by_Batony_Robson",
+    "normalTexture": {
+      "index": 2
+    },
+    "occlusionTexture": {
+      "index": 3,
+      "strength": 0.740603506565094
+    },
+    "pbrMetallicRoughness": {
+      "baseColorTexture": {
+        "index": 4
+      },
+      "metallicRoughnessTexture": {
+        "index": 3
+      }
+    }
+  },
+  "materials": [
+    {
+      "alphaMode": "OPAQUE",
+      "doubleSided": true,
+      "emissiveFactor": [
+        1,
+        1,
+        1
+      ],
+      "emissiveTexture": {
+        "index": 0
+      },
+      "extensions": {
+        "KHR_materials_emissive_strength": {
+          "emissiveStrength": 10
+        },
+        "KHR_materials_specular": {
+          "specularColorTexture": {
+            "index": 1
+          }
+        }
+      },
+      "name": "XBox_Gamepad_by_Batony_Robson_OPAQUE",
+      "normalTexture": {
+        "index": 2
+      },
+      "occlusionTexture": {
+        "index": 3,
+        "strength": 0.740603506565094
+      },
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 4
+        },
+        "metallicRoughnessTexture": {
+          "index": 3
+        }
+      }
+    },
+    {
+      "alphaMode": "BLEND",
+      "doubleSided": true,
+      "emissiveFactor": [
+        1,
+        1,
+        1
+      ],
+      "emissiveTexture": {
+        "index": 0
+      },
+      "extensions": {
+        "KHR_materials_emissive_strength": {
+          "emissiveStrength": 10
+        },
+        "KHR_materials_specular": {
+          "specularColorTexture": {
+            "index": 1
+          }
+        }
+      },
+      "name": "XBox_Gamepad_by_Batony_Robson_BLEND",
+      "normalTexture": {
+        "index": 2
+      },
+      "occlusionTexture": {
+        "index": 3,
+        "strength": 0.740603506565094
+      },
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 4
+        },
+        "metallicRoughnessTexture": {
+          "index": 3
+        }
+      }
+    }
+  ],
+  "textures": [
+    {
+      "sampler": 0,
+      "source": 0
+    },
+    {
+      "sampler": 0,
+      "source": 1
+    },
+    {
+      "sampler": 0,
+      "source": 2
+    },
+    {
+      "sampler": 0,
+      "source": 3
+    },
+    {
+      "sampler": 0,
+      "source": 4
+    }
+  ],
+  "images": [
+    {
+      "bufferView": 4,
+      "mimeType": "image/png",
+      "name": "Image_2"
+    },
+    {
+      "bufferView": 5,
+      "mimeType": "image/png",
+      "name": "Image"
+    },
+    {
+      "bufferView": 6,
+      "mimeType": "image/png",
+      "name": "Image_3"
+    },
+    {
+      "bufferView": 7,
+      "mimeType": "image/png",
+      "name": "Image_1"
+    },
+    {
+      "bufferView": 8,
+      "mimeType": "image/png",
+      "name": "Image_0"
+    }
+  ],
+  "samplers": [
+    {
+      "magFilter": 9729,
+      "minFilter": 9987
+    }
+  ],
+  "texture_roles": {
+    "baseColor": {
+      "texture": 4,
+      "channels": "RGB sRGB; A linear coverage",
+      "color_space": "sRGB RGB / linear A"
+    },
+    "emissive": {
+      "texture": 0,
+      "channels": "RGB",
+      "color_space": "sRGB"
+    },
+    "normal": {
+      "texture": 2,
+      "channels": "RGB tangent-space normal",
+      "color_space": "linear"
+    },
+    "occlusion": {
+      "texture": 3,
+      "channels": "R",
+      "color_space": "linear"
+    },
+    "roughness": {
+      "texture": 3,
+      "channels": "G",
+      "color_space": "linear"
+    },
+    "metallic": {
+      "texture": 3,
+      "channels": "B",
+      "color_space": "linear"
+    },
+    "specularColor": {
+      "texture": 1,
+      "channels": "RGB",
+      "color_space": "sRGB"
+    }
+  },
+  "factors": {
+    "baseColor": [
+      1,
+      1,
+      1,
+      1
+    ],
+    "metallic": 1,
+    "roughness": 1,
+    "normalScale": 1,
+    "emissive": [
+      1,
+      1,
+      1
+    ],
+    "emissiveStrength": 10,
+    "occlusionStrength": 0.740603506565094,
+    "specularFactor": 1,
+    "specularColorFactor": [
+      1,
+      1,
+      1
+    ]
+  },
+  "factor_evidence": "Explicit static values where present; omitted factors are glTF 2.0 / KHR defaults, not simulator defaults.",
+  "doubleSided": true,
+  "physical_parameters": null,
+  "specular_note": "STATIC_VISUAL uses KHR_materials_specular.specularColorTexture (RGB sRGB); the author GLB uses specularTexture (A linear). This snapshot preserves STATIC_VISUAL. Reconciliation is deferred.",
+  "filter_note": "All non-color texture channels use linear data. SpecularColor is a color texture defined as sRGB by KHR.",
+  "scope": "Appearance only; no contact, dynamics, kinematic, or RL validation.",
+  "constant_opacity": {
+    "material": "BLEND",
+    "value": 0.25098039215686274,
+    "numerator": 64,
+    "denominator": 255,
+    "units": "dimensionless linear coverage",
+    "source": {
+      "description": "V2 exact UV coverage: all 256 BLEND faces have alpha_min=alpha_max=64.",
+      "statistics": {
+        "faces": 256,
+        "exact_alpha_min": 64,
+        "exact_alpha_max": 64,
+        "image_size": [
+          2048,
+          2048
+        ]
+      },
+      "evidence": "build/experiments/visual_meshbase_20261015/ruling5/opacity_evidence.json"
+    },
+    "usage": "For backends routing transparent passes by constant opacity, including SAPIEN raster and MuJoCo classic.",
+    "sapien": "SAPIEN 3.0.3 material.base_color.a selects the pass. With a base-color texture, gbuffer1.frag:85-94,205 takes texture RGBA directly and does not multiply constant alpha; keep source RGBA and visibility 1.",
+    "sapien_source": "https://github.com/haosulab/sapien-vulkan-2/blob/2ad24e1e96d88d3dd00fb1a7821ffcef42ab1ed9/src/renderer/renderer.cpp#L765",
+    "shader_evidence": "build/experiments/visual_meshbase_20261015/ruling4/sources/installed_shader/gbuffer1.frag",
+    "mujoco": "Use RGB-only base texture plus BLEND material rgba.a=64/255, applied once.",
+    "gltf": "Keep GLB baseColorFactor.a=1: source texture already contains 64/255. Do not multiply twice; Cycles GLB is unchanged."
+  }
+}
