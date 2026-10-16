@@ -98,7 +98,9 @@ for example `[build,robotwin,example,teleop]`. The repository is private:
 automatic downloads fail without authentication. Download the attachments while
 signed in, then import the zip with `--archive` as shown above.
 
-The wheel builds runtime resources in your resource directory from the approved
+The resource zip is build input (source meshes and frozen snapshots), not
+ready-to-load resources: run `build-resources` once to generate the URDF and
+manifests. The wheel builds runtime resources in your resource directory from the approved
 input zip. Basic resource generation requires neither Blender nor a CoACD run.
 `verify` checks resource readiness and required files; see
 [resource import documentation](docs/importing.md) for details.
@@ -149,7 +151,8 @@ integration details are in [RoboTwin backend documentation](docs/robotwin_backen
    scene and choose its pose. Direct mesh or URDF loading loses the appearance
    materials, SDF configuration and signal mapping. Generated resource directories
    are internal build products; their README files point back to this API.
-3. Interact through the returned handle and adapt signals by channel name.
+3. Interact through the returned handle and adapt signals by channel name
+   (see the button names below).
    Use a static box as the supporting table: SDF does not contact `add_ground`
    planes. Call `diagnose_scene(scene)` to inspect integration mistakes without
    changing the scene.
@@ -163,6 +166,22 @@ integration details are in [RoboTwin backend documentation](docs/robotwin_backen
    `xbox-gamepad-physics example export ./gamepad_example` for a standalone runner.
    Import public APIs from `robotwin`; do not depend on internal `examples`
    modules for downstream integration.
+
+Channel names follow SDL3 and name buttons by position, not by Xbox label:
+
+| Xbox control | Channel | Range |
+| --- | --- | --- |
+| A / B / X / Y | `south` / `east` / `west` / `north` | 0–1 |
+| View / Xbox / Menu | `back` / `guide` / `start` | 0–1 |
+| LB / RB | `left_shoulder` / `right_shoulder` | 0–1 |
+| LT / RT | `left_trigger` / `right_trigger` | 0–1 |
+| Left stick tilt | `left_x`, `left_y` | −1–1 |
+| Right stick tilt | `right_x`, `right_y` | −1–1 |
+| Stick click | `left_stick` / `right_stick` | 0–1 |
+| D-pad | `dpad_up` / `dpad_down` / `dpad_left` / `dpad_right` | 0–1 |
+
+For example, `GamepadState.xbox_one_s({"south": 1.0, "left_x": 0.8})` presses A
+and tilts the left stick. Pair is a physical event, not a channel.
 
 The loader reserves collision `groups[2]` bit31 (`0x80000000`) and sets
 `groups[3] = 0x5842` to filter contacts between gamepad shapes. It preserves

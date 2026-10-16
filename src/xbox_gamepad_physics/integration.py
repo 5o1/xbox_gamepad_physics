@@ -30,6 +30,13 @@ GUIDE = """Xbox One S integration guide
    Read gamepad_state(); set_gamepad_state(state) writes joint positions;
    set_gamepad_targets(state) writes drives, followed by your scene.step().
    Adapt by channel name, never tensor index. Pair is a separate physical event.
+   Channel names follow SDL3 (by position, not by Xbox label):
+     A south, B east, X west, Y north, View back, Xbox guide, Menu start,
+     LB left_shoulder, RB right_shoulder, LT left_trigger, RT right_trigger,
+     left stick tilt left_x/left_y, right stick tilt right_x/right_y,
+     stick clicks left_stick/right_stick, D-pad dpad_up/down/left/right.
+   Sticks range -1..1; triggers and buttons range 0..1.
+   Example: GamepadState.xbox_one_s({'south': 1.0, 'left_x': 0.8})
    Your scene owns timestep, lights, cameras and object poses.
 
 4. Rendering
