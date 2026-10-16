@@ -27,9 +27,9 @@ PROFILE = (
 )
 
 
-@unittest.skip("MuJoCo is outside the v0.3 release scope; the frozen tree is retained only as a historical baseline")
+@unittest.skip("Historical resource tree is retained for provenance only.")
 class MujocoFullControlsAssetTest(unittest.TestCase):
-    @unittest.skip("MuJoCo is frozen: its generators read common resources that are now built into the resource cache, not tracked under resource_data/")
+    @unittest.skip("Historical resource tree is retained for provenance only.")
     def test_generated_profile_is_fresh(self):
         with tempfile.TemporaryDirectory() as directory:
             generated = Path(directory)

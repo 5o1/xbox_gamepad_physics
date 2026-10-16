@@ -65,7 +65,7 @@ _EXTRAS = {
     "example": ("PyYAML", "numpy", "Pillow", "transforms3d"),
     "teleop": ("aiohttp", "PyYAML", "numpy", "Pillow", "transforms3d", "opencv-python", "trimesh", "manifold3d"),
     "maintainer": ("coacd",),
-    "mujoco": (),
+    "mujoco": ("mujoco",),
     "isaac": (),
 }
 
@@ -77,14 +77,15 @@ def _version(name):
         return None
 
 
-def diagnose_environment():
+def diagnose_environment(*, backends=("robotwin",)):
     """Inspect installed distributions and resource readiness without building."""
     python = platform.python_version()
     sapien = _version("sapien")
+    mujoco = _version("mujoco")
     parsed = re.match(r"(\d+)\.(\d+)\.(\d+)", sapien or "")
     sdf = bool(parsed and tuple(map(int, parsed.groups())) >= (3, 0, 3))
     try:
-        resources = resource_status()
+        resources = resource_status(backends=backends)
         resources["ready"] = (not resources["missing"] and
                               not any(node["stale"] for node in resources["nodes"]))
     except (XboxGamepadPhysicsError, ImportError, OSError, ValueError) as error:
@@ -93,9 +94,41 @@ def diagnose_environment():
     for extra, distributions in _EXTRAS.items():
         versions = {name: _version(name) for name in distributions}
         extras[extra] = {"installed": all(versions.values()), "distributions": versions}
-    return {"python": python, "supported_python": python.startswith(("3.10.", "3.11.")),
-            "python_support": {"core": ["3.10", "3.11"], "robotwin": ["3.10"],
+    runtime_ready = all(sdf if name == "robotwin" else mujoco == "3.16.0" for name in backends)
+    return {"backends": list(backends), "runtime_ready": runtime_ready,
+            "mujoco": mujoco, "supported_mujoco": mujoco == "3.16.0",
+            "python": python, "supported_python": python.startswith(("3.10.", "3.11.")),
+            "python_support": {"core": ["3.10", "3.11"], "robotwin": ["3.10"], "mujoco": ["3.10", "3.11"],
                                "isaac": "External Python 3.11 platform; backend not implemented in C1"},
             "sapien": sapien, "supported_sapien": sapien == "3.0.3",
             "sdf_supported": sdf,
             "resources": resources, "extras": extras}
+
+
+MUJOCO_GUIDE = """MuJoCo Xbox One S integration guide
+
+1. Install with [build,mujoco] in Python 3.10 or 3.11 (MuJoCo 3.16.0):
+     python -m pip install 'xbox-gamepad-physics[build,mujoco]'
+     xbox-gamepad-physics build-resources --backend mujoco --archive INPUT.zip --resources ./gamepad_resources --offline
+   Set XBOX_GAMEPAD_PHYSICS_RESOURCES to the prepared directory.
+   Inspect with status --backend mujoco and doctor --backend mujoco.
+   verify --backend mujoco reports the declared physical acceptance gate;
+   available assets may remain blocked while contact acceptance is pending.
+
+2. Let the caller compile its model, then bind by name:
+   import mujoco
+   from xbox_gamepad_physics.mujoco import attach_to_spec, load_standalone
+   parent = mujoco.MjSpec.from_string('<mujoco/>')
+   binding = attach_to_spec(parent, prefix='pad_', fixed_root=True)
+   model = parent.compile()
+   data = mujoco.MjData(model)
+   pad = binding.bind(model, data)
+   Choose fixed_root before compile. The fragment does not set global options.
+   For standalone use: scene = load_standalone(fixed_root=True).
+
+3. Read gamepad_state() and set_gamepad_targets(state) by channel name.
+   The caller owns stepping: mujoco.mj_step(model, data). Pair remains separate.
+   Binding checks named controls; pad.findings reports collision-bit overlap and material
+   degradation. Classic Phong rendering approximates the upstream PBR material;
+   successful loading and signals do not establish contact acceptance.
+"""

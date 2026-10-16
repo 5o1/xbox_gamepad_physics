@@ -125,7 +125,7 @@ def _manifest(*, entrypoint="xbox_one_s.xml", scene_file="scene_fixed.xml"):
     )
 
 
-@unittest.skip("MuJoCo is outside the v0.3 release scope; the frozen tree is retained only as a historical baseline")
+@unittest.skip("Historical resource tree is retained for provenance only.")
 class MujocoRuntimeTests(unittest.TestCase):
     def setUp(self):
         _FakeMjSpecFactory.calls = []

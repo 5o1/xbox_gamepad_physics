@@ -64,7 +64,16 @@ ROBOTWIN = BackendSpec(
 )
 MUJOCO = BackendSpec("mujoco", ("full_controls",), ("mujoco_full_controls",),
                      "xbox_gamepad_physics.mujoco.bind", "xbox_gamepad_physics.mujoco.builder.build",
-                     UsageSpec("xbox_gamepad_physics.mujoco.bind", ""), implemented=False)
+                     UsageSpec("xbox_gamepad_physics.mujoco.bind",
+                               "from xbox_gamepad_physics.mujoco import load_standalone\n"
+                               "scene = load_standalone(fixed_root=True)\n"
+                               "pad = scene.gamepad\n",
+                               guide_command="xbox-gamepad-physics guide --backend mujoco",
+                               example_export_command="See examples/mujoco/inspect_asset.py in the source checkout.",
+                               backend_notes=("Caller compiles make_spec/attach_to_spec, then binds by name.",
+                                              "Fixed/free root choice is structural before compilation.")),
+                     capabilities=frozenset({"named_joints", "signals", "birth_fixed_free", "target_drive"}),
+                     implemented=True)
 ISAAC = BackendSpec("isaac", ("full_controls",), ("isaac_full_controls",),
                     "xbox_gamepad_physics.isaac.bind_articulation", "xbox_gamepad_physics.isaac.builder.build",
                     UsageSpec("xbox_gamepad_physics.isaac.bind_articulation", ""),

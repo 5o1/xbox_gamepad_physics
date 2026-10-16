@@ -193,3 +193,26 @@ def derive_texture_channels(source: TextureDescription, channels: str, *, output
         converted.save(output)
     return TextureDescription(str(output),source.role,channels,source.color_space,
                               source.uv_set,source.sampler,source.transform,source.evidence)
+
+
+def bind_appearance_to_motion(description, kinematics, motion):
+    """Bind reviewed part identities from common kinematics to neutral links.
+
+    Geometry is still in authored glTF coordinates. Its scale is applied by
+    the consumer; this pose converts Y-up to simulation Z-up, then into the
+    complete neutral link frame, including any public origin rotation.
+    """
+    from dataclasses import replace
+    from .transforms import compose, inverse, neutral_link_poses
+    poses = neutral_link_poses(motion)
+    joints = {joint.name: joint for joint in motion.joints}
+    nodes = {node["source_node"]: node for node in kinematics["nodes"]}
+    if set(nodes) != {part.name for part in description.parts}:
+        raise ValueError("kinematics and appearance part identities differ")
+    conversion = Pose(orientation_wxyz=(math.sqrt(.5), math.sqrt(.5), 0., 0.))
+    parts = []
+    for part in description.parts:
+        node = nodes[part.name]
+        link = joints[node["joint_ids"][-1]].child if node["joint_ids"] else "controller_body"
+        parts.append(replace(part, link=link, local_pose=compose(inverse(poses[link]), conversion)))
+    return replace(description, parts=tuple(parts))
