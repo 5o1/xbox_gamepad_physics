@@ -85,9 +85,9 @@ Download the wheel and resource zip from the
 The package is distributed through Release attachments rather than PyPI.
 
 ```sh
-python3.10 -m pip install "./xbox_gamepad_physics-0.3.1-py3-none-any.whl[build,robotwin]"
+python3.10 -m pip install "./xbox_gamepad_physics-0.4.0-py3-none-any.whl[build,robotwin]"
 python3.10 -m xbox_gamepad_physics build-resources \
-  --archive ./xbox_gamepad_physics-resources-0.3.1.zip \
+  --archive ./xbox_gamepad_physics-resources-0.4.0.zip \
   --resources ./gamepad_resources --offline
 export XBOX_GAMEPAD_PHYSICS_RESOURCES="$PWD/gamepad_resources"
 python3.10 -m xbox_gamepad_physics verify --backend robotwin --profile full_controls
@@ -227,7 +227,7 @@ boundary adapter. See [full controls](docs/full_controls.md) for the interface a
 - Freezing a tilted gamepad can produce stick signals of approximately 0.03.
 - SDF does not collide with `add_ground` planes or another SDF object; use a
   static box for the supporting table.
-- MuJoCo is outside the v0.3 release scope. Its frozen files are historical.
+- MuJoCo is outside the v0.3+ release scope. Its frozen files are historical.
 
 Loading and signal round trips do not establish contact-physics readiness or RL
 results. See [release status and limitations](docs/plan.md) for the recorded scope.
