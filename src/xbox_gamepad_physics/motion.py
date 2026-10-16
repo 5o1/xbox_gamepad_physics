@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 import math
 from types import MappingProxyType
 from typing import Any, Mapping
@@ -18,6 +18,7 @@ from .controller import (
 )
 from .errors import ResourceFormatError, StateValidationError
 from .resources import load_json_resource
+from .state import CHANNEL_NAMES
 
 
 @dataclass(frozen=True, slots=True)
@@ -31,6 +32,7 @@ class MotionJoint:
     lower: float
     upper: float
     unit: str
+    origin_orientation_wxyz: tuple[float, float, float, float] = (1.0, 0.0, 0.0, 0.0)
 
 
 @dataclass(frozen=True, slots=True)
@@ -42,6 +44,7 @@ class MotionContract:
     signal_controller: GamepadSignalController
     state_mapping: Mapping[str, Any]
     joint_space_constraints: tuple[Mapping[str, Any], ...]
+    signal_policy: Mapping[str, Any] = field(default_factory=dict)
 
 
 def _number(record: Mapping[str, Any], field: str, context: str) -> float:
@@ -54,10 +57,8 @@ def _number(record: Mapping[str, Any], field: str, context: str) -> float:
     return result
 
 
-def load_motion_contract(profile: str = "full_controls") -> MotionContract:
-    """Load the common motion contract consumed by every simulator backend."""
-
-    raw = load_json_resource("common", "xbox_one_s", "motion", f"{profile}.json")
+def motion_from_dict(raw: Mapping[str, Any], profile: str = "full_controls") -> MotionContract:
+    """Parse a complete engine-free motion description without preparing resources."""
     if raw.get("asset_id") != "xbox_one_s" or raw.get("profile") != profile:
         raise ResourceFormatError("motion contract asset/profile identity mismatch")
     raw_joints = raw.get("joints")
@@ -96,7 +97,13 @@ def load_motion_contract(profile: str = "full_controls") -> MotionContract:
         upper = _number(record, "upper", context)
         if lower >= upper:
             raise ResourceFormatError(f"{context} lower must be below upper")
-        joint = MotionJoint(name, kind, parent, child, origin_values, axis_values, lower, upper, unit)
+        orientation = record.get("origin_orientation_wxyz", (1.0, 0.0, 0.0, 0.0))
+        if len(orientation) != 4:
+            raise ResourceFormatError(f"{context}.origin_orientation_wxyz needs four values")
+        orientation = tuple(_number({"value": value}, "value", context) for value in orientation)
+        if not math.isclose(sum(value * value for value in orientation), 1.0, abs_tol=1e-12):
+            raise ResourceFormatError(f"{context} orientation must be a unit quaternion")
+        joint = MotionJoint(name, kind, parent, child, origin_values, axis_values, lower, upper, unit, orientation)
         joints.append(joint)
         by_name[name] = joint
 
@@ -146,7 +153,8 @@ def load_motion_contract(profile: str = "full_controls") -> MotionContract:
     )
     try:
         controller = GamepadSignalController.xbox_one_s(
-            axes, radial, scalars, splits, radial_sources, events
+            axes, radial, scalars, splits, radial_sources, events,
+            signal_policy=raw.get("signal_policy"),
         )
     except StateValidationError as error:
         raise ResourceFormatError(f"invalid motion signal bindings: {error}") from error
@@ -207,4 +215,21 @@ def load_motion_contract(profile: str = "full_controls") -> MotionContract:
         signal_controller=controller,
         state_mapping=MappingProxyType(state_mapping),
         joint_space_constraints=tuple(MappingProxyType(dict(item)) for item in constraints),
+        signal_policy=MappingProxyType(dict(raw.get("signal_policy", {}))),
     )
+
+
+def load_motion_contract(profile: str = "full_controls") -> MotionContract:
+    """Load the common motion contract consumed by every simulator backend."""
+    return motion_from_dict(load_json_resource("common", "xbox_one_s", "motion", f"{profile}.json"), profile)
+
+
+def controller_from_motion(motion: MotionContract) -> GamepadSignalController:
+    return motion.signal_controller
+
+
+def project_representable(state, motion: MotionContract):
+    """Compose existing inverse/forward mappings; this projection can be lossy."""
+    channels = tuple(n for n, enabled in zip(CHANNEL_NAMES,
+                                            state.task_mask) if enabled)
+    return motion.signal_controller.encode(motion.signal_controller.decode_joint_targets(state), task_channels=channels)

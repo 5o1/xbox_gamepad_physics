@@ -3,10 +3,11 @@ from __future__ import annotations
 
 import argparse
 from contextlib import redirect_stdout
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 import hashlib
 import importlib
 import json
+import os
 from pathlib import Path
 import shutil
 import sys
@@ -20,6 +21,7 @@ BUILDER_ROOT = Path(__file__).resolve().parent
 from xbox_gamepad_physics._resource_cache import cache_lock, publish_directory
 from xbox_gamepad_physics.errors import ResourceError
 from .usage import write_resource_readme
+from xbox_gamepad_physics.backends.registry import backend_spec, selected_nodes
 
 # Output directory of each node, relative to the resource root.
 RESOURCE_OUTPUTS = {
@@ -27,6 +29,7 @@ RESOURCE_OUTPUTS = {
     "common_motion": "common/xbox_one_s/motion",
     "sim_visual": "common/xbox_one_s/visual",
     "collision": "common/xbox_one_s/collision",
+    "common_physical": "common/xbox_one_s/physical",
     "robotwin_left_stick": "robotwin/left_stick",
     "robotwin_full_controls": "robotwin/full_controls",
 }
@@ -40,6 +43,7 @@ class Node:
     output: str
     generate: Callable[[Path, Path], None]
     sources: tuple[str, ...] = ()
+    options: str = ""
 
 
 def _generator(module: str, output: Path, **kwargs):
@@ -47,9 +51,26 @@ def _generator(module: str, output: Path, **kwargs):
         importlib.import_module("." + module, __package__).build(output=output, **kwargs)
 
 
-def nodes(inputs: Path, *, evidence: Path = DATA_ROOT) -> tuple[Node, ...]:
+def nodes(inputs: Path, *, evidence: Path = DATA_ROOT, calibration=None) -> tuple[Node, ...]:
     """Build only from the imported input snapshot and wheel evidence."""
+    from xbox_gamepad_physics.backends.common.calibration import load_calibration, resolve_calibration, ResolvedCalibration
+    if not isinstance(calibration, ResolvedCalibration):
+        override = load_calibration(calibration)
+        calibration = resolve_calibration(override=override, profile=override.profile)
     inputs, evidence = Path(inputs).resolve(), Path(evidence).resolve()
+    def calibrated(profile):
+        return calibration if calibration.profile == profile else None
+    physical_sources = tuple(str(BUILDER_ROOT.parent / "backends/common" / name)
+                             for name in ("model.py", "calibration.py", "physical.py"))
+    adapter_source = str(BUILDER_ROOT.parent / "robotwin/physical.py")
+    options = json.dumps(asdict(calibration), sort_keys=True)
+    def physical_builder(out, root):
+        from xbox_gamepad_physics.backends.common.physical import build as generate
+        generate(out, full_controls_source=evidence / "references/full_controls.json",
+                 left_stick_source=evidence / "references/left_stick.json",
+                 common_motion=root / "common/xbox_one_s/motion/full_controls.json",
+                 kinematics=kin(root), meshbase=meshbase,
+                 collision_root=root / RESOURCE_OUTPUTS["collision"], calibration=calibration)
     def asset(relative):
         return str(inputs / relative)
     def proof(relative):
@@ -84,21 +105,34 @@ def nodes(inputs: Path, *, evidence: Path = DATA_ROOT) -> tuple[Node, ...]:
             asset("assets/xbox_one_s/visual_meshbase/manifest.json"),
         ), ("kinematics",), RESOURCE_OUTPUTS["sim_visual"],
              lambda out, root: _generator("export_sim_visual_assets", out, kinematics=kin(root), inputs=inputs),
-             code("export_sim_visual_assets")),
+             (*code("export_sim_visual_assets"), *(str(BUILDER_ROOT.parent / "backends/common" / name) for name in ("appearance.py", "model.py")))),
         Node("collision", (str(meshbase), asset("assets/xbox_one_s/collision_coacd"), str(policy)),
              (), RESOURCE_OUTPUTS["collision"],
              lambda out, root: _generator("common_collision", out, meshbase=meshbase,
                                           frozen=inputs / "assets/xbox_one_s/collision_coacd", policy=policy),
              code("common_collision")),
+        Node("common_physical", (str(policy), proof("references/left_stick.json"), str(meshbase)),
+             ("kinematics", "common_motion", "collision"), RESOURCE_OUTPUTS["common_physical"],
+             physical_builder, physical_sources, options),
         Node("robotwin_left_stick", (proof("references/left_stick.json"),),
-             ("kinematics", "sim_visual"), RESOURCE_OUTPUTS["robotwin_left_stick"],
-             lambda out, root: _generator("build_robotwin_left_stick", out, kinematics=kin(root), visual_manifest=visual(root) / "manifest.json", source=evidence / "references/left_stick.json"),
-             code("build_robotwin_left_stick")),
+             ("kinematics", "sim_visual", "common_physical"), RESOURCE_OUTPUTS["robotwin_left_stick"],
+             lambda out, root: _generator("build_robotwin_left_stick", out, kinematics=kin(root), visual_manifest=visual(root) / "manifest.json", source=evidence / "references/left_stick.json", calibration=calibrated("left_stick")),
+             (*code("build_robotwin_left_stick"), *physical_sources, adapter_source), options),
         Node("robotwin_full_controls", (str(policy), proof("references/left_stick.json"), str(meshbase)),
-             ("kinematics", "common_motion", "sim_visual", "collision"), RESOURCE_OUTPUTS["robotwin_full_controls"],
-             lambda out, root: _generator("build_robotwin_full_controls", out, kinematics=kin(root), visual_root=visual(root), common_motion=root / "common/xbox_one_s/motion/full_controls.json", collision_root=root / RESOURCE_OUTPUTS["collision"], meshbase=meshbase, source=policy, left_stick_source=evidence / "references/left_stick.json"),
-             code("build_robotwin_full_controls", "common_collision")),
+             ("kinematics", "common_motion", "sim_visual", "collision", "common_physical"), RESOURCE_OUTPUTS["robotwin_full_controls"],
+             lambda out, root: _generator("build_robotwin_full_controls", out, kinematics=kin(root), visual_root=visual(root), common_motion=root / "common/xbox_one_s/motion/full_controls.json", collision_root=root / RESOURCE_OUTPUTS["collision"], meshbase=meshbase, source=policy, left_stick_source=evidence / "references/left_stick.json", calibration=calibrated("full_controls")),
+             (*code("build_robotwin_full_controls", "common_collision"), *physical_sources, adapter_source), options),
     )
+
+
+def _selected_graph(inputs, evidence, *, backends=("robotwin",), targets=None, runtime="python", calibration=None):
+    selected = []
+    for name in backends:
+        declaration = backend_spec(name)
+        declaration.require_builder_runtime(runtime)
+        selected.extend(declaration.node_names)
+    return selected_nodes(nodes(inputs, evidence=evidence, calibration=calibration),
+                          tuple(selected) if targets is None else tuple(targets))
 
 
 def _ordered(graph: tuple[Node, ...]) -> tuple[Node, ...]:
@@ -144,7 +178,7 @@ def _fingerprint(node: Node, repo: Path, root: Path, table: dict[str, Node]) -> 
             if path.name == "README.md":
                 continue
             result["upstream/" + path.relative_to(root).as_posix()] = hashlib.sha256(path.read_bytes()).hexdigest()
-    return {"inputs": result, "upstream": list(node.upstream), "output": node.output}
+    return {"inputs": result, "upstream": list(node.upstream), "output": node.output, "options": node.options}
 
 
 def _read_stamp(root: Path, node: Node) -> dict:
@@ -155,11 +189,17 @@ def _read_stamp(root: Path, node: Node) -> dict:
 
 
 def node_status(root: Path, *, inputs: Path | None = None, evidence: Path = DATA_ROOT,
-                repo: Path | None = None, graph: tuple[Node, ...] | None = None) -> list[dict]:
+                repo: Path | None = None, graph: tuple[Node, ...] | None = None,
+                backends=("robotwin",), targets=None, runtime="python", calibration=None) -> list[dict]:
     root = Path(root).resolve()
     repo = Path(repo).resolve() if repo is not None else root / "inputs"
     inputs = Path(inputs).resolve() if inputs is not None else repo
-    graph = _ordered(nodes(inputs, evidence=evidence) if graph is None else graph)
+    if graph is None and calibration is None and not os.environ.get("XBOX_GAMEPAD_PHYSICS_CALIBRATION"):
+        selected_config = root / ".selected-calibration.json"
+        if selected_config.is_file():
+            from xbox_gamepad_physics.backends.common.calibration import resolved_from_dict
+            calibration = resolved_from_dict(json.loads(selected_config.read_text()))
+    graph = _ordered(_selected_graph(inputs, evidence, backends=backends, targets=targets, runtime=runtime, calibration=calibration) if graph is None else graph)
     table = {node.name: node for node in graph}
     stale = set()
     report = []
@@ -182,13 +222,24 @@ def node_status(root: Path, *, inputs: Path | None = None, evidence: Path = DATA
 
 def build(output: Path = ROOT / "build/resources", *, force: bool = False,
           inputs: Path | None = None, evidence: Path = DATA_ROOT,
-          repo: Path | None = None, graph: tuple[Node, ...] | None = None) -> list[dict]:
+          repo: Path | None = None, graph: tuple[Node, ...] | None = None,
+          backends=("robotwin",), targets=None, runtime="python", calibration=None) -> list[dict]:
     """Build stale nodes and all downstream nodes, publishing only on success."""
     started = time.perf_counter()
     output = Path(output).resolve()
     repo = Path(repo).resolve() if repo is not None else output / "inputs"
     inputs = Path(inputs).resolve() if inputs is not None else repo
-    graph = _ordered(nodes(inputs, evidence=evidence) if graph is None else graph)
+    configuration = calibration
+    if graph is None:
+        from xbox_gamepad_physics.backends.common.calibration import load_calibration, resolve_calibration, ResolvedCalibration, resolved_from_dict
+        selected_config = output / ".selected-calibration.json"
+        if calibration is None and not os.environ.get("XBOX_GAMEPAD_PHYSICS_CALIBRATION") and selected_config.is_file():
+            configuration = resolved_from_dict(json.loads(selected_config.read_text()))
+        elif not isinstance(calibration, ResolvedCalibration):
+            override = load_calibration(calibration)
+            configuration = resolve_calibration(override=override, profile=override.profile)
+        calibration = configuration
+    graph = _ordered(_selected_graph(inputs, evidence, backends=backends, targets=targets, runtime=runtime, calibration=calibration) if graph is None else graph)
     table = {node.name: node for node in graph}
     try:
         with cache_lock(output):
@@ -208,6 +259,8 @@ def build(output: Path = ROOT / "build/resources", *, force: bool = False,
                     staged.mkdir()
                 (staged / ".stamps").mkdir(exist_ok=True)
                 write_resource_readme(staged)
+                if configuration is not None:
+                    (staged / ".selected-calibration.json").write_text(json.dumps(asdict(configuration), indent=2) + "\n")
                 for node in graph:
                     tick = time.perf_counter()
                     if node.name not in selected:
@@ -232,9 +285,13 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, default=ROOT / "build/resources")
     parser.add_argument("--force", action="store_true")
+    parser.add_argument("--backend", choices=("robotwin", "mujoco", "isaac"), default="robotwin")
+    parser.add_argument("--target", action="append")
+    parser.add_argument("--calibration", type=Path)
     parser.add_argument("--inputs", type=Path, default=ROOT)
     args = parser.parse_args()
-    build(args.output, force=args.force, inputs=args.inputs)
+    build(args.output, force=args.force, inputs=args.inputs, backends=(args.backend,),
+          targets=args.target, calibration=args.calibration)
 
 
 if __name__ == "__main__":

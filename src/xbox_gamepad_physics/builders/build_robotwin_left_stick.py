@@ -13,6 +13,8 @@ from .build_kinematics import build as build_kinematics
 
 from .paths import DATA_ROOT, ROOT
 from .usage import document_outputs
+from ..robotwin.physical import calibrated_contact, configure_robotwin_dynamics
+from ..backends.common.physical import derive_joint_dynamics, left_stick_links
 SOURCE = DATA_ROOT / "references" / "left_stick.json"
 VISUAL_MANIFEST = (
     ROOT
@@ -135,19 +137,17 @@ def _find_joint(profile: dict, joint_id: str) -> dict:
 
 
 def build(output: Path, *, kinematics: Path | None = None,
-          visual_manifest: Path = VISUAL_MANIFEST, source: Path = SOURCE) -> None:
+          visual_manifest: Path = VISUAL_MANIFEST, source: Path = SOURCE, calibration=None) -> None:
     source = _json(source)
     kinematics = _json(kinematics) if kinematics is not None else build_kinematics()[1]
     visual = _json(visual_manifest)
-    output.mkdir(parents=True, exist_ok=True)
-    (output / "collision").mkdir(exist_ok=True)
-    (output / "visual").mkdir(exist_ok=True)
 
     k = source["kinematics"]
-    dynamics = source["passive_dynamics"]
+    dynamics = dict(source["passive_dynamics"])
     mass = source["mass_properties"]
     collision = source["collision_geometry"]
-    contact = source["contact_material"]
+    contact = calibrated_contact(source, calibration)
+    link_physical = left_stick_links(source)
 
     source_x = _find_joint(kinematics, "left_stick_x")
     source_y = _find_joint(kinematics, "left_stick_y")
@@ -160,13 +160,25 @@ def build(output: Path, *, kinematics: Path | None = None,
     if not math.isclose(source_x["limits"][1], k["half_sweep_rad"], abs_tol=1e-12):
         raise ValueError("left-stick angle differs from the reviewed kinematic profile")
 
+    joint_dynamics = derive_joint_dynamics("left_stick", {"left_stick_x": source_x, "left_stick_y": source_y}, source, calibration=calibration)
+    configure_robotwin_dynamics(joint_dynamics, source, "left_stick", calibration)
+    if calibration is not None:
+        reference = joint_dynamics["left_stick_x"]
+        # The historical summary is retained; per-joint effective values live in manifest.
+        dynamics.update(linear_equivalent_stiffness_nm_per_rad=reference["stiffness"],
+            damping_nms_per_rad=reference["drive_damping"], drive_force_limit_nm=reference["effort"],
+            joint_friction_nm=reference["friction"])
+    output.mkdir(parents=True, exist_ok=True)
+    (output / "collision").mkdir(exist_ok=True)
+    (output / "visual").mkdir(exist_ok=True)
+
     robot = ET.Element("robot", name="xbox_one_s_left_stick")
     body = ET.SubElement(robot, "link", name="controller_body")
     _inertial(
         body,
-        mass["body_link_mass_kg"],
-        (-0.00014, -0.00325, -0.00475),
-        tuple(mass["body_inertia_kg_m2"]),
+        link_physical["controller_body"]["mass_kg"],
+        tuple(link_physical["controller_body"]["com_m"]),
+        tuple(link_physical["controller_body"]["inertia_kg_m2"]),
     )
     _box_collision(body, "body_central_support", (0.0, 0.0, -0.018), (0.12, 0.075, 0.028))
 
@@ -196,16 +208,16 @@ def build(output: Path, *, kinematics: Path | None = None,
     gimbal = ET.SubElement(robot, "link", name="left_stick_x_frame")
     _inertial(
         gimbal,
-        mass["gimbal_link_mass_kg"],
-        (0.0, 0.0, 0.0),
-        tuple(mass["gimbal_inertia_kg_m2"]),
+        link_physical["left_stick_x_frame"]["mass_kg"],
+        tuple(link_physical["left_stick_x_frame"]["com_m"]),
+        tuple(link_physical["left_stick_x_frame"]["inertia_kg_m2"]),
     )
     stick = ET.SubElement(robot, "link", name="left_stick")
     _inertial(
         stick,
-        mass["stick_link_mass_kg"],
-        tuple(mass["stick_com_m_from_pivot"]),
-        tuple(mass["stick_inertia_kg_m2"]),
+        link_physical["left_stick"]["mass_kg"],
+        tuple(link_physical["left_stick"]["com_m"]),
+        tuple(link_physical["left_stick"]["inertia_kg_m2"]),
     )
     for key in ("lower_stem", "upper_stem", "cap"):
         item = collision[key]
@@ -217,13 +229,10 @@ def build(output: Path, *, kinematics: Path | None = None,
             float(item["length_m"]),
         )
 
-    common_joint = dict(
-        limit=float(k["half_sweep_rad"]),
-        effort=float(dynamics["drive_force_limit_nm"]),
-        velocity=float(dynamics["velocity_limit_rad_s"]),
-        damping=float(dynamics["damping_nms_per_rad"]),
-        friction=float(dynamics["joint_friction_nm"]),
-    )
+    def joint_values(name):
+        record = joint_dynamics[name]
+        return dict(limit=float(k["half_sweep_rad"]), effort=record["effort"],
+                    velocity=record["velocity"], damping=record["passive_damping"], friction=record["friction"])
     _joint(
         robot,
         "left_stick_x",
@@ -231,7 +240,7 @@ def build(output: Path, *, kinematics: Path | None = None,
         "left_stick_x_frame",
         pivot,
         tuple(k["horizontal_axis_source_frame"]),
-        **common_joint,
+        **joint_values("left_stick_x"),
     )
     _joint(
         robot,
@@ -240,7 +249,7 @@ def build(output: Path, *, kinematics: Path | None = None,
         "left_stick",
         (0.0, 0.0, 0.0),
         tuple(k["vertical_axis_source_frame"]),
-        **common_joint,
+        **joint_values("left_stick_y"),
     )
     ET.indent(robot, space="  ")
     ET.ElementTree(robot).write(
@@ -348,11 +357,11 @@ def build(output: Path, *, kinematics: Path | None = None,
         "joint_dynamics": [
             {
                 "name": name,
-                "stiffness": dynamics["linear_equivalent_stiffness_nm_per_rad"],
-                "damping": dynamics["damping_nms_per_rad"],
-                "force_limit": dynamics["drive_force_limit_nm"],
-                "friction": dynamics["joint_friction_nm"],
-                "target": 0.0,
+                "stiffness": joint_dynamics[name]["stiffness"],
+                "damping": joint_dynamics[name]["drive_damping"],
+                "force_limit": joint_dynamics[name]["effort"],
+                "friction": joint_dynamics[name]["friction"],
+                "target": joint_dynamics[name]["target"],
             }
             for name in ("left_stick_x", "left_stick_y")
         ],

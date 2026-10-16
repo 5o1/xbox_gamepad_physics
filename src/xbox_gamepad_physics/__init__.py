@@ -38,7 +38,7 @@ from .errors import (
 )
 from .profiles import BackendProfile, load_profile, require_physics_ready
 from .motion import MotionContract, MotionJoint, load_motion_contract
-from .resources import load_json_resource, resource_path, resource_root
+from .resources import load_json_resource, resource_path, resource_root, prepare_resources, query_resource_path
 from .state import (
     AXIS_COUNT,
     AXIS_NAMES,
@@ -97,4 +97,6 @@ __all__ = [
     "require_physics_ready",
     "resource_path",
     "resource_root",
+    "prepare_resources",
+    "query_resource_path",
 ]

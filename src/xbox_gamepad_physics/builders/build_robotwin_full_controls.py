@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import math
 from pathlib import Path
 import xml.etree.ElementTree as ET
 
@@ -12,7 +11,8 @@ import numpy as np
 import trimesh
 
 from .build_kinematics import build as build_kinematics
-from .common_collision import shell_meshes
+from ..robotwin.physical import calibrated_contact, configure_robotwin_dynamics
+from ..backends.common.physical import derive_joint_dynamics, derive_component_mass, mass_mesh, link_transforms, frame_mass_properties, body_mass_properties
 from .usage import document_outputs
 
 
@@ -134,25 +134,6 @@ def _converted_bounds(part_file: Path, scale: float) -> np.ndarray:
     return np.stack((converted.min(axis=0), converted.max(axis=0)))
 
 
-def _critical_damping(stiffness: float, effective_mass: float, ratio: float) -> float:
-    return 2.0 * ratio * math.sqrt(stiffness * effective_mass)
-
-
-def _link_transforms(motion):
-    transforms = {"controller_body": np.eye(4)}
-    pending = list(motion["joints"])
-    while pending:
-        ready = [joint for joint in pending if joint["parent"] in transforms]
-        if not ready:
-            raise ValueError("motion joint chain is disconnected")
-        for joint in ready:
-            transform = trimesh.transformations.euler_matrix(*joint.get("rpy", (0, 0, 0)), axes="sxyz")
-            transform[:3, 3] = joint["origin"]
-            transforms[joint["child"]] = transforms[joint["parent"]] @ transform
-            pending.remove(joint)
-    return transforms
-
-
 def _transform_obj(source, destination, transform):
     lines = []
     for line in source.read_text().splitlines():
@@ -165,35 +146,15 @@ def _transform_obj(source, destination, transform):
     destination.write_text("\n".join(lines) + "\n")
 
 
-def _mass_mesh(component, transform, meshbase):
-    shells = shell_meshes(meshbase / "meshes" / f"{component}.obj")
-    if len(shells) == 2:
-        import manifold3d
-        solids = [manifold3d.Manifold(manifold3d.Mesh64(
-            np.asarray(mesh.vertices), np.asarray(mesh.faces, dtype=np.uint64))) for mesh in shells]
-        union = solids[0] + solids[1]
-        if union.status() != manifold3d.Error.NoError:
-            raise ValueError(f"{component}: manifold union failed: {union.status()}")
-        result = union.to_mesh64()
-        mesh = trimesh.Trimesh(result.vert_properties[:, :3], result.tri_verts, process=False)
-    else:
-        mesh = shells[0]
-    mesh.apply_transform(transform)
-    return mesh
-
-
 def build(output: Path, *, kinematics: Path | None = None,
           visual_root: Path = VISUAL_ROOT, common_motion: Path = COMMON_MOTION,
           collision_root: Path = COLLISION_ROOT, meshbase: Path = ROOT / "assets/xbox_one_s/collision_meshbase",
-          source: Path = SOURCE, left_stick_source: Path = LEFT_STICK_SOURCE) -> None:
+          source: Path = SOURCE, left_stick_source: Path = LEFT_STICK_SOURCE, calibration=None) -> None:
     source = _json(source)
     profile = _json(kinematics) if kinematics is not None else build_kinematics()[1]
     motion = _json(common_motion)
     visual = _json(visual_root / "manifest.json")
     left_stick = _json(left_stick_source)
-    output.mkdir(parents=True, exist_ok=True)
-    (output / "collision").mkdir(exist_ok=True)
-    (output / "visual").mkdir(exist_ok=True)
 
     motion_joints = {joint["name"]: joint for joint in motion["joints"]}
     joints = {joint["id"]: dict(joint) for joint in profile["joints"]}
@@ -214,74 +175,16 @@ def build(output: Path, *, kinematics: Path | None = None,
         for control, part_name in PART_BY_CONTROL.items()
     }
 
-    face = set(source["control_groups"]["face_buttons"]["joints"])
-    small = set(source["control_groups"]["small_buttons"]["joints"])
-    shoulders = set(source["control_groups"]["shoulders"]["joints"])
-    triggers = set(source["control_groups"]["triggers"]["joints"])
-    dpad = set(source["control_groups"]["dpad"]["joints"])
-    stick_tilts = {
-        "left_stick_x", "left_stick_y", "right_stick_x", "right_stick_y"
-    }
-    stick_clicks = {"left_stick_click", "right_stick_click"}
-    one_sided = face | small | shoulders | triggers | stick_clicks
-    preload_fraction = float(
-        source["passive_preload_policy"]["preload_fraction"]
-    )
-
-    dynamics = {}
-    for name, joint in joints.items():
-        travel = float(joint["limits"][1] - joint["limits"][0])
-        if name in face:
-            force = float(source["control_groups"]["face_buttons"]["reference_force_n"])
-            stiffness, effort, velocity, effective = force / travel, 2 * force, 1.0, 0.001
-        elif name in small:
-            force = float(source["control_groups"]["small_buttons"]["reference_force_n"])
-            stiffness, effort, velocity, effective = force / travel, 2 * force, 1.0, 0.0005
-        elif name in shoulders:
-            force = float(source["control_groups"]["shoulders"]["reference_force_n"])
-            stiffness, effort, velocity, effective = force / travel, 2 * force, 1.0, 0.003
-        elif name in triggers:
-            torque = float(source["control_groups"]["triggers"]["endpoint_torque_nm"])
-            stiffness, effort, velocity, effective = torque / travel, 0.024, 10.0, 1e-6
-        elif name in stick_tilts:
-            record = left_stick["passive_dynamics"]
-            stiffness = float(record["linear_equivalent_stiffness_nm_per_rad"])
-            effort = float(record["drive_force_limit_nm"])
-            velocity = float(record["velocity_limit_rad_s"])
-            effective = 0.8e-6
-        elif name in stick_clicks:
-            group = source["control_groups"]["sticks"]
-            stiffness = float(group["click_stiffness_n_per_m"])
-            effort = float(group["click_force_limit_n"])
-            velocity, effective = 0.2, 0.004
-        elif name in dpad:
-            group = source["control_groups"]["dpad"]
-            stiffness = float(group["stiffness_nm_per_rad"])
-            effort = float(group["force_limit_nm"])
-            velocity, effective = 10.0, 1e-6
-        else:
-            raise ValueError(f"joint {name!r} has no dynamics policy")
-        ratio = 0.7
-        damping = _critical_damping(stiffness, effective, ratio)
-        joint.update(
-            effort=effort,
-            velocity=velocity,
-            stiffness=stiffness,
-            drive_damping=damping,
-            passive_damping=damping * 0.05,
-            friction=(
-                float(source["control_groups"]["sticks"]["tilt_joint_friction_coefficient"])
-                if name in stick_tilts
-                else 0.0
-            ),
-            target=(-preload_fraction * travel if name in one_sided else 0.0),
-        )
-        dynamics[name] = joint
+    dynamics = derive_joint_dynamics("full_controls", joints, source, left_stick, calibration)
+    configure_robotwin_dynamics(dynamics, source, "full_controls", calibration)
+    contact = calibrated_contact(left_stick, calibration)
+    output.mkdir(parents=True, exist_ok=True)
+    (output / "collision").mkdir(exist_ok=True)
+    (output / "visual").mkdir(exist_ok=True)
 
     robot = ET.Element("robot", name="xbox_one_s_full_controls")
     link_elements = {"controller_body": ET.SubElement(robot, "link", name="controller_body")}
     collision_records = {"controller_body": {"coacd": [], "sdf": [], "hull_count": 0}}
-    body_mass = float(source["mass_policy"]["whole_controller_mass_kg"])
 
     # The public motion contract owns the articulation topology.
     link_graph = {}
@@ -302,12 +205,9 @@ def build(output: Path, *, kinematics: Path | None = None,
     }
 
     # Neutral transforms come from the complete motion chain, including frames.
-    transforms = _link_transforms(motion)
+    transforms = link_transforms(motion)
     common_collision = _json(collision_root / "manifest.json")
     moving_mass, mass_properties = {}, {}
-    density = float(source["mass_policy"]["polymer_density_kg_m3"])
-    fill = source["mass_policy"]["solid_fill_factors"]
-    minimum_mass = float(source["mass_policy"]["minimum_moving_mass_kg"])
     for component, record in common_collision["components"].items():
         link_name = "controller_body" if component in {"shell", "shell_front_plate"} else final_link_by_control[component]
         if link_name != "controller_body":
@@ -326,16 +226,13 @@ def build(output: Path, *, kinematics: Path | None = None,
         ET.SubElement(geometry, "mesh", filename="collision/" + record["coacd"][0])
         if link_name == "controller_body":
             continue
-        mesh = _mass_mesh(component, local, meshbase)
+        mesh = mass_mesh(component, local, meshbase)
         properties = mesh.mass_properties
         if properties.volume <= 0:
             raise ValueError(f"{component}: meshbase volume must be positive")
-        group = ("sticks" if "stick" in component else "triggers" if "trigger" in component
-                 else "bumpers" if "shoulder" in component else "dpad" if component == "dpad" else "buttons")
-        raw_mass = properties.volume * density * float(fill[group])
-        mass = max(minimum_mass, raw_mass)
-        # Unit-density centroidal tensor, scaled to the final clamped mass.
-        tensor = np.asarray(properties.inertia) * (mass / properties.mass)
+        mass_record = derive_component_mass(component, properties, source)
+        raw_mass, mass = mass_record["unclamped_mass_kg"], mass_record["mass_kg"]
+        tensor = np.asarray(mass_record["inertia_kg_m2"])
         moving_mass[link_name] = mass
         mass_properties[link_name] = {"volume_m3": properties.volume, "unclamped_mass_kg": raw_mass,
             "mass_kg": mass, "com_m": properties.center_mass.tolist(), "inertia_kg_m2": tensor.tolist()}
@@ -344,14 +241,13 @@ def build(output: Path, *, kinematics: Path | None = None,
     for link_name, link in link_elements.items():
         if link_name == "controller_body" or link_name in moving_mass:
             continue
-        moving_mass[link_name] = 0.0005
-        _inertial(link, 0.0005, np.zeros(3), np.eye(3) * 2e-8)
-    body_mass -= sum(moving_mass.values())
-    if body_mass <= 0:
-        raise ValueError("moving mass estimates exceed whole controller mass")
+        frame = frame_mass_properties()
+        moving_mass[link_name] = frame["mass_kg"]
+        _inertial(link, frame["mass_kg"], frame["com_m"], frame["inertia_kg_m2"])
+    body = body_mass_properties(source, left_stick, moving_mass)
+    body_mass = body["mass_kg"]
     assert abs(body_mass + sum(moving_mass.values()) - 0.28) <= 1e-12
-    _inertial(link_elements["controller_body"], body_mass,
-              [-0.00014, -0.00325, -0.00475], left_stick["mass_properties"]["body_inertia_kg_m2"])
+    _inertial(link_elements["controller_body"], body_mass, body["com_m"], body["inertia_kg_m2"])
     for link_name, record in collision_records.items():
         record["mass_kg"] = body_mass if link_name == "controller_body" else moving_mass[link_name]
 
@@ -449,7 +345,7 @@ def build(output: Path, *, kinematics: Path | None = None,
             }
             for name, joint in dynamics.items()
         ],
-        "contact_material": left_stick["contact_material"],
+        "contact_material": contact,
         "visual_binding": visual_binding,
     }
     (output / "manifest.json").write_text(

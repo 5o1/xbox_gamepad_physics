@@ -155,6 +155,7 @@ class GamepadSignalController:
         split_mappings: Iterable[SplitSignalMapping] = (),
         radial_source_groups: Iterable[RadialSourceGroup] = (),
         physical_event_mappings: Iterable[PhysicalEventMapping] = (),
+        signal_policy: Mapping[str, object] | None = None,
     ) -> None:
         channels = tuple(device_channels)
         unknown_device_channels = tuple(
@@ -340,8 +341,19 @@ class GamepadSignalController:
         self._split_mappings = split
         self._radial_source_groups = source_groups
         self._physical_event_mappings = events
-        self._dpad_contact_threshold = (_dpad_threshold_from_record()
-                                        if any(c.startswith("dpad_") for c in mapped_channels) else None)
+        self._dpad_contact_threshold = None
+        if any(c.startswith("dpad_") for c in mapped_channels):
+            if signal_policy is None:
+                self._dpad_contact_threshold = _dpad_threshold_from_record()
+            else:
+                try:
+                    threshold = signal_policy["dpad_contact_closure"]["threshold"]
+                except (KeyError, TypeError) as error:
+                    raise StateValidationError("signal_policy needs dpad_contact_closure.threshold") from error
+                if (isinstance(threshold, bool) or not isinstance(threshold, (int, float))
+                        or not math.isfinite(threshold) or not 0 < threshold <= 1):
+                    raise StateValidationError("D-pad contact threshold must be finite in (0, 1]")
+                self._dpad_contact_threshold = float(threshold)
 
     @classmethod
     def xbox_one_s(
@@ -352,6 +364,8 @@ class GamepadSignalController:
         split_mappings: Iterable[SplitSignalMapping] = (),
         radial_source_groups: Iterable[RadialSourceGroup] = (),
         physical_event_mappings: Iterable[PhysicalEventMapping] = (),
+        *,
+        signal_policy: Mapping[str, object] | None = None,
     ) -> "GamepadSignalController":
         return cls(
             device_id=GamepadDeviceId.XBOX_ONE_S,
@@ -362,7 +376,12 @@ class GamepadSignalController:
             split_mappings=split_mappings,
             radial_source_groups=radial_source_groups,
             physical_event_mappings=physical_event_mappings,
+            signal_policy=signal_policy,
         )
+
+    @property
+    def dpad_contact_threshold(self) -> float | None:
+        return self._dpad_contact_threshold
 
     @property
     def axis_mappings(self) -> tuple[AxisSignalMapping, ...]:

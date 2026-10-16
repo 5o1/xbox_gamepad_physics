@@ -1,0 +1,6867 @@
+{
+  "suite_id": "ruling20_sdf303_v1",
+  "settings": {
+    "radius_m": 0.004,
+    "mass_kg": 0.05,
+    "stiffness_n_m": 3000.0,
+    "damping_ns_m": 12.0,
+    "force_limit_n": 16.0,
+    "approach_clearance_m": 0.005,
+    "speed_m_s": 0.005,
+    "maximum_stroke_m": 0.03,
+    "hold_seconds": 0.5,
+    "observe_seconds": 0.5,
+    "digital_threshold": 0.95,
+    "analog_threshold": 0.9,
+    "neutral_epsilon": 0.0001
+  },
+  "press_stop": {
+    "signal_goal": 0.98,
+    "blocked_seconds": 0.1,
+    "blocked_range_m": 1e-06,
+    "force_fraction": 0.95
+  },
+  "fixture": {
+    "gravity_m_s2": [
+      0.0,
+      0.0,
+      -9.81
+    ],
+    "sphere_material": {
+      "static_friction": 0.8,
+      "dynamic_friction": 0.6,
+      "restitution": 0.0
+    },
+    "sphere_inertia": "2*mass_kg*radius_m**2/5",
+    "dt_s": 0.004,
+    "sapien_mapping": {
+      "contact_offset_m": 0.0002,
+      "rest_offset_m": 0.0,
+      "collision_groups": [
+        1,
+        1,
+        0,
+        0
+      ]
+    }
+  },
+  "criteria": {
+    "digital_threshold": 0.95,
+    "analog_threshold": 0.9,
+    "dpad_threshold": 0.3,
+    "neutral_epsilon": 0.0001,
+    "hold_steps": 125
+  },
+  "evidence": {
+    "category": "fixture_definition",
+    "applicability": "Historical SAPIEN3.0.3/SDF ruling20 regression; not measured gamepad physics.",
+    "source": "src/xbox_gamepad_physics/teleop/ball_probe.py@7c79b29:19-25,159-223",
+    "scoring_source": "teleop/ball_acceptance.py@7c79b29:17-68",
+    "unit_conventions": "settings suffixes use SI; digital/analog thresholds and friction are dimensionless; fixture gravity is m/s^2.",
+    "uncertainty": null,
+    "uncertainty_reason": "Values define the experiment; physical execution uncertainty was not quantified.",
+    "baseline_passed": 23,
+    "baseline_failed": 3
+  },
+  "cases": [
+    {
+      "case_id": "A",
+      "plan": {
+        "name": "A",
+        "link": "a",
+        "joint": "a_press",
+        "channel": "south",
+        "sign": 1,
+        "kind": "button",
+        "point_m": [
+          0.04002422094345093,
+          0.013126539066433907,
+          0.050811003893613815
+        ],
+        "direction": [
+          6.258487701416016e-06,
+          -3.79182552023849e-09,
+          -0.9999999403953552
+        ],
+        "start_m": [
+          0.04002416506409645,
+          0.013126539066433907,
+          0.059811003506183624
+        ],
+        "axis_world": [
+          6.258487701416016e-06,
+          -3.79182552023849e-09,
+          -0.9999999403953552
+        ],
+        "pivot_m": [
+          0.04002423211932182,
+          0.013126533478498459,
+          0.05081098899245262
+        ],
+        "limits": [
+          [
+            0.0,
+            0.0008967542671598494
+          ]
+        ],
+        "view": "buttons_close"
+      },
+      "root_pose": [
+        0,
+        0,
+        0.03035474591349888,
+        1,
+        0,
+        0,
+        0
+      ],
+      "joint_limits": {
+        "a_press": [
+          0.0,
+          0.0008967542671598494
+        ],
+        "b_press": [
+          0.0,
+          0.001376767992042005
+        ],
+        "left_shoulder_press": [
+          0.0,
+          0.0022283243015408516
+        ],
+        "right_shoulder_press": [
+          0.0,
+          0.002228327328339219
+        ],
+        "pair_press": [
+          0.0,
+          0.0010423330822959542
+        ],
+        "dpad_horizontal": [
+          -0.17453241348266602,
+          0.17453241348266602
+        ],
+        "view_press": [
+          0.0,
+          0.0012666219845414162
+        ],
+        "menu_press": [
+          0.0,
+          0.0012666225666180253
+        ],
+        "left_stick_x": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "right_stick_x": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "left_trigger_hinge": [
+          0.0,
+          0.29531940817832947
+        ],
+        "right_trigger_hinge": [
+          0.0,
+          0.29531940817832947
+        ],
+        "x_press": [
+          0.0,
+          0.000780960894189775
+        ],
+        "guide_press": [
+          0.0,
+          0.0007251785136759281
+        ],
+        "y_press": [
+          0.0,
+          0.0012284000404179096
+        ],
+        "dpad_vertical": [
+          -0.17453241348266602,
+          0.17453241348266602
+        ],
+        "left_stick_y": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "right_stick_y": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "left_stick_click": [
+          0.0,
+          0.00039999998989515007
+        ],
+        "right_stick_click": [
+          0.0,
+          0.00039999998989515007
+        ]
+      },
+      "timeline": [
+        {
+          "phase": "idle",
+          "first_step": 0,
+          "last_step": 831,
+          "phase_origin_step": 0
+        },
+        {
+          "phase": "approach",
+          "first_step": 832,
+          "last_step": 1081,
+          "phase_origin_step": 832
+        },
+        {
+          "phase": "press",
+          "first_step": 1082,
+          "last_step": 1394,
+          "phase_origin_step": 1082
+        },
+        {
+          "phase": "hold",
+          "first_step": 1395,
+          "last_step": 1520,
+          "phase_origin_step": 1396
+        },
+        {
+          "phase": "withdraw",
+          "first_step": 1521,
+          "last_step": 1645,
+          "phase_origin_step": 1521
+        },
+        {
+          "phase": "observe",
+          "first_step": 1646,
+          "last_step": 1770,
+          "phase_origin_step": 1646
+        },
+        {
+          "phase": "done",
+          "first_step": 1771,
+          "last_step": 1966,
+          "phase_origin_step": 1771
+        }
+      ],
+      "baseline": {
+        "case": "A",
+        "target_channel": "south",
+        "target_min": 0.9868014677886049,
+        "target_max": 0.9870302729471049,
+        "signals_at_photo": {
+          "left_x": 0,
+          "left_y": 0,
+          "right_x": 0,
+          "right_y": 0,
+          "left_trigger": 0,
+          "right_trigger": 0,
+          "south": 0.9869568605685904,
+          "east": 0,
+          "west": 0,
+          "north": 0,
+          "back": 0,
+          "guide": 0,
+          "start": 0,
+          "left_stick": 0,
+          "right_stick": 0,
+          "left_shoulder": 0,
+          "right_shoulder": 0,
+          "dpad_up": 0,
+          "dpad_down": 0,
+          "dpad_left": 0,
+          "dpad_right": 0
+        },
+        "event_at_photo": {
+          "pair_bind_connect": 0
+        },
+        "target_threshold": 0.95,
+        "dpad_bottomed_noncritical": null,
+        "signal_passed": true,
+        "misfires": {},
+        "no_misfires": true,
+        "overlay_passed": true,
+        "overlay_unexpected": [],
+        "overlay_color": {
+          "yellow_components": [
+            "right:down"
+          ],
+          "target_yellow": true,
+          "unexpected_yellow_components": [],
+          "passed": true
+        },
+        "canonical_32_exact": true,
+        "return_time_after_withdraw_s": 0.0,
+        "return_from_start_s": 0.5,
+        "return_passed": true,
+        "internal_pairs": 0,
+        "contacted_links": [
+          "gamepad/a"
+        ],
+        "max_penetration_m": 9.907921776175499e-05,
+        "max_force_n": 1.1173115261470248,
+        "hold_sim_seconds": 0.5,
+        "withdraw_step": 1521,
+        "steps": 1967,
+        "termination": {
+          "reason": "signal_goal",
+          "step": 1395,
+          "stroke_m": 0.006260000000000015,
+          "actual_progress_m": 0.005961317214044943,
+          "force_norm_n": 1.102812251738527,
+          "signal": 0.9871930653832801,
+          "window_steps": 25,
+          "window_position_range_m": 0.00037447360922486603,
+          "window_min_force_n": 0.46757378343566725
+        },
+        "joint_limit_excess": {
+          "left_trigger_hinge": 7.192444417825072e-10,
+          "right_trigger_hinge": 3.1362529240297476e-10
+        },
+        "passed": true,
+        "source_directory": "/mnt/wsl/shared/ConCon/xbox_gamepad_physics/build/experiments/teleop_gripper_p2_20261011/ruling20/buttons/A"
+      },
+      "source_paths": {
+        "plan": "build/experiments/teleop_gripper_p2_20261011/ruling20/buttons/A/server/ball_plan.json",
+        "root_pose": "build/experiments/teleop_gripper_p2_20261011/ruling20/buttons/A/server/live_config.json#gamepad.pose",
+        "timeline": "build/experiments/teleop_gripper_p2_20261011/ruling20/buttons/A/server/ball_trace.jsonl",
+        "result": "build/experiments/teleop_gripper_p2_20261011/ruling20/results.json#cases/A"
+      }
+    },
+    {
+      "case_id": "B",
+      "plan": {
+        "name": "B",
+        "link": "b",
+        "joint": "b_press",
+        "channel": "east",
+        "sign": 1,
+        "kind": "button",
+        "point_m": [
+          0.050514575093984604,
+          0.02312505804002285,
+          0.049042958766222
+        ],
+        "direction": [
+          4.231929779052734e-06,
+          -2.4144046051333135e-07,
+          -1.0
+        ],
+        "start_m": [
+          0.05051453784108162,
+          0.023125059902668,
+          0.05804295837879181
+        ],
+        "axis_world": [
+          4.231929779052734e-06,
+          -2.4144046051333135e-07,
+          -1.0
+        ],
+        "pivot_m": [
+          0.05077116936445236,
+          0.022967301309108734,
+          0.04938958212733269
+        ],
+        "limits": [
+          [
+            0.0,
+            0.001376767992042005
+          ]
+        ],
+        "view": "buttons_close"
+      },
+      "root_pose": [
+        0,
+        0,
+        0.03035474591349888,
+        1,
+        0,
+        0,
+        0
+      ],
+      "joint_limits": {
+        "a_press": [
+          0.0,
+          0.0008967542671598494
+        ],
+        "b_press": [
+          0.0,
+          0.001376767992042005
+        ],
+        "left_shoulder_press": [
+          0.0,
+          0.0022283243015408516
+        ],
+        "right_shoulder_press": [
+          0.0,
+          0.002228327328339219
+        ],
+        "pair_press": [
+          0.0,
+          0.0010423330822959542
+        ],
+        "dpad_horizontal": [
+          -0.17453241348266602,
+          0.17453241348266602
+        ],
+        "view_press": [
+          0.0,
+          0.0012666219845414162
+        ],
+        "menu_press": [
+          0.0,
+          0.0012666225666180253
+        ],
+        "left_stick_x": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "right_stick_x": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "left_trigger_hinge": [
+          0.0,
+          0.29531940817832947
+        ],
+        "right_trigger_hinge": [
+          0.0,
+          0.29531940817832947
+        ],
+        "x_press": [
+          0.0,
+          0.000780960894189775
+        ],
+        "guide_press": [
+          0.0,
+          0.0007251785136759281
+        ],
+        "y_press": [
+          0.0,
+          0.0012284000404179096
+        ],
+        "dpad_vertical": [
+          -0.17453241348266602,
+          0.17453241348266602
+        ],
+        "left_stick_y": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "right_stick_y": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "left_stick_click": [
+          0.0,
+          0.00039999998989515007
+        ],
+        "right_stick_click": [
+          0.0,
+          0.00039999998989515007
+        ]
+      },
+      "timeline": [
+        {
+          "phase": "idle",
+          "first_step": 0,
+          "last_step": 809,
+          "phase_origin_step": 0
+        },
+        {
+          "phase": "approach",
+          "first_step": 810,
+          "last_step": 1059,
+          "phase_origin_step": 810
+        },
+        {
+          "phase": "press",
+          "first_step": 1060,
+          "last_step": 1375,
+          "phase_origin_step": 1060
+        },
+        {
+          "phase": "hold",
+          "first_step": 1376,
+          "last_step": 1501,
+          "phase_origin_step": 1377
+        },
+        {
+          "phase": "withdraw",
+          "first_step": 1502,
+          "last_step": 1626,
+          "phase_origin_step": 1502
+        },
+        {
+          "phase": "observe",
+          "first_step": 1627,
+          "last_step": 1751,
+          "phase_origin_step": 1627
+        },
+        {
+          "phase": "done",
+          "first_step": 1752,
+          "last_step": 1973,
+          "phase_origin_step": 1752
+        }
+      ],
+      "baseline": {
+        "case": "B",
+        "target_channel": "east",
+        "target_min": 0.9893904843388801,
+        "target_max": 0.9894506043413898,
+        "signals_at_photo": {
+          "left_x": 0,
+          "left_y": 0,
+          "right_x": 0,
+          "right_y": 0,
+          "left_trigger": 0,
+          "right_trigger": 0,
+          "south": 0,
+          "east": 0.9894008002886778,
+          "west": 0,
+          "north": 0,
+          "back": 0,
+          "guide": 0,
+          "start": 0,
+          "left_stick": 0,
+          "right_stick": 0,
+          "left_shoulder": 0,
+          "right_shoulder": 0,
+          "dpad_up": 0,
+          "dpad_down": 0,
+          "dpad_left": 0,
+          "dpad_right": 0
+        },
+        "event_at_photo": {
+          "pair_bind_connect": 0
+        },
+        "target_threshold": 0.95,
+        "dpad_bottomed_noncritical": null,
+        "signal_passed": true,
+        "misfires": {},
+        "no_misfires": true,
+        "overlay_passed": true,
+        "overlay_unexpected": [],
+        "overlay_color": {
+          "yellow_components": [
+            "right:right"
+          ],
+          "target_yellow": true,
+          "unexpected_yellow_components": [],
+          "passed": true
+        },
+        "canonical_32_exact": true,
+        "return_time_after_withdraw_s": 0.0,
+        "return_from_start_s": 0.5,
+        "return_passed": true,
+        "internal_pairs": 0,
+        "contacted_links": [
+          "gamepad/b"
+        ],
+        "max_penetration_m": 7.550930604338646e-05,
+        "max_force_n": 1.1309073602192161,
+        "hold_sim_seconds": 0.5,
+        "withdraw_step": 1502,
+        "steps": 1974,
+        "termination": {
+          "reason": "signal_goal",
+          "step": 1376,
+          "stroke_m": 0.006320000000000015,
+          "actual_progress_m": 0.00601604600315907,
+          "force_norm_n": 1.1257089860465002,
+          "signal": 0.9891028215420619,
+          "window_steps": 25,
+          "window_position_range_m": 0.0003996827408857904,
+          "window_min_force_n": 0.6541484779246673
+        },
+        "joint_limit_excess": {
+          "right_trigger_hinge": 3.1362529240297476e-10,
+          "left_trigger_hinge": 7.192444417825072e-10
+        },
+        "passed": true,
+        "source_directory": "/mnt/wsl/shared/ConCon/xbox_gamepad_physics/build/experiments/teleop_gripper_p2_20261011/ruling20/buttons/B"
+      },
+      "source_paths": {
+        "plan": "build/experiments/teleop_gripper_p2_20261011/ruling20/buttons/B/server/ball_plan.json",
+        "root_pose": "build/experiments/teleop_gripper_p2_20261011/ruling20/buttons/B/server/live_config.json#gamepad.pose",
+        "timeline": "build/experiments/teleop_gripper_p2_20261011/ruling20/buttons/B/server/ball_trace.jsonl",
+        "result": "build/experiments/teleop_gripper_p2_20261011/ruling20/results.json#cases/B"
+      }
+    },
+    {
+      "case_id": "X",
+      "plan": {
+        "name": "X",
+        "link": "x",
+        "joint": "x_press",
+        "channel": "west",
+        "sign": 1,
+        "kind": "button",
+        "point_m": [
+          0.02932312898337841,
+          0.02382763661444187,
+          0.05159566178917885
+        ],
+        "direction": [
+          3.039836883544922e-06,
+          2.4087823931040475e-06,
+          -1.0
+        ],
+        "start_m": [
+          0.029323101043701172,
+          0.02382761426270008,
+          0.06059566140174866
+        ],
+        "axis_world": [
+          3.039836883544922e-06,
+          2.4087823931040475e-06,
+          -1.0
+        ],
+        "pivot_m": [
+          0.02932283841073513,
+          0.023827578872442245,
+          0.05159565061330795
+        ],
+        "limits": [
+          [
+            0.0,
+            0.000780960894189775
+          ]
+        ],
+        "view": "buttons_close"
+      },
+      "root_pose": [
+        0,
+        0,
+        0.03035474591349888,
+        1,
+        0,
+        0,
+        0
+      ],
+      "joint_limits": {
+        "a_press": [
+          0.0,
+          0.0008967542671598494
+        ],
+        "b_press": [
+          0.0,
+          0.001376767992042005
+        ],
+        "left_shoulder_press": [
+          0.0,
+          0.0022283243015408516
+        ],
+        "right_shoulder_press": [
+          0.0,
+          0.002228327328339219
+        ],
+        "pair_press": [
+          0.0,
+          0.0010423330822959542
+        ],
+        "dpad_horizontal": [
+          -0.17453241348266602,
+          0.17453241348266602
+        ],
+        "view_press": [
+          0.0,
+          0.0012666219845414162
+        ],
+        "menu_press": [
+          0.0,
+          0.0012666225666180253
+        ],
+        "left_stick_x": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "right_stick_x": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "left_trigger_hinge": [
+          0.0,
+          0.29531940817832947
+        ],
+        "right_trigger_hinge": [
+          0.0,
+          0.29531940817832947
+        ],
+        "x_press": [
+          0.0,
+          0.000780960894189775
+        ],
+        "guide_press": [
+          0.0,
+          0.0007251785136759281
+        ],
+        "y_press": [
+          0.0,
+          0.0012284000404179096
+        ],
+        "dpad_vertical": [
+          -0.17453241348266602,
+          0.17453241348266602
+        ],
+        "left_stick_y": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "right_stick_y": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "left_stick_click": [
+          0.0,
+          0.00039999998989515007
+        ],
+        "right_stick_click": [
+          0.0,
+          0.00039999998989515007
+        ]
+      },
+      "timeline": [
+        {
+          "phase": "idle",
+          "first_step": 0,
+          "last_step": 806,
+          "phase_origin_step": 0
+        },
+        {
+          "phase": "approach",
+          "first_step": 807,
+          "last_step": 1056,
+          "phase_origin_step": 807
+        },
+        {
+          "phase": "press",
+          "first_step": 1057,
+          "last_step": 1363,
+          "phase_origin_step": 1057
+        },
+        {
+          "phase": "hold",
+          "first_step": 1364,
+          "last_step": 1489,
+          "phase_origin_step": 1365
+        },
+        {
+          "phase": "withdraw",
+          "first_step": 1490,
+          "last_step": 1614,
+          "phase_origin_step": 1490
+        },
+        {
+          "phase": "observe",
+          "first_step": 1615,
+          "last_step": 1739,
+          "phase_origin_step": 1615
+        },
+        {
+          "phase": "done",
+          "first_step": 1740,
+          "last_step": 1908,
+          "phase_origin_step": 1740
+        }
+      ],
+      "baseline": {
+        "case": "X",
+        "target_channel": "west",
+        "target_min": 0.9850301677955238,
+        "target_max": 0.9852797055704049,
+        "signals_at_photo": {
+          "left_x": 0,
+          "left_y": 0,
+          "right_x": 0,
+          "right_y": 0,
+          "left_trigger": 0,
+          "right_trigger": 0,
+          "south": 0,
+          "east": 0,
+          "west": 0.9851901909743379,
+          "north": 0,
+          "back": 0,
+          "guide": 0,
+          "start": 0,
+          "left_stick": 0,
+          "right_stick": 0,
+          "left_shoulder": 0,
+          "right_shoulder": 0,
+          "dpad_up": 0,
+          "dpad_down": 0,
+          "dpad_left": 0,
+          "dpad_right": 0
+        },
+        "event_at_photo": {
+          "pair_bind_connect": 0
+        },
+        "target_threshold": 0.95,
+        "dpad_bottomed_noncritical": null,
+        "signal_passed": true,
+        "misfires": {},
+        "no_misfires": true,
+        "overlay_passed": true,
+        "overlay_unexpected": [],
+        "overlay_color": {
+          "yellow_components": [
+            "right:left"
+          ],
+          "target_yellow": true,
+          "unexpected_yellow_components": [],
+          "passed": true
+        },
+        "canonical_32_exact": true,
+        "return_time_after_withdraw_s": 0.0,
+        "return_from_start_s": 0.5,
+        "return_passed": true,
+        "internal_pairs": 0,
+        "contacted_links": [
+          "gamepad/x"
+        ],
+        "max_penetration_m": 9.124819189310074e-05,
+        "max_force_n": 1.1198281691172256,
+        "hold_sim_seconds": 0.5,
+        "withdraw_step": 1490,
+        "steps": 1909,
+        "termination": {
+          "reason": "signal_goal",
+          "step": 1364,
+          "stroke_m": 0.006140000000000014,
+          "actual_progress_m": 0.005838301033091413,
+          "force_norm_n": 1.1098801082611554,
+          "signal": 0.985404027257532,
+          "window_steps": 25,
+          "window_position_range_m": 0.0003600046041003571,
+          "window_min_force_n": 0.4020120147140375
+        },
+        "joint_limit_excess": {
+          "right_trigger_hinge": 3.1362529240297476e-10,
+          "left_trigger_hinge": 7.192444417825072e-10
+        },
+        "passed": true,
+        "source_directory": "/mnt/wsl/shared/ConCon/xbox_gamepad_physics/build/experiments/teleop_gripper_p2_20261011/ruling20/buttons/X"
+      },
+      "source_paths": {
+        "plan": "build/experiments/teleop_gripper_p2_20261011/ruling20/buttons/X/server/ball_plan.json",
+        "root_pose": "build/experiments/teleop_gripper_p2_20261011/ruling20/buttons/X/server/live_config.json#gamepad.pose",
+        "timeline": "build/experiments/teleop_gripper_p2_20261011/ruling20/buttons/X/server/ball_trace.jsonl",
+        "result": "build/experiments/teleop_gripper_p2_20261011/ruling20/results.json#cases/X"
+      }
+    },
+    {
+      "case_id": "Y",
+      "plan": {
+        "name": "Y",
+        "link": "y",
+        "joint": "y_press",
+        "channel": "north",
+        "sign": 1,
+        "kind": "button",
+        "point_m": [
+          0.04013233631849289,
+          0.03377210721373558,
+          0.04993171989917755
+        ],
+        "direction": [
+          3.5762786865234375e-06,
+          2.719749545576633e-06,
+          -1.0000001192092896
+        ],
+        "start_m": [
+          0.0401323027908802,
+          0.03377208113670349,
+          0.05893171951174736
+        ],
+        "axis_world": [
+          3.5762786865234375e-06,
+          2.719749545576633e-06,
+          -1.0000001192092896
+        ],
+        "pivot_m": [
+          0.040127597749233246,
+          0.033774830400943756,
+          0.0506305918097496
+        ],
+        "limits": [
+          [
+            0.0,
+            0.0012284000404179096
+          ]
+        ],
+        "view": "buttons_close"
+      },
+      "root_pose": [
+        0,
+        0,
+        0.03035474591349888,
+        1,
+        0,
+        0,
+        0
+      ],
+      "joint_limits": {
+        "a_press": [
+          0.0,
+          0.0008967542671598494
+        ],
+        "b_press": [
+          0.0,
+          0.001376767992042005
+        ],
+        "left_shoulder_press": [
+          0.0,
+          0.0022283243015408516
+        ],
+        "right_shoulder_press": [
+          0.0,
+          0.002228327328339219
+        ],
+        "pair_press": [
+          0.0,
+          0.0010423330822959542
+        ],
+        "dpad_horizontal": [
+          -0.17453241348266602,
+          0.17453241348266602
+        ],
+        "view_press": [
+          0.0,
+          0.0012666219845414162
+        ],
+        "menu_press": [
+          0.0,
+          0.0012666225666180253
+        ],
+        "left_stick_x": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "right_stick_x": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "left_trigger_hinge": [
+          0.0,
+          0.29531940817832947
+        ],
+        "right_trigger_hinge": [
+          0.0,
+          0.29531940817832947
+        ],
+        "x_press": [
+          0.0,
+          0.000780960894189775
+        ],
+        "guide_press": [
+          0.0,
+          0.0007251785136759281
+        ],
+        "y_press": [
+          0.0,
+          0.0012284000404179096
+        ],
+        "dpad_vertical": [
+          -0.17453241348266602,
+          0.17453241348266602
+        ],
+        "left_stick_y": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "right_stick_y": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "left_stick_click": [
+          0.0,
+          0.00039999998989515007
+        ],
+        "right_stick_click": [
+          0.0,
+          0.00039999998989515007
+        ]
+      },
+      "timeline": [
+        {
+          "phase": "idle",
+          "first_step": 0,
+          "last_step": 827,
+          "phase_origin_step": 0
+        },
+        {
+          "phase": "approach",
+          "first_step": 828,
+          "last_step": 1077,
+          "phase_origin_step": 828
+        },
+        {
+          "phase": "press",
+          "first_step": 1078,
+          "last_step": 1371,
+          "phase_origin_step": 1078
+        },
+        {
+          "phase": "hold",
+          "first_step": 1372,
+          "last_step": 1497,
+          "phase_origin_step": 1373
+        },
+        {
+          "phase": "withdraw",
+          "first_step": 1498,
+          "last_step": 1622,
+          "phase_origin_step": 1498
+        },
+        {
+          "phase": "observe",
+          "first_step": 1623,
+          "last_step": 1747,
+          "phase_origin_step": 1623
+        },
+        {
+          "phase": "done",
+          "first_step": 1748,
+          "last_step": 1936,
+          "phase_origin_step": 1748
+        }
+      ],
+      "baseline": {
+        "case": "Y",
+        "target_channel": "north",
+        "target_min": 0.9881241859734718,
+        "target_max": 0.9889752194673478,
+        "signals_at_photo": {
+          "left_x": 0,
+          "left_y": 0,
+          "right_x": 0,
+          "right_y": 0,
+          "left_trigger": 0,
+          "right_trigger": 0,
+          "south": 0,
+          "east": 0,
+          "west": 0,
+          "north": 0.9889482100524531,
+          "back": 0,
+          "guide": 0,
+          "start": 0,
+          "left_stick": 0,
+          "right_stick": 0,
+          "left_shoulder": 0,
+          "right_shoulder": 0,
+          "dpad_up": 0,
+          "dpad_down": 0,
+          "dpad_left": 0,
+          "dpad_right": 0
+        },
+        "event_at_photo": {
+          "pair_bind_connect": 0
+        },
+        "target_threshold": 0.95,
+        "dpad_bottomed_noncritical": null,
+        "signal_passed": true,
+        "misfires": {},
+        "no_misfires": true,
+        "overlay_passed": true,
+        "overlay_unexpected": [],
+        "overlay_color": {
+          "yellow_components": [
+            "right:up"
+          ],
+          "target_yellow": true,
+          "unexpected_yellow_components": [],
+          "passed": true
+        },
+        "canonical_32_exact": true,
+        "return_time_after_withdraw_s": 0.0,
+        "return_from_start_s": 0.5,
+        "return_passed": true,
+        "internal_pairs": 0,
+        "contacted_links": [
+          "gamepad/y"
+        ],
+        "max_penetration_m": 9.712227620184422e-05,
+        "max_force_n": 1.1131141102669055,
+        "hold_sim_seconds": 0.5,
+        "withdraw_step": 1498,
+        "steps": 1937,
+        "termination": {
+          "reason": "signal_goal",
+          "step": 1372,
+          "stroke_m": 0.005880000000000014,
+          "actual_progress_m": 0.0055876680245531005,
+          "force_norm_n": 1.0924748922328145,
+          "signal": 0.9801339481187197,
+          "window_steps": 25,
+          "window_position_range_m": 0.0004027114804962097,
+          "window_min_force_n": 0.5937093415723204
+        },
+        "joint_limit_excess": {
+          "right_trigger_hinge": 3.1362529240297476e-10,
+          "left_trigger_hinge": 7.192444417825072e-10
+        },
+        "passed": true,
+        "source_directory": "/mnt/wsl/shared/ConCon/xbox_gamepad_physics/build/experiments/teleop_gripper_p2_20261011/ruling20/buttons/Y"
+      },
+      "source_paths": {
+        "plan": "build/experiments/teleop_gripper_p2_20261011/ruling20/buttons/Y/server/ball_plan.json",
+        "root_pose": "build/experiments/teleop_gripper_p2_20261011/ruling20/buttons/Y/server/live_config.json#gamepad.pose",
+        "timeline": "build/experiments/teleop_gripper_p2_20261011/ruling20/buttons/Y/server/ball_trace.jsonl",
+        "result": "build/experiments/teleop_gripper_p2_20261011/ruling20/results.json#cases/Y"
+      }
+    },
+    {
+      "case_id": "LB",
+      "plan": {
+        "name": "LB",
+        "link": "left_shoulder",
+        "joint": "left_shoulder_press",
+        "channel": "left_shoulder",
+        "sign": 1,
+        "kind": "button",
+        "point_m": [
+          -0.038166482001543045,
+          0.05037256330251694,
+          0.03945338726043701
+        ],
+        "direction": [
+          -1.0728836059570312e-06,
+          -1.0,
+          8.344650268554688e-07
+        ],
+        "start_m": [
+          -0.03816647082567215,
+          0.059372562915086746,
+          0.039453379809856415
+        ],
+        "axis_world": [
+          -1.0728836059570312e-06,
+          -1.0,
+          8.344650268554688e-07
+        ],
+        "pivot_m": [
+          -0.03630172088742256,
+          0.04424259066581726,
+          0.03895498067140579
+        ],
+        "limits": [
+          [
+            0.0,
+            0.0022283243015408516
+          ]
+        ],
+        "view": "triggers"
+      },
+      "root_pose": [
+        0,
+        0,
+        0.03035474591349888,
+        1,
+        0,
+        0,
+        0
+      ],
+      "joint_limits": {
+        "a_press": [
+          0.0,
+          0.0008967542671598494
+        ],
+        "b_press": [
+          0.0,
+          0.001376767992042005
+        ],
+        "left_shoulder_press": [
+          0.0,
+          0.0022283243015408516
+        ],
+        "right_shoulder_press": [
+          0.0,
+          0.002228327328339219
+        ],
+        "pair_press": [
+          0.0,
+          0.0010423330822959542
+        ],
+        "dpad_horizontal": [
+          -0.17453241348266602,
+          0.17453241348266602
+        ],
+        "view_press": [
+          0.0,
+          0.0012666219845414162
+        ],
+        "menu_press": [
+          0.0,
+          0.0012666225666180253
+        ],
+        "left_stick_x": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "right_stick_x": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "left_trigger_hinge": [
+          0.0,
+          0.29531940817832947
+        ],
+        "right_trigger_hinge": [
+          0.0,
+          0.29531940817832947
+        ],
+        "x_press": [
+          0.0,
+          0.000780960894189775
+        ],
+        "guide_press": [
+          0.0,
+          0.0007251785136759281
+        ],
+        "y_press": [
+          0.0,
+          0.0012284000404179096
+        ],
+        "dpad_vertical": [
+          -0.17453241348266602,
+          0.17453241348266602
+        ],
+        "left_stick_y": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "right_stick_y": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "left_stick_click": [
+          0.0,
+          0.00039999998989515007
+        ],
+        "right_stick_click": [
+          0.0,
+          0.00039999998989515007
+        ]
+      },
+      "timeline": [
+        {
+          "phase": "idle",
+          "first_step": 0,
+          "last_step": 810,
+          "phase_origin_step": 0
+        },
+        {
+          "phase": "approach",
+          "first_step": 811,
+          "last_step": 1060,
+          "phase_origin_step": 811
+        },
+        {
+          "phase": "press",
+          "first_step": 1061,
+          "last_step": 1430,
+          "phase_origin_step": 1061
+        },
+        {
+          "phase": "hold",
+          "first_step": 1431,
+          "last_step": 1556,
+          "phase_origin_step": 1432
+        },
+        {
+          "phase": "withdraw",
+          "first_step": 1557,
+          "last_step": 1681,
+          "phase_origin_step": 1557
+        },
+        {
+          "phase": "observe",
+          "first_step": 1682,
+          "last_step": 1806,
+          "phase_origin_step": 1682
+        },
+        {
+          "phase": "done",
+          "first_step": 1807,
+          "last_step": 1992,
+          "phase_origin_step": 1807
+        }
+      ],
+      "baseline": {
+        "case": "LB",
+        "target_channel": "left_shoulder",
+        "target_min": 0.9607144073758999,
+        "target_max": 0.9954577566150495,
+        "signals_at_photo": {
+          "left_x": 0,
+          "left_y": 0,
+          "right_x": 0,
+          "right_y": 0,
+          "left_trigger": 0,
+          "right_trigger": 0,
+          "south": 0,
+          "east": 0,
+          "west": 0,
+          "north": 0,
+          "back": 0,
+          "guide": 0,
+          "start": 0,
+          "left_stick": 0,
+          "right_stick": 0,
+          "left_shoulder": 0.9633351472112642,
+          "right_shoulder": 0,
+          "dpad_up": 0,
+          "dpad_down": 0,
+          "dpad_left": 0,
+          "dpad_right": 0
+        },
+        "event_at_photo": {
+          "pair_bind_connect": 0
+        },
+        "target_threshold": 0.95,
+        "dpad_bottomed_noncritical": null,
+        "signal_passed": true,
+        "misfires": {},
+        "no_misfires": true,
+        "overlay_passed": true,
+        "overlay_unexpected": [],
+        "overlay_color": {
+          "yellow_components": [
+            "left:left-bumper"
+          ],
+          "target_yellow": true,
+          "unexpected_yellow_components": [],
+          "passed": true
+        },
+        "canonical_32_exact": true,
+        "return_time_after_withdraw_s": 0.0,
+        "return_from_start_s": 0.5,
+        "return_passed": true,
+        "internal_pairs": 0,
+        "contacted_links": [
+          "gamepad/left_shoulder"
+        ],
+        "max_penetration_m": 2.1407846361398697e-05,
+        "max_force_n": 1.8547883718026223,
+        "hold_sim_seconds": 0.5,
+        "withdraw_step": 1557,
+        "steps": 1993,
+        "termination": {
+          "reason": "signal_goal",
+          "step": 1431,
+          "stroke_m": 0.007400000000000018,
+          "actual_progress_m": 0.007035397146333722,
+          "force_norm_n": 1.7605008514550795,
+          "signal": 0.9838195903674526,
+          "window_steps": 25,
+          "window_position_range_m": 0.0003787540554847091,
+          "window_min_force_n": 1.4225482345411193
+        },
+        "joint_limit_excess": {
+          "right_trigger_hinge": 3.1362529240297476e-10,
+          "left_trigger_hinge": 7.192444417825072e-10
+        },
+        "passed": true,
+        "source_directory": "/mnt/wsl/shared/ConCon/xbox_gamepad_physics/build/experiments/teleop_gripper_p2_20261011/ruling20/buttons/LB"
+      },
+      "source_paths": {
+        "plan": "build/experiments/teleop_gripper_p2_20261011/ruling20/buttons/LB/server/ball_plan.json",
+        "root_pose": "build/experiments/teleop_gripper_p2_20261011/ruling20/buttons/LB/server/live_config.json#gamepad.pose",
+        "timeline": "build/experiments/teleop_gripper_p2_20261011/ruling20/buttons/LB/server/ball_trace.jsonl",
+        "result": "build/experiments/teleop_gripper_p2_20261011/ruling20/results.json#cases/LB"
+      }
+    },
+    {
+      "case_id": "RB",
+      "plan": {
+        "name": "RB",
+        "link": "right_shoulder",
+        "joint": "right_shoulder_press",
+        "channel": "right_shoulder",
+        "sign": 1,
+        "kind": "button",
+        "point_m": [
+          0.03816690295934677,
+          0.05036245658993721,
+          0.03945339098572731
+        ],
+        "direction": [
+          1.6689300537109375e-06,
+          -1.0000001192092896,
+          3.5762786865234375e-07
+        ],
+        "start_m": [
+          0.03816688805818558,
+          0.05936245620250702,
+          0.03945338726043701
+        ],
+        "axis_world": [
+          1.6689300537109375e-06,
+          -1.0000001192092896,
+          3.5762786865234375e-07
+        ],
+        "pivot_m": [
+          0.03630172833800316,
+          0.044242605566978455,
+          0.0389549657702446
+        ],
+        "limits": [
+          [
+            0.0,
+            0.002228327328339219
+          ]
+        ],
+        "view": "triggers"
+      },
+      "root_pose": [
+        0,
+        0,
+        0.03035474591349888,
+        1,
+        0,
+        0,
+        0
+      ],
+      "joint_limits": {
+        "a_press": [
+          0.0,
+          0.0008967542671598494
+        ],
+        "b_press": [
+          0.0,
+          0.001376767992042005
+        ],
+        "left_shoulder_press": [
+          0.0,
+          0.0022283243015408516
+        ],
+        "right_shoulder_press": [
+          0.0,
+          0.002228327328339219
+        ],
+        "pair_press": [
+          0.0,
+          0.0010423330822959542
+        ],
+        "dpad_horizontal": [
+          -0.17453241348266602,
+          0.17453241348266602
+        ],
+        "view_press": [
+          0.0,
+          0.0012666219845414162
+        ],
+        "menu_press": [
+          0.0,
+          0.0012666225666180253
+        ],
+        "left_stick_x": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "right_stick_x": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "left_trigger_hinge": [
+          0.0,
+          0.29531940817832947
+        ],
+        "right_trigger_hinge": [
+          0.0,
+          0.29531940817832947
+        ],
+        "x_press": [
+          0.0,
+          0.000780960894189775
+        ],
+        "guide_press": [
+          0.0,
+          0.0007251785136759281
+        ],
+        "y_press": [
+          0.0,
+          0.0012284000404179096
+        ],
+        "dpad_vertical": [
+          -0.17453241348266602,
+          0.17453241348266602
+        ],
+        "left_stick_y": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "right_stick_y": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "left_stick_click": [
+          0.0,
+          0.00039999998989515007
+        ],
+        "right_stick_click": [
+          0.0,
+          0.00039999998989515007
+        ]
+      },
+      "timeline": [
+        {
+          "phase": "idle",
+          "first_step": 0,
+          "last_step": 801,
+          "phase_origin_step": 0
+        },
+        {
+          "phase": "approach",
+          "first_step": 802,
+          "last_step": 1051,
+          "phase_origin_step": 802
+        },
+        {
+          "phase": "press",
+          "first_step": 1052,
+          "last_step": 1420,
+          "phase_origin_step": 1052
+        },
+        {
+          "phase": "hold",
+          "first_step": 1421,
+          "last_step": 1546,
+          "phase_origin_step": 1422
+        },
+        {
+          "phase": "withdraw",
+          "first_step": 1547,
+          "last_step": 1671,
+          "phase_origin_step": 1547
+        },
+        {
+          "phase": "observe",
+          "first_step": 1672,
+          "last_step": 1796,
+          "phase_origin_step": 1672
+        },
+        {
+          "phase": "done",
+          "first_step": 1797,
+          "last_step": 2002,
+          "phase_origin_step": 1797
+        }
+      ],
+      "baseline": {
+        "case": "RB",
+        "target_channel": "right_shoulder",
+        "target_min": 0.9826269544179728,
+        "target_max": 0.9838632414026578,
+        "signals_at_photo": {
+          "left_x": 0,
+          "left_y": 0,
+          "right_x": 0,
+          "right_y": 0,
+          "left_trigger": 0,
+          "right_trigger": 0,
+          "south": 0,
+          "east": 0,
+          "west": 0,
+          "north": 0,
+          "back": 0,
+          "guide": 0,
+          "start": 0,
+          "left_stick": 0,
+          "right_stick": 0,
+          "left_shoulder": 0,
+          "right_shoulder": 0.9836631493154644,
+          "dpad_up": 0,
+          "dpad_down": 0,
+          "dpad_left": 0,
+          "dpad_right": 0
+        },
+        "event_at_photo": {
+          "pair_bind_connect": 0
+        },
+        "target_threshold": 0.95,
+        "dpad_bottomed_noncritical": null,
+        "signal_passed": true,
+        "misfires": {},
+        "no_misfires": true,
+        "overlay_passed": true,
+        "overlay_unexpected": [],
+        "overlay_color": {
+          "yellow_components": [
+            "right:right-bumper"
+          ],
+          "target_yellow": true,
+          "unexpected_yellow_components": [],
+          "passed": true
+        },
+        "canonical_32_exact": true,
+        "return_time_after_withdraw_s": 0.0,
+        "return_from_start_s": 0.5,
+        "return_passed": true,
+        "internal_pairs": 0,
+        "contacted_links": [
+          "gamepad/right_shoulder"
+        ],
+        "max_penetration_m": 2.144835889339447e-05,
+        "max_force_n": 1.7574836550256296,
+        "hold_sim_seconds": 0.5,
+        "withdraw_step": 1547,
+        "steps": 2003,
+        "termination": {
+          "reason": "signal_goal",
+          "step": 1421,
+          "stroke_m": 0.007380000000000018,
+          "actual_progress_m": 0.007025026839638127,
+          "force_norm_n": 1.7429948501508157,
+          "signal": 0.9803867589352441,
+          "window_steps": 25,
+          "window_position_range_m": 0.0003880002774625524,
+          "window_min_force_n": 1.4162994711501695
+        },
+        "joint_limit_excess": {
+          "right_trigger_hinge": 3.1362529240297476e-10,
+          "left_trigger_hinge": 7.192444417825072e-10
+        },
+        "passed": true,
+        "source_directory": "/mnt/wsl/shared/ConCon/xbox_gamepad_physics/build/experiments/teleop_gripper_p2_20261011/ruling20/buttons/RB"
+      },
+      "source_paths": {
+        "plan": "build/experiments/teleop_gripper_p2_20261011/ruling20/buttons/RB/server/ball_plan.json",
+        "root_pose": "build/experiments/teleop_gripper_p2_20261011/ruling20/buttons/RB/server/live_config.json#gamepad.pose",
+        "timeline": "build/experiments/teleop_gripper_p2_20261011/ruling20/buttons/RB/server/ball_trace.jsonl",
+        "result": "build/experiments/teleop_gripper_p2_20261011/ruling20/results.json#cases/RB"
+      }
+    },
+    {
+      "case_id": "View",
+      "plan": {
+        "name": "View",
+        "link": "view",
+        "joint": "view_press",
+        "channel": "back",
+        "sign": 1,
+        "kind": "button",
+        "point_m": [
+          -0.011342170648276806,
+          0.02382919006049633,
+          0.050887059420347214
+        ],
+        "direction": [
+          -3.5762786865234375e-07,
+          -1.1891116002971103e-07,
+          -0.9999999403953552
+        ],
+        "start_m": [
+          -0.011342167854309082,
+          0.02382919192314148,
+          0.05988705903291702
+        ],
+        "axis_world": [
+          -3.5762786865234375e-07,
+          -1.1891116002971103e-07,
+          -0.9999999403953552
+        ],
+        "pivot_m": [
+          -0.011342163197696209,
+          0.02382919378578663,
+          0.05088705196976662
+        ],
+        "limits": [
+          [
+            0.0,
+            0.0012666219845414162
+          ]
+        ],
+        "view": "buttons_close"
+      },
+      "root_pose": [
+        0,
+        0,
+        0.03035474591349888,
+        1,
+        0,
+        0,
+        0
+      ],
+      "joint_limits": {
+        "a_press": [
+          0.0,
+          0.0008967542671598494
+        ],
+        "b_press": [
+          0.0,
+          0.001376767992042005
+        ],
+        "left_shoulder_press": [
+          0.0,
+          0.0022283243015408516
+        ],
+        "right_shoulder_press": [
+          0.0,
+          0.002228327328339219
+        ],
+        "pair_press": [
+          0.0,
+          0.0010423330822959542
+        ],
+        "dpad_horizontal": [
+          -0.17453241348266602,
+          0.17453241348266602
+        ],
+        "view_press": [
+          0.0,
+          0.0012666219845414162
+        ],
+        "menu_press": [
+          0.0,
+          0.0012666225666180253
+        ],
+        "left_stick_x": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "right_stick_x": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "left_trigger_hinge": [
+          0.0,
+          0.29531940817832947
+        ],
+        "right_trigger_hinge": [
+          0.0,
+          0.29531940817832947
+        ],
+        "x_press": [
+          0.0,
+          0.000780960894189775
+        ],
+        "guide_press": [
+          0.0,
+          0.0007251785136759281
+        ],
+        "y_press": [
+          0.0,
+          0.0012284000404179096
+        ],
+        "dpad_vertical": [
+          -0.17453241348266602,
+          0.17453241348266602
+        ],
+        "left_stick_y": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "right_stick_y": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "left_stick_click": [
+          0.0,
+          0.00039999998989515007
+        ],
+        "right_stick_click": [
+          0.0,
+          0.00039999998989515007
+        ]
+      },
+      "timeline": [
+        {
+          "phase": "idle",
+          "first_step": 0,
+          "last_step": 807,
+          "phase_origin_step": 0
+        },
+        {
+          "phase": "approach",
+          "first_step": 808,
+          "last_step": 1057,
+          "phase_origin_step": 808
+        },
+        {
+          "phase": "press",
+          "first_step": 1058,
+          "last_step": 1391,
+          "phase_origin_step": 1058
+        },
+        {
+          "phase": "hold",
+          "first_step": 1392,
+          "last_step": 1517,
+          "phase_origin_step": 1393
+        },
+        {
+          "phase": "withdraw",
+          "first_step": 1518,
+          "last_step": 1642,
+          "phase_origin_step": 1518
+        },
+        {
+          "phase": "observe",
+          "first_step": 1643,
+          "last_step": 1767,
+          "phase_origin_step": 1643
+        },
+        {
+          "phase": "done",
+          "first_step": 1768,
+          "last_step": 1935,
+          "phase_origin_step": 1768
+        }
+      ],
+      "baseline": {
+        "case": "View",
+        "target_channel": "back",
+        "target_min": 0.9918716727553695,
+        "target_max": 0.9920216700004845,
+        "signals_at_photo": {
+          "left_x": 0,
+          "left_y": 0,
+          "right_x": 0,
+          "right_y": 0,
+          "left_trigger": 0,
+          "right_trigger": 0,
+          "south": 0,
+          "east": 0,
+          "west": 0,
+          "north": 0,
+          "back": 0.9919842625992824,
+          "guide": 0,
+          "start": 0,
+          "left_stick": 0,
+          "right_stick": 0,
+          "left_shoulder": 0,
+          "right_shoulder": 0,
+          "dpad_up": 0,
+          "dpad_down": 0,
+          "dpad_left": 0,
+          "dpad_right": 0
+        },
+        "event_at_photo": {
+          "pair_bind_connect": 0
+        },
+        "target_threshold": 0.95,
+        "dpad_bottomed_noncritical": null,
+        "signal_passed": true,
+        "misfires": {},
+        "no_misfires": true,
+        "overlay_passed": true,
+        "overlay_unexpected": [],
+        "overlay_color": {
+          "yellow_components": [
+            "left:select"
+          ],
+          "target_yellow": true,
+          "unexpected_yellow_components": [],
+          "passed": true
+        },
+        "canonical_32_exact": true,
+        "return_time_after_withdraw_s": 0.0,
+        "return_from_start_s": 0.5,
+        "return_passed": true,
+        "internal_pairs": 0,
+        "contacted_links": [
+          "gamepad/view"
+        ],
+        "max_penetration_m": 0.00014570169150829315,
+        "max_force_n": 1.138523289871867,
+        "hold_sim_seconds": 0.5,
+        "withdraw_step": 1518,
+        "steps": 1936,
+        "termination": {
+          "reason": "signal_goal",
+          "step": 1392,
+          "stroke_m": 0.006680000000000016,
+          "actual_progress_m": 0.006382833785841698,
+          "force_norm_n": 1.1121848694547611,
+          "signal": 0.9922920694460288,
+          "window_steps": 25,
+          "window_position_range_m": 0.0004034302888220641,
+          "window_min_force_n": 0.6305174977106696
+        },
+        "joint_limit_excess": {
+          "right_trigger_hinge": 3.1362529240297476e-10,
+          "left_trigger_hinge": 7.192444417825072e-10
+        },
+        "passed": true,
+        "source_directory": "/mnt/wsl/shared/ConCon/xbox_gamepad_physics/build/experiments/teleop_gripper_p2_20261011/ruling20/buttons/View"
+      },
+      "source_paths": {
+        "plan": "build/experiments/teleop_gripper_p2_20261011/ruling20/buttons/View/server/ball_plan.json",
+        "root_pose": "build/experiments/teleop_gripper_p2_20261011/ruling20/buttons/View/server/live_config.json#gamepad.pose",
+        "timeline": "build/experiments/teleop_gripper_p2_20261011/ruling20/buttons/View/server/ball_trace.jsonl",
+        "result": "build/experiments/teleop_gripper_p2_20261011/ruling20/results.json#cases/View"
+      }
+    },
+    {
+      "case_id": "Menu",
+      "plan": {
+        "name": "Menu",
+        "link": "menu",
+        "joint": "menu_press",
+        "channel": "start",
+        "sign": 1,
+        "kind": "button",
+        "point_m": [
+          0.011254954151809216,
+          0.023817991837859154,
+          0.05088707059621811
+        ],
+        "direction": [
+          -4.76837158203125e-07,
+          -9.531986506772228e-07,
+          -0.9999999403953552
+        ],
+        "start_m": [
+          0.011254958808422089,
+          0.0238180011510849,
+          0.05988707020878792
+        ],
+        "axis_world": [
+          -4.76837158203125e-07,
+          -9.531986506772228e-07,
+          -0.9999999403953552
+        ],
+        "pivot_m": [
+          0.01125495694577694,
+          0.023817993700504303,
+          0.050887055695056915
+        ],
+        "limits": [
+          [
+            0.0,
+            0.0012666225666180253
+          ]
+        ],
+        "view": "buttons_close"
+      },
+      "root_pose": [
+        0,
+        0,
+        0.03035474591349888,
+        1,
+        0,
+        0,
+        0
+      ],
+      "joint_limits": {
+        "a_press": [
+          0.0,
+          0.0008967542671598494
+        ],
+        "b_press": [
+          0.0,
+          0.001376767992042005
+        ],
+        "left_shoulder_press": [
+          0.0,
+          0.0022283243015408516
+        ],
+        "right_shoulder_press": [
+          0.0,
+          0.002228327328339219
+        ],
+        "pair_press": [
+          0.0,
+          0.0010423330822959542
+        ],
+        "dpad_horizontal": [
+          -0.17453241348266602,
+          0.17453241348266602
+        ],
+        "view_press": [
+          0.0,
+          0.0012666219845414162
+        ],
+        "menu_press": [
+          0.0,
+          0.0012666225666180253
+        ],
+        "left_stick_x": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "right_stick_x": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "left_trigger_hinge": [
+          0.0,
+          0.29531940817832947
+        ],
+        "right_trigger_hinge": [
+          0.0,
+          0.29531940817832947
+        ],
+        "x_press": [
+          0.0,
+          0.000780960894189775
+        ],
+        "guide_press": [
+          0.0,
+          0.0007251785136759281
+        ],
+        "y_press": [
+          0.0,
+          0.0012284000404179096
+        ],
+        "dpad_vertical": [
+          -0.17453241348266602,
+          0.17453241348266602
+        ],
+        "left_stick_y": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "right_stick_y": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "left_stick_click": [
+          0.0,
+          0.00039999998989515007
+        ],
+        "right_stick_click": [
+          0.0,
+          0.00039999998989515007
+        ]
+      },
+      "timeline": [
+        {
+          "phase": "idle",
+          "first_step": 0,
+          "last_step": 808,
+          "phase_origin_step": 0
+        },
+        {
+          "phase": "approach",
+          "first_step": 809,
+          "last_step": 1058,
+          "phase_origin_step": 809
+        },
+        {
+          "phase": "press",
+          "first_step": 1059,
+          "last_step": 1392,
+          "phase_origin_step": 1059
+        },
+        {
+          "phase": "hold",
+          "first_step": 1393,
+          "last_step": 1518,
+          "phase_origin_step": 1394
+        },
+        {
+          "phase": "withdraw",
+          "first_step": 1519,
+          "last_step": 1643,
+          "phase_origin_step": 1519
+        },
+        {
+          "phase": "observe",
+          "first_step": 1644,
+          "last_step": 1768,
+          "phase_origin_step": 1644
+        },
+        {
+          "phase": "done",
+          "first_step": 1769,
+          "last_step": 1985,
+          "phase_origin_step": 1769
+        }
+      ],
+      "baseline": {
+        "case": "Menu",
+        "target_channel": "start",
+        "target_min": 0.9918722851700538,
+        "target_max": 0.9920211794206167,
+        "signals_at_photo": {
+          "left_x": 0,
+          "left_y": 0,
+          "right_x": 0,
+          "right_y": 0,
+          "left_trigger": 0,
+          "right_trigger": 0,
+          "south": 0,
+          "east": 0,
+          "west": 0,
+          "north": 0,
+          "back": 0,
+          "guide": 0,
+          "start": 0.9919829448476326,
+          "left_stick": 0,
+          "right_stick": 0,
+          "left_shoulder": 0,
+          "right_shoulder": 0,
+          "dpad_up": 0,
+          "dpad_down": 0,
+          "dpad_left": 0,
+          "dpad_right": 0
+        },
+        "event_at_photo": {
+          "pair_bind_connect": 0
+        },
+        "target_threshold": 0.95,
+        "dpad_bottomed_noncritical": null,
+        "signal_passed": true,
+        "misfires": {},
+        "no_misfires": true,
+        "overlay_passed": true,
+        "overlay_unexpected": [],
+        "overlay_color": {
+          "yellow_components": [
+            "right:start"
+          ],
+          "target_yellow": true,
+          "unexpected_yellow_components": [],
+          "passed": true
+        },
+        "canonical_32_exact": true,
+        "return_time_after_withdraw_s": 0.0,
+        "return_from_start_s": 0.5,
+        "return_passed": true,
+        "internal_pairs": 0,
+        "contacted_links": [
+          "gamepad/menu"
+        ],
+        "max_penetration_m": 0.00014570076018571854,
+        "max_force_n": 1.138527918964006,
+        "hold_sim_seconds": 0.5,
+        "withdraw_step": 1519,
+        "steps": 1986,
+        "termination": {
+          "reason": "signal_goal",
+          "step": 1393,
+          "stroke_m": 0.006680000000000016,
+          "actual_progress_m": 0.006382841236416197,
+          "force_norm_n": 1.1121734213469652,
+          "signal": 0.9922929573829099,
+          "window_steps": 25,
+          "window_position_range_m": 0.00040343401408861335,
+          "window_min_force_n": 0.6305266352526618
+        },
+        "joint_limit_excess": {
+          "right_trigger_hinge": 3.1362529240297476e-10,
+          "left_trigger_hinge": 7.192444417825072e-10
+        },
+        "passed": true,
+        "source_directory": "/mnt/wsl/shared/ConCon/xbox_gamepad_physics/build/experiments/teleop_gripper_p2_20261011/ruling20/buttons/Menu"
+      },
+      "source_paths": {
+        "plan": "build/experiments/teleop_gripper_p2_20261011/ruling20/buttons/Menu/server/ball_plan.json",
+        "root_pose": "build/experiments/teleop_gripper_p2_20261011/ruling20/buttons/Menu/server/live_config.json#gamepad.pose",
+        "timeline": "build/experiments/teleop_gripper_p2_20261011/ruling20/buttons/Menu/server/ball_trace.jsonl",
+        "result": "build/experiments/teleop_gripper_p2_20261011/ruling20/results.json#cases/Menu"
+      }
+    },
+    {
+      "case_id": "Guide",
+      "plan": {
+        "name": "Guide",
+        "link": "guide",
+        "joint": "guide_press",
+        "channel": "guide",
+        "sign": 1,
+        "kind": "button",
+        "point_m": [
+          -2.951636801640234e-08,
+          0.04071011394262314,
+          0.04867629334330559
+        ],
+        "direction": [
+          -1.1920928955078125e-07,
+          -1.299631321671768e-06,
+          -1.0000001192092896
+        ],
+        "start_m": [
+          -2.8443484012541376e-08,
+          0.040710125118494034,
+          0.0576762929558754
+        ],
+        "axis_world": [
+          -1.1920928955078125e-07,
+          -1.299631321671768e-06,
+          -1.0000001192092896
+        ],
+        "pivot_m": [
+          -2.0625616770075794e-08,
+          0.04071011021733284,
+          0.04867630451917648
+        ],
+        "limits": [
+          [
+            0.0,
+            0.0007251785136759281
+          ]
+        ],
+        "view": "buttons_close"
+      },
+      "root_pose": [
+        0,
+        0,
+        0.03035474591349888,
+        1,
+        0,
+        0,
+        0
+      ],
+      "joint_limits": {
+        "a_press": [
+          0.0,
+          0.0008967542671598494
+        ],
+        "b_press": [
+          0.0,
+          0.001376767992042005
+        ],
+        "left_shoulder_press": [
+          0.0,
+          0.0022283243015408516
+        ],
+        "right_shoulder_press": [
+          0.0,
+          0.002228327328339219
+        ],
+        "pair_press": [
+          0.0,
+          0.0010423330822959542
+        ],
+        "dpad_horizontal": [
+          -0.17453241348266602,
+          0.17453241348266602
+        ],
+        "view_press": [
+          0.0,
+          0.0012666219845414162
+        ],
+        "menu_press": [
+          0.0,
+          0.0012666225666180253
+        ],
+        "left_stick_x": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "right_stick_x": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "left_trigger_hinge": [
+          0.0,
+          0.29531940817832947
+        ],
+        "right_trigger_hinge": [
+          0.0,
+          0.29531940817832947
+        ],
+        "x_press": [
+          0.0,
+          0.000780960894189775
+        ],
+        "guide_press": [
+          0.0,
+          0.0007251785136759281
+        ],
+        "y_press": [
+          0.0,
+          0.0012284000404179096
+        ],
+        "dpad_vertical": [
+          -0.17453241348266602,
+          0.17453241348266602
+        ],
+        "left_stick_y": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "right_stick_y": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "left_stick_click": [
+          0.0,
+          0.00039999998989515007
+        ],
+        "right_stick_click": [
+          0.0,
+          0.00039999998989515007
+        ]
+      },
+      "timeline": [
+        {
+          "phase": "idle",
+          "first_step": 0,
+          "last_step": 801,
+          "phase_origin_step": 0
+        },
+        {
+          "phase": "approach",
+          "first_step": 802,
+          "last_step": 1051,
+          "phase_origin_step": 802
+        },
+        {
+          "phase": "press",
+          "first_step": 1052,
+          "last_step": 1358,
+          "phase_origin_step": 1052
+        },
+        {
+          "phase": "hold",
+          "first_step": 1359,
+          "last_step": 1484,
+          "phase_origin_step": 1360
+        },
+        {
+          "phase": "withdraw",
+          "first_step": 1485,
+          "last_step": 1609,
+          "phase_origin_step": 1485
+        },
+        {
+          "phase": "observe",
+          "first_step": 1610,
+          "last_step": 1734,
+          "phase_origin_step": 1610
+        },
+        {
+          "phase": "done",
+          "first_step": 1735,
+          "last_step": 1942,
+          "phase_origin_step": 1735
+        }
+      ],
+      "baseline": {
+        "case": "Guide",
+        "target_channel": "guide",
+        "target_min": 0.9876731721186925,
+        "target_max": 0.9881048462283015,
+        "signals_at_photo": {
+          "left_x": 0,
+          "left_y": 0,
+          "right_x": 0,
+          "right_y": 0,
+          "left_trigger": 0,
+          "right_trigger": 0,
+          "south": 0,
+          "east": 0,
+          "west": 0,
+          "north": 0,
+          "back": 0,
+          "guide": 0.9879816369017397,
+          "start": 0,
+          "left_stick": 0,
+          "right_stick": 0,
+          "left_shoulder": 0,
+          "right_shoulder": 0,
+          "dpad_up": 0,
+          "dpad_down": 0,
+          "dpad_left": 0,
+          "dpad_right": 0
+        },
+        "event_at_photo": {
+          "pair_bind_connect": 0
+        },
+        "target_threshold": 0.95,
+        "dpad_bottomed_noncritical": null,
+        "signal_passed": true,
+        "misfires": {},
+        "no_misfires": true,
+        "overlay_passed": true,
+        "overlay_unexpected": [],
+        "overlay_color": {
+          "yellow_components": [
+            "center:guide"
+          ],
+          "target_yellow": true,
+          "unexpected_yellow_components": [],
+          "passed": true
+        },
+        "canonical_32_exact": true,
+        "return_time_after_withdraw_s": 0.0,
+        "return_from_start_s": 0.5,
+        "return_passed": true,
+        "internal_pairs": 0,
+        "contacted_links": [
+          "gamepad/controller_body",
+          "gamepad/guide"
+        ],
+        "max_penetration_m": 0.0001427438110113144,
+        "max_force_n": 1.1669683425729123,
+        "hold_sim_seconds": 0.5,
+        "withdraw_step": 1485,
+        "steps": 1943,
+        "termination": {
+          "reason": "signal_goal",
+          "step": 1359,
+          "stroke_m": 0.006140000000000014,
+          "actual_progress_m": 0.00583998552951564,
+          "force_norm_n": 1.1328280654163418,
+          "signal": 0.9887523573927152,
+          "window_steps": 25,
+          "window_position_range_m": 0.0003621429498780497,
+          "window_min_force_n": 0.41310058737621697
+        },
+        "joint_limit_excess": {
+          "right_trigger_hinge": 3.1362529240297476e-10,
+          "left_trigger_hinge": 7.192444417825072e-10
+        },
+        "passed": true,
+        "source_directory": "/mnt/wsl/shared/ConCon/xbox_gamepad_physics/build/experiments/teleop_gripper_p2_20261011/ruling20/buttons/Guide"
+      },
+      "source_paths": {
+        "plan": "build/experiments/teleop_gripper_p2_20261011/ruling20/buttons/Guide/server/ball_plan.json",
+        "root_pose": "build/experiments/teleop_gripper_p2_20261011/ruling20/buttons/Guide/server/live_config.json#gamepad.pose",
+        "timeline": "build/experiments/teleop_gripper_p2_20261011/ruling20/buttons/Guide/server/ball_trace.jsonl",
+        "result": "build/experiments/teleop_gripper_p2_20261011/ruling20/results.json#cases/Guide"
+      }
+    },
+    {
+      "case_id": "Pair",
+      "plan": {
+        "name": "Pair",
+        "link": "pair",
+        "joint": "pair_press",
+        "channel": null,
+        "sign": 1,
+        "kind": "button",
+        "point_m": [
+          -0.013452679850161076,
+          0.048670943826436996,
+          0.04293811693787575
+        ],
+        "direction": [
+          2.384185791015625e-07,
+          -1.0,
+          -7.450580596923828e-07
+        ],
+        "start_m": [
+          -0.013452681712806225,
+          0.057670943439006805,
+          0.042938124388456345
+        ],
+        "axis_world": [
+          -2.384185791015625e-07,
+          1.0,
+          7.450580596923828e-07
+        ],
+        "pivot_m": [
+          -0.01345266867429018,
+          0.0488462895154953,
+          0.04293810948729515
+        ],
+        "limits": [
+          [
+            0.0,
+            0.0010423330822959542
+          ]
+        ],
+        "view": "triggers"
+      },
+      "root_pose": [
+        0,
+        0,
+        0.03035474591349888,
+        1,
+        0,
+        0,
+        0
+      ],
+      "joint_limits": {
+        "a_press": [
+          0.0,
+          0.0008967542671598494
+        ],
+        "b_press": [
+          0.0,
+          0.001376767992042005
+        ],
+        "left_shoulder_press": [
+          0.0,
+          0.0022283243015408516
+        ],
+        "right_shoulder_press": [
+          0.0,
+          0.002228327328339219
+        ],
+        "pair_press": [
+          0.0,
+          0.0010423330822959542
+        ],
+        "dpad_horizontal": [
+          -0.17453241348266602,
+          0.17453241348266602
+        ],
+        "view_press": [
+          0.0,
+          0.0012666219845414162
+        ],
+        "menu_press": [
+          0.0,
+          0.0012666225666180253
+        ],
+        "left_stick_x": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "right_stick_x": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "left_trigger_hinge": [
+          0.0,
+          0.29531940817832947
+        ],
+        "right_trigger_hinge": [
+          0.0,
+          0.29531940817832947
+        ],
+        "x_press": [
+          0.0,
+          0.000780960894189775
+        ],
+        "guide_press": [
+          0.0,
+          0.0007251785136759281
+        ],
+        "y_press": [
+          0.0,
+          0.0012284000404179096
+        ],
+        "dpad_vertical": [
+          -0.17453241348266602,
+          0.17453241348266602
+        ],
+        "left_stick_y": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "right_stick_y": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "left_stick_click": [
+          0.0,
+          0.00039999998989515007
+        ],
+        "right_stick_click": [
+          0.0,
+          0.00039999998989515007
+        ]
+      },
+      "timeline": [
+        {
+          "phase": "idle",
+          "first_step": 0,
+          "last_step": 802,
+          "phase_origin_step": 0
+        },
+        {
+          "phase": "approach",
+          "first_step": 803,
+          "last_step": 1052,
+          "phase_origin_step": 803
+        },
+        {
+          "phase": "press",
+          "first_step": 1053,
+          "last_step": 1466,
+          "phase_origin_step": 1053
+        },
+        {
+          "phase": "hold",
+          "first_step": 1467,
+          "last_step": 1592,
+          "phase_origin_step": 1468
+        },
+        {
+          "phase": "withdraw",
+          "first_step": 1593,
+          "last_step": 1717,
+          "phase_origin_step": 1593
+        },
+        {
+          "phase": "observe",
+          "first_step": 1718,
+          "last_step": 1842,
+          "phase_origin_step": 1718
+        },
+        {
+          "phase": "done",
+          "first_step": 1843,
+          "last_step": 2043,
+          "phase_origin_step": 1843
+        }
+      ],
+      "baseline": {
+        "case": "Pair",
+        "target_channel": null,
+        "target_min": 0.01399660817579135,
+        "target_max": 0.014007789990156226,
+        "signals_at_photo": {
+          "left_x": 0,
+          "left_y": 0,
+          "right_x": 0,
+          "right_y": 0,
+          "left_trigger": 0,
+          "right_trigger": 0,
+          "south": 0,
+          "east": 0,
+          "west": 0,
+          "north": 0,
+          "back": 0,
+          "guide": 0,
+          "start": 0,
+          "left_stick": 0,
+          "right_stick": 0,
+          "left_shoulder": 0,
+          "right_shoulder": 0,
+          "dpad_up": 0,
+          "dpad_down": 0,
+          "dpad_left": 0,
+          "dpad_right": 0
+        },
+        "event_at_photo": {
+          "pair_bind_connect": 0.013998539143812378
+        },
+        "target_threshold": 0.95,
+        "dpad_bottomed_noncritical": null,
+        "signal_passed": false,
+        "misfires": {},
+        "no_misfires": true,
+        "overlay_passed": true,
+        "overlay_unexpected": [],
+        "overlay_color": {
+          "yellow_components": [],
+          "target_yellow": true,
+          "unexpected_yellow_components": [],
+          "passed": true
+        },
+        "canonical_32_exact": true,
+        "return_time_after_withdraw_s": 0.0,
+        "return_from_start_s": 0.5,
+        "return_passed": true,
+        "internal_pairs": 0,
+        "contacted_links": [
+          "gamepad/pair"
+        ],
+        "max_penetration_m": 0,
+        "max_force_n": 16.000000000000004,
+        "hold_sim_seconds": 0.5,
+        "withdraw_step": 1593,
+        "steps": 2044,
+        "termination": {
+          "reason": "blocked",
+          "step": 1467,
+          "stroke_m": 0.00828,
+          "actual_progress_m": 0.00471588597766226,
+          "force_norm_n": 16.0,
+          "signal": 0.013999313974179604,
+          "window_steps": 25,
+          "window_position_range_m": 7.860362474243487e-07,
+          "window_min_force_n": 15.742621216167999
+        },
+        "joint_limit_excess": {
+          "right_trigger_hinge": 3.1362529240297476e-10,
+          "left_trigger_hinge": 7.192444417825072e-10
+        },
+        "passed": false,
+        "source_directory": "/mnt/wsl/shared/ConCon/xbox_gamepad_physics/build/experiments/teleop_gripper_p2_20261011/ruling20/buttons/Pair"
+      },
+      "source_paths": {
+        "plan": "build/experiments/teleop_gripper_p2_20261011/ruling20/buttons/Pair/server/ball_plan.json",
+        "root_pose": "build/experiments/teleop_gripper_p2_20261011/ruling20/buttons/Pair/server/live_config.json#gamepad.pose",
+        "timeline": "build/experiments/teleop_gripper_p2_20261011/ruling20/buttons/Pair/server/ball_trace.jsonl",
+        "result": "build/experiments/teleop_gripper_p2_20261011/ruling20/results.json#cases/Pair"
+      }
+    },
+    {
+      "case_id": "L3",
+      "plan": {
+        "name": "L3",
+        "link": "left_stick",
+        "joint": "left_stick_click",
+        "channel": "left_stick",
+        "sign": 1,
+        "kind": "button",
+        "point_m": [
+          -0.03802722692489624,
+          0.024133622646331787,
+          0.059278279542922974
+        ],
+        "direction": [
+          -1.1920928955078125e-07,
+          -8.822392771890009e-08,
+          -1.0000001192092896
+        ],
+        "start_m": [
+          -0.03802722692489624,
+          0.024133622646331787,
+          0.06827828288078308
+        ],
+        "axis_world": [
+          -1.1920928955078125e-07,
+          -8.822392771890009e-08,
+          -1.0000001192092896
+        ],
+        "pivot_m": [
+          -0.03803535923361778,
+          0.024133630096912384,
+          0.04247860610485077
+        ],
+        "limits": [
+          [
+            0.0,
+            0.00039999998989515007
+          ]
+        ],
+        "view": "buttons_close"
+      },
+      "root_pose": [
+        0,
+        0,
+        0.03035474591349888,
+        1,
+        0,
+        0,
+        0
+      ],
+      "joint_limits": {
+        "a_press": [
+          0.0,
+          0.0008967542671598494
+        ],
+        "b_press": [
+          0.0,
+          0.001376767992042005
+        ],
+        "left_shoulder_press": [
+          0.0,
+          0.0022283243015408516
+        ],
+        "right_shoulder_press": [
+          0.0,
+          0.002228327328339219
+        ],
+        "pair_press": [
+          0.0,
+          0.0010423330822959542
+        ],
+        "dpad_horizontal": [
+          -0.17453241348266602,
+          0.17453241348266602
+        ],
+        "view_press": [
+          0.0,
+          0.0012666219845414162
+        ],
+        "menu_press": [
+          0.0,
+          0.0012666225666180253
+        ],
+        "left_stick_x": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "right_stick_x": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "left_trigger_hinge": [
+          0.0,
+          0.29531940817832947
+        ],
+        "right_trigger_hinge": [
+          0.0,
+          0.29531940817832947
+        ],
+        "x_press": [
+          0.0,
+          0.000780960894189775
+        ],
+        "guide_press": [
+          0.0,
+          0.0007251785136759281
+        ],
+        "y_press": [
+          0.0,
+          0.0012284000404179096
+        ],
+        "dpad_vertical": [
+          -0.17453241348266602,
+          0.17453241348266602
+        ],
+        "left_stick_y": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "right_stick_y": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "left_stick_click": [
+          0.0,
+          0.00039999998989515007
+        ],
+        "right_stick_click": [
+          0.0,
+          0.00039999998989515007
+        ]
+      },
+      "timeline": [
+        {
+          "phase": "idle",
+          "first_step": 0,
+          "last_step": 798,
+          "phase_origin_step": 0
+        },
+        {
+          "phase": "approach",
+          "first_step": 799,
+          "last_step": 1048,
+          "phase_origin_step": 799
+        },
+        {
+          "phase": "press",
+          "first_step": 1049,
+          "last_step": 1609,
+          "phase_origin_step": 1049
+        },
+        {
+          "phase": "hold",
+          "first_step": 1610,
+          "last_step": 1735,
+          "phase_origin_step": 1611
+        },
+        {
+          "phase": "withdraw",
+          "first_step": 1736,
+          "last_step": 1860,
+          "phase_origin_step": 1736
+        },
+        {
+          "phase": "observe",
+          "first_step": 1861,
+          "last_step": 1985,
+          "phase_origin_step": 1861
+        },
+        {
+          "phase": "done",
+          "first_step": 1986,
+          "last_step": 2191,
+          "phase_origin_step": 1986
+        }
+      ],
+      "baseline": {
+        "case": "L3",
+        "target_channel": "left_stick",
+        "target_min": 0.7074818131513894,
+        "target_max": 0.7075128814904019,
+        "signals_at_photo": {
+          "left_x": 0,
+          "left_y": 0,
+          "right_x": 0,
+          "right_y": 0,
+          "left_trigger": 0,
+          "right_trigger": 0,
+          "south": 0,
+          "east": 0,
+          "west": 0,
+          "north": 0,
+          "back": 0,
+          "guide": 0,
+          "start": 0,
+          "left_stick": 0.7075002213241532,
+          "right_stick": 0,
+          "left_shoulder": 0,
+          "right_shoulder": 0,
+          "dpad_up": 0,
+          "dpad_down": 0,
+          "dpad_left": 0,
+          "dpad_right": 0
+        },
+        "event_at_photo": {
+          "pair_bind_connect": 0
+        },
+        "target_threshold": 0.95,
+        "dpad_bottomed_noncritical": null,
+        "signal_passed": false,
+        "misfires": {},
+        "no_misfires": true,
+        "overlay_passed": true,
+        "overlay_unexpected": [],
+        "overlay_color": {
+          "yellow_components": [
+            "left:analog-stick",
+            "left:analog-stick-ring"
+          ],
+          "target_yellow": true,
+          "unexpected_yellow_components": [],
+          "passed": true
+        },
+        "canonical_32_exact": true,
+        "return_time_after_withdraw_s": 0.0,
+        "return_from_start_s": 0.5,
+        "return_passed": true,
+        "internal_pairs": 0,
+        "contacted_links": [
+          "gamepad/left_stick"
+        ],
+        "max_penetration_m": 2.4878885596990585e-05,
+        "max_force_n": 16.000000000000004,
+        "hold_sim_seconds": 0.5,
+        "withdraw_step": 1736,
+        "steps": 2192,
+        "termination": {
+          "reason": "blocked",
+          "step": 1610,
+          "stroke_m": 0.01121999999999988,
+          "actual_progress_m": 0.0053848258117900165,
+          "force_norm_n": 16.0,
+          "signal": 0.7075013854773715,
+          "window_steps": 25,
+          "window_position_range_m": 9.611249938007438e-07,
+          "window_min_force_n": 15.405990959358666
+        },
+        "joint_limit_excess": {
+          "left_trigger_hinge": 7.192444417825072e-10,
+          "right_trigger_hinge": 3.1362529240297476e-10
+        },
+        "passed": false,
+        "source_directory": "/mnt/wsl/shared/ConCon/xbox_gamepad_physics/build/experiments/teleop_gripper_p2_20261011/ruling20/sticks/L3"
+      },
+      "source_paths": {
+        "plan": "build/experiments/teleop_gripper_p2_20261011/ruling20/sticks/L3/server/ball_plan.json",
+        "root_pose": "build/experiments/teleop_gripper_p2_20261011/ruling20/sticks/L3/server/live_config.json#gamepad.pose",
+        "timeline": "build/experiments/teleop_gripper_p2_20261011/ruling20/sticks/L3/server/ball_trace.jsonl",
+        "result": "build/experiments/teleop_gripper_p2_20261011/ruling20/results.json#cases/L3"
+      }
+    },
+    {
+      "case_id": "R3",
+      "plan": {
+        "name": "R3",
+        "link": "right_stick",
+        "joint": "right_stick_click",
+        "channel": "right_stick",
+        "sign": 1,
+        "kind": "button",
+        "point_m": [
+          0.020557276904582977,
+          0.000489346100948751,
+          0.0587393157184124
+        ],
+        "direction": [
+          -1.1920928955078125e-07,
+          -4.281175591813735e-08,
+          -0.9999999403953552
+        ],
+        "start_m": [
+          0.020557278767228127,
+          0.0004893465084023774,
+          0.06773931533098221
+        ],
+        "axis_world": [
+          -1.1920928955078125e-07,
+          -4.281175591813735e-08,
+          -0.9999999403953552
+        ],
+        "pivot_m": [
+          0.020557697862386703,
+          0.0004891357966698706,
+          0.04202272370457649
+        ],
+        "limits": [
+          [
+            0.0,
+            0.00039999998989515007
+          ]
+        ],
+        "view": "buttons_close"
+      },
+      "root_pose": [
+        0,
+        0,
+        0.03035474591349888,
+        1,
+        0,
+        0,
+        0
+      ],
+      "joint_limits": {
+        "a_press": [
+          0.0,
+          0.0008967542671598494
+        ],
+        "b_press": [
+          0.0,
+          0.001376767992042005
+        ],
+        "left_shoulder_press": [
+          0.0,
+          0.0022283243015408516
+        ],
+        "right_shoulder_press": [
+          0.0,
+          0.002228327328339219
+        ],
+        "pair_press": [
+          0.0,
+          0.0010423330822959542
+        ],
+        "dpad_horizontal": [
+          -0.17453241348266602,
+          0.17453241348266602
+        ],
+        "view_press": [
+          0.0,
+          0.0012666219845414162
+        ],
+        "menu_press": [
+          0.0,
+          0.0012666225666180253
+        ],
+        "left_stick_x": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "right_stick_x": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "left_trigger_hinge": [
+          0.0,
+          0.29531940817832947
+        ],
+        "right_trigger_hinge": [
+          0.0,
+          0.29531940817832947
+        ],
+        "x_press": [
+          0.0,
+          0.000780960894189775
+        ],
+        "guide_press": [
+          0.0,
+          0.0007251785136759281
+        ],
+        "y_press": [
+          0.0,
+          0.0012284000404179096
+        ],
+        "dpad_vertical": [
+          -0.17453241348266602,
+          0.17453241348266602
+        ],
+        "left_stick_y": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "right_stick_y": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "left_stick_click": [
+          0.0,
+          0.00039999998989515007
+        ],
+        "right_stick_click": [
+          0.0,
+          0.00039999998989515007
+        ]
+      },
+      "timeline": [
+        {
+          "phase": "idle",
+          "first_step": 0,
+          "last_step": 862,
+          "phase_origin_step": 0
+        },
+        {
+          "phase": "approach",
+          "first_step": 863,
+          "last_step": 1112,
+          "phase_origin_step": 863
+        },
+        {
+          "phase": "press",
+          "first_step": 1113,
+          "last_step": 1671,
+          "phase_origin_step": 1113
+        },
+        {
+          "phase": "hold",
+          "first_step": 1672,
+          "last_step": 1797,
+          "phase_origin_step": 1673
+        },
+        {
+          "phase": "withdraw",
+          "first_step": 1798,
+          "last_step": 1922,
+          "phase_origin_step": 1798
+        },
+        {
+          "phase": "observe",
+          "first_step": 1923,
+          "last_step": 2047,
+          "phase_origin_step": 1923
+        },
+        {
+          "phase": "done",
+          "first_step": 2048,
+          "last_step": 2248,
+          "phase_origin_step": 2048
+        }
+      ],
+      "baseline": {
+        "case": "R3",
+        "target_channel": "right_stick",
+        "target_min": 0.6793342618038878,
+        "target_max": 0.6793611100874841,
+        "signals_at_photo": {
+          "left_x": 0,
+          "left_y": 0,
+          "right_x": 0,
+          "right_y": 0,
+          "left_trigger": 0,
+          "right_trigger": 0,
+          "south": 0,
+          "east": 0,
+          "west": 0,
+          "north": 0,
+          "back": 0,
+          "guide": 0,
+          "start": 0,
+          "left_stick": 0,
+          "right_stick": 0.6793494685553014,
+          "left_shoulder": 0,
+          "right_shoulder": 0,
+          "dpad_up": 0,
+          "dpad_down": 0,
+          "dpad_left": 0,
+          "dpad_right": 0
+        },
+        "event_at_photo": {
+          "pair_bind_connect": 0
+        },
+        "target_threshold": 0.95,
+        "dpad_bottomed_noncritical": null,
+        "signal_passed": false,
+        "misfires": {},
+        "no_misfires": true,
+        "overlay_passed": true,
+        "overlay_unexpected": [],
+        "overlay_color": {
+          "yellow_components": [
+            "right:analog-stick",
+            "right:analog-stick-ring"
+          ],
+          "target_yellow": true,
+          "unexpected_yellow_components": [],
+          "passed": true
+        },
+        "canonical_32_exact": true,
+        "return_time_after_withdraw_s": 0.0,
+        "return_from_start_s": 0.5,
+        "return_passed": true,
+        "internal_pairs": 0,
+        "contacted_links": [
+          "gamepad/right_stick"
+        ],
+        "max_penetration_m": 2.554943785071373e-05,
+        "max_force_n": 16.000000000000004,
+        "hold_sim_seconds": 0.5,
+        "withdraw_step": 1798,
+        "steps": 2249,
+        "termination": {
+          "reason": "blocked",
+          "step": 1672,
+          "stroke_m": 0.011179999999999881,
+          "actual_progress_m": 0.0052903403165467456,
+          "force_norm_n": 15.999999999999998,
+          "signal": 0.6793558713980019,
+          "window_steps": 25,
+          "window_position_range_m": 8.717178711439844e-07,
+          "window_min_force_n": 15.596856782744972
+        },
+        "joint_limit_excess": {
+          "left_trigger_hinge": 7.192444417825072e-10,
+          "right_trigger_hinge": 3.1362529240297476e-10
+        },
+        "passed": false,
+        "source_directory": "/mnt/wsl/shared/ConCon/xbox_gamepad_physics/build/experiments/teleop_gripper_p2_20261011/ruling20/sticks/R3"
+      },
+      "source_paths": {
+        "plan": "build/experiments/teleop_gripper_p2_20261011/ruling20/sticks/R3/server/ball_plan.json",
+        "root_pose": "build/experiments/teleop_gripper_p2_20261011/ruling20/sticks/R3/server/live_config.json#gamepad.pose",
+        "timeline": "build/experiments/teleop_gripper_p2_20261011/ruling20/sticks/R3/server/ball_trace.jsonl",
+        "result": "build/experiments/teleop_gripper_p2_20261011/ruling20/results.json#cases/R3"
+      }
+    },
+    {
+      "case_id": "Dpad_up",
+      "plan": {
+        "name": "Dpad_up",
+        "link": "dpad",
+        "joint": "dpad_vertical",
+        "channel": "dpad_up",
+        "sign": -1,
+        "kind": "dpad",
+        "point_m": [
+          -0.020312119275331497,
+          0.006191740743815899,
+          0.048665613537585146
+        ],
+        "direction": [
+          0.0,
+          0.0,
+          -1.0
+        ],
+        "start_m": [
+          -0.020312119275331497,
+          0.006191740743815899,
+          0.05766561353758515
+        ],
+        "axis_world": [
+          1.0,
+          2.0574514314475323e-11,
+          0.0
+        ],
+        "pivot_m": [
+          -0.020312119275331497,
+          -0.001808259286917746,
+          0.04156418889760971
+        ],
+        "limits": [
+          [
+            -0.17453241348266602,
+            0.17453241348266602
+          ]
+        ],
+        "view": "buttons_close"
+      },
+      "root_pose": [
+        0,
+        0,
+        0.03035474591349888,
+        1,
+        0,
+        0,
+        0
+      ],
+      "joint_limits": {
+        "a_press": [
+          0.0,
+          0.0008967542671598494
+        ],
+        "b_press": [
+          0.0,
+          0.001376767992042005
+        ],
+        "left_shoulder_press": [
+          0.0,
+          0.0022283243015408516
+        ],
+        "right_shoulder_press": [
+          0.0,
+          0.002228327328339219
+        ],
+        "pair_press": [
+          0.0,
+          0.0010423330822959542
+        ],
+        "dpad_horizontal": [
+          -0.17453241348266602,
+          0.17453241348266602
+        ],
+        "view_press": [
+          0.0,
+          0.0012666219845414162
+        ],
+        "menu_press": [
+          0.0,
+          0.0012666225666180253
+        ],
+        "left_stick_x": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "right_stick_x": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "left_trigger_hinge": [
+          0.0,
+          0.29531940817832947
+        ],
+        "right_trigger_hinge": [
+          0.0,
+          0.29531940817832947
+        ],
+        "x_press": [
+          0.0,
+          0.000780960894189775
+        ],
+        "guide_press": [
+          0.0,
+          0.0007251785136759281
+        ],
+        "y_press": [
+          0.0,
+          0.0012284000404179096
+        ],
+        "dpad_vertical": [
+          -0.17453241348266602,
+          0.17453241348266602
+        ],
+        "left_stick_y": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "right_stick_y": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "left_stick_click": [
+          0.0,
+          0.00039999998989515007
+        ],
+        "right_stick_click": [
+          0.0,
+          0.00039999998989515007
+        ]
+      },
+      "timeline": [
+        {
+          "phase": "idle",
+          "first_step": 0,
+          "last_step": 804,
+          "phase_origin_step": 0
+        },
+        {
+          "phase": "approach",
+          "first_step": 805,
+          "last_step": 1054,
+          "phase_origin_step": 805
+        },
+        {
+          "phase": "press",
+          "first_step": 1055,
+          "last_step": 1390,
+          "phase_origin_step": 1055
+        },
+        {
+          "phase": "hold",
+          "first_step": 1391,
+          "last_step": 1516,
+          "phase_origin_step": 1392
+        },
+        {
+          "phase": "withdraw",
+          "first_step": 1517,
+          "last_step": 1641,
+          "phase_origin_step": 1517
+        },
+        {
+          "phase": "observe",
+          "first_step": 1642,
+          "last_step": 1766,
+          "phase_origin_step": 1642
+        },
+        {
+          "phase": "done",
+          "first_step": 1767,
+          "last_step": 1938,
+          "phase_origin_step": 1767
+        }
+      ],
+      "baseline": {
+        "case": "Dpad_up",
+        "target_channel": "dpad_up",
+        "target_min": 0.9355037859849571,
+        "target_max": 0.9999999999915821,
+        "signals_at_photo": {
+          "left_x": 0,
+          "left_y": 0,
+          "right_x": 0,
+          "right_y": 0,
+          "left_trigger": 0,
+          "right_trigger": 0,
+          "south": 0,
+          "east": 0,
+          "west": 0,
+          "north": 0,
+          "back": 0,
+          "guide": 0,
+          "start": 0,
+          "left_stick": 0,
+          "right_stick": 0,
+          "left_shoulder": 0,
+          "right_shoulder": 0,
+          "dpad_up": 0.9499880983604766,
+          "dpad_down": 0,
+          "dpad_left": 0,
+          "dpad_right": 0
+        },
+        "event_at_photo": {
+          "pair_bind_connect": 0
+        },
+        "target_threshold": 0.3,
+        "dpad_bottomed_noncritical": true,
+        "signal_passed": true,
+        "misfires": {},
+        "no_misfires": true,
+        "overlay_passed": true,
+        "overlay_unexpected": [],
+        "overlay_color": {
+          "yellow_components": [
+            "left:up"
+          ],
+          "target_yellow": true,
+          "unexpected_yellow_components": [],
+          "passed": true
+        },
+        "canonical_32_exact": true,
+        "return_time_after_withdraw_s": 0.0,
+        "return_from_start_s": 0.5,
+        "return_passed": true,
+        "internal_pairs": 0,
+        "contacted_links": [
+          "gamepad/dpad"
+        ],
+        "max_penetration_m": 6.473250687122345e-05,
+        "max_force_n": 2.1131957923456386,
+        "hold_sim_seconds": 0.5,
+        "withdraw_step": 1517,
+        "steps": 1939,
+        "termination": {
+          "reason": "signal_goal",
+          "step": 1391,
+          "stroke_m": 0.006720000000000016,
+          "actual_progress_m": 0.006304369365727314,
+          "force_norm_n": 1.3023693568899595,
+          "signal": 0.9880971651899755,
+          "window_steps": 25,
+          "window_position_range_m": 0.0003610439598560333,
+          "window_min_force_n": 0.7892598215351916
+        },
+        "joint_limit_excess": {
+          "left_trigger_hinge": 7.192444417825072e-10,
+          "dpad_vertical": 4.470348358154297e-08,
+          "right_trigger_hinge": 3.1362529240297476e-10
+        },
+        "passed": true,
+        "source_directory": "/mnt/wsl/shared/ConCon/xbox_gamepad_physics/build/experiments/teleop_gripper_p2_20261011/ruling20/dpad_triggers/Dpad_up"
+      },
+      "source_paths": {
+        "plan": "build/experiments/teleop_gripper_p2_20261011/ruling20/dpad_triggers/Dpad_up/server/ball_plan.json",
+        "root_pose": "build/experiments/teleop_gripper_p2_20261011/ruling20/dpad_triggers/Dpad_up/server/live_config.json#gamepad.pose",
+        "timeline": "build/experiments/teleop_gripper_p2_20261011/ruling20/dpad_triggers/Dpad_up/server/ball_trace.jsonl",
+        "result": "build/experiments/teleop_gripper_p2_20261011/ruling20/results.json#cases/Dpad_up"
+      }
+    },
+    {
+      "case_id": "Dpad_down",
+      "plan": {
+        "name": "Dpad_down",
+        "link": "dpad",
+        "joint": "dpad_vertical",
+        "channel": "dpad_down",
+        "sign": 1,
+        "kind": "dpad",
+        "point_m": [
+          -0.020312119275331497,
+          -0.009808259084820747,
+          0.04866665991354912
+        ],
+        "direction": [
+          0.0,
+          0.0,
+          -1.0
+        ],
+        "start_m": [
+          -0.020312119275331497,
+          -0.009808259084820747,
+          0.05766665991354912
+        ],
+        "axis_world": [
+          1.0,
+          2.0574514314475323e-11,
+          0.0
+        ],
+        "pivot_m": [
+          -0.020312119275331497,
+          -0.001808259286917746,
+          0.04156418889760971
+        ],
+        "limits": [
+          [
+            -0.17453241348266602,
+            0.17453241348266602
+          ]
+        ],
+        "view": "buttons_close"
+      },
+      "root_pose": [
+        0,
+        0,
+        0.03035474591349888,
+        1,
+        0,
+        0,
+        0
+      ],
+      "joint_limits": {
+        "a_press": [
+          0.0,
+          0.0008967542671598494
+        ],
+        "b_press": [
+          0.0,
+          0.001376767992042005
+        ],
+        "left_shoulder_press": [
+          0.0,
+          0.0022283243015408516
+        ],
+        "right_shoulder_press": [
+          0.0,
+          0.002228327328339219
+        ],
+        "pair_press": [
+          0.0,
+          0.0010423330822959542
+        ],
+        "dpad_horizontal": [
+          -0.17453241348266602,
+          0.17453241348266602
+        ],
+        "view_press": [
+          0.0,
+          0.0012666219845414162
+        ],
+        "menu_press": [
+          0.0,
+          0.0012666225666180253
+        ],
+        "left_stick_x": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "right_stick_x": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "left_trigger_hinge": [
+          0.0,
+          0.29531940817832947
+        ],
+        "right_trigger_hinge": [
+          0.0,
+          0.29531940817832947
+        ],
+        "x_press": [
+          0.0,
+          0.000780960894189775
+        ],
+        "guide_press": [
+          0.0,
+          0.0007251785136759281
+        ],
+        "y_press": [
+          0.0,
+          0.0012284000404179096
+        ],
+        "dpad_vertical": [
+          -0.17453241348266602,
+          0.17453241348266602
+        ],
+        "left_stick_y": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "right_stick_y": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "left_stick_click": [
+          0.0,
+          0.00039999998989515007
+        ],
+        "right_stick_click": [
+          0.0,
+          0.00039999998989515007
+        ]
+      },
+      "timeline": [
+        {
+          "phase": "idle",
+          "first_step": 0,
+          "last_step": 832,
+          "phase_origin_step": 0
+        },
+        {
+          "phase": "approach",
+          "first_step": 833,
+          "last_step": 1082,
+          "phase_origin_step": 833
+        },
+        {
+          "phase": "press",
+          "first_step": 1083,
+          "last_step": 1418,
+          "phase_origin_step": 1083
+        },
+        {
+          "phase": "hold",
+          "first_step": 1419,
+          "last_step": 1544,
+          "phase_origin_step": 1420
+        },
+        {
+          "phase": "withdraw",
+          "first_step": 1545,
+          "last_step": 1669,
+          "phase_origin_step": 1545
+        },
+        {
+          "phase": "observe",
+          "first_step": 1670,
+          "last_step": 1794,
+          "phase_origin_step": 1670
+        },
+        {
+          "phase": "done",
+          "first_step": 1795,
+          "last_step": 1979,
+          "phase_origin_step": 1795
+        }
+      ],
+      "baseline": {
+        "case": "Dpad_down",
+        "target_channel": "dpad_down",
+        "target_min": 0.9413792173126678,
+        "target_max": 0.999999999772585,
+        "signals_at_photo": {
+          "left_x": 0,
+          "left_y": 0,
+          "right_x": 0,
+          "right_y": 0,
+          "left_trigger": 0,
+          "right_trigger": 0,
+          "south": 0,
+          "east": 0,
+          "west": 0,
+          "north": 0,
+          "back": 0,
+          "guide": 0,
+          "start": 0,
+          "left_stick": 0,
+          "right_stick": 0,
+          "left_shoulder": 0,
+          "right_shoulder": 0,
+          "dpad_up": 0,
+          "dpad_down": 0.9835089721627994,
+          "dpad_left": 0,
+          "dpad_right": 0
+        },
+        "event_at_photo": {
+          "pair_bind_connect": 0
+        },
+        "target_threshold": 0.3,
+        "dpad_bottomed_noncritical": true,
+        "signal_passed": true,
+        "misfires": {},
+        "no_misfires": true,
+        "overlay_passed": true,
+        "overlay_unexpected": [],
+        "overlay_color": {
+          "yellow_components": [
+            "left:down"
+          ],
+          "target_yellow": true,
+          "unexpected_yellow_components": [],
+          "passed": true
+        },
+        "canonical_32_exact": true,
+        "return_time_after_withdraw_s": 0.0,
+        "return_from_start_s": 0.5,
+        "return_passed": true,
+        "internal_pairs": 0,
+        "contacted_links": [
+          "gamepad/dpad"
+        ],
+        "max_penetration_m": 5.0129368901252747e-05,
+        "max_force_n": 2.307784863395647,
+        "hold_sim_seconds": 0.5,
+        "withdraw_step": 1545,
+        "steps": 1980,
+        "termination": {
+          "reason": "signal_goal",
+          "step": 1419,
+          "stroke_m": 0.006720000000000016,
+          "actual_progress_m": 0.006303646228799517,
+          "force_norm_n": 1.3064980390545666,
+          "signal": 0.9907985983044688,
+          "window_steps": 25,
+          "window_position_range_m": 0.00035999342799186707,
+          "window_min_force_n": 0.7903891715779484
+        },
+        "joint_limit_excess": {
+          "left_trigger_hinge": 7.192444417825072e-10,
+          "dpad_vertical": 4.470348358154297e-08,
+          "right_trigger_hinge": 3.1362529240297476e-10
+        },
+        "passed": true,
+        "source_directory": "/mnt/wsl/shared/ConCon/xbox_gamepad_physics/build/experiments/teleop_gripper_p2_20261011/ruling20/dpad_triggers/Dpad_down"
+      },
+      "source_paths": {
+        "plan": "build/experiments/teleop_gripper_p2_20261011/ruling20/dpad_triggers/Dpad_down/server/ball_plan.json",
+        "root_pose": "build/experiments/teleop_gripper_p2_20261011/ruling20/dpad_triggers/Dpad_down/server/live_config.json#gamepad.pose",
+        "timeline": "build/experiments/teleop_gripper_p2_20261011/ruling20/dpad_triggers/Dpad_down/server/ball_trace.jsonl",
+        "result": "build/experiments/teleop_gripper_p2_20261011/ruling20/results.json#cases/Dpad_down"
+      }
+    },
+    {
+      "case_id": "Dpad_left",
+      "plan": {
+        "name": "Dpad_left",
+        "link": "dpad",
+        "joint": "dpad_horizontal",
+        "channel": "dpad_left",
+        "sign": -1,
+        "kind": "dpad",
+        "point_m": [
+          -0.028312118723988533,
+          -0.001808259286917746,
+          0.04877251640102282
+        ],
+        "direction": [
+          0.0,
+          0.0,
+          -1.0
+        ],
+        "start_m": [
+          -0.028312118723988533,
+          -0.001808259286917746,
+          0.05777251640102282
+        ],
+        "axis_world": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "pivot_m": [
+          -0.020312119275331497,
+          -0.001808259286917746,
+          0.04156418889760971
+        ],
+        "limits": [
+          [
+            -0.17453241348266602,
+            0.17453241348266602
+          ]
+        ],
+        "view": "buttons_close"
+      },
+      "root_pose": [
+        0,
+        0,
+        0.03035474591349888,
+        1,
+        0,
+        0,
+        0
+      ],
+      "joint_limits": {
+        "a_press": [
+          0.0,
+          0.0008967542671598494
+        ],
+        "b_press": [
+          0.0,
+          0.001376767992042005
+        ],
+        "left_shoulder_press": [
+          0.0,
+          0.0022283243015408516
+        ],
+        "right_shoulder_press": [
+          0.0,
+          0.002228327328339219
+        ],
+        "pair_press": [
+          0.0,
+          0.0010423330822959542
+        ],
+        "dpad_horizontal": [
+          -0.17453241348266602,
+          0.17453241348266602
+        ],
+        "view_press": [
+          0.0,
+          0.0012666219845414162
+        ],
+        "menu_press": [
+          0.0,
+          0.0012666225666180253
+        ],
+        "left_stick_x": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "right_stick_x": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "left_trigger_hinge": [
+          0.0,
+          0.29531940817832947
+        ],
+        "right_trigger_hinge": [
+          0.0,
+          0.29531940817832947
+        ],
+        "x_press": [
+          0.0,
+          0.000780960894189775
+        ],
+        "guide_press": [
+          0.0,
+          0.0007251785136759281
+        ],
+        "y_press": [
+          0.0,
+          0.0012284000404179096
+        ],
+        "dpad_vertical": [
+          -0.17453241348266602,
+          0.17453241348266602
+        ],
+        "left_stick_y": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "right_stick_y": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "left_stick_click": [
+          0.0,
+          0.00039999998989515007
+        ],
+        "right_stick_click": [
+          0.0,
+          0.00039999998989515007
+        ]
+      },
+      "timeline": [
+        {
+          "phase": "idle",
+          "first_step": 0,
+          "last_step": 799,
+          "phase_origin_step": 0
+        },
+        {
+          "phase": "approach",
+          "first_step": 800,
+          "last_step": 1049,
+          "phase_origin_step": 800
+        },
+        {
+          "phase": "press",
+          "first_step": 1050,
+          "last_step": 1385,
+          "phase_origin_step": 1050
+        },
+        {
+          "phase": "hold",
+          "first_step": 1386,
+          "last_step": 1511,
+          "phase_origin_step": 1387
+        },
+        {
+          "phase": "withdraw",
+          "first_step": 1512,
+          "last_step": 1636,
+          "phase_origin_step": 1512
+        },
+        {
+          "phase": "observe",
+          "first_step": 1637,
+          "last_step": 1761,
+          "phase_origin_step": 1637
+        },
+        {
+          "phase": "done",
+          "first_step": 1762,
+          "last_step": 1943,
+          "phase_origin_step": 1762
+        }
+      ],
+      "baseline": {
+        "case": "Dpad_left",
+        "target_channel": "dpad_left",
+        "target_min": 0.9525973236508288,
+        "target_max": 0.9999999999999323,
+        "signals_at_photo": {
+          "left_x": 0,
+          "left_y": 0,
+          "right_x": 0,
+          "right_y": 0,
+          "left_trigger": 0,
+          "right_trigger": 0,
+          "south": 0,
+          "east": 0,
+          "west": 0,
+          "north": 0,
+          "back": 0,
+          "guide": 0,
+          "start": 0,
+          "left_stick": 0,
+          "right_stick": 0,
+          "left_shoulder": 0,
+          "right_shoulder": 0,
+          "dpad_up": 0,
+          "dpad_down": 0,
+          "dpad_left": 0.999999914622385,
+          "dpad_right": 0
+        },
+        "event_at_photo": {
+          "pair_bind_connect": 0
+        },
+        "target_threshold": 0.3,
+        "dpad_bottomed_noncritical": true,
+        "signal_passed": true,
+        "misfires": {},
+        "no_misfires": true,
+        "overlay_passed": true,
+        "overlay_unexpected": [],
+        "overlay_color": {
+          "yellow_components": [
+            "left:left"
+          ],
+          "target_yellow": true,
+          "unexpected_yellow_components": [],
+          "passed": true
+        },
+        "canonical_32_exact": true,
+        "return_time_after_withdraw_s": 0.0,
+        "return_from_start_s": 0.5,
+        "return_passed": true,
+        "internal_pairs": 0,
+        "contacted_links": [
+          "gamepad/dpad"
+        ],
+        "max_penetration_m": 3.5161618143320084e-05,
+        "max_force_n": 2.08881337927204,
+        "hold_sim_seconds": 0.5,
+        "withdraw_step": 1512,
+        "steps": 1944,
+        "termination": {
+          "reason": "signal_goal",
+          "step": 1386,
+          "stroke_m": 0.006720000000000016,
+          "actual_progress_m": 0.006276439072102458,
+          "force_norm_n": 1.3441710510975544,
+          "signal": 0.9856910532455788,
+          "window_steps": 25,
+          "window_position_range_m": 0.00033425167202949524,
+          "window_min_force_n": 0.8281670144683767
+        },
+        "joint_limit_excess": {
+          "left_trigger_hinge": 7.192444417825072e-10,
+          "dpad_horizontal": 5.960464477539063e-08,
+          "right_trigger_hinge": 3.1362529240297476e-10
+        },
+        "passed": true,
+        "source_directory": "/mnt/wsl/shared/ConCon/xbox_gamepad_physics/build/experiments/teleop_gripper_p2_20261011/ruling20/dpad_triggers/Dpad_left"
+      },
+      "source_paths": {
+        "plan": "build/experiments/teleop_gripper_p2_20261011/ruling20/dpad_triggers/Dpad_left/server/ball_plan.json",
+        "root_pose": "build/experiments/teleop_gripper_p2_20261011/ruling20/dpad_triggers/Dpad_left/server/live_config.json#gamepad.pose",
+        "timeline": "build/experiments/teleop_gripper_p2_20261011/ruling20/dpad_triggers/Dpad_left/server/ball_trace.jsonl",
+        "result": "build/experiments/teleop_gripper_p2_20261011/ruling20/results.json#cases/Dpad_left"
+      }
+    },
+    {
+      "case_id": "Dpad_right",
+      "plan": {
+        "name": "Dpad_right",
+        "link": "dpad",
+        "joint": "dpad_horizontal",
+        "channel": "dpad_right",
+        "sign": 1,
+        "kind": "dpad",
+        "point_m": [
+          -0.012312118895351887,
+          -0.001808259286917746,
+          0.048772291348193816
+        ],
+        "direction": [
+          0.0,
+          0.0,
+          -1.0
+        ],
+        "start_m": [
+          -0.012312118895351887,
+          -0.001808259286917746,
+          0.05777229134819382
+        ],
+        "axis_world": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "pivot_m": [
+          -0.020312119275331497,
+          -0.001808259286917746,
+          0.04156418889760971
+        ],
+        "limits": [
+          [
+            -0.17453241348266602,
+            0.17453241348266602
+          ]
+        ],
+        "view": "buttons_close"
+      },
+      "root_pose": [
+        0,
+        0,
+        0.03035474591349888,
+        1,
+        0,
+        0,
+        0
+      ],
+      "joint_limits": {
+        "a_press": [
+          0.0,
+          0.0008967542671598494
+        ],
+        "b_press": [
+          0.0,
+          0.001376767992042005
+        ],
+        "left_shoulder_press": [
+          0.0,
+          0.0022283243015408516
+        ],
+        "right_shoulder_press": [
+          0.0,
+          0.002228327328339219
+        ],
+        "pair_press": [
+          0.0,
+          0.0010423330822959542
+        ],
+        "dpad_horizontal": [
+          -0.17453241348266602,
+          0.17453241348266602
+        ],
+        "view_press": [
+          0.0,
+          0.0012666219845414162
+        ],
+        "menu_press": [
+          0.0,
+          0.0012666225666180253
+        ],
+        "left_stick_x": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "right_stick_x": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "left_trigger_hinge": [
+          0.0,
+          0.29531940817832947
+        ],
+        "right_trigger_hinge": [
+          0.0,
+          0.29531940817832947
+        ],
+        "x_press": [
+          0.0,
+          0.000780960894189775
+        ],
+        "guide_press": [
+          0.0,
+          0.0007251785136759281
+        ],
+        "y_press": [
+          0.0,
+          0.0012284000404179096
+        ],
+        "dpad_vertical": [
+          -0.17453241348266602,
+          0.17453241348266602
+        ],
+        "left_stick_y": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "right_stick_y": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "left_stick_click": [
+          0.0,
+          0.00039999998989515007
+        ],
+        "right_stick_click": [
+          0.0,
+          0.00039999998989515007
+        ]
+      },
+      "timeline": [
+        {
+          "phase": "idle",
+          "first_step": 0,
+          "last_step": 813,
+          "phase_origin_step": 0
+        },
+        {
+          "phase": "approach",
+          "first_step": 814,
+          "last_step": 1063,
+          "phase_origin_step": 814
+        },
+        {
+          "phase": "press",
+          "first_step": 1064,
+          "last_step": 1399,
+          "phase_origin_step": 1064
+        },
+        {
+          "phase": "hold",
+          "first_step": 1400,
+          "last_step": 1525,
+          "phase_origin_step": 1401
+        },
+        {
+          "phase": "withdraw",
+          "first_step": 1526,
+          "last_step": 1650,
+          "phase_origin_step": 1526
+        },
+        {
+          "phase": "observe",
+          "first_step": 1651,
+          "last_step": 1775,
+          "phase_origin_step": 1651
+        },
+        {
+          "phase": "done",
+          "first_step": 1776,
+          "last_step": 1937,
+          "phase_origin_step": 1776
+        }
+      ],
+      "baseline": {
+        "case": "Dpad_right",
+        "target_channel": "dpad_right",
+        "target_min": 0.9372130458361678,
+        "target_max": 0.9999999999964932,
+        "signals_at_photo": {
+          "left_x": 0,
+          "left_y": 0,
+          "right_x": 0,
+          "right_y": 0,
+          "left_trigger": 0,
+          "right_trigger": 0,
+          "south": 0,
+          "east": 0,
+          "west": 0,
+          "north": 0,
+          "back": 0,
+          "guide": 0,
+          "start": 0,
+          "left_stick": 0,
+          "right_stick": 0,
+          "left_shoulder": 0,
+          "right_shoulder": 0,
+          "dpad_up": 0,
+          "dpad_down": 0,
+          "dpad_left": 0,
+          "dpad_right": 0.9999998292447702
+        },
+        "event_at_photo": {
+          "pair_bind_connect": 0
+        },
+        "target_threshold": 0.3,
+        "dpad_bottomed_noncritical": true,
+        "signal_passed": true,
+        "misfires": {},
+        "no_misfires": true,
+        "overlay_passed": true,
+        "overlay_unexpected": [],
+        "overlay_color": {
+          "yellow_components": [
+            "left:right"
+          ],
+          "target_yellow": true,
+          "unexpected_yellow_components": [],
+          "passed": true
+        },
+        "canonical_32_exact": true,
+        "return_time_after_withdraw_s": 0.0,
+        "return_from_start_s": 0.5,
+        "return_passed": true,
+        "internal_pairs": 0,
+        "contacted_links": [
+          "gamepad/dpad"
+        ],
+        "max_penetration_m": 3.732694312930107e-05,
+        "max_force_n": 2.3104814937865186,
+        "hold_sim_seconds": 0.5,
+        "withdraw_step": 1526,
+        "steps": 1938,
+        "termination": {
+          "reason": "signal_goal",
+          "step": 1400,
+          "stroke_m": 0.006720000000000016,
+          "actual_progress_m": 0.00627622146985405,
+          "force_norm_n": 1.3589820807108575,
+          "signal": 0.9866560764273088,
+          "window_steps": 25,
+          "window_position_range_m": 0.00033360719680786133,
+          "window_min_force_n": 0.8214941909809726
+        },
+        "joint_limit_excess": {
+          "left_trigger_hinge": 7.192444417825072e-10,
+          "dpad_horizontal": 4.470348358154297e-08,
+          "right_trigger_hinge": 3.1362529240297476e-10
+        },
+        "passed": true,
+        "source_directory": "/mnt/wsl/shared/ConCon/xbox_gamepad_physics/build/experiments/teleop_gripper_p2_20261011/ruling20/dpad_triggers/Dpad_right"
+      },
+      "source_paths": {
+        "plan": "build/experiments/teleop_gripper_p2_20261011/ruling20/dpad_triggers/Dpad_right/server/ball_plan.json",
+        "root_pose": "build/experiments/teleop_gripper_p2_20261011/ruling20/dpad_triggers/Dpad_right/server/live_config.json#gamepad.pose",
+        "timeline": "build/experiments/teleop_gripper_p2_20261011/ruling20/dpad_triggers/Dpad_right/server/ball_trace.jsonl",
+        "result": "build/experiments/teleop_gripper_p2_20261011/ruling20/results.json#cases/Dpad_right"
+      }
+    },
+    {
+      "case_id": "left_x_pos",
+      "plan": {
+        "name": "left_x_pos",
+        "link": "left_stick",
+        "joint": "left_stick_x",
+        "channel": "left_x",
+        "sign": 1,
+        "kind": "stick",
+        "point_m": [
+          -0.047377973794937134,
+          0.024133622646331787,
+          0.058398131281137466
+        ],
+        "direction": [
+          0.9999998807907104,
+          0.0,
+          -0.0005109920166432858
+        ],
+        "start_m": [
+          -0.05637797340750694,
+          0.024133622646331787,
+          0.05840273201465607
+        ],
+        "axis_world": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "pivot_m": [
+          -0.03803535923361778,
+          0.024133630096912384,
+          0.04247860610485077
+        ],
+        "limits": [
+          [
+            -0.40142571926116943,
+            0.40142571926116943
+          ]
+        ],
+        "view": "buttons_close"
+      },
+      "root_pose": [
+        0,
+        0,
+        0.03035474591349888,
+        1,
+        0,
+        0,
+        0
+      ],
+      "joint_limits": {
+        "a_press": [
+          0.0,
+          0.0008967542671598494
+        ],
+        "b_press": [
+          0.0,
+          0.001376767992042005
+        ],
+        "left_shoulder_press": [
+          0.0,
+          0.0022283243015408516
+        ],
+        "right_shoulder_press": [
+          0.0,
+          0.002228327328339219
+        ],
+        "pair_press": [
+          0.0,
+          0.0010423330822959542
+        ],
+        "dpad_horizontal": [
+          -0.17453241348266602,
+          0.17453241348266602
+        ],
+        "view_press": [
+          0.0,
+          0.0012666219845414162
+        ],
+        "menu_press": [
+          0.0,
+          0.0012666225666180253
+        ],
+        "left_stick_x": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "right_stick_x": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "left_trigger_hinge": [
+          0.0,
+          0.29531940817832947
+        ],
+        "right_trigger_hinge": [
+          0.0,
+          0.29531940817832947
+        ],
+        "x_press": [
+          0.0,
+          0.000780960894189775
+        ],
+        "guide_press": [
+          0.0,
+          0.0007251785136759281
+        ],
+        "y_press": [
+          0.0,
+          0.0012284000404179096
+        ],
+        "dpad_vertical": [
+          -0.17453241348266602,
+          0.17453241348266602
+        ],
+        "left_stick_y": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "right_stick_y": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "left_stick_click": [
+          0.0,
+          0.00039999998989515007
+        ],
+        "right_stick_click": [
+          0.0,
+          0.00039999998989515007
+        ]
+      },
+      "timeline": [
+        {
+          "phase": "idle",
+          "first_step": 0,
+          "last_step": 807,
+          "phase_origin_step": 0
+        },
+        {
+          "phase": "approach",
+          "first_step": 808,
+          "last_step": 1057,
+          "phase_origin_step": 808
+        },
+        {
+          "phase": "press",
+          "first_step": 1058,
+          "last_step": 1654,
+          "phase_origin_step": 1058
+        },
+        {
+          "phase": "hold",
+          "first_step": 1655,
+          "last_step": 1780,
+          "phase_origin_step": 1656
+        },
+        {
+          "phase": "withdraw",
+          "first_step": 1781,
+          "last_step": 1905,
+          "phase_origin_step": 1781
+        },
+        {
+          "phase": "observe",
+          "first_step": 1906,
+          "last_step": 2030,
+          "phase_origin_step": 1906
+        },
+        {
+          "phase": "done",
+          "first_step": 2031,
+          "last_step": 2214,
+          "phase_origin_step": 2031
+        }
+      ],
+      "baseline": {
+        "case": "left_x_pos",
+        "target_channel": "left_x",
+        "target_min": 0.9816454782451074,
+        "target_max": 0.9818776304357012,
+        "signals_at_photo": {
+          "left_x": 0.9816773277141718,
+          "left_y": 6.379450371900015e-05,
+          "right_x": 0,
+          "right_y": 0,
+          "left_trigger": 0,
+          "right_trigger": 0,
+          "south": 0,
+          "east": 0,
+          "west": 0,
+          "north": 0,
+          "back": 0,
+          "guide": 0,
+          "start": 0,
+          "left_stick": 0,
+          "right_stick": 0,
+          "left_shoulder": 0,
+          "right_shoulder": 0,
+          "dpad_up": 0,
+          "dpad_down": 0,
+          "dpad_left": 0,
+          "dpad_right": 0
+        },
+        "event_at_photo": {
+          "pair_bind_connect": 0
+        },
+        "target_threshold": 0.9,
+        "dpad_bottomed_noncritical": null,
+        "signal_passed": true,
+        "misfires": {},
+        "no_misfires": true,
+        "overlay_passed": true,
+        "overlay_unexpected": [],
+        "overlay_color": {
+          "yellow_components": [
+            "left:analog-stick",
+            "left:analog-stick-ring"
+          ],
+          "target_yellow": true,
+          "unexpected_yellow_components": [],
+          "passed": true
+        },
+        "canonical_32_exact": true,
+        "return_time_after_withdraw_s": 0.068,
+        "return_from_start_s": 0.5680000000000001,
+        "return_passed": true,
+        "internal_pairs": 0,
+        "contacted_links": [
+          "gamepad/left_stick"
+        ],
+        "max_penetration_m": 1.1665746569633484e-05,
+        "max_force_n": 1.1624577628222288,
+        "hold_sim_seconds": 0.5,
+        "withdraw_step": 1781,
+        "steps": 2215,
+        "termination": {
+          "reason": "signal_goal",
+          "step": 1655,
+          "stroke_m": 0.01193999999999985,
+          "actual_progress_m": 0.011793708339605538,
+          "force_norm_n": 1.1530442893492088,
+          "signal": 0.9816033092511012,
+          "window_steps": 25,
+          "window_position_range_m": 0.0004876982401075536,
+          "window_min_force_n": 1.101417331147437
+        },
+        "joint_limit_excess": {
+          "left_trigger_hinge": 7.192444417825072e-10,
+          "right_trigger_hinge": 3.1362529240297476e-10
+        },
+        "passed": true,
+        "source_directory": "/mnt/wsl/shared/ConCon/xbox_gamepad_physics/build/experiments/teleop_gripper_p2_20261011/ruling20/sticks/left_x_pos"
+      },
+      "source_paths": {
+        "plan": "build/experiments/teleop_gripper_p2_20261011/ruling20/sticks/left_x_pos/server/ball_plan.json",
+        "root_pose": "build/experiments/teleop_gripper_p2_20261011/ruling20/sticks/left_x_pos/server/live_config.json#gamepad.pose",
+        "timeline": "build/experiments/teleop_gripper_p2_20261011/ruling20/sticks/left_x_pos/server/ball_trace.jsonl",
+        "result": "build/experiments/teleop_gripper_p2_20261011/ruling20/results.json#cases/left_x_pos"
+      }
+    },
+    {
+      "case_id": "left_x_neg",
+      "plan": {
+        "name": "left_x_neg",
+        "link": "left_stick",
+        "joint": "left_stick_x",
+        "channel": "left_x",
+        "sign": -1,
+        "kind": "stick",
+        "point_m": [
+          -0.028484586626291275,
+          0.024133622646331787,
+          0.05838847532868385
+        ],
+        "direction": [
+          -0.9999998807907104,
+          -0.0,
+          0.0005109920166432858
+        ],
+        "start_m": [
+          -0.019484587013721466,
+          0.024133622646331787,
+          0.05838387459516525
+        ],
+        "axis_world": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "pivot_m": [
+          -0.03803535923361778,
+          0.024133630096912384,
+          0.04247860610485077
+        ],
+        "limits": [
+          [
+            -0.40142571926116943,
+            0.40142571926116943
+          ]
+        ],
+        "view": "buttons_close"
+      },
+      "root_pose": [
+        0,
+        0,
+        0.03035474591349888,
+        1,
+        0,
+        0,
+        0
+      ],
+      "joint_limits": {
+        "a_press": [
+          0.0,
+          0.0008967542671598494
+        ],
+        "b_press": [
+          0.0,
+          0.001376767992042005
+        ],
+        "left_shoulder_press": [
+          0.0,
+          0.0022283243015408516
+        ],
+        "right_shoulder_press": [
+          0.0,
+          0.002228327328339219
+        ],
+        "pair_press": [
+          0.0,
+          0.0010423330822959542
+        ],
+        "dpad_horizontal": [
+          -0.17453241348266602,
+          0.17453241348266602
+        ],
+        "view_press": [
+          0.0,
+          0.0012666219845414162
+        ],
+        "menu_press": [
+          0.0,
+          0.0012666225666180253
+        ],
+        "left_stick_x": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "right_stick_x": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "left_trigger_hinge": [
+          0.0,
+          0.29531940817832947
+        ],
+        "right_trigger_hinge": [
+          0.0,
+          0.29531940817832947
+        ],
+        "x_press": [
+          0.0,
+          0.000780960894189775
+        ],
+        "guide_press": [
+          0.0,
+          0.0007251785136759281
+        ],
+        "y_press": [
+          0.0,
+          0.0012284000404179096
+        ],
+        "dpad_vertical": [
+          -0.17453241348266602,
+          0.17453241348266602
+        ],
+        "left_stick_y": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "right_stick_y": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "left_stick_click": [
+          0.0,
+          0.00039999998989515007
+        ],
+        "right_stick_click": [
+          0.0,
+          0.00039999998989515007
+        ]
+      },
+      "timeline": [
+        {
+          "phase": "idle",
+          "first_step": 0,
+          "last_step": 832,
+          "phase_origin_step": 0
+        },
+        {
+          "phase": "approach",
+          "first_step": 833,
+          "last_step": 1082,
+          "phase_origin_step": 833
+        },
+        {
+          "phase": "press",
+          "first_step": 1083,
+          "last_step": 1689,
+          "phase_origin_step": 1083
+        },
+        {
+          "phase": "hold",
+          "first_step": 1690,
+          "last_step": 1815,
+          "phase_origin_step": 1691
+        },
+        {
+          "phase": "withdraw",
+          "first_step": 1816,
+          "last_step": 1940,
+          "phase_origin_step": 1816
+        },
+        {
+          "phase": "observe",
+          "first_step": 1941,
+          "last_step": 2065,
+          "phase_origin_step": 1941
+        },
+        {
+          "phase": "done",
+          "first_step": 2066,
+          "last_step": 2294,
+          "phase_origin_step": 2066
+        }
+      ],
+      "baseline": {
+        "case": "left_x_neg",
+        "target_channel": "left_x",
+        "target_min": 0.9802798858582246,
+        "target_max": 0.9804016414042988,
+        "signals_at_photo": {
+          "left_x": -0.9803141852864479,
+          "left_y": 6.346395734197742e-05,
+          "right_x": 0,
+          "right_y": 0,
+          "left_trigger": 0,
+          "right_trigger": 0,
+          "south": 0,
+          "east": 0,
+          "west": 0,
+          "north": 0,
+          "back": 0,
+          "guide": 0,
+          "start": 0,
+          "left_stick": 0,
+          "right_stick": 0,
+          "left_shoulder": 0,
+          "right_shoulder": 0,
+          "dpad_up": 0,
+          "dpad_down": 0,
+          "dpad_left": 0,
+          "dpad_right": 0
+        },
+        "event_at_photo": {
+          "pair_bind_connect": 0
+        },
+        "target_threshold": 0.9,
+        "dpad_bottomed_noncritical": null,
+        "signal_passed": true,
+        "misfires": {},
+        "no_misfires": true,
+        "overlay_passed": true,
+        "overlay_unexpected": [],
+        "overlay_color": {
+          "yellow_components": [
+            "left:analog-stick",
+            "left:analog-stick-ring"
+          ],
+          "target_yellow": true,
+          "unexpected_yellow_components": [],
+          "passed": true
+        },
+        "canonical_32_exact": true,
+        "return_time_after_withdraw_s": 0.064,
+        "return_from_start_s": 0.5640000000000001,
+        "return_passed": true,
+        "internal_pairs": 0,
+        "contacted_links": [
+          "gamepad/left_stick"
+        ],
+        "max_penetration_m": 1.1738389730453491e-05,
+        "max_force_n": 1.1549350027974439,
+        "hold_sim_seconds": 0.5,
+        "withdraw_step": 1816,
+        "steps": 2295,
+        "termination": {
+          "reason": "signal_goal",
+          "step": 1690,
+          "stroke_m": 0.012139999999999842,
+          "actual_progress_m": 0.011993515128126998,
+          "force_norm_n": 1.151109355343051,
+          "signal": 0.9802088370426191,
+          "window_steps": 25,
+          "window_position_range_m": 0.0004873751506556008,
+          "window_min_force_n": 1.1008128463812368
+        },
+        "joint_limit_excess": {
+          "left_trigger_hinge": 7.192444417825072e-10,
+          "right_trigger_hinge": 3.1362529240297476e-10
+        },
+        "passed": true,
+        "source_directory": "/mnt/wsl/shared/ConCon/xbox_gamepad_physics/build/experiments/teleop_gripper_p2_20261011/ruling20/sticks/left_x_neg"
+      },
+      "source_paths": {
+        "plan": "build/experiments/teleop_gripper_p2_20261011/ruling20/sticks/left_x_neg/server/ball_plan.json",
+        "root_pose": "build/experiments/teleop_gripper_p2_20261011/ruling20/sticks/left_x_neg/server/live_config.json#gamepad.pose",
+        "timeline": "build/experiments/teleop_gripper_p2_20261011/ruling20/sticks/left_x_neg/server/ball_trace.jsonl",
+        "result": "build/experiments/teleop_gripper_p2_20261011/ruling20/results.json#cases/left_x_neg"
+      }
+    },
+    {
+      "case_id": "left_y_pos",
+      "plan": {
+        "name": "left_y_pos",
+        "link": "left_stick",
+        "joint": "left_stick_y",
+        "channel": "left_y",
+        "sign": 1,
+        "kind": "stick",
+        "point_m": [
+          -0.03802722692489624,
+          0.033463213592767715,
+          0.05839335545897484
+        ],
+        "direction": [
+          0.0,
+          -1.0,
+          -4.6815580390102696e-07
+        ],
+        "start_m": [
+          -0.03802722692489624,
+          0.042463213205337524,
+          0.05839335918426514
+        ],
+        "axis_world": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "pivot_m": [
+          -0.03803535923361778,
+          0.024133630096912384,
+          0.04247860610485077
+        ],
+        "limits": [
+          [
+            -0.40142571926116943,
+            0.40142571926116943
+          ]
+        ],
+        "view": "buttons_close"
+      },
+      "root_pose": [
+        0,
+        0,
+        0.03035474591349888,
+        1,
+        0,
+        0,
+        0
+      ],
+      "joint_limits": {
+        "a_press": [
+          0.0,
+          0.0008967542671598494
+        ],
+        "b_press": [
+          0.0,
+          0.001376767992042005
+        ],
+        "left_shoulder_press": [
+          0.0,
+          0.0022283243015408516
+        ],
+        "right_shoulder_press": [
+          0.0,
+          0.002228327328339219
+        ],
+        "pair_press": [
+          0.0,
+          0.0010423330822959542
+        ],
+        "dpad_horizontal": [
+          -0.17453241348266602,
+          0.17453241348266602
+        ],
+        "view_press": [
+          0.0,
+          0.0012666219845414162
+        ],
+        "menu_press": [
+          0.0,
+          0.0012666225666180253
+        ],
+        "left_stick_x": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "right_stick_x": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "left_trigger_hinge": [
+          0.0,
+          0.29531940817832947
+        ],
+        "right_trigger_hinge": [
+          0.0,
+          0.29531940817832947
+        ],
+        "x_press": [
+          0.0,
+          0.000780960894189775
+        ],
+        "guide_press": [
+          0.0,
+          0.0007251785136759281
+        ],
+        "y_press": [
+          0.0,
+          0.0012284000404179096
+        ],
+        "dpad_vertical": [
+          -0.17453241348266602,
+          0.17453241348266602
+        ],
+        "left_stick_y": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "right_stick_y": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "left_stick_click": [
+          0.0,
+          0.00039999998989515007
+        ],
+        "right_stick_click": [
+          0.0,
+          0.00039999998989515007
+        ]
+      },
+      "timeline": [
+        {
+          "phase": "idle",
+          "first_step": 0,
+          "last_step": 851,
+          "phase_origin_step": 0
+        },
+        {
+          "phase": "approach",
+          "first_step": 852,
+          "last_step": 1101,
+          "phase_origin_step": 852
+        },
+        {
+          "phase": "press",
+          "first_step": 1102,
+          "last_step": 1697,
+          "phase_origin_step": 1102
+        },
+        {
+          "phase": "hold",
+          "first_step": 1698,
+          "last_step": 1823,
+          "phase_origin_step": 1699
+        },
+        {
+          "phase": "withdraw",
+          "first_step": 1824,
+          "last_step": 1948,
+          "phase_origin_step": 1824
+        },
+        {
+          "phase": "observe",
+          "first_step": 1949,
+          "last_step": 2073,
+          "phase_origin_step": 1949
+        },
+        {
+          "phase": "done",
+          "first_step": 2074,
+          "last_step": 2258,
+          "phase_origin_step": 2074
+        }
+      ],
+      "baseline": {
+        "case": "left_y_pos",
+        "target_channel": "left_y",
+        "target_min": 0.9811579363725044,
+        "target_max": 0.9812945401559047,
+        "signals_at_photo": {
+          "left_x": -0.00016631232949542772,
+          "left_y": 0.9812136172624774,
+          "right_x": 0,
+          "right_y": 0,
+          "left_trigger": 0,
+          "right_trigger": 0,
+          "south": 0,
+          "east": 0,
+          "west": 0,
+          "north": 0,
+          "back": 0,
+          "guide": 0,
+          "start": 0,
+          "left_stick": 0,
+          "right_stick": 0,
+          "left_shoulder": 0,
+          "right_shoulder": 0,
+          "dpad_up": 0,
+          "dpad_down": 0,
+          "dpad_left": 0,
+          "dpad_right": 0
+        },
+        "event_at_photo": {
+          "pair_bind_connect": 0
+        },
+        "target_threshold": 0.9,
+        "dpad_bottomed_noncritical": null,
+        "signal_passed": true,
+        "misfires": {},
+        "no_misfires": true,
+        "overlay_passed": true,
+        "overlay_unexpected": [],
+        "overlay_color": {
+          "yellow_components": [
+            "left:analog-stick",
+            "left:analog-stick-ring"
+          ],
+          "target_yellow": true,
+          "unexpected_yellow_components": [],
+          "passed": true
+        },
+        "canonical_32_exact": true,
+        "return_time_after_withdraw_s": 0.0,
+        "return_from_start_s": 0.5,
+        "return_passed": true,
+        "internal_pairs": 0,
+        "contacted_links": [
+          "gamepad/left_stick"
+        ],
+        "max_penetration_m": 1.1851079761981964e-05,
+        "max_force_n": 1.1386027193311654,
+        "hold_sim_seconds": 0.5,
+        "withdraw_step": 1824,
+        "steps": 2259,
+        "termination": {
+          "reason": "signal_goal",
+          "step": 1698,
+          "stroke_m": 0.01191999999999985,
+          "actual_progress_m": 0.01177733581061918,
+          "force_norm_n": 1.1355170873957199,
+          "signal": 0.9811175491669774,
+          "window_steps": 25,
+          "window_position_range_m": 0.0004874654123158302,
+          "window_min_force_n": 1.0853515058237069
+        },
+        "joint_limit_excess": {
+          "left_trigger_hinge": 7.192444417825072e-10,
+          "right_trigger_hinge": 3.1362529240297476e-10
+        },
+        "passed": true,
+        "source_directory": "/mnt/wsl/shared/ConCon/xbox_gamepad_physics/build/experiments/teleop_gripper_p2_20261011/ruling20/sticks/left_y_pos"
+      },
+      "source_paths": {
+        "plan": "build/experiments/teleop_gripper_p2_20261011/ruling20/sticks/left_y_pos/server/ball_plan.json",
+        "root_pose": "build/experiments/teleop_gripper_p2_20261011/ruling20/sticks/left_y_pos/server/live_config.json#gamepad.pose",
+        "timeline": "build/experiments/teleop_gripper_p2_20261011/ruling20/sticks/left_y_pos/server/ball_trace.jsonl",
+        "result": "build/experiments/teleop_gripper_p2_20261011/ruling20/results.json#cases/left_y_pos"
+      }
+    },
+    {
+      "case_id": "left_y_neg",
+      "plan": {
+        "name": "left_y_neg",
+        "link": "left_stick",
+        "joint": "left_stick_y",
+        "channel": "left_y",
+        "sign": -1,
+        "kind": "stick",
+        "point_m": [
+          -0.03802722692489624,
+          0.014579271897673607,
+          0.05839334800839424
+        ],
+        "direction": [
+          -0.0,
+          1.0,
+          4.6815580390102696e-07
+        ],
+        "start_m": [
+          -0.03802722692489624,
+          0.005579272285103798,
+          0.05839334428310394
+        ],
+        "axis_world": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "pivot_m": [
+          -0.03803535923361778,
+          0.024133630096912384,
+          0.04247860610485077
+        ],
+        "limits": [
+          [
+            -0.40142571926116943,
+            0.40142571926116943
+          ]
+        ],
+        "view": "buttons_close"
+      },
+      "root_pose": [
+        0,
+        0,
+        0.03035474591349888,
+        1,
+        0,
+        0,
+        0
+      ],
+      "joint_limits": {
+        "a_press": [
+          0.0,
+          0.0008967542671598494
+        ],
+        "b_press": [
+          0.0,
+          0.001376767992042005
+        ],
+        "left_shoulder_press": [
+          0.0,
+          0.0022283243015408516
+        ],
+        "right_shoulder_press": [
+          0.0,
+          0.002228327328339219
+        ],
+        "pair_press": [
+          0.0,
+          0.0010423330822959542
+        ],
+        "dpad_horizontal": [
+          -0.17453241348266602,
+          0.17453241348266602
+        ],
+        "view_press": [
+          0.0,
+          0.0012666219845414162
+        ],
+        "menu_press": [
+          0.0,
+          0.0012666225666180253
+        ],
+        "left_stick_x": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "right_stick_x": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "left_trigger_hinge": [
+          0.0,
+          0.29531940817832947
+        ],
+        "right_trigger_hinge": [
+          0.0,
+          0.29531940817832947
+        ],
+        "x_press": [
+          0.0,
+          0.000780960894189775
+        ],
+        "guide_press": [
+          0.0,
+          0.0007251785136759281
+        ],
+        "y_press": [
+          0.0,
+          0.0012284000404179096
+        ],
+        "dpad_vertical": [
+          -0.17453241348266602,
+          0.17453241348266602
+        ],
+        "left_stick_y": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "right_stick_y": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "left_stick_click": [
+          0.0,
+          0.00039999998989515007
+        ],
+        "right_stick_click": [
+          0.0,
+          0.00039999998989515007
+        ]
+      },
+      "timeline": [
+        {
+          "phase": "idle",
+          "first_step": 0,
+          "last_step": 830,
+          "phase_origin_step": 0
+        },
+        {
+          "phase": "approach",
+          "first_step": 831,
+          "last_step": 1080,
+          "phase_origin_step": 831
+        },
+        {
+          "phase": "press",
+          "first_step": 1081,
+          "last_step": 1687,
+          "phase_origin_step": 1081
+        },
+        {
+          "phase": "hold",
+          "first_step": 1688,
+          "last_step": 1813,
+          "phase_origin_step": 1689
+        },
+        {
+          "phase": "withdraw",
+          "first_step": 1814,
+          "last_step": 1938,
+          "phase_origin_step": 1814
+        },
+        {
+          "phase": "observe",
+          "first_step": 1939,
+          "last_step": 2063,
+          "phase_origin_step": 1939
+        },
+        {
+          "phase": "done",
+          "first_step": 2064,
+          "last_step": 2245,
+          "phase_origin_step": 2064
+        }
+      ],
+      "baseline": {
+        "case": "left_y_neg",
+        "target_channel": "left_y",
+        "target_min": 0.9805349043343006,
+        "target_max": 0.9806726959766869,
+        "signals_at_photo": {
+          "left_x": 3.27824253045039e-05,
+          "left_y": -0.9805363891580332,
+          "right_x": 0,
+          "right_y": 0,
+          "left_trigger": 0,
+          "right_trigger": 0,
+          "south": 0,
+          "east": 0,
+          "west": 0,
+          "north": 0,
+          "back": 0,
+          "guide": 0,
+          "start": 0,
+          "left_stick": 0,
+          "right_stick": 0,
+          "left_shoulder": 0,
+          "right_shoulder": 0,
+          "dpad_up": 0,
+          "dpad_down": 0,
+          "dpad_left": 0,
+          "dpad_right": 0
+        },
+        "event_at_photo": {
+          "pair_bind_connect": 0
+        },
+        "target_threshold": 0.9,
+        "dpad_bottomed_noncritical": null,
+        "signal_passed": true,
+        "misfires": {},
+        "no_misfires": true,
+        "overlay_passed": true,
+        "overlay_unexpected": [],
+        "overlay_color": {
+          "yellow_components": [
+            "left:analog-stick",
+            "left:analog-stick-ring"
+          ],
+          "target_yellow": true,
+          "unexpected_yellow_components": [],
+          "passed": true
+        },
+        "canonical_32_exact": true,
+        "return_time_after_withdraw_s": 0.0,
+        "return_from_start_s": 0.5,
+        "return_passed": true,
+        "internal_pairs": 0,
+        "contacted_links": [
+          "gamepad/left_stick"
+        ],
+        "max_penetration_m": 1.1849682778120041e-05,
+        "max_force_n": 1.1382228987369174,
+        "hold_sim_seconds": 0.5,
+        "withdraw_step": 1814,
+        "steps": 2246,
+        "termination": {
+          "reason": "signal_goal",
+          "step": 1688,
+          "stroke_m": 0.012139999999999842,
+          "actual_progress_m": 0.011997463148891899,
+          "force_norm_n": 1.1349251753014375,
+          "signal": 0.9804966701231859,
+          "window_steps": 25,
+          "window_position_range_m": 0.00048746913582374367,
+          "window_min_force_n": 1.0847989645747567
+        },
+        "joint_limit_excess": {
+          "left_trigger_hinge": 7.192444417825072e-10,
+          "right_trigger_hinge": 3.1362529240297476e-10
+        },
+        "passed": true,
+        "source_directory": "/mnt/wsl/shared/ConCon/xbox_gamepad_physics/build/experiments/teleop_gripper_p2_20261011/ruling20/sticks/left_y_neg"
+      },
+      "source_paths": {
+        "plan": "build/experiments/teleop_gripper_p2_20261011/ruling20/sticks/left_y_neg/server/ball_plan.json",
+        "root_pose": "build/experiments/teleop_gripper_p2_20261011/ruling20/sticks/left_y_neg/server/live_config.json#gamepad.pose",
+        "timeline": "build/experiments/teleop_gripper_p2_20261011/ruling20/sticks/left_y_neg/server/ball_trace.jsonl",
+        "result": "build/experiments/teleop_gripper_p2_20261011/ruling20/results.json#cases/left_y_neg"
+      }
+    },
+    {
+      "case_id": "right_x_pos",
+      "plan": {
+        "name": "right_x_pos",
+        "link": "right_stick",
+        "joint": "right_stick_x",
+        "channel": "right_x",
+        "sign": 1,
+        "kind": "stick",
+        "point_m": [
+          0.011320739053189754,
+          0.0004893457517027855,
+          0.05793723091483116
+        ],
+        "direction": [
+          1.0,
+          -0.0,
+          2.656783544807695e-05
+        ],
+        "start_m": [
+          0.0023207394406199455,
+          0.0004893457517027855,
+          0.05793699249625206
+        ],
+        "axis_world": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "pivot_m": [
+          0.020557697862386703,
+          0.0004891359712928534,
+          0.04202272742986679
+        ],
+        "limits": [
+          [
+            -0.40142571926116943,
+            0.40142571926116943
+          ]
+        ],
+        "view": "buttons_close"
+      },
+      "root_pose": [
+        0,
+        0,
+        0.03035474591349888,
+        1,
+        0,
+        0,
+        0
+      ],
+      "joint_limits": {
+        "a_press": [
+          0.0,
+          0.0008967542671598494
+        ],
+        "b_press": [
+          0.0,
+          0.001376767992042005
+        ],
+        "left_shoulder_press": [
+          0.0,
+          0.0022283243015408516
+        ],
+        "right_shoulder_press": [
+          0.0,
+          0.002228327328339219
+        ],
+        "pair_press": [
+          0.0,
+          0.0010423330822959542
+        ],
+        "dpad_horizontal": [
+          -0.17453241348266602,
+          0.17453241348266602
+        ],
+        "view_press": [
+          0.0,
+          0.0012666219845414162
+        ],
+        "menu_press": [
+          0.0,
+          0.0012666225666180253
+        ],
+        "left_stick_x": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "right_stick_x": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "left_trigger_hinge": [
+          0.0,
+          0.29531940817832947
+        ],
+        "right_trigger_hinge": [
+          0.0,
+          0.29531940817832947
+        ],
+        "x_press": [
+          0.0,
+          0.000780960894189775
+        ],
+        "guide_press": [
+          0.0,
+          0.0007251785136759281
+        ],
+        "y_press": [
+          0.0,
+          0.0012284000404179096
+        ],
+        "dpad_vertical": [
+          -0.17453241348266602,
+          0.17453241348266602
+        ],
+        "left_stick_y": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "right_stick_y": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "left_stick_click": [
+          0.0,
+          0.00039999998989515007
+        ],
+        "right_stick_click": [
+          0.0,
+          0.00039999998989515007
+        ]
+      },
+      "timeline": [
+        {
+          "phase": "idle",
+          "first_step": 0,
+          "last_step": 798,
+          "phase_origin_step": 0
+        },
+        {
+          "phase": "approach",
+          "first_step": 799,
+          "last_step": 1048,
+          "phase_origin_step": 799
+        },
+        {
+          "phase": "press",
+          "first_step": 1049,
+          "last_step": 1642,
+          "phase_origin_step": 1049
+        },
+        {
+          "phase": "hold",
+          "first_step": 1643,
+          "last_step": 1768,
+          "phase_origin_step": 1644
+        },
+        {
+          "phase": "withdraw",
+          "first_step": 1769,
+          "last_step": 1893,
+          "phase_origin_step": 1769
+        },
+        {
+          "phase": "observe",
+          "first_step": 1894,
+          "last_step": 2018,
+          "phase_origin_step": 1894
+        },
+        {
+          "phase": "done",
+          "first_step": 2019,
+          "last_step": 2207,
+          "phase_origin_step": 2019
+        }
+      ],
+      "baseline": {
+        "case": "right_x_pos",
+        "target_channel": "right_x",
+        "target_min": 0.9800798058602552,
+        "target_max": 0.9802443985710152,
+        "signals_at_photo": {
+          "left_x": 0,
+          "left_y": 0,
+          "right_x": 0.9801866389278165,
+          "right_y": -9.033021785135989e-05,
+          "left_trigger": 0,
+          "right_trigger": 0,
+          "south": 0,
+          "east": 0,
+          "west": 0,
+          "north": 0,
+          "back": 0,
+          "guide": 0,
+          "start": 0,
+          "left_stick": 0,
+          "right_stick": 0,
+          "left_shoulder": 0,
+          "right_shoulder": 0,
+          "dpad_up": 0,
+          "dpad_down": 0,
+          "dpad_left": 0,
+          "dpad_right": 0
+        },
+        "event_at_photo": {
+          "pair_bind_connect": 0
+        },
+        "target_threshold": 0.9,
+        "dpad_bottomed_noncritical": null,
+        "signal_passed": true,
+        "misfires": {},
+        "no_misfires": true,
+        "overlay_passed": true,
+        "overlay_unexpected": [],
+        "overlay_color": {
+          "yellow_components": [
+            "right:analog-stick",
+            "right:analog-stick-ring"
+          ],
+          "target_yellow": true,
+          "unexpected_yellow_components": [],
+          "passed": true
+        },
+        "canonical_32_exact": true,
+        "return_time_after_withdraw_s": 0.048,
+        "return_from_start_s": 0.548,
+        "return_passed": true,
+        "internal_pairs": 0,
+        "contacted_links": [
+          "gamepad/right_stick"
+        ],
+        "max_penetration_m": 1.2633390724658966e-05,
+        "max_force_n": 1.1529202936441736,
+        "hold_sim_seconds": 0.5,
+        "withdraw_step": 1769,
+        "steps": 2208,
+        "termination": {
+          "reason": "signal_goal",
+          "step": 1643,
+          "stroke_m": 0.011879999999999852,
+          "actual_progress_m": 0.011735327469553117,
+          "force_norm_n": 1.1468583066562448,
+          "signal": 0.9800325142243715,
+          "window_steps": 25,
+          "window_position_range_m": 0.0004875035411161296,
+          "window_min_force_n": 1.096795467123158
+        },
+        "joint_limit_excess": {
+          "left_trigger_hinge": 7.192444417825072e-10,
+          "right_trigger_hinge": 3.1362529240297476e-10
+        },
+        "passed": true,
+        "source_directory": "/mnt/wsl/shared/ConCon/xbox_gamepad_physics/build/experiments/teleop_gripper_p2_20261011/ruling20/sticks/right_x_pos"
+      },
+      "source_paths": {
+        "plan": "build/experiments/teleop_gripper_p2_20261011/ruling20/sticks/right_x_pos/server/ball_plan.json",
+        "root_pose": "build/experiments/teleop_gripper_p2_20261011/ruling20/sticks/right_x_pos/server/live_config.json#gamepad.pose",
+        "timeline": "build/experiments/teleop_gripper_p2_20261011/ruling20/sticks/right_x_pos/server/ball_trace.jsonl",
+        "result": "build/experiments/teleop_gripper_p2_20261011/ruling20/results.json#cases/right_x_pos"
+      }
+    },
+    {
+      "case_id": "right_x_neg",
+      "plan": {
+        "name": "right_x_neg",
+        "link": "right_stick",
+        "joint": "right_stick_x",
+        "channel": "right_x",
+        "sign": -1,
+        "kind": "stick",
+        "point_m": [
+          0.02997010573744774,
+          0.0004893457517027855,
+          0.05793772637844086
+        ],
+        "direction": [
+          -1.0,
+          0.0,
+          -2.656783544807695e-05
+        ],
+        "start_m": [
+          0.03897010535001755,
+          0.0004893457517027855,
+          0.05793796479701996
+        ],
+        "axis_world": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "pivot_m": [
+          0.020557697862386703,
+          0.0004891359712928534,
+          0.04202272742986679
+        ],
+        "limits": [
+          [
+            -0.40142571926116943,
+            0.40142571926116943
+          ]
+        ],
+        "view": "buttons_close"
+      },
+      "root_pose": [
+        0,
+        0,
+        0.03035474591349888,
+        1,
+        0,
+        0,
+        0
+      ],
+      "joint_limits": {
+        "a_press": [
+          0.0,
+          0.0008967542671598494
+        ],
+        "b_press": [
+          0.0,
+          0.001376767992042005
+        ],
+        "left_shoulder_press": [
+          0.0,
+          0.0022283243015408516
+        ],
+        "right_shoulder_press": [
+          0.0,
+          0.002228327328339219
+        ],
+        "pair_press": [
+          0.0,
+          0.0010423330822959542
+        ],
+        "dpad_horizontal": [
+          -0.17453241348266602,
+          0.17453241348266602
+        ],
+        "view_press": [
+          0.0,
+          0.0012666219845414162
+        ],
+        "menu_press": [
+          0.0,
+          0.0012666225666180253
+        ],
+        "left_stick_x": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "right_stick_x": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "left_trigger_hinge": [
+          0.0,
+          0.29531940817832947
+        ],
+        "right_trigger_hinge": [
+          0.0,
+          0.29531940817832947
+        ],
+        "x_press": [
+          0.0,
+          0.000780960894189775
+        ],
+        "guide_press": [
+          0.0,
+          0.0007251785136759281
+        ],
+        "y_press": [
+          0.0,
+          0.0012284000404179096
+        ],
+        "dpad_vertical": [
+          -0.17453241348266602,
+          0.17453241348266602
+        ],
+        "left_stick_y": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "right_stick_y": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "left_stick_click": [
+          0.0,
+          0.00039999998989515007
+        ],
+        "right_stick_click": [
+          0.0,
+          0.00039999998989515007
+        ]
+      },
+      "timeline": [
+        {
+          "phase": "idle",
+          "first_step": 0,
+          "last_step": 813,
+          "phase_origin_step": 0
+        },
+        {
+          "phase": "approach",
+          "first_step": 814,
+          "last_step": 1063,
+          "phase_origin_step": 814
+        },
+        {
+          "phase": "press",
+          "first_step": 1064,
+          "last_step": 1661,
+          "phase_origin_step": 1064
+        },
+        {
+          "phase": "hold",
+          "first_step": 1662,
+          "last_step": 1787,
+          "phase_origin_step": 1663
+        },
+        {
+          "phase": "withdraw",
+          "first_step": 1788,
+          "last_step": 1912,
+          "phase_origin_step": 1788
+        },
+        {
+          "phase": "observe",
+          "first_step": 1913,
+          "last_step": 2037,
+          "phase_origin_step": 1913
+        },
+        {
+          "phase": "done",
+          "first_step": 2038,
+          "last_step": 2244,
+          "phase_origin_step": 2038
+        }
+      ],
+      "baseline": {
+        "case": "right_x_neg",
+        "target_channel": "right_x",
+        "target_min": 0.9821279717170195,
+        "target_max": 0.9822939007691388,
+        "signals_at_photo": {
+          "left_x": 0,
+          "left_y": 0,
+          "right_x": -0.982172070981878,
+          "right_y": -0.00021973957532234076,
+          "left_trigger": 0,
+          "right_trigger": 0,
+          "south": 0,
+          "east": 0,
+          "west": 0,
+          "north": 0,
+          "back": 0,
+          "guide": 0,
+          "start": 0,
+          "left_stick": 0,
+          "right_stick": 0,
+          "left_shoulder": 0,
+          "right_shoulder": 0,
+          "dpad_up": 0,
+          "dpad_down": 0,
+          "dpad_left": 0,
+          "dpad_right": 0
+        },
+        "event_at_photo": {
+          "pair_bind_connect": 0
+        },
+        "target_threshold": 0.9,
+        "dpad_bottomed_noncritical": null,
+        "signal_passed": true,
+        "misfires": {},
+        "no_misfires": true,
+        "overlay_passed": true,
+        "overlay_unexpected": [],
+        "overlay_color": {
+          "yellow_components": [
+            "right:analog-stick",
+            "right:analog-stick-ring"
+          ],
+          "target_yellow": true,
+          "unexpected_yellow_components": [],
+          "passed": true
+        },
+        "canonical_32_exact": true,
+        "return_time_after_withdraw_s": 0.044,
+        "return_from_start_s": 0.544,
+        "return_passed": true,
+        "internal_pairs": 0,
+        "contacted_links": [
+          "gamepad/right_stick"
+        ],
+        "max_penetration_m": 1.2711621820926666e-05,
+        "max_force_n": 1.1524930656988746,
+        "hold_sim_seconds": 0.5,
+        "withdraw_step": 1788,
+        "steps": 2245,
+        "termination": {
+          "reason": "signal_goal",
+          "step": 1662,
+          "stroke_m": 0.01195999999999985,
+          "actual_progress_m": 0.01181531886876522,
+          "force_norm_n": 1.1504916856047562,
+          "signal": 0.9821639786925352,
+          "window_steps": 25,
+          "window_position_range_m": 0.00048762189202613236,
+          "window_min_force_n": 1.0967247174406165
+        },
+        "joint_limit_excess": {
+          "left_trigger_hinge": 7.192444417825072e-10,
+          "right_trigger_hinge": 3.1362529240297476e-10
+        },
+        "passed": true,
+        "source_directory": "/mnt/wsl/shared/ConCon/xbox_gamepad_physics/build/experiments/teleop_gripper_p2_20261011/ruling20/sticks/right_x_neg"
+      },
+      "source_paths": {
+        "plan": "build/experiments/teleop_gripper_p2_20261011/ruling20/sticks/right_x_neg/server/ball_plan.json",
+        "root_pose": "build/experiments/teleop_gripper_p2_20261011/ruling20/sticks/right_x_neg/server/live_config.json#gamepad.pose",
+        "timeline": "build/experiments/teleop_gripper_p2_20261011/ruling20/sticks/right_x_neg/server/ball_trace.jsonl",
+        "result": "build/experiments/teleop_gripper_p2_20261011/ruling20/results.json#cases/right_x_neg"
+      }
+    },
+    {
+      "case_id": "right_y_pos",
+      "plan": {
+        "name": "right_y_pos",
+        "link": "right_stick",
+        "joint": "right_stick_y",
+        "channel": "right_y",
+        "sign": 1,
+        "kind": "stick",
+        "point_m": [
+          0.020557275041937828,
+          0.009735463187098503,
+          0.05793735384941101
+        ],
+        "direction": [
+          0.0,
+          -1.0,
+          1.3181508620618843e-05
+        ],
+        "start_m": [
+          0.020557275041937828,
+          0.018735462799668312,
+          0.05793723464012146
+        ],
+        "axis_world": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "pivot_m": [
+          0.020557697862386703,
+          0.0004891359712928534,
+          0.04202272742986679
+        ],
+        "limits": [
+          [
+            -0.40142571926116943,
+            0.40142571926116943
+          ]
+        ],
+        "view": "buttons_close"
+      },
+      "root_pose": [
+        0,
+        0,
+        0.03035474591349888,
+        1,
+        0,
+        0,
+        0
+      ],
+      "joint_limits": {
+        "a_press": [
+          0.0,
+          0.0008967542671598494
+        ],
+        "b_press": [
+          0.0,
+          0.001376767992042005
+        ],
+        "left_shoulder_press": [
+          0.0,
+          0.0022283243015408516
+        ],
+        "right_shoulder_press": [
+          0.0,
+          0.002228327328339219
+        ],
+        "pair_press": [
+          0.0,
+          0.0010423330822959542
+        ],
+        "dpad_horizontal": [
+          -0.17453241348266602,
+          0.17453241348266602
+        ],
+        "view_press": [
+          0.0,
+          0.0012666219845414162
+        ],
+        "menu_press": [
+          0.0,
+          0.0012666225666180253
+        ],
+        "left_stick_x": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "right_stick_x": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "left_trigger_hinge": [
+          0.0,
+          0.29531940817832947
+        ],
+        "right_trigger_hinge": [
+          0.0,
+          0.29531940817832947
+        ],
+        "x_press": [
+          0.0,
+          0.000780960894189775
+        ],
+        "guide_press": [
+          0.0,
+          0.0007251785136759281
+        ],
+        "y_press": [
+          0.0,
+          0.0012284000404179096
+        ],
+        "dpad_vertical": [
+          -0.17453241348266602,
+          0.17453241348266602
+        ],
+        "left_stick_y": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "right_stick_y": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "left_stick_click": [
+          0.0,
+          0.00039999998989515007
+        ],
+        "right_stick_click": [
+          0.0,
+          0.00039999998989515007
+        ]
+      },
+      "timeline": [
+        {
+          "phase": "idle",
+          "first_step": 0,
+          "last_step": 806,
+          "phase_origin_step": 0
+        },
+        {
+          "phase": "approach",
+          "first_step": 807,
+          "last_step": 1056,
+          "phase_origin_step": 807
+        },
+        {
+          "phase": "press",
+          "first_step": 1057,
+          "last_step": 1651,
+          "phase_origin_step": 1057
+        },
+        {
+          "phase": "hold",
+          "first_step": 1652,
+          "last_step": 1777,
+          "phase_origin_step": 1653
+        },
+        {
+          "phase": "withdraw",
+          "first_step": 1778,
+          "last_step": 1902,
+          "phase_origin_step": 1778
+        },
+        {
+          "phase": "observe",
+          "first_step": 1903,
+          "last_step": 2027,
+          "phase_origin_step": 1903
+        },
+        {
+          "phase": "done",
+          "first_step": 2028,
+          "last_step": 2234,
+          "phase_origin_step": 2028
+        }
+      ],
+      "baseline": {
+        "case": "right_y_pos",
+        "target_channel": "right_y",
+        "target_min": 0.9803621450930112,
+        "target_max": 0.9805760339516939,
+        "signals_at_photo": {
+          "left_x": 0,
+          "left_y": 0,
+          "right_x": 0.0006777161822452593,
+          "right_y": 0.9804922898931746,
+          "left_trigger": 0,
+          "right_trigger": 0,
+          "south": 0,
+          "east": 0,
+          "west": 0,
+          "north": 0,
+          "back": 0,
+          "guide": 0,
+          "start": 0,
+          "left_stick": 0,
+          "right_stick": 0,
+          "left_shoulder": 0,
+          "right_shoulder": 0,
+          "dpad_up": 0,
+          "dpad_down": 0,
+          "dpad_left": 0,
+          "dpad_right": 0
+        },
+        "event_at_photo": {
+          "pair_bind_connect": 0
+        },
+        "target_threshold": 0.9,
+        "dpad_bottomed_noncritical": null,
+        "signal_passed": true,
+        "misfires": {},
+        "no_misfires": true,
+        "overlay_passed": true,
+        "overlay_unexpected": [],
+        "overlay_color": {
+          "yellow_components": [
+            "right:analog-stick",
+            "right:analog-stick-ring"
+          ],
+          "target_yellow": true,
+          "unexpected_yellow_components": [],
+          "passed": true
+        },
+        "canonical_32_exact": true,
+        "return_time_after_withdraw_s": 0.0,
+        "return_from_start_s": 0.5,
+        "return_passed": true,
+        "internal_pairs": 0,
+        "contacted_links": [
+          "gamepad/right_stick"
+        ],
+        "max_penetration_m": 1.2860633432865143e-05,
+        "max_force_n": 1.1389477476763616,
+        "hold_sim_seconds": 0.5,
+        "withdraw_step": 1778,
+        "steps": 2235,
+        "termination": {
+          "reason": "signal_goal",
+          "step": 1652,
+          "stroke_m": 0.011899999999999852,
+          "actual_progress_m": 0.011759414319404771,
+          "force_norm_n": 1.1298967142280567,
+          "signal": 0.9803384621544761,
+          "window_steps": 25,
+          "window_position_range_m": 0.00048757295099576513,
+          "window_min_force_n": 1.080500047843385
+        },
+        "joint_limit_excess": {
+          "left_trigger_hinge": 7.192444417825072e-10,
+          "right_trigger_hinge": 3.1362529240297476e-10
+        },
+        "passed": true,
+        "source_directory": "/mnt/wsl/shared/ConCon/xbox_gamepad_physics/build/experiments/teleop_gripper_p2_20261011/ruling20/sticks/right_y_pos"
+      },
+      "source_paths": {
+        "plan": "build/experiments/teleop_gripper_p2_20261011/ruling20/sticks/right_y_pos/server/ball_plan.json",
+        "root_pose": "build/experiments/teleop_gripper_p2_20261011/ruling20/sticks/right_y_pos/server/live_config.json#gamepad.pose",
+        "timeline": "build/experiments/teleop_gripper_p2_20261011/ruling20/sticks/right_y_pos/server/ball_trace.jsonl",
+        "result": "build/experiments/teleop_gripper_p2_20261011/ruling20/results.json#cases/right_y_pos"
+      }
+    },
+    {
+      "case_id": "right_y_neg",
+      "plan": {
+        "name": "right_y_neg",
+        "link": "right_stick",
+        "joint": "right_stick_y",
+        "channel": "right_y",
+        "sign": -1,
+        "kind": "stick",
+        "point_m": [
+          0.020557275041937828,
+          -0.008936529979109764,
+          0.05793759971857071
+        ],
+        "direction": [
+          -0.0,
+          1.0,
+          -1.3181508620618843e-05
+        ],
+        "start_m": [
+          0.020557275041937828,
+          -0.017936529591679573,
+          0.05793771892786026
+        ],
+        "axis_world": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "pivot_m": [
+          0.020557697862386703,
+          0.0004891359712928534,
+          0.04202272742986679
+        ],
+        "limits": [
+          [
+            -0.40142571926116943,
+            0.40142571926116943
+          ]
+        ],
+        "view": "buttons_close"
+      },
+      "root_pose": [
+        0,
+        0,
+        0.03035474591349888,
+        1,
+        0,
+        0,
+        0
+      ],
+      "joint_limits": {
+        "a_press": [
+          0.0,
+          0.0008967542671598494
+        ],
+        "b_press": [
+          0.0,
+          0.001376767992042005
+        ],
+        "left_shoulder_press": [
+          0.0,
+          0.0022283243015408516
+        ],
+        "right_shoulder_press": [
+          0.0,
+          0.002228327328339219
+        ],
+        "pair_press": [
+          0.0,
+          0.0010423330822959542
+        ],
+        "dpad_horizontal": [
+          -0.17453241348266602,
+          0.17453241348266602
+        ],
+        "view_press": [
+          0.0,
+          0.0012666219845414162
+        ],
+        "menu_press": [
+          0.0,
+          0.0012666225666180253
+        ],
+        "left_stick_x": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "right_stick_x": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "left_trigger_hinge": [
+          0.0,
+          0.29531940817832947
+        ],
+        "right_trigger_hinge": [
+          0.0,
+          0.29531940817832947
+        ],
+        "x_press": [
+          0.0,
+          0.000780960894189775
+        ],
+        "guide_press": [
+          0.0,
+          0.0007251785136759281
+        ],
+        "y_press": [
+          0.0,
+          0.0012284000404179096
+        ],
+        "dpad_vertical": [
+          -0.17453241348266602,
+          0.17453241348266602
+        ],
+        "left_stick_y": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "right_stick_y": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "left_stick_click": [
+          0.0,
+          0.00039999998989515007
+        ],
+        "right_stick_click": [
+          0.0,
+          0.00039999998989515007
+        ]
+      },
+      "timeline": [
+        {
+          "phase": "idle",
+          "first_step": 0,
+          "last_step": 829,
+          "phase_origin_step": 0
+        },
+        {
+          "phase": "approach",
+          "first_step": 830,
+          "last_step": 1079,
+          "phase_origin_step": 830
+        },
+        {
+          "phase": "press",
+          "first_step": 1080,
+          "last_step": 1676,
+          "phase_origin_step": 1080
+        },
+        {
+          "phase": "hold",
+          "first_step": 1677,
+          "last_step": 1802,
+          "phase_origin_step": 1678
+        },
+        {
+          "phase": "withdraw",
+          "first_step": 1803,
+          "last_step": 1927,
+          "phase_origin_step": 1803
+        },
+        {
+          "phase": "observe",
+          "first_step": 1928,
+          "last_step": 2052,
+          "phase_origin_step": 1928
+        },
+        {
+          "phase": "done",
+          "first_step": 2053,
+          "last_step": 2244,
+          "phase_origin_step": 2053
+        }
+      ],
+      "baseline": {
+        "case": "right_y_neg",
+        "target_channel": "right_y",
+        "target_min": 0.9801639953658943,
+        "target_max": 0.9803073550972778,
+        "signals_at_photo": {
+          "left_x": 0,
+          "left_y": 0,
+          "right_x": 0.0003477066763035817,
+          "right_y": -0.9801977008646245,
+          "left_trigger": 0,
+          "right_trigger": 0,
+          "south": 0,
+          "east": 0,
+          "west": 0,
+          "north": 0,
+          "back": 0,
+          "guide": 0,
+          "start": 0,
+          "left_stick": 0,
+          "right_stick": 0,
+          "left_shoulder": 0,
+          "right_shoulder": 0,
+          "dpad_up": 0,
+          "dpad_down": 0,
+          "dpad_left": 0,
+          "dpad_right": 0
+        },
+        "event_at_photo": {
+          "pair_bind_connect": 0
+        },
+        "target_threshold": 0.9,
+        "dpad_bottomed_noncritical": null,
+        "signal_passed": true,
+        "misfires": {},
+        "no_misfires": true,
+        "overlay_passed": true,
+        "overlay_unexpected": [],
+        "overlay_color": {
+          "yellow_components": [
+            "right:analog-stick",
+            "right:analog-stick-ring"
+          ],
+          "target_yellow": true,
+          "unexpected_yellow_components": [],
+          "passed": true
+        },
+        "canonical_32_exact": true,
+        "return_time_after_withdraw_s": 0.0,
+        "return_from_start_s": 0.5,
+        "return_passed": true,
+        "internal_pairs": 0,
+        "contacted_links": [
+          "gamepad/right_stick"
+        ],
+        "max_penetration_m": 1.2919772416353226e-05,
+        "max_force_n": 1.1312046403587623,
+        "hold_sim_seconds": 0.5,
+        "withdraw_step": 1803,
+        "steps": 2245,
+        "termination": {
+          "reason": "signal_goal",
+          "step": 1677,
+          "stroke_m": 0.01193999999999985,
+          "actual_progress_m": 0.011799713127506613,
+          "force_norm_n": 1.1273219149007632,
+          "signal": 0.9801221233366346,
+          "window_steps": 25,
+          "window_position_range_m": 0.00048766334472498743,
+          "window_min_force_n": 1.0778581933221572
+        },
+        "joint_limit_excess": {
+          "left_trigger_hinge": 7.192444417825072e-10,
+          "right_trigger_hinge": 3.1362529240297476e-10
+        },
+        "passed": true,
+        "source_directory": "/mnt/wsl/shared/ConCon/xbox_gamepad_physics/build/experiments/teleop_gripper_p2_20261011/ruling20/sticks/right_y_neg"
+      },
+      "source_paths": {
+        "plan": "build/experiments/teleop_gripper_p2_20261011/ruling20/sticks/right_y_neg/server/ball_plan.json",
+        "root_pose": "build/experiments/teleop_gripper_p2_20261011/ruling20/sticks/right_y_neg/server/live_config.json#gamepad.pose",
+        "timeline": "build/experiments/teleop_gripper_p2_20261011/ruling20/sticks/right_y_neg/server/ball_trace.jsonl",
+        "result": "build/experiments/teleop_gripper_p2_20261011/ruling20/results.json#cases/right_y_neg"
+      }
+    },
+    {
+      "case_id": "LT",
+      "plan": {
+        "name": "LT",
+        "link": "left_trigger",
+        "joint": "left_trigger_hinge",
+        "channel": "left_trigger",
+        "sign": 1,
+        "kind": "trigger",
+        "point_m": [
+          -0.04473443329334259,
+          0.046904515475034714,
+          0.02214706689119339
+        ],
+        "direction": [
+          1.1605100880274222e-08,
+          -0.8520898222923279,
+          -0.5233955979347229
+        ],
+        "start_m": [
+          -0.04473443329334259,
+          0.05457332357764244,
+          0.02685762755572796
+        ],
+        "axis_world": [
+          -1.0,
+          5.960464477539063e-08,
+          -1.1920927533992653e-07
+        ],
+        "pivot_m": [
+          -0.04567798972129822,
+          0.03601910173892975,
+          0.032450612634420395
+        ],
+        "limits": [
+          [
+            0.0,
+            0.29531940817832947
+          ]
+        ],
+        "view": "triggers"
+      },
+      "root_pose": [
+        0,
+        0,
+        0.03035474591349888,
+        1,
+        0,
+        0,
+        0
+      ],
+      "joint_limits": {
+        "a_press": [
+          0.0,
+          0.0008967542671598494
+        ],
+        "b_press": [
+          0.0,
+          0.001376767992042005
+        ],
+        "left_shoulder_press": [
+          0.0,
+          0.0022283243015408516
+        ],
+        "right_shoulder_press": [
+          0.0,
+          0.002228327328339219
+        ],
+        "pair_press": [
+          0.0,
+          0.0010423330822959542
+        ],
+        "dpad_horizontal": [
+          -0.17453241348266602,
+          0.17453241348266602
+        ],
+        "view_press": [
+          0.0,
+          0.0012666219845414162
+        ],
+        "menu_press": [
+          0.0,
+          0.0012666225666180253
+        ],
+        "left_stick_x": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "right_stick_x": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "left_trigger_hinge": [
+          0.0,
+          0.29531940817832947
+        ],
+        "right_trigger_hinge": [
+          0.0,
+          0.29531940817832947
+        ],
+        "x_press": [
+          0.0,
+          0.000780960894189775
+        ],
+        "guide_press": [
+          0.0,
+          0.0007251785136759281
+        ],
+        "y_press": [
+          0.0,
+          0.0012284000404179096
+        ],
+        "dpad_vertical": [
+          -0.17453241348266602,
+          0.17453241348266602
+        ],
+        "left_stick_y": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "right_stick_y": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "left_stick_click": [
+          0.0,
+          0.00039999998989515007
+        ],
+        "right_stick_click": [
+          0.0,
+          0.00039999998989515007
+        ]
+      },
+      "timeline": [
+        {
+          "phase": "idle",
+          "first_step": 0,
+          "last_step": 817,
+          "phase_origin_step": 0
+        },
+        {
+          "phase": "approach",
+          "first_step": 818,
+          "last_step": 1067,
+          "phase_origin_step": 818
+        },
+        {
+          "phase": "press",
+          "first_step": 1068,
+          "last_step": 1469,
+          "phase_origin_step": 1068
+        },
+        {
+          "phase": "hold",
+          "first_step": 1470,
+          "last_step": 1595,
+          "phase_origin_step": 1471
+        },
+        {
+          "phase": "withdraw",
+          "first_step": 1596,
+          "last_step": 1720,
+          "phase_origin_step": 1596
+        },
+        {
+          "phase": "observe",
+          "first_step": 1721,
+          "last_step": 1845,
+          "phase_origin_step": 1721
+        },
+        {
+          "phase": "done",
+          "first_step": 1846,
+          "last_step": 1998,
+          "phase_origin_step": 1846
+        }
+      ],
+      "baseline": {
+        "case": "LT",
+        "target_channel": "left_trigger",
+        "target_min": 0.9795424993251273,
+        "target_max": 0.9869184173413292,
+        "signals_at_photo": {
+          "left_x": 0,
+          "left_y": 0,
+          "right_x": 0,
+          "right_y": 0,
+          "left_trigger": 0.9835710483360286,
+          "right_trigger": 0,
+          "south": 0,
+          "east": 0,
+          "west": 0,
+          "north": 0,
+          "back": 0,
+          "guide": 0,
+          "start": 0,
+          "left_stick": 0,
+          "right_stick": 0,
+          "left_shoulder": 0,
+          "right_shoulder": 0,
+          "dpad_up": 0,
+          "dpad_down": 0,
+          "dpad_left": 0,
+          "dpad_right": 0
+        },
+        "event_at_photo": {
+          "pair_bind_connect": 0
+        },
+        "target_threshold": 0.9,
+        "dpad_bottomed_noncritical": null,
+        "signal_passed": true,
+        "misfires": {},
+        "no_misfires": true,
+        "overlay_passed": true,
+        "overlay_unexpected": [],
+        "overlay_color": {
+          "yellow_components": [
+            "left:left-trigger"
+          ],
+          "target_yellow": true,
+          "unexpected_yellow_components": [],
+          "passed": true
+        },
+        "canonical_32_exact": true,
+        "return_time_after_withdraw_s": 0.0,
+        "return_from_start_s": 0.5,
+        "return_passed": true,
+        "internal_pairs": 0,
+        "contacted_links": [
+          "gamepad/left_trigger"
+        ],
+        "max_penetration_m": 3.0067749321460724e-06,
+        "max_force_n": 2.5485279486891215,
+        "hold_sim_seconds": 0.5,
+        "withdraw_step": 1596,
+        "steps": 1999,
+        "termination": {
+          "reason": "signal_goal",
+          "step": 1470,
+          "stroke_m": 0.008040000000000009,
+          "actual_progress_m": 0.0076660413835132465,
+          "force_norm_n": 2.544804840937635,
+          "signal": 0.9803096593847683,
+          "window_steps": 25,
+          "window_position_range_m": 0.0004286588257682864,
+          "window_min_force_n": 2.062601318021861
+        },
+        "joint_limit_excess": {
+          "left_trigger_hinge": 7.192444417825072e-10,
+          "right_trigger_hinge": 3.1362529240297476e-10
+        },
+        "passed": true,
+        "source_directory": "/mnt/wsl/shared/ConCon/xbox_gamepad_physics/build/experiments/teleop_gripper_p2_20261011/ruling20/dpad_triggers/LT"
+      },
+      "source_paths": {
+        "plan": "build/experiments/teleop_gripper_p2_20261011/ruling20/dpad_triggers/LT/server/ball_plan.json",
+        "root_pose": "build/experiments/teleop_gripper_p2_20261011/ruling20/dpad_triggers/LT/server/live_config.json#gamepad.pose",
+        "timeline": "build/experiments/teleop_gripper_p2_20261011/ruling20/dpad_triggers/LT/server/ball_trace.jsonl",
+        "result": "build/experiments/teleop_gripper_p2_20261011/ruling20/results.json#cases/LT"
+      }
+    },
+    {
+      "case_id": "RT",
+      "plan": {
+        "name": "RT",
+        "link": "right_trigger",
+        "joint": "right_trigger_hinge",
+        "channel": "right_trigger",
+        "sign": 1,
+        "kind": "trigger",
+        "point_m": [
+          0.04473443701863289,
+          0.04690951108932495,
+          0.022150171920657158
+        ],
+        "direction": [
+          9.845722388490685e-07,
+          -0.8520889282226562,
+          -0.5233970284461975
+        ],
+        "start_m": [
+          0.04473442956805229,
+          0.05457831174135208,
+          0.02686074562370777
+        ],
+        "axis_world": [
+          -1.0,
+          -1.1920928955078125e-06,
+          5.960467319710006e-08
+        ],
+        "pivot_m": [
+          0.045677997171878815,
+          0.03601909801363945,
+          0.03245062008500099
+        ],
+        "limits": [
+          [
+            0.0,
+            0.29531940817832947
+          ]
+        ],
+        "view": "triggers"
+      },
+      "root_pose": [
+        0,
+        0,
+        0.03035474591349888,
+        1,
+        0,
+        0,
+        0
+      ],
+      "joint_limits": {
+        "a_press": [
+          0.0,
+          0.0008967542671598494
+        ],
+        "b_press": [
+          0.0,
+          0.001376767992042005
+        ],
+        "left_shoulder_press": [
+          0.0,
+          0.0022283243015408516
+        ],
+        "right_shoulder_press": [
+          0.0,
+          0.002228327328339219
+        ],
+        "pair_press": [
+          0.0,
+          0.0010423330822959542
+        ],
+        "dpad_horizontal": [
+          -0.17453241348266602,
+          0.17453241348266602
+        ],
+        "view_press": [
+          0.0,
+          0.0012666219845414162
+        ],
+        "menu_press": [
+          0.0,
+          0.0012666225666180253
+        ],
+        "left_stick_x": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "right_stick_x": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "left_trigger_hinge": [
+          0.0,
+          0.29531940817832947
+        ],
+        "right_trigger_hinge": [
+          0.0,
+          0.29531940817832947
+        ],
+        "x_press": [
+          0.0,
+          0.000780960894189775
+        ],
+        "guide_press": [
+          0.0,
+          0.0007251785136759281
+        ],
+        "y_press": [
+          0.0,
+          0.0012284000404179096
+        ],
+        "dpad_vertical": [
+          -0.17453241348266602,
+          0.17453241348266602
+        ],
+        "left_stick_y": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "right_stick_y": [
+          -0.40142571926116943,
+          0.40142571926116943
+        ],
+        "left_stick_click": [
+          0.0,
+          0.00039999998989515007
+        ],
+        "right_stick_click": [
+          0.0,
+          0.00039999998989515007
+        ]
+      },
+      "timeline": [
+        {
+          "phase": "idle",
+          "first_step": 0,
+          "last_step": 815,
+          "phase_origin_step": 0
+        },
+        {
+          "phase": "approach",
+          "first_step": 816,
+          "last_step": 1065,
+          "phase_origin_step": 816
+        },
+        {
+          "phase": "press",
+          "first_step": 1066,
+          "last_step": 1467,
+          "phase_origin_step": 1066
+        },
+        {
+          "phase": "hold",
+          "first_step": 1468,
+          "last_step": 1593,
+          "phase_origin_step": 1469
+        },
+        {
+          "phase": "withdraw",
+          "first_step": 1594,
+          "last_step": 1718,
+          "phase_origin_step": 1594
+        },
+        {
+          "phase": "observe",
+          "first_step": 1719,
+          "last_step": 1843,
+          "phase_origin_step": 1719
+        },
+        {
+          "phase": "done",
+          "first_step": 1844,
+          "last_step": 2005,
+          "phase_origin_step": 1844
+        }
+      ],
+      "baseline": {
+        "case": "RT",
+        "target_channel": "right_trigger",
+        "target_min": 0.9793234116522147,
+        "target_max": 0.9854769395339215,
+        "signals_at_photo": {
+          "left_x": 0,
+          "left_y": 0,
+          "right_x": 0,
+          "right_y": 0,
+          "left_trigger": 0,
+          "right_trigger": 0.9843192362710693,
+          "south": 0,
+          "east": 0,
+          "west": 0,
+          "north": 0,
+          "back": 0,
+          "guide": 0,
+          "start": 0,
+          "left_stick": 0,
+          "right_stick": 0,
+          "left_shoulder": 0,
+          "right_shoulder": 0,
+          "dpad_up": 0,
+          "dpad_down": 0,
+          "dpad_left": 0,
+          "dpad_right": 0
+        },
+        "event_at_photo": {
+          "pair_bind_connect": 0
+        },
+        "target_threshold": 0.9,
+        "dpad_bottomed_noncritical": null,
+        "signal_passed": true,
+        "misfires": {},
+        "no_misfires": true,
+        "overlay_passed": true,
+        "overlay_unexpected": [],
+        "overlay_color": {
+          "yellow_components": [
+            "right:right-trigger"
+          ],
+          "target_yellow": true,
+          "unexpected_yellow_components": [],
+          "passed": true
+        },
+        "canonical_32_exact": true,
+        "return_time_after_withdraw_s": 0.0,
+        "return_from_start_s": 0.5,
+        "return_passed": true,
+        "internal_pairs": 0,
+        "contacted_links": [
+          "gamepad/right_trigger"
+        ],
+        "max_penetration_m": 5.822628736495972e-06,
+        "max_force_n": 2.5461759617298276,
+        "hold_sim_seconds": 0.5,
+        "withdraw_step": 1594,
+        "steps": 2006,
+        "termination": {
+          "reason": "signal_goal",
+          "step": 1468,
+          "stroke_m": 0.008040000000000009,
+          "actual_progress_m": 0.007668141042053294,
+          "force_norm_n": 2.5461759617298276,
+          "signal": 0.9802851369045666,
+          "window_steps": 25,
+          "window_position_range_m": 0.00043028065130011096,
+          "window_min_force_n": 2.0582194108453438
+        },
+        "joint_limit_excess": {
+          "left_trigger_hinge": 7.192444417825072e-10,
+          "right_trigger_hinge": 3.1362529240297476e-10
+        },
+        "passed": true,
+        "source_directory": "/mnt/wsl/shared/ConCon/xbox_gamepad_physics/build/experiments/teleop_gripper_p2_20261011/ruling20/dpad_triggers/RT"
+      },
+      "source_paths": {
+        "plan": "build/experiments/teleop_gripper_p2_20261011/ruling20/dpad_triggers/RT/server/ball_plan.json",
+        "root_pose": "build/experiments/teleop_gripper_p2_20261011/ruling20/dpad_triggers/RT/server/live_config.json#gamepad.pose",
+        "timeline": "build/experiments/teleop_gripper_p2_20261011/ruling20/dpad_triggers/RT/server/ball_trace.jsonl",
+        "result": "build/experiments/teleop_gripper_p2_20261011/ruling20/results.json#cases/RT"
+      }
+    }
+  ]
+}

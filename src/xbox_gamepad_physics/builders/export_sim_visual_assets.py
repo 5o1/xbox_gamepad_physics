@@ -155,6 +155,8 @@ def build(output: Path = DEFAULT_OUTPUT, *, kinematics: Path | None = None, inpu
     }
     (output/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
     document_outputs(output)
+    from xbox_gamepad_physics.backends.common.appearance import write_appearance
+    write_appearance(output, materials=materials)
     print(json.dumps({'parts':len(parts),'textures':len(texture_files),'mesh_bytes':len(packed),'output':str(output)}))
 
 

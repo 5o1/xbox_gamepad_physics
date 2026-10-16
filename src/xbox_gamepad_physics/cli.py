@@ -11,16 +11,18 @@ from typing import Sequence
 
 from .errors import XboxGamepadPhysicsError, ResourceNotFoundError
 from .profiles import load_profile, require_physics_ready
-from .resources import build_resources, resource_root, resource_status
+from .resources import build_resources, prepare_resources, resource_root, resource_status
+from .backends.registry import BACKENDS, backend_spec
 
 
-_BACKENDS = ("robotwin", "mujoco")
+_BACKENDS = tuple(BACKENDS)
 
 
 def _selected_backends(value: str) -> tuple[str, ...]:
-    if value == "mujoco":
-        raise ResourceNotFoundError("MuJoCo is outside the v0.3 release scope")
-    return ("robotwin",) if value == "all" else (value,)
+    if value == "all":
+        return tuple(name for name,spec in BACKENDS.items() if spec.implemented)
+    backend_spec(value).require_builder_runtime()
+    return (value,)
 
 
 def _status(args: argparse.Namespace) -> int:
@@ -80,7 +82,7 @@ def _print_resources(value: dict) -> None:
 
 
 def _build_resources(args: argparse.Namespace) -> int:
-    print(f"resource root: {build_resources(force=args.force, archive=args.archive, resources=args.resources, offline=args.offline)}")
+    print(f"resource root: {prepare_resources(force=args.force, archive=args.archive, resources=args.resources, offline=args.offline, backends=(args.backend,), targets=args.target, calibration=args.calibration)}")
     return 0
 
 
@@ -152,6 +154,9 @@ def _parser() -> argparse.ArgumentParser:
 
     build = subparsers.add_parser("build-resources", help="build stale project-local resources")
     build.add_argument("--force", action="store_true")
+    build.add_argument("--backend", choices=_BACKENDS, default="robotwin")
+    build.add_argument("--target", action="append")
+    build.add_argument("--calibration", type=Path)
     build.add_argument("--archive", type=Path, help="import the matching input zip")
     build.add_argument("--resources", type=Path, help="writable local resource root")
     build.add_argument("--offline", action="store_true", help="never download inputs")

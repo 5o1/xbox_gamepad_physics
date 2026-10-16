@@ -12,6 +12,8 @@ import math
 from typing import Any, Iterable, Mapping
 
 from .errors import JointConfigurationError, SceneCompatibilityError
+from xbox_gamepad_physics.backends.common.handle import SignalHandleMixin, ResetRequest
+from xbox_gamepad_physics.backends.common.model import Pose
 from xbox_gamepad_physics.controller import GamepadSignalController
 from xbox_gamepad_physics.state import GamepadState, XBOX_ONE_S_CHANNELS
 
@@ -46,8 +48,13 @@ class _JointBinding:
     joint: Any
 
 
-class XboxOneSArticulation:
+class XboxOneSArticulation(SignalHandleMixin):
     """A name-addressed handle around the underlying SAPIEN articulation."""
+
+    asset_id = "xbox_one_s"
+    backend = "robotwin"
+    profile = "full_controls"
+    capabilities = frozenset({"named_joints", "signals", "birth_fixed_free", "runtime_root_switch_cpu"})
 
     def __init__(
         self,
@@ -244,39 +251,39 @@ class XboxOneSArticulation:
             )
         setter(number)
 
-    def gamepad_state(
-        self, task_channels: Iterable[str] | None = None
-    ) -> GamepadState:
-        """Return the canonical tensor state exposed by this partial asset.
 
-        Availability comes from the mappings actually present in the loaded
-        simulator profile.  This prevents an unfinished physical asset from
-        reporting unimplemented Xbox controls as valid neutral observations.
-        """
+    def root_pose(self) -> Pose:
+        pose = self._articulation.get_root_pose()
+        return Pose(tuple(float(v) for v in pose.p), tuple(float(v) for v in pose.q))
 
-        return self._signal_controller.encode(
-            self.joint_positions(), task_channels=task_channels
-        )
+    def root_twist(self):
+        return (tuple(float(v) for v in self._articulation.get_root_linear_velocity()),
+                tuple(float(v) for v in self._articulation.get_root_angular_velocity()))
 
-    def physical_events(self) -> dict[str, float]:
-        """Return normalized device-management events outside the game tensor."""
+    def restore_passive_targets(self) -> None:
+        for name, value in self._passive_targets.items():
+            self.set_joint_target(name, value)
 
-        return self._signal_controller.encode_physical_events(self.joint_positions())
-
-    def set_gamepad_state(self, state: GamepadState) -> None:
-        """Synchronize articulation qpos from a canonical gamepad state."""
-
-        self.set_joint_positions(self._signal_controller.decode_joint_targets(state))
-
-    def set_gamepad_targets(self, state: GamepadState) -> None:
-        """Set SAPIEN drive targets from a canonical gamepad state."""
-
-        for name, target in self._signal_controller.decode_joint_targets(state).items():
-            self.set_joint_target(name, target)
-
-    def set_physical_events(self, events: Mapping[str, float]) -> None:
-        """Synchronize physical-only controls such as Pair/Bind."""
-
-        self.set_joint_positions(
-            self._signal_controller.decode_physical_event_targets(events)
-        )
+    def reset(self, request: ResetRequest) -> None:
+        """Apply an explicit state reset between caller-owned physics steps."""
+        if request.targets not in ("passive", "preserve"):
+            raise ValueError("reset targets must be passive or preserve")
+        if request.root_pose is not None:
+            from .loader import _coerce_pose
+            pose = request.root_pose
+            self._articulation.set_root_pose(_coerce_pose([*pose.position_m, *pose.orientation_wxyz]))
+        if request.root_twist is not None:
+            self._articulation.set_root_linear_velocity(request.root_twist[0])
+            self._articulation.set_root_angular_velocity(request.root_twist[1])
+        if request.joint_positions is not None:
+            self.set_joint_positions(request.joint_positions)
+        if request.joint_velocities is not None:
+            qvel = self._articulation.get_qvel().copy()
+            for name, value in request.joint_velocities.items():
+                number = float(value)
+                if not math.isfinite(number):
+                    raise ValueError("joint velocities must be finite")
+                qvel[self._binding(name).qpos_offset] = number
+            self._articulation.set_qvel(qvel)
+        if request.targets == "passive":
+            self.restore_passive_targets()

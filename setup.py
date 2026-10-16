@@ -35,6 +35,8 @@ setup(
         "teleop": ["aiohttp>=3.9", "PyYAML>=6", "numpy>=1.24", "Pillow>=9", "transforms3d>=0.4", "opencv-python>=4.8", "trimesh>=4.4", "manifold3d==3.5.4"],
         "maintainer": ["coacd==1.0.14"],
         "robotwin": ["sapien==3.0.3"],
+        "mujoco": [],
+        "isaac": [],
         "example": ["PyYAML>=6", "numpy>=1.24", "Pillow>=9", "transforms3d>=0.4"],
     },
     entry_points={

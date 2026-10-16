@@ -126,13 +126,20 @@ def missing_resources(root: Path) -> list[str]:
                     expected.add("common/xbox_one_s/visual/" + name)
         except (OSError, ValueError, TypeError, KeyError, AttributeError) as error:
             raise ResourceFormatError(f"cannot inspect resource {path}: {error}") from error
+    # Node receipts include new common sidecars without imposing them on old
+    # third-party fixtures that intentionally provide a smaller declared graph.
+    for stamp in (root / ".stamps").glob("*.json"):
+        value = json.loads(stamp.read_text(encoding="utf-8"))
+        output = value.get("fingerprint", {}).get("output")
+        if output:
+            expected.update((Path(output) / name).as_posix() for name in value.get("files", ()))
     return sorted(name for name in expected if not (root / name).is_file())
 
 
-def resource_status() -> dict:
+def resource_status(*, backends=("robotwin",), targets=None) -> dict:
     """Inspect resolution and staleness without acquiring or changing resources."""
     root, mode, repo = _resolve_root()
-    statuses = _builder(repo).node_status(root, inputs=_inputs(root, repo))
+    statuses = _builder(repo).node_status(root, inputs=_inputs(root, repo), backends=backends, targets=targets)
     return {"root": str(root), "mode": mode, "nodes": statuses,
             "missing": missing_resources(root)}
 
@@ -293,6 +300,7 @@ def resource_path(
     profile: str,
     *parts: str,
     must_exist: bool = True,
+    prepare: bool = True,
 ) -> Path:
     """Resolve a resource beneath one backend/profile directory.
 
@@ -302,12 +310,13 @@ def resource_path(
     """
 
     safe_backend = _safe_component(backend, "backend")
-    if safe_backend == "mujoco":
-        raise ResourceNotFoundError("MuJoCo is outside the v0.3 release scope")
+    if prepare and safe_backend in {"mujoco", "isaac"}:
+        from .backends.registry import backend_spec
+        backend_spec(safe_backend).require_builder_runtime()
     safe_profile = _safe_component(profile, "profile")
     relative_parts = _safe_relative_parts(parts)
 
-    root = resource_root().resolve()
+    root = (resource_root() if prepare else _resolve_root()[0]).resolve()
     profile_root = (root / safe_backend / safe_profile).resolve()
     try:
         profile_root.relative_to(root)
@@ -328,7 +337,7 @@ def resource_path(
         relative = "/".join((safe_backend, safe_profile, *relative_parts))
         # Repair declared files deleted after first use; the resolved location
         # remains cached even when cwd or environment variables change.
-        if relative in missing_resources(root):
+        if prepare and relative in missing_resources(root):
             _prepare(root, _repository())
         if candidate.is_file():
             return candidate
@@ -359,5 +368,33 @@ def build_resources(*, force: bool = False, archive: Path | None = None,
     """Import a matching input zip and locally build all RoboTwin resources."""
     root, _, repo = _resolve_root() if resources is None else (Path(resources).expanduser().resolve(), "explicit", _repository())
     _prepare(root, repo, archive=archive, offline=offline, force=force)
+    resource_root.cache_clear()
+    return root
+
+
+def query_resource_path(backend, profile, *parts, must_exist=True):
+    """Inspect a location without acquiring inputs, building or starting a platform."""
+    return resource_path(backend, profile, *parts, must_exist=must_exist, prepare=False)
+
+
+def prepare_resources(*, backends=("robotwin",), targets=None, calibration=None,
+                      runtime="python", resources=None, inputs=None,
+                      archive=None, offline=False, force=False):
+    """Prepare only the requested backend/target closure with explicit calibration."""
+    from .backends.registry import backend_spec
+    for name in backends:
+        backend_spec(name).require_builder_runtime(runtime)
+    from .backends.common.calibration import load_calibration, ResolvedCalibration
+    if not isinstance(calibration, ResolvedCalibration):
+        calibration = load_calibration(calibration)
+        from .backends.common.calibration import resolve_calibration
+        calibration = resolve_calibration(override=calibration, profile=calibration.profile)
+    root, _, repo = (_resolve_root() if resources is None else
+                     (Path(resources).expanduser().resolve(), "explicit", _repository()))
+    if inputs is None:
+        _acquire_inputs(root, repo, archive=archive, offline=offline)
+        inputs = _inputs(root, repo)
+    _builder(repo).build(output=root,inputs=Path(inputs),force=force,backends=backends,
+                         targets=targets,runtime=runtime,calibration=calibration)
     resource_root.cache_clear()
     return root

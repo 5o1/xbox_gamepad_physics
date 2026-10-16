@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from .loader import _resolve_scene
+from xbox_gamepad_physics.backends.common.diagnostics import legacy_load_record
 from .scene import require_sapien
 
 
@@ -15,8 +16,8 @@ def _mark_loaded(scene, articulation, *, profile, collision, attach_visual):
     if records is None:
         records = {}
         setattr(scene, _LOADS_ATTRIBUTE, records)
-    records[articulation] = {"profile": profile, "collision": collision,
-                             "attach_visual": attach_visual}
+    records[articulation] = legacy_load_record(profile=profile, collision=collision,
+                                               attach_visual=attach_visual)
 
 
 def _name(value):

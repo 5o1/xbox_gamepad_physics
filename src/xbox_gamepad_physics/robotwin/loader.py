@@ -30,6 +30,7 @@ from xbox_gamepad_physics.errors import (
     StateValidationError,
 )
 from xbox_gamepad_physics.motion import MotionJoint, load_motion_contract
+from xbox_gamepad_physics.backends.common.collision import selected_collision_variant
 
 from .articulation import (
     XboxOneSArticulation,
@@ -178,7 +179,8 @@ def _validated_description(profile: str) -> RoboTwinAssetDescription:
         mapping = motion_contract.state_mapping
     else:
         mapping = manifest.get("state_mapping")
-    signal_controller = _signal_controller(mapping)
+    signal_controller = (motion_contract.signal_controller if joint_motion
+                         else _signal_controller(mapping))
     referenced = {
         item.source
         for group in (
@@ -386,7 +388,7 @@ def _sdf_physx():
 
 
 def _load_sdf(loader, description, physx):
-    variant = description.collision_variants.get("sdf")
+    variant = selected_collision_variant(description.collision_variants, "sdf")
     if variant is None:
         raise RoboTwinManifestError("profile does not declare an SDF collision variant")
     articulation_builders, actor_builders, cameras = loader.parse(str(description.urdf_path))
@@ -482,6 +484,15 @@ def load_into_scene(
         description.signal_controller,
         scene=resolved_scene,
     )
+    selected_config = description.urdf_path.parents[2] / ".selected-calibration.json"
+    wrapper.configuration_id = "default:" + profile
+    if selected_config.is_file():
+        import json
+        configured = json.loads(selected_config.read_text())
+        if configured["profile"] == profile:
+            wrapper.configuration_id = configured["configuration_id"]
+    wrapper.profile = profile
+    wrapper._passive_targets = {item.name: item.target for item in description.joint_dynamics}
     from .diagnostics import _mark_loaded
     _mark_loaded(resolved_scene, articulation, profile=profile, collision=collision,
                  attach_visual=attach_visual)

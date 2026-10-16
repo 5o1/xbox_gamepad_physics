@@ -65,6 +65,8 @@ _EXTRAS = {
     "example": ("PyYAML", "numpy", "Pillow", "transforms3d"),
     "teleop": ("aiohttp", "PyYAML", "numpy", "Pillow", "transforms3d", "opencv-python", "trimesh", "manifold3d"),
     "maintainer": ("coacd",),
+    "mujoco": (),
+    "isaac": (),
 }
 
 
@@ -91,7 +93,9 @@ def diagnose_environment():
     for extra, distributions in _EXTRAS.items():
         versions = {name: _version(name) for name in distributions}
         extras[extra] = {"installed": all(versions.values()), "distributions": versions}
-    return {"python": python, "supported_python": python.startswith("3.10."),
+    return {"python": python, "supported_python": python.startswith(("3.10.", "3.11.")),
+            "python_support": {"core": ["3.10", "3.11"], "robotwin": ["3.10"],
+                               "isaac": "External Python 3.11 platform; backend not implemented in C1"},
             "sapien": sapien, "supported_sapien": sapien == "3.0.3",
             "sdf_supported": sdf,
             "resources": resources, "extras": extras}

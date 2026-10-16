@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Mapping
 
 from xbox_gamepad_physics.resources import load_json_resource, resource_path
+from xbox_gamepad_physics.backends.common.appearance import group_opacity, part_records, visual_assignments
 
 
 @dataclass
@@ -59,7 +60,7 @@ def _render_materials(render, root, manifest):
     opaque=_render_material(render,root,manifest)
     # In SAPIEN 3.0.3 constant alpha selects the transparent pass; texture RGBA
     # supplies coverage unchanged. Do not multiply the texture alpha again.
-    opacity=manifest.get('constant_opacity',{}).get('value',1)
+    opacity=group_opacity(manifest,'BLEND')
     textures={name:getattr(opaque,name) for name in manifest['sapien_material']['textures']}
     return {'OPAQUE':opaque,'BLEND':_render_material(render,root,manifest,opacity=opacity,textures=textures)}
 
@@ -71,7 +72,7 @@ def _part_shapes(render, root, part, scale, materials):
 
 
 def _part_records(manifest):
-    return {part['name']:part for part in manifest['parts']}
+    return part_records(manifest)
 
 
 def _link(articulation, name):
@@ -109,15 +110,7 @@ def attach_visual_to_articulation(articulation, binding: Mapping, *, directory=N
     records=_part_records(manifest)
     scale=manifest['meters_per_native_unit']
     conversion=sapien.Pose(q=[math.sqrt(.5),math.sqrt(.5),0,0])
-    assignments={name:(binding['root_link'],None) for name in binding['static_parts']}
-    for part_name,record in binding['moving_parts'].items():
-        assignments[part_name]=(record['link'],record['pivot_m_source_frame'])
-    if set(assignments)!=set(records):
-        raise ValueError(
-            'visual binding part mismatch: '
-            f'missing={sorted(set(records)-set(assignments))}, '
-            f'extra={sorted(set(assignments)-set(records))}'
-        )
+    assignments=visual_assignments(binding,records)
 
     grouped={}
     for part_name,(link_name,pivot) in assignments.items():
