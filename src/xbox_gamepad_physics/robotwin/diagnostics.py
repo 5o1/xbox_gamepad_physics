@@ -38,6 +38,36 @@ def _gamepad_articulation(art):
     return "controller_body" in links and "left_stick_x" in joints
 
 
+def _box_support_between(entities, origin, normal, plane_distance, physx):
+    """Check whether a static box intercepts the downward ray before the plane."""
+    for entity in entities:
+        for component in _components(entity):
+            if not isinstance(component, physx.PhysxRigidStaticComponent):
+                continue
+            for shape in component.collision_shapes:
+                if not isinstance(shape, physx.PhysxCollisionShapeBox):
+                    continue
+                world = entity.pose * shape.local_pose
+                matrix = world.to_transformation_matrix()
+                # Rotate the world ray into the oriented box's local frame.
+                local = [sum(matrix[i][j] * (origin[i] - world.p[i]) for i in range(3)) for j in range(3)]
+                direction = [-sum(matrix[i][j] * normal[i] for i in range(3)) for j in range(3)]
+                near, far = 0.0, plane_distance
+                for axis, half in enumerate(shape.half_size):
+                    if abs(direction[axis]) < 1e-12:
+                        if abs(local[axis]) > half:
+                            far = -1.0
+                            break
+                    else:
+                        first = (-half - local[axis]) / direction[axis]
+                        second = (half - local[axis]) / direction[axis]
+                        near = max(near, min(first, second))
+                        far = min(far, max(first, second))
+                if 0 <= near <= far and near < plane_distance:
+                    return True
+    return False
+
+
 def diagnose_scene(scene):
     """Return a read-only dict of gamepad loading, support and shader findings.
 
@@ -45,7 +75,11 @@ def diagnose_scene(scene):
     Unmarked controller_body/left_stick_x articulations are suspected raw URDF
     imports. Raw mesh detection uses source filenames, so renamed/copied meshes
     with no identifying source path cannot be recognized. A plane below an SDF
-    root is reported as a potential unsupported support; this is a geometric
+    root, without an intervening static box, is a potential unsupported support;
+    raw URDF imports receive the same compatibility warning with collision
+    explicitly unverified, rather than claiming their shapes were cooked as SDF.
+    Intervening static boxes (oriented) are found by casting along the plane
+    normal from the gamepad root. This is a geometric
     warning, not a contact validation. This function never alters the scene,
     global renderer settings, or PhysX configuration.
     """
@@ -89,7 +123,10 @@ def diagnose_scene(scene):
     plane_type = sapien.physx.PhysxCollisionShapePlane
     for art in articulations:
         record = records.get(art)
-        if record is None or record["collision"] != "sdf":
+        if record is None:
+            if not _gamepad_articulation(art):
+                continue
+        elif record["collision"] != "sdf":
             continue
         root = art.get_links()[0]
         root_position = root.entity.pose.p
@@ -101,10 +138,15 @@ def diagnose_scene(scene):
                 matrix = world.to_transformation_matrix()
                 normal = [matrix[i][0] for i in range(3)]
                 distance = sum((root_position[i] - world.p[i]) * normal[i] for i in range(3))
-                if normal[2] > 0.9 and distance >= 0:
+                if (normal[2] > 0.9 and distance >= 0 and
+                        not _box_support_between(entities, root_position, normal, distance, sapien.physx)):
                     findings.append({"code": "sdf_plane_support", "severity": "warning",
                                      "entity": _name(entity),
-                                     "message": "A ground plane lies below an SDF gamepad. SDF cannot collide with add_ground planes; provide a static box as support."})
+                                     "message": (
+                                         "A ground plane lies below a directly imported gamepad; its collision setup is unverified. "
+                                         "SDF cannot collide with add_ground planes; use load_into_scene and a static box as support."
+                                         if record is None else
+                                         "A ground plane lies below an SDF gamepad. SDF cannot collide with add_ground planes; provide a static box as support.")})
 
     shader = str(sapien.render.get_camera_shader_dir())
     shader_name = shader.rstrip("/").split("/")[-1]

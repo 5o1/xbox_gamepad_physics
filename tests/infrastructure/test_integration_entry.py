@@ -38,7 +38,9 @@ class DiagnosticTest(unittest.TestCase):
         art = Articulation(root)
         scene = NS(create_urdf_loader=lambda: None,
                    get_all_articulations=lambda: [art], get_entities=lambda: [root])
-        fake = NS(physx=NS(PhysxCollisionShapePlane=type("Plane", (), {})),
+        fake = NS(physx=NS(PhysxCollisionShapePlane=type("Plane", (), {}),
+                          PhysxRigidStaticComponent=type("Static", (), {}),
+                          PhysxCollisionShapeBox=type("Box", (), {})),
                   render=NS(get_camera_shader_dir=lambda: "/shaders/default"))
         return scene, art, fake
 
@@ -83,6 +85,44 @@ class DiagnosticTest(unittest.TestCase):
         self.assertEqual(result["findings"], [])
         self.assertEqual(result["rendering"]["mode"], "ray_tracing")
 
+    def test_raw_urdf_plane_warns_without_claiming_sdf_collision(self):
+        scene, art, fake = self.make_scene()
+        plane = fake.physx.PhysxCollisionShapePlane()
+        plane.local_pose = None
+        class Pose:
+            p = [0, 0, 0]
+            def __mul__(self, other): return self
+            def to_transformation_matrix(self):
+                return [[0, 0, 0, 0], [0, 1, 0, 0], [1, 0, 0, 0], [0, 0, 0, 1]]
+        ground = Entity("ground", [NS(collision_shapes=[plane])], Pose())
+        scene.get_entities = lambda: [art.entity, ground]
+        with mock.patch.object(diagnostics, "require_sapien", return_value=fake):
+            result = diagnostics.diagnose_scene(scene)
+        self.assertEqual({item["code"] for item in result["findings"]}, {"direct_urdf", "sdf_plane_support"})
+        self.assertEqual(result["gamepads"][0]["collision"], "unknown")
+        self.assertIn("unverified", result["findings"][-1]["message"])
+        diagnostics._mark_loaded(scene, art, profile="left_stick", collision="coacd", attach_visual=True)
+        with mock.patch.object(diagnostics, "require_sapien", return_value=fake):
+            self.assertEqual(diagnostics.diagnose_scene(scene)["findings"], [])
+
+    def test_table_box_intercepts_ground_plane_below_gamepad(self):
+        scene, art, fake = self.make_scene()
+        diagnostics._mark_loaded(scene, art, profile="full_controls", collision="sdf", attach_visual=True)
+        class Pose:
+            def __init__(self, p): self.p = p
+            def __mul__(self, other): return self
+            def to_transformation_matrix(self):
+                return [[1, 0, 0, self.p[0]], [0, 1, 0, self.p[1]], [0, 0, 1, self.p[2]], [0, 0, 0, 1]]
+        shape = fake.physx.PhysxCollisionShapeBox()
+        shape.local_pose = None
+        shape.half_size = [.6, .35, .025]
+        body = fake.physx.PhysxRigidStaticComponent()
+        body.collision_shapes = [shape]
+        table = Entity("table", [body], Pose([0, 0, .715]))
+        self.assertTrue(diagnostics._box_support_between([table], [0, 0, .8], [0, 0, 1], .8, fake.physx))
+        self.assertFalse(diagnostics._box_support_between([table], [1, 0, .8], [0, 0, 1], .8, fake.physx))
+        self.assertFalse(diagnostics._box_support_between([table], [0, 0, .8], [0, 0, 1], .02, fake.physx))
+
 
 class EntryPointTest(unittest.TestCase):
     def test_doctor_missing_runtime_and_resources_has_actionable_result(self):
@@ -98,8 +138,10 @@ class EntryPointTest(unittest.TestCase):
 
     def test_doctor_ready_and_old_sapien(self):
         with mock.patch.object(integration, "_version", return_value="3.0.3"), mock.patch.object(integration, "resource_status", return_value={"root": "/tmp/test", "missing": [], "nodes": []}):
-            with contextlib.redirect_stdout(io.StringIO()):
+            output = io.StringIO()
+            with contextlib.redirect_stdout(output):
                 self.assertEqual(cli.main(["doctor"]), 0)
+            self.assertIn("diagnose_scene(scene)", output.getvalue())
         with mock.patch.object(integration, "_version", return_value="3.0.0b1"), mock.patch.object(integration, "resource_status", return_value={"missing": [], "nodes": []}):
             self.assertFalse(integration.diagnose_environment()["sdf_supported"])
 

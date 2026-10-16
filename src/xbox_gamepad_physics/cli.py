@@ -133,6 +133,7 @@ def _doctor(args):
             missing = [dep for dep, version in extra['distributions'].items() if version is None]
             print(f"[{name}]: {'installed' if extra['installed'] else 'missing ' + ', '.join(missing)}")
         print("Next: xbox-gamepad-physics guide; example export DIRECTORY")
+        print("For scene-level checks, call diagnose_scene(scene) in your code.")
     return 0 if result['sdf_supported'] and result['resources']['ready'] else 1
 
 
