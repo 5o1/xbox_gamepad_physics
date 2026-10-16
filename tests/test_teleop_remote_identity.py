@@ -7,7 +7,9 @@ import tempfile
 import unittest
 import os
 import threading
+from unittest import mock
 from http.server import BaseHTTPRequestHandler,ThreadingHTTPServer
+from xbox_gamepad_physics.teleop import remote_session
 from xbox_gamepad_physics.teleop.remote_session import cleanup,record_processes,RECEIPT
 
 
@@ -78,3 +80,21 @@ class RemoteIdentityTest(unittest.TestCase):
                 self.assertEqual(result['forced_cleanup'],[])
                 self.assertIsNone(child.poll())
             finally:child.terminate();child.wait(timeout=5)
+
+    def test_transiently_empty_argv_is_not_recorded(self):
+        with tempfile.TemporaryDirectory() as folder:
+            run=Path(folder);child=subprocess.Popen([sys.executable,'-c','import time;time.sleep(30)'])
+            try:
+                real=remote_session.identity;reads=[]
+                def flaky(pid):
+                    value=real(pid);reads.append(pid)
+                    return {**value,'argv':''} if value and len(reads)<3 else value
+                with mock.patch.object(remote_session,'identity',flaky):
+                    data=record_processes(run,0,[child.pid])
+                self.assertTrue(data['processes'][0]['argv'])
+                result=cleanup(run,wait=0)
+                self.assertTrue(result['all_exited'])
+                self.assertEqual(result['forced_cleanup'],[{'pid':child.pid,'signal':'SIGTERM'}])
+                child.wait(timeout=5)
+            finally:
+                if child.poll() is None:child.terminate();child.wait(timeout=5)

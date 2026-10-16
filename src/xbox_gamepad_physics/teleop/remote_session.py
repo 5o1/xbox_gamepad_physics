@@ -23,9 +23,19 @@ def identity(pid):
     except FileNotFoundError:return None
 
 
+def stable_identity(pid, timeout=2.0):
+    # /proc/<pid>/cmdline can read empty for a moment around exec under load;
+    # recording that would make cleanup refuse to signal the live process.
+    deadline=time.monotonic()+timeout
+    value=identity(pid)
+    while value is not None and not value['argv'] and time.monotonic()<deadline:
+        time.sleep(.02);value=identity(pid)
+    return value
+
+
 def record_processes(run, port, pids):
     run=Path(run)
-    rows=[value for pid in pids if (value:=identity(pid)) is not None]
+    rows=[value for pid in pids if (value:=stable_identity(pid)) is not None]
     data={'run':run.name,'output':str(run.resolve()),'port':port,'processes':rows}
     temporary=run/(RECEIPT+'.tmp')
     temporary.write_text(json.dumps(data,indent=2)+'\n')
