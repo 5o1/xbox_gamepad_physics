@@ -1,15 +1,27 @@
-"""Historical MuJoCo entry points: excluded from the v0.3 release scope."""
+"""Lazy dependency boundary for the native MuJoCo backend."""
 
 from __future__ import annotations
 
 from typing import NoReturn
+import importlib
 
-from xbox_gamepad_physics.errors import PhysicsNotReadyError
+from xbox_gamepad_physics.errors import PhysicsNotReadyError, MissingBackendDependencyError
 
 
 def reject_release_backend() -> NoReturn:
     raise PhysicsNotReadyError("MuJoCo is outside the v0.3 release scope")
 
 
-def require_mujoco() -> NoReturn:
-    reject_release_backend()
+def require_mujoco():
+    """Import only when loading; M2 is validated against exactly 3.16.0."""
+    try:
+        module = importlib.import_module("mujoco")
+    except ImportError as exc:
+        raise MissingBackendDependencyError(
+            "MuJoCo requires optional 'mujoco==3.16.0'."
+        ) from exc
+    if module.__version__ != "3.16.0":
+        raise MissingBackendDependencyError(
+            f"MuJoCo M2 requires 3.16.0; installed {module.__version__}."
+        )
+    return module
