@@ -14,16 +14,37 @@ parser.add_argument('--spacing-mm',type=float,choices=[.5,1.,2.],default=1.)
 parser.add_argument('--cases',default='A,LT')
 parser.add_argument('--full-suite',action='store_true')
 parser.add_argument('--comparison-only',action='store_true')
+parser.add_argument('--continue-on-regression',action='store_true',
+ help='Record scoring failures and continue the selected frozen cases without changing acceptance criteria.')
 parser.add_argument('--case-start',type=int,default=0)
 parser.add_argument('--case-count',type=int)
 parser.add_argument('--shell-spacing-mm',type=float,choices=[.5,1.,2.])
 parser.add_argument('--shell-coacd',action='store_true')
 parser.add_argument('--guide-coacd',action='store_true')
+parser.add_argument('--stick-coacd',choices=['left','right'],
+ help='Diagnostic: change only the selected stick collision component to frozen CoACD.')
+parser.add_argument('--diagnostic-stick-native-state',action='store_true',
+ help='Record native velocities and available joint-force telemetry without changing the executor control law.')
+parser.add_argument('--diagnostic-constant-hold-force',action='store_true',
+ help='Diagnostic only: freeze the final press force vector during hold; retain the original press trajectory and scoring.')
+parser.add_argument('--diagnostic-constant-hold-axis-force',action='store_true',
+ help='Diagnostic only: freeze the final axial press force while preserving transverse PD positioning.')
+parser.add_argument('--diagnostic-lock-stick-tilt',action='store_true',
+ help='Diagnostic only: add regular native fixed joints holding both tilt frames neutral; click remains free.')
 parser.add_argument('--contact-offset-mm',type=float,choices=[.1,.2],default=.2)
 parser.add_argument('--measure-guide-clearance',action='store_true')
 parser.add_argument('--diagnostic-no-shell-contact',action='store_true')
+parser.add_argument('--diagnostic-refresh-force-frame',action='store_true',
+ help='Refresh the SDK force-composer pose cache before every world-force command; diagnostic only.')
 AppLauncher.add_app_launcher_args(parser)
-args=parser.parse_args();launcher=AppLauncher(args);app=launcher.app
+args=parser.parse_args()
+if (args.stick_coacd or args.diagnostic_stick_native_state or args.diagnostic_constant_hold_force or args.diagnostic_constant_hold_axis_force or args.diagnostic_lock_stick_tilt) and not args.comparison_only:
+    raise ValueError('stick diagnostic controls require --comparison-only')
+if args.diagnostic_constant_hold_force and args.diagnostic_constant_hold_axis_force:
+    raise ValueError('select exactly one constant-force diagnostic')
+launcher=AppLauncher(args);app=launcher.app
+import atexit
+atexit.register(app.close,skip_cleanup=True)
 
 import numpy as np
 import torch
@@ -48,7 +69,8 @@ from xbox_gamepad_physics.acceptance.records import ResultSink
 
 args.output.mkdir(parents=True,exist_ok=True)
 result={'status':'running','collision':args.collision,'candidate_spacing_mm':args.spacing_mm if args.collision=='sdf' else None,
-        'sdf_default':False,'cases':[]}
+        'sdf_default':args.collision=='sdf','cases':[],
+        'continue_on_regression':args.continue_on_regression}
 def save():
     (args.output/'result.json').write_text(json.dumps(result,indent=2)+'\n')
 def gpu():
@@ -80,8 +102,15 @@ for source in collisions:
         elif args.shell_spacing_mm is not None:
             overrides[source.component]={'collision_mode':'sdf','sdf_options':{**options,'spacing_m':args.shell_spacing_mm*.001}}
     if source.component=='guide' and args.guide_coacd:overrides[source.component]={'collision_mode':'coacd'}
+    if args.stick_coacd and source.component==args.stick_coacd+'_stick':overrides[source.component]={'collision_mode':'coacd'}
 result['diagnostic_overrides']=overrides
 result['comparison_only']=args.comparison_only
+result['diagnostic_refresh_force_frame']=args.diagnostic_refresh_force_frame
+result['diagnostic_constant_hold_force']=args.diagnostic_constant_hold_force
+result['diagnostic_constant_hold_axis_force']=args.diagnostic_constant_hold_axis_force
+result['diagnostic_lock_stick_tilt']=args.diagnostic_lock_stick_tilt
+if args.diagnostic_refresh_force_frame and not args.comparison_only:
+    raise ValueError('force-frame controls require --comparison-only')
 result['fixture']={'suite':suite.suite_id,'sphere':suite.settings,'contact_offsets':{k:v.as_dict() for k,v in offsets.items()},
  'sdf_cook_controls':options,'sdf_controls_basis':'B0 explicit probe cook controls; candidate experiment, not calibrated defaults',
  'gravity_m_s2':suite.fixture['gravity_m_s2'],'dt_s':.004}
@@ -107,12 +136,41 @@ if args.diagnostic_no_shell_contact:
 links=sorted({'controller_body'}|{case.plan['link'] for case in suite.cases})
 sensors={link:ContactSensor(ContactSensorCfg(prim_path='/World/Gamepad/Links/'+link,
  filter_prim_paths_expr=['/World/Probe'],track_contact_points=True,update_period=0.,max_contact_data_count_per_prim=64)) for link in links}
+if args.diagnostic_lock_stick_tilt:
+    from pxr import Gf
+    stage=omni.usd.get_context().get_stage()
+    paths=[]
+    for side in ('left','right'):
+        path='/World/ClickDiagnosticLocks/'+side
+        joint=UsdPhysics.FixedJoint.Define(stage,path)
+        joint.CreateBody0Rel().SetTargets(['/World/Gamepad/Links/controller_body'])
+        joint.CreateBody1Rel().SetTargets(['/World/Gamepad/Links/'+side+'_stick_y_frame'])
+        joint.CreateLocalPos0Attr(Gf.Vec3f(*motion.joint_by_name[side+'_stick_x'].origin))
+        joint.CreateLocalPos1Attr(Gf.Vec3f(0))
+        joint.CreateExcludeFromArticulationAttr(True)
+        paths.append(path)
+    result['diagnostic_extra_fixed_tilt_joint_paths']=paths
 started=time.perf_counter();sim.reset();torch.cuda.synchronize();result['reset_and_cook_seconds']=time.perf_counter()-started
 pad_native.update(.004);probe.update(.004)
 pad=bind_articulation(pad_native,motion=motion,physical=physical)
 result['root_pose_m_wxyz']=list(pad.root_pose().position_m)+list(pad.root_pose().orientation_wxyz)
 assert np.allclose(result['root_pose_m_wxyz'],[*root_pose.position_m,*root_pose.orientation_wxyz],atol=1e-7)
-executor=IsaacPressExecutor(simulation=sim,gamepad=pad,probe=probe,sensors=sensors,root_pose=root_pose,radius_m=settings['radius_m'])
+class RefreshedForceExecutor(IsaacPressExecutor):
+    def apply_ball_force(self,force_n):
+        self.probe.permanent_wrench_composer.reset()
+        super().apply_ball_force(force_n)
+executor_class=RefreshedForceExecutor if args.diagnostic_refresh_force_frame else IsaacPressExecutor
+if args.diagnostic_stick_native_state:
+    if args.diagnostic_refresh_force_frame:
+        raise ValueError('native stick logging uses the production force path directly')
+    from diagnose_clicks import NativeClickLoggingExecutor
+    executor_class=NativeClickLoggingExecutor
+executor=executor_class(simulation=sim,gamepad=pad,probe=probe,sensors=sensors,root_pose=root_pose,radius_m=settings['radius_m'])
+if args.diagnostic_stick_native_state:
+    result['native_logging']=executor.native_metadata
+    result['physx_configuration']={name:getattr(sim.cfg.physx,name) for name in (
+        'solver_type','min_position_iteration_count','max_position_iteration_count',
+        'min_velocity_iteration_count','max_velocity_iteration_count','enable_external_forces_every_iteration')}
 if not args.full_suite and args.cases=='Guide':executor.diagnostic_links=['guide','controller_body']
 result['shape_stats']=omni.physx.get_physxunittests_interface().get_physics_stats()
 result['cooking_after_reset']=cooking();result['gpu_after_reset']=gpu()
@@ -162,10 +220,29 @@ else:
     result['convex_above_64']=repr_rows;save()
     assert all(r['callback_received'] for r in repr_rows)
 
+if args.stick_coacd:
+    stage_id=UsdUtils.StageCache.Get().GetId(stage).ToLongInt()
+    cooked=[]
+    for prim in meshes:
+        if '/Links/'+args.stick_coacd+'_stick/Collision/' not in str(prim.GetPath()):continue
+        record={'path':str(prim.GetPath()),'source_vertices':len(UsdGeom.Mesh(prim).GetPointsAttr().Get()),
+                'approximation':UsdPhysics.MeshCollisionAPI(prim).GetApproximationAttr().Get(),
+                'callback_received':False}
+        def on_cooked(status,convexes,record=record):
+            record.update(callback_received=True,cook_status=str(status),
+                cooked_vertices=[len(h.vertices) for h in convexes],cooked_convexes=len(convexes))
+        omni.physx.get_physx_cooking_interface().request_convex_collision_representation(
+            stage_id=stage_id,collision_prim_id=PhysicsSchemaTools.sdfPathToInt(str(prim.GetPath())),
+            run_asynchronously=False,on_result=on_cooked)
+        cooked.append(record)
+    result['stick_coacd_actual_cook']=cooked;save()
+    assert cooked and all(r['callback_received'] and r['approximation']=='convexHull' for r in cooked)
+
 if args.measure_guide_clearance:
     from xbox_gamepad_physics.isaac.guide_clearance import measure_guide_clearance
     result['guide_clearance']=measure_guide_clearance(stage,sdf if args.collision=='sdf' else None,
-        collisions=collisions,case=suite.case('Guide'),radius_m=settings['radius_m'],device=args.device)
+        collisions=collisions,case=suite.case('Guide'),radius_m=settings['radius_m'],device=args.device,
+        reference_path=args.output.parent/'guide_triangle_reference.json')
     save()
 
 # Shell contact from an actual frozen triangle; no substitute synthetic geometry.
@@ -207,7 +284,12 @@ cases=suite.cases if args.full_suite else [suite.case(name) for name in args.cas
 if args.full_suite:cases=cases[args.case_start:args.case_start+args.case_count if args.case_count is not None else None]
 for case in cases:
     sink=ResultSink(args.output/('trace_'+case.case_id+'.jsonl'))
-    scored=run_case(executor,suite,case,sink);sink.close()
+    if args.diagnostic_constant_hold_force or args.diagnostic_constant_hold_axis_force:
+        from diagnose_clicks import run_constant_hold_case
+        scored=run_constant_hold_case(executor,suite,case,sink,axial_only=args.diagnostic_constant_hold_axis_force)
+    else:
+        scored=run_case(executor,suite,case,sink)
+    sink.close()
     rows=[json.loads(line) for line in (args.output/('trace_'+case.case_id+'.jsonl')).read_text().splitlines()]
     contacts=[c for row in rows for c in row['contacts'] if c['link']==case.plan['link']]
     scored['target_contact_observed']=bool(contacts)
@@ -220,9 +302,13 @@ for case in cases:
     result['cases'].append(scored);save()
     if not args.full_suite and not args.comparison_only:
         assert contacts,('dynamic link contact missing',case.case_id)
-    if args.full_suite and not args.comparison_only and case.baseline['passed'] and not scored['physics_passed']:
+    if args.full_suite and not args.comparison_only and not args.continue_on_regression and case.baseline['passed'] and not scored['physics_passed']:
         result['status']='failed_regression';result['failed_case']=case.case_id;save()
         raise AssertionError('previously passed case regressed: '+case.case_id)
-result['cooking_final']=cooking();result['gpu_final']=gpu();result['status']='completed_comparison' if args.comparison_only else 'passed';result['physics_passed_count']=sum(c['physics_passed'] for c in result['cases']);save()
+result['cooking_final']=cooking();result['gpu_final']=gpu()
+result['status']=('completed_comparison' if args.comparison_only else
+ 'completed_with_failures' if any(not c['physics_passed'] for c in result['cases']) else 'passed')
+result['physics_passed_count']=sum(c['physics_passed'] for c in result['cases']);save()
 print('B3_DONE '+args.collision+' '+str(args.spacing_mm),flush=True)
+atexit.unregister(app.close)
 app.close(skip_cleanup=True)

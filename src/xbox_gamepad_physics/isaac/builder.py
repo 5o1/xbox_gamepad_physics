@@ -8,10 +8,19 @@ from __future__ import annotations
 from dataclasses import asdict, dataclass
 import json
 import math
+import os
 from pathlib import Path
 
 from ..backends.common.collision import bind_collision_to_links, iter_frozen_hulls
 from ..backends.common.transforms import neutral_link_poses, point
+from .constraints import NATIVE_CONE_ANGLE_SCALE, joint_chain, require_supported_constraints, validate_initial_positions
+
+
+# User ruling 3 selects SDF as the default backend policy. These are the
+# unchanged 0.5 mm diagnostic baseline controls, not fitted Guide settings.
+DEFAULT_SDF_OPTIONS = {'spacing_m': .0005, 'subgrid_resolution': 6,
+                       'bits_per_pixel': 'BitsPerPixel16', 'margin': .01,
+                       'narrow_band_thickness': .02}
 
 
 @dataclass(frozen=True)
@@ -75,19 +84,23 @@ def _axis_quaternion(axis):
 
 
 def build_usd(output_path, *, motion, physical, appearance, collision_sources,
-              visual_directory, root_mode='fixed', collision_mode='coacd', sdf_options=None,
+              visual_directory, root_mode='fixed', collision_mode='sdf', sdf_options=None,
               contact_offsets=None, collision_overrides=None):
     """Build a full-controls asset; caller owns AppLauncher and all runtime state.
 
-    SDF is opt-in and requires explicit native cook settings. Its default-readiness
-    gate belongs to B2-B4. Unknown unsupported parameters stay null in the sidecar.
+    SDF is the default policy selected in user ruling 3. Its unchanged baseline
+    uses 0.5 mm spacing. Full contact qualification is separate and still pending.
+    Unknown physical parameters stay null in the sidecar.
     """
+    shaft_limits = require_supported_constraints(motion)
     if root_mode not in {'fixed', 'free'}:
         raise ValueError("root_mode must be 'fixed' or 'free'")
     if collision_mode not in {'coacd', 'sdf'}:
         raise ValueError("collision_mode must be 'coacd' or 'sdf'")
+    if collision_mode == 'sdf' and sdf_options is None:
+        sdf_options = dict(DEFAULT_SDF_OPTIONS)
     if collision_mode == 'sdf' and not sdf_options:
-        raise ValueError('SDF requires explicit cook settings; it has not passed the default gate')
+        raise ValueError('SDF requires nonempty cook settings')
     if physical.profile != motion.profile or motion.profile != 'full_controls':
         raise ValueError('B1 requires matching full_controls motion and physical descriptions')
     collision_overrides = collision_overrides or {}
@@ -108,6 +121,7 @@ def build_usd(output_path, *, motion, physical, appearance, collision_sources,
         for field in ('dry_friction_effort', 'armature'):
             if getattr(law, field).value is not None:
                 raise ValueError(f'{name}.{field}: no verified Isaac mapping in B1')
+    validate_initial_positions(motion, physical)
     # pxr is deliberately imported only inside the platform-process entry point.
     from pxr import Usd, UsdGeom, UsdPhysics, UsdShade, PhysxSchema, Gf, Sdf, Vt, Tf
     import numpy as np
@@ -174,6 +188,23 @@ def build_usd(output_path, *, motion, physical, appearance, collision_sources,
             f'physxJointAxis:{axis_name}:viscousFrictionCoefficient',
             Sdf.ValueTypeNames.Float, custom=False).Set(law.passive_damping.value/scale)
 
+    constraint_paths = {}
+    for limit in shaft_limits:
+        path = root+'/ShaftLimits/'+Tf.MakeValidIdentifier(limit.name)
+        native = UsdPhysics.SphericalJoint.Define(stage, path)
+        native.CreateBody0Rel().SetTargets([link_paths[limit.reference_link]])
+        native.CreateBody1Rel().SetTargets([link_paths[limit.moving_link]])
+        native.CreateLocalPos0Attr(Gf.Vec3f(*joint_chain(motion, limit)[0].origin))
+        native.CreateLocalPos1Attr(Gf.Vec3f(0))
+        native.CreateAxisAttr('X')
+        native.CreateLocalRot0Attr(quat(_axis_quaternion(limit.reference_axis)))
+        native.CreateLocalRot1Attr(quat(_axis_quaternion(limit.moving_axis)))
+        native.CreateConeAngle0LimitAttr(math.degrees(limit.maximum_rad)*NATIVE_CONE_ANGLE_SCALE)
+        native.CreateConeAngle1LimitAttr(math.degrees(limit.maximum_rad)*NATIVE_CONE_ANGLE_SCALE)
+        # A regular joint closes the loop without changing the articulation's
+        # 20 coordinates. Articulation spherical limits form a pyramid instead.
+        native.CreateExcludeFromArticulationAttr(True)
+        constraint_paths[limit.name] = path
     if root_mode == 'fixed':
         joint = UsdPhysics.FixedJoint.Define(stage, root+'/Joints/world_fixed')
         joint.CreateBody1Rel().SetTargets([link_paths['controller_body']])
@@ -198,7 +229,8 @@ def build_usd(output_path, *, motion, physical, appearance, collision_sources,
                 raise ValueError('B1 supports the frozen untransformed UV0 textures')
             sh = UsdShade.Shader.Define(stage, path+'/'+suffix)
             sh.CreateIdAttr('UsdUVTexture')
-            sh.CreateInput('file', Sdf.ValueTypeNames.Asset).Set(Sdf.AssetPath(str(visual_root/t.resource)))
+            asset_path=Path(os.path.relpath(visual_root/t.resource,output.parent)).as_posix()
+            sh.CreateInput('file', Sdf.ValueTypeNames.Asset).Set(Sdf.AssetPath(asset_path))
             sh.CreateInput('sourceColorSpace', Sdf.ValueTypeNames.Token).Set(color_space)
             sh.CreateInput('st', Sdf.ValueTypeNames.Float2).ConnectToSource(reader.ConnectableAPI(), 'result')
             sh.CreateInput('wrapS', Sdf.ValueTypeNames.Token).Set('repeat')
@@ -327,6 +359,15 @@ def build_usd(output_path, *, motion, physical, appearance, collision_sources,
     stage.GetRootLayer().Save()
     artifact = UsdArtifact(output, root, link_paths, joint_paths, root_mode, collision_mode)
     sidecar = {**asdict(artifact), 'usd_path': output.name, 'physical': asdict(physical),
+               'shaft_cone_paths': constraint_paths,
+               'shaft_cone_angle_scale': NATIVE_CONE_ANGLE_SCALE,
+               'shaft_cone_angles_deg': {limit.name: {
+                   'common_maximum': math.degrees(limit.maximum_rad),
+                   'authored_half_angle': math.degrees(limit.maximum_rad)*NATIVE_CONE_ANGLE_SCALE}
+                   for limit in shaft_limits},
+               'shaft_cone_policy_source': 'Owner requested an inward native-stop margin so loaded steady angles stay below the unchanged common maximum; native_cone_margin_20261020',
+               'shaft_cone_enforcement': 'regular native spherical joints closing the two-hinge chains',
+               'shaft_cone_state_projection': False,
                'collision_shapes': hull_count, 'shadow_disabled_meshes': shadow_paths,
                'shadow_basis': 'mb_ib1b: only the four BLEND domes; letters remain on OPAQUE geometry',
                'passive_damping_binding': 'USD PhysxJointAxisAPI per degree; Isaac Lab viscous_friction uses original SI; not drive damping',
@@ -335,6 +376,8 @@ def build_usd(output_path, *, motion, physical, appearance, collision_sources,
                'unknown_reason': 'No adopted Isaac-specific calibration; SDK effective values must be recorded by native validation.',
                'appearance_limitations': ['PreviewSurface metallic workflow is not full KHR dielectric F0 equivalence.'],
                'sdf_default_gate_passed': False,
+               'default_collision_policy': 'sdf',
+               'default_policy_source': 'User ruling 3; contact qualification remains separate',
                'sdf_candidate_settings': sdf_options,
                'component_collision_overrides': collision_overrides,
                'contact_offsets': {k: asdict(v) for k,v in contact_offsets.items()} if contact_offsets else None}

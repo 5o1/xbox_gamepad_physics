@@ -5,7 +5,8 @@ import math
 from pathlib import Path
 
 from ..backends.common.handle import ResetRequest, SignalHandleMixin
-from ..backends.common.model import Pose
+from ..backends.common.model import Pose, finite_value
+from .constraints import require_supported_constraints, validate_initial_positions, verify_native_cones
 
 
 def make_articulation_cfg(usd_path, *, motion, physical, prim_path='/World/Gamepad',
@@ -16,6 +17,8 @@ def make_articulation_cfg(usd_path, *, motion, physical, prim_path='/World/Gamep
     in the USD, never overridden by a density/mass recomputation in this factory.
     Native actuator tensors use SI (unlike USD angular attributes).
     """
+    require_supported_constraints(motion)
+    validate_initial_positions(motion, physical)
     from isaaclab.assets import ArticulationCfg
     from isaaclab.actuators import ImplicitActuatorCfg
     from isaaclab.sim import UsdFileCfg
@@ -43,13 +46,14 @@ def make_articulation_cfg(usd_path, *, motion, physical, prim_path='/World/Gamep
 
 
 class IsaacGamepadHandle(SignalHandleMixin):
-    """Scalar B1 handle. Caller flushes targets and updates data after each step."""
+    """Scalar handle with native cone joints and validated explicit writes."""
     asset_id = 'xbox_one_s'
     backend = 'isaac'
     profile = 'full_controls'
     capabilities = frozenset({'named_joints', 'signals', 'birth_fixed_free'})
 
     def __init__(self, articulation, *, motion, physical):
+        require_supported_constraints(motion)
         if not articulation.is_initialized:
             raise ValueError('bind_articulation requires an initialized caller articulation')
         if articulation.num_instances != 1:
@@ -62,6 +66,10 @@ class IsaacGamepadHandle(SignalHandleMixin):
         self.physical = physical
         self._indices = {name: i for i, name in enumerate(names)}
         self._signal_controller = motion.signal_controller
+        verify_native_cones(articulation, motion)
+        from .shaft_limits import ShaftLimits
+        self._shaft_limits = ShaftLimits(articulation, motion)
+        self._shaft_limits.validate_initial_state()
         self.restore_passive_targets()
 
     @property
@@ -98,6 +106,7 @@ class IsaacGamepadHandle(SignalHandleMixin):
         v = self.articulation.data.joint_vel.clone()
         for name, value in positions.items():
             q[0, self._indices[name]] = value
+        q = self._shaft_limits.checked_state(q, v)
         self.articulation.write_joint_state_to_sim(q, v)
 
     def set_joint_target(self, name, target):
@@ -128,14 +137,15 @@ class IsaacGamepadHandle(SignalHandleMixin):
             self._check(request.joint_positions)
         if self.root_fixed and (request.root_pose is not None or request.root_twist is not None):
             raise ValueError('fixed roots cannot be repositioned after birth')
-        art = self.articulation
-        if request.root_pose is not None:
-            pose = request.root_pose
-            art.write_root_pose_to_sim(torch.tensor([[*pose.position_m, *pose.orientation_wxyz]],
-                device=art.device, dtype=art.data.joint_pos.dtype))
+        if request.root_pose is not None and not isinstance(request.root_pose, Pose):
+            raise ValueError('scalar reset root_pose must be a common Pose')
         if request.root_twist is not None:
-            art.write_root_velocity_to_sim(torch.tensor([request.root_twist], device=art.device,
-                dtype=art.data.joint_pos.dtype))
+            finite_value(request.root_twist)
+            if len(request.root_twist) != 6:
+                raise ValueError('root_twist must have six SI components')
+        if request.joint_velocities is not None:
+            finite_value(tuple(request.joint_velocities.values()))
+        art = self.articulation
         q = art.data.joint_pos.clone()
         v = art.data.joint_vel.clone()
         positions = request.joint_positions or {n: l.initial_position.value for n,l in self.physical.return_laws.items()}
@@ -146,6 +156,15 @@ class IsaacGamepadHandle(SignalHandleMixin):
             if not math.isfinite(value):
                 raise ValueError('reset velocities must be finite')
             v[0, self._indices[name]] = value
+        q = self._shaft_limits.checked_state(q, v)
+        # Validate the complete joint candidate before writing root or joints.
+        if request.root_pose is not None:
+            pose = request.root_pose
+            art.write_root_pose_to_sim(torch.tensor([[*pose.position_m, *pose.orientation_wxyz]],
+                device=art.device, dtype=art.data.joint_pos.dtype))
+        if request.root_twist is not None:
+            art.write_root_velocity_to_sim(torch.tensor([request.root_twist], device=art.device,
+                dtype=art.data.joint_pos.dtype))
         art.write_joint_state_to_sim(q, v)
         art.reset()
         if request.targets == 'passive':

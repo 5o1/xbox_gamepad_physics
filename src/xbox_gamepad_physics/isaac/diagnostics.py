@@ -8,6 +8,8 @@ def readback_usd(artifact, *, motion, physical, appearance, collision_sources):
     import numpy as np
     from ..backends.common.collision import bind_collision_to_links
     from ..backends.common.transforms import neutral_link_poses, rotate, multiply
+    from .constraints import NATIVE_CONE_ANGLE_SCALE, require_supported_constraints
+    from pxr import Tf
     stage = Usd.Stage.Open(str(artifact.usd_path))
     comparisons = []
     def compare(label, actual, expected, atol=1e-10):
@@ -20,6 +22,13 @@ def readback_usd(artifact, *, motion, physical, appearance, collision_sources):
     joints = [p for p in stage.Traverse() if p.IsA(UsdPhysics.RevoluteJoint) or p.IsA(UsdPhysics.PrismaticJoint)]
     assert len(bodies)==len(physical.links)==21 and len(joints)==len(motion.joints)==20
     assert bool(stage.GetPrimAtPath('/Gamepad/Joints/world_fixed')) == (artifact.root_mode=='fixed')
+    for limit in require_supported_constraints(motion):
+        cone = UsdPhysics.SphericalJoint(stage.GetPrimAtPath(
+            '/Gamepad/ShaftLimits/'+Tf.MakeValidIdentifier(limit.name)))
+        assert cone and cone.GetExcludeFromArticulationAttr().Get()
+        for axis, attribute in enumerate((cone.GetConeAngle0LimitAttr(), cone.GetConeAngle1LimitAttr())):
+            compare(limit.name+'.native_half_angle_'+str(axis), attribute.Get(),
+                    math.degrees(limit.maximum_rad)*NATIVE_CONE_ANGLE_SCALE)
     poses = neutral_link_poses(motion)
     for record in physical.links:
         p = stage.GetPrimAtPath(artifact.link_paths[record.name])

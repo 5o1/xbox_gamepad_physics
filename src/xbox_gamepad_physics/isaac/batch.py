@@ -9,6 +9,7 @@ from ..backends.common.handle import ResetRequest, SignalHandleMixin, validate_e
 from ..backends.common.model import Pose
 from ..backends.common.signals_torch import NamedJointBatch, SignalBatch
 from .signals_torch import IsaacTorchSignalMapper
+from .constraints import require_supported_constraints, verify_native_cones
 
 
 class IsaacBatchedGamepadHandle:
@@ -25,6 +26,7 @@ class IsaacBatchedGamepadHandle:
     capabilities = frozenset({'named_joints','signals','birth_fixed_free','batch_cuda'})
 
     def __init__(self, articulation, *, motion, physical, env_origins):
+        require_supported_constraints(motion)
         if not articulation.is_initialized:
             raise ValueError('bind after the caller initializes the articulation')
         self.articulation=articulation
@@ -42,6 +44,10 @@ class IsaacBatchedGamepadHandle:
         self.mapper=IsaacTorchSignalMapper(motion,self.joint_names,device=self.device,dtype=self.dtype)
         self._passive=torch.tensor([physical.return_laws[n].neutral_target.value for n in self.joint_names],device=self.device,dtype=self.dtype)
         self._initial=torch.tensor([physical.return_laws[n].initial_position.value for n in self.joint_names],device=self.device,dtype=self.dtype)
+        verify_native_cones(articulation,motion)
+        from .shaft_limits import ShaftLimits
+        self._shaft_limits=ShaftLimits(articulation,motion)
+        self._shaft_limits.validate_initial_state()
 
     def _check(self,value,rows,width):
         if not isinstance(value,torch.Tensor) or value.device!=self.device or value.dtype!=self.dtype or tuple(value.shape)!=(rows,width):
@@ -103,6 +109,7 @@ class IsaacBatchedGamepadHandle:
         q=self.articulation.data.joint_pos[ids].clone()
         v=self.articulation.data.joint_vel[ids].clone()
         q[:,columns]=values
+        q=self._shaft_limits.checked_state(q,v)
         self.articulation.write_joint_state_to_sim(q,v,env_ids=ids)
 
     def set_joint_targets(self,targets,env_ids=None):
@@ -156,6 +163,7 @@ class IsaacBatchedGamepadHandle:
             root_pose=root_pose.clone();root_pose[:,:3]+=self.env_origins[ids]
         if request.root_twist is not None:self._check(request.root_twist,k,6)
         if not k:return
+        q=self._shaft_limits.checked_state(q,v)
         if root_pose is not None:self.articulation.write_root_pose_to_sim(root_pose,env_ids=ids)
         if request.root_twist is not None:self.articulation.write_root_velocity_to_sim(request.root_twist,env_ids=ids)
         self.articulation.write_joint_state_to_sim(q,v,env_ids=ids)

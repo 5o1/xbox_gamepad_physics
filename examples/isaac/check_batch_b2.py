@@ -15,7 +15,7 @@ import torch
 from isaaclab.sim import SimulationContext,SimulationCfg
 from isaaclab.scene import InteractiveScene,InteractiveSceneCfg
 from isaaclab.utils import configclass
-from xbox_gamepad_physics.isaac import build_usd,make_articulation_cfg,bind_batched_articulation
+from xbox_gamepad_physics.isaac import build_usd,make_articulation_cfg,bind_batched_articulation,step
 from xbox_gamepad_physics.motion import motion_from_dict
 from xbox_gamepad_physics.backends.common.appearance import load_appearance
 from xbox_gamepad_physics.backends.common.collision import load_collision_sources
@@ -30,7 +30,7 @@ motion=motion_from_dict(json.loads((c/'motion/full_controls.json').read_text()))
 physical=load_physical(resource_directory=c/'physical')
 appearance=load_appearance(directory=c/'visual',binding=json.loads((r/'review_binding.json').read_text()))
 artifact=build_usd(args.output/'batch.usda',motion=motion,physical=physical,appearance=appearance,
- collision_sources=load_collision_sources(directory=c/'collision'),visual_directory=c/'visual',root_mode='free')
+ collision_sources=load_collision_sources(directory=c/'collision'),visual_directory=c/'visual',root_mode='free',collision_mode='coacd')
 sim=SimulationContext(SimulationCfg(dt=.004,device=args.device,gravity=(0.,0.,0.),log_dir=str(args.output/'lab_logs')))
 @configclass
 class SceneCfg(InteractiveSceneCfg):
@@ -67,6 +67,11 @@ lo=torch.tensor([motion.joint_by_name[x].lower for x in pad.joint_names],device=
 hi=torch.tensor([motion.joint_by_name[x].upper for x in pad.joint_names],device=device)
 fraction=(torch.arange(n,device=device)[:,None]+torch.arange(j,device=device)[None,:]*.37+1)/(n+j*.37+2)
 q=lo+(hi-lo)*fraction
+# D08 uses legal interior states for row isolation. Actual cone boundary loads
+# and rejection of the independent-axis corner belong to check_shaft_limits.py.
+for side in ('left','right'):
+    for axis in ('x','y'):
+        q[:,pad._indices[side+'_stick_'+axis]]*=.5
 pad.set_joint_positions(q)
 same('all_distinct_rows',pad.joint_positions(),q)
 same('owning_copy_unchanged',owned,torch.zeros_like(owned))
@@ -114,7 +119,7 @@ same('root_write_read_origin_once',pad.root_poses(),local,atol=2e-7)
 def advance(initial,targets):
     pad.reset(ResetRequest(root_pose=root,root_twist=zero_twist,joint_positions=initial,joint_velocities=zero_v))
     pad.set_joint_targets(targets)
-    for _ in range(20):scene.write_data_to_sim();sim.step(render=False);scene.update(.004)
+    for _ in range(20):step(sim,gamepads=(pad,))
     return pad.joint_positions(),pad.root_poses()
 q_first,r_first=advance(q,lo+(hi-lo)*(1-fraction))
 q_second,r_second=advance(q[perm],(lo+(hi-lo)*(1-fraction))[perm])

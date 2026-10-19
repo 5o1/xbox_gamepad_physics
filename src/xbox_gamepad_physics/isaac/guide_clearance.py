@@ -64,7 +64,7 @@ def _crossing(t,values,level):
     return float(t[k-1]+(t[k]-t[k-1])*(a-level)/(a-b)) if a!=b else float(t[k])
 
 
-def measure_guide_clearance(stage,sdf,*,collisions,case,radius_m,device):
+def measure_guide_clearance(stage,sdf,*,collisions,case,radius_m,device,reference_path=None):
     import torch
     import omni.physics.tensors as tensors
     from pxr import UsdGeom,Gf
@@ -72,8 +72,8 @@ def measure_guide_clearance(stage,sdf,*,collisions,case,radius_m,device):
     origin=np.asarray(case.plan['start_m'],dtype=np.float64)
     direction=np.asarray(case.plan['direction'],dtype=np.float64);direction/=np.linalg.norm(direction)
     t=np.linspace(0.,.02,4097);world=origin[None,:]+t[:,None]*direction
-    reference_path=Path('/tmp/xgp_i2/output/guide_triangle_reference.json')
-    if reference_path.is_file():
+    reference_path=Path(reference_path) if reference_path is not None else None
+    if reference_path is not None and reference_path.is_file():
         reference=json.loads(reference_path.read_text())
         if reference['origin_m']!=origin.tolist() or reference['direction_unit']!=direction.tolist():
             raise ValueError('neutral reference ray differs')
@@ -98,7 +98,9 @@ def measure_guide_clearance(stage,sdf,*,collisions,case,radius_m,device):
             'triangle_signed_distance_m':{k:v.tolist() for k,v in triangle_curves.items()},
             'triangle_axial_first_hit_m':{k:min(v) if v else None for k,v in rays.items()},
             'reference':'same triangle_shells used by SAPIEN; geometric reference, not SAPIEN cooked-SDF readback'}
-        reference_path.parent.mkdir(parents=True,exist_ok=True);reference_path.write_text(json.dumps(reference)+'\n')
+        if reference_path is not None:
+            reference_path.parent.mkdir(parents=True,exist_ok=True)
+            reference_path.write_text(json.dumps(reference)+'\n')
     native_curves={};native_paths={}
     if sdf is not None:
         paths=[p for p in sdf.object_paths if '/controller_body/' in p or '/guide/' in p]

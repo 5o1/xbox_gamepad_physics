@@ -21,7 +21,7 @@ import omni.physx
 from isaaclab.sim import SimulationContext,SimulationCfg
 from isaaclab.scene import InteractiveScene,InteractiveSceneCfg
 from isaaclab.utils import configclass
-from xbox_gamepad_physics.isaac import build_usd,make_articulation_cfg,bind_batched_articulation
+from xbox_gamepad_physics.isaac import build_usd,make_articulation_cfg,bind_batched_articulation,step
 from xbox_gamepad_physics.motion import motion_from_dict
 from xbox_gamepad_physics.backends.common.appearance import load_appearance
 from xbox_gamepad_physics.backends.common.collision import load_collision_sources
@@ -76,13 +76,13 @@ pad=bind_batched_articulation(scene['pad'],motion=motion,physical=physical,env_o
 result['native_num_envs']=pad.num_envs;assert pad.num_envs==args.num_envs
 result['cooking_after_initialize']=cooking();memory('after_initialize')
 pad.restore_passive_targets()
-for _ in range(args.warmup):scene.write_data_to_sim();sim.step(render=False);scene.update(.004)
+for _ in range(args.warmup):step(sim,gamepads=(pad,))
 torch.cuda.synchronize();started=time.perf_counter()
 for _ in range(10):pad.reset()
 torch.cuda.synchronize();result['state_reset_seconds_mean']=float((time.perf_counter()-started)/10)
 result['state_reset_repetitions']=10
 started=time.perf_counter()
-for _ in range(args.steps):scene.write_data_to_sim();sim.step(render=False);scene.update(.004)
+for _ in range(args.steps):step(sim,gamepads=(pad,))
 torch.cuda.synchronize();result['step_window_seconds']=time.perf_counter()-started
 result['step_seconds_mean']=result['step_window_seconds']/args.steps
 result['world_steps_per_second']=args.steps/result['step_window_seconds']

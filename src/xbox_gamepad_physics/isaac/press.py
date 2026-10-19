@@ -37,13 +37,17 @@ class IsaacPressExecutor:
 
     def apply_ball_force(self,force_n):
         force=torch.tensor([[force_n]],dtype=torch.float32,device=self.probe.device)
+        # Isaac Lab caches world->local orientation in the permanent composer.
+        # Refresh it for a world-frame force after the free probe has rotated.
+        self.probe.permanent_wrench_composer.reset()
         self.probe.set_external_force_and_torque(force,torch.zeros_like(force),is_global=True)
 
     def step(self,dt_s):
         if dt_s!=self.dt_s:raise ValueError('unexpected shared runner timestep')
-        self.gamepad.articulation.write_data_to_sim();self.probe.write_data_to_sim()
-        self.simulation.step(render=False)
-        self.gamepad.articulation.update(dt_s);self.probe.update(dt_s)
+        from .stepping import step
+        self.probe.write_data_to_sim()
+        step(self.simulation,gamepads=(self.gamepad,),render=False)
+        self.probe.update(dt_s)
         for sensor in self.sensors.values():sensor.update(dt_s,force_recompute=True)
         self._step_count+=1
 
@@ -72,7 +76,22 @@ class IsaacPressExecutor:
         for link in self.diagnostic_links:
             i=art.body_names.index(link)
             body_poses[link]=torch.cat((art.data.body_link_pos_w[0,i],art.data.body_link_quat_w[0,i])).cpu().tolist()
-        return {'diagnostic_body_link_poses':body_poses,'joint_positions':q,'signals':dict(zip(CHANNEL_NAMES,state.values)),
+        limits=self.gamepad._shaft_limits
+        shaft_diagnostic=None
+        if limits.limits:
+            angles,jacobian=limits.geometry(art.data.joint_pos)
+            outward=(jacobian*art.data.joint_vel.double()[:,None]).sum(-1)
+            boundary=angles>=limits.maximum
+            velocity=outward[boundary]
+            shaft_diagnostic={
+                'maximum_angle_rad':angles.amax(0).cpu().tolist(),
+                'maximum_excess_rad':(angles-limits.maximum).clamp_min(0.).amax(0).cpu().tolist(),
+                'maximum_boundary_outward_rad_s':float(velocity.max().item()) if velocity.numel() else None,
+                'enforcement':'native_regular_spherical',
+                'state_projection':False,
+                'impulse_n_m_s':None,
+                'impulse_missing_reason':'Native cone impulse is not exposed by this adapter.'}
+        return {'shaft_limits':shaft_diagnostic,'diagnostic_body_link_poses':body_poses,'joint_positions':q,'signals':dict(zip(CHANNEL_NAMES,state.values)),
                 'probe':{'pose':pose,'events':self.gamepad.motion.signal_controller.encode_physical_events(q)},
                 'contacts':contacts,'joint_limit_excess':excess,
                 'gamepad_internal_pairs':0,

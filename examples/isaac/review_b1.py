@@ -25,7 +25,7 @@ from xbox_gamepad_physics.motion import motion_from_dict
 from xbox_gamepad_physics.backends.common.appearance import load_appearance
 from xbox_gamepad_physics.backends.common.collision import load_collision_sources
 from xbox_gamepad_physics.backends.common.physical import load_physical
-from xbox_gamepad_physics.isaac import build_usd,make_articulation_cfg,bind_articulation
+from xbox_gamepad_physics.isaac import build_usd,make_articulation_cfg,bind_articulation,step as gamepad_step
 from xbox_gamepad_physics.isaac.diagnostics import readback_usd,readback_articulation
 
 common=args.resources/'common/xbox_one_s'
@@ -40,7 +40,7 @@ result={'root_mode':args.root_mode,'render_mode':args.render_mode,
 def save():
     (args.output/(tag+'_result.json')).write_text(json.dumps(result,indent=2)+'\n')
 artifact=build_usd(args.output/(tag+'.usda'),motion=motion,physical=physical,
-    appearance=appearance,collision_sources=collisions,visual_directory=common/'visual',root_mode=args.root_mode)
+    appearance=appearance,collision_sources=collisions,visual_directory=common/'visual',root_mode=args.root_mode,collision_mode='coacd')
 result['usd']=readback_usd(artifact,motion=motion,physical=physical,appearance=appearance,collision_sources=collisions)
 save()
 if not args.render_mode:
@@ -60,7 +60,7 @@ if not args.render_mode:
     for name,value in targets.items():handle.set_joint_target(name,value)
     trace=[]
     for step in range(100):
-        native.write_data_to_sim();sim.step(render=False);native.update(dt)
+        gamepad_step(sim,gamepads=(handle,))
         if step%10==0:trace.append({'step':step+1,'q':handle.joint_positions()})
     q1=handle.joint_positions()
     response={j.name:abs(q1[j.name]-q0[j.name])/(j.upper-j.lower) for j in motion.joints}
@@ -70,7 +70,7 @@ if not args.render_mode:
     assert all(v>.05 for v in response.values()),response
     handle.restore_passive_targets()
     for _ in range(100):
-        native.write_data_to_sim();sim.step(render=False);native.update(dt)
+        gamepad_step(sim,gamepads=(handle,))
     result['return_q']=handle.joint_positions()
     result['signals']=list(handle.gamepad_state().values)
     if not handle.root_fixed:
@@ -78,7 +78,7 @@ if not args.render_mode:
         velocity=torch.zeros((1,6),device=native.device);velocity[:,0]=.01
         native.write_root_velocity_to_sim(velocity)
         for _ in range(10):
-            native.write_data_to_sim();sim.step(render=False);native.update(dt)
+            gamepad_step(sim,gamepads=(handle,))
         delta=(native.data.root_pos_w-pose0).detach().cpu().tolist()[0]
         result['free_translation_m']=delta
         assert delta[0]>.0001,delta
