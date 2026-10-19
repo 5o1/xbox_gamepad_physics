@@ -10,6 +10,12 @@ from xbox_gamepad_physics.state import GamepadState
 
 
 class NeutralHandle:
+    def __init__(self, model, data):
+        self.model, self.data = model, data
+
+    def tilt_limit_state(self):
+        return {}
+
     def restore_passive_targets(self):
         pass
 
@@ -35,14 +41,18 @@ class NeutralHandle:
 def empty_asset(**kwargs):
     import mujoco
     spec = mujoco.MjSpec.from_string("<mujoco/>")
-    return SimpleNamespace(spec=spec, bind=lambda model, data: NeutralHandle())
+    from xbox_gamepad_physics.mujoco.numerics import sdf_policy
+    return SimpleNamespace(spec=spec, sdf_policy=sdf_policy(), bind=lambda model, data: NeutralHandle(model, data))
 
 
 def test_force_actuators_obey_fixture_mass_and_gravity():
-    pytest.importorskip("mujoco")
+    mj = pytest.importorskip("mujoco")
     suite = load_suite()
     executor = MujocoPressExecutor(spec_factory=empty_asset)
     executor.reset_case(suite, suite.cases[0])
+    assert executor.model.opt.integrator == mj.mjtIntegrator.mjINT_DISCRETE
+    assert executor.model.opt.disableflags & int(mj.mjtDisableBit.mjDSBL_REFSAFE)
+    assert executor.mapping['integrator'] == 'discrete'
     assert executor.mapping['probe_native_contact']['solref'] == [.02,1.]
     assert executor.mapping['probe_native_contact']['solmix'] == 1.
     initial = executor.ball_state()["position_m"]
@@ -55,6 +65,10 @@ def test_force_actuators_obey_fixture_mass_and_gravity():
     assert executor.ball_state()["velocity_m_s"][0] == pytest.approx(1 / suite.settings["mass_kg"] * 0.004)
     assert executor.sample()["contacts"] == []
     assert executor.sample()["gamepad_internal_pairs"] == 0
+    frame = executor.sample()['canonical_state']
+    assert frame['layout_id'] == 'sdl3-gamepad-core-v1'
+    assert frame['device_id'] == 1
+    assert len(frame['values']) == len(frame['available_mask']) == 32
     with pytest.raises(ValueError, match="total norm"):
         executor.apply_ball_force((16, 16, 0))
     with pytest.raises(ValueError, match="timestep"):

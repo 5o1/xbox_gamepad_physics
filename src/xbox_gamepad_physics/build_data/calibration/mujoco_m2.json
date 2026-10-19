@@ -7,11 +7,11 @@
     "mujoco": {
       "numerical_stability": {
         "schema_version": "mujoco-substeps-v1",
-        "policy_id": "mb-m2-ruling3-approved-8-substeps",
+        "policy_id": "mb-m2-native-discrete-damping5-approved",
         "mujoco_version": "3.16.0",
         "classification": "Numerical stability policy, not hardware physical properties.",
         "approval_status": "approved",
-        "integrator": "implicitfast",
+        "integrator": "discrete",
         "physics_timestep_s": 0.0005,
         "acceptance_step_s": 0.004,
         "substeps_per_acceptance_step": 8,
@@ -20,14 +20,21 @@
         "evidence": {
           "experiment": "build/experiments/mb_m2/ruling2/rest_summary.json",
           "frequency_estimates": "build/experiments/mb_m2/ruling2/omega.csv",
-          "primary_source": "https://github.com/google-deepmind/mujoco/blob/3.16.0/doc/computation/index.rst#numerical-integration"
+          "primary_source": "https://github.com/google-deepmind/mujoco/blob/3.16.0/doc/computation/index.rst#numerical-integration",
+          "selected_response": "build/experiments/mb_m2/discrete_damping_impedance_20261020/REPORT.md",
+          "cost": "build/experiments/mb_m2/discrete_damping_impedance_20261020/TIMING.md"
         },
-        "validation_scope": "Ruling 2 one-second rest passed at 0.0005 s. Ruling 3 approves production substeps; convergence and contact validation remain separate gates.",
+        "validation_scope": "Selected from fixed/free no-contact response and timing comparisons. Full SDF contact validation and timestep convergence for this combination remain unverified; exact 23-degree non-penetration is unsupported.",
         "uncertainty": null,
-        "uncertainty_reason": "Contact accuracy and timestep convergence require the ruling 3 experiments; this is not a hardware physical property.",
-        "approval_date": "2026-10-16",
-        "approval_source": "Owner ruling 3, 2026-10-16.",
-        "max_physics_timestep_s": 0.0005
+        "uncertainty_reason": "This is a numerical policy, not hardware data. First boundary crossing remains about 0.35 degrees in the measured component experiment.",
+        "approval_date": "2026-10-20",
+        "approval_source": "Owner instruction, 2026-10-20: adopt the tested discrete damping-ratio-5 combination.",
+        "max_physics_timestep_s": 0.0005,
+        "refsafe": false,
+        "solver": "Newton",
+        "iterations": 100,
+        "tolerance": 1e-08,
+        "diagexact": false
       },
       "contact_response": {
         "schema_version": "mujoco-contact-response-v1",
@@ -51,6 +58,55 @@
         },
         "uncertainty": null,
         "uncertainty_reason": "Trial numerical response; downstream validation, convergence and full-suite results are separate evidence, not hardware contact calibration."
+      },
+      "sdf": {
+        "schema_version": "mujoco-native-sdf-v1",
+        "mujoco_version": "3.16.0",
+        "default_collision": "sdf",
+        "classification": "Numerical geometry representation policy, not hardware physical properties.",
+        "approval_source": "Owner ruling 6, 2026-10-17: native SDF is the default; CoACD is an explicit comparison.",
+        "octree_maxdepth": 8,
+        "native_default_octree_maxdepth": 6,
+        "sdf_iterations": 10,
+        "sdf_initpoints": 40,
+        "scope": "One native SDF mesh per common triangle shell. Mesh depth is set through MjSpec before compilation. Search options are set only on standalone/acceptance models; caller options are preserved.",
+        "derivation": "Select depth 8 before acceptance: a roughly 0.15 m shell has nominal finest-cell scale 0.15/2**8 = 0.000586 m (native depth 6 gives 0.002344 m). This is not an error bound or an equivalence to SAPIEN voxel spacing. Keep native search defaults 10 iterations and 40 initial points.",
+        "evidence": {
+          "native_depth": "https://github.com/google-deepmind/mujoco/blob/3.16.0/src/user/user_init.c#L249-L257",
+          "compiler": "https://github.com/google-deepmind/mujoco/blob/3.16.0/src/user/user_mesh.cc#L1591-L1602",
+          "search_defaults": "https://github.com/google-deepmind/mujoco/blob/3.16.0/doc/XMLreference.rst#L525-L534",
+          "native_support": "build/experiments/mb_m1/official_core.md section 4 and native SDF cavity experiment"
+        },
+        "uncertainty": null,
+        "uncertainty_reason": "Octree depth controls representation, not a certified surface-distance error. Contact accuracy and timestep convergence are measured separately."
+      },
+      "limit_response": {
+        "policy_id": "mb-m2-native-discrete-damping5-approved",
+        "classification": "Numerical limit-response policy, not hardware physical properties.",
+        "approval_status": "approved",
+        "approval_date": "2026-10-20",
+        "approval_source": "Owner instruction: adopt the tested discrete damping-ratio-5 combination.",
+        "solreflimit": [
+          1e-06,
+          5.0
+        ],
+        "solimplimit": [
+          0.9999,
+          0.9999,
+          0.001,
+          0.5,
+          2.0
+        ],
+        "scope": "Circular shaft-limit spatial tendons only. Range, sites, zero margin, ReturnLaw, scalar click limits and geom contact parameters are unchanged.",
+        "required_numerical_settings": "The measured response uses discrete, refsafe disabled, Newton with 100 iterations and 1e-8 tolerance, diagexact disabled, and physics dt=0.0005 s. Attachment never edits caller global options.",
+        "derivation": "Selected tested candidate: strong native response, damping ratio 5, and maximum native impedance 0.9999. Reduces repeated rebound without a material cost increase relative to ratio 1 in the no-contact fixture. These are not measured spring/damping properties.",
+        "evidence": {
+          "experiment": "build/experiments/mb_m2/discrete_damping_impedance_20261020/REPORT.md",
+          "timing": "build/experiments/mb_m2/discrete_damping_impedance_20261020/TIMING.md",
+          "primary_source": "https://github.com/google-deepmind/mujoco/blob/3.16.0/doc/computation/index.rst#numerical-integration"
+        },
+        "uncertainty": null,
+        "uncertainty_reason": "First crossing remains about 0.35 degrees. Exact non-penetration, other loading directions, full contact behavior and timestep convergence are not established by the component experiment."
       }
     }
   }

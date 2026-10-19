@@ -44,7 +44,7 @@ class GamepadAttachment:
 
 def attach_to_spec(parent_spec, *, frame=None, site=None, prefix="xbox_", suffix="",
                    profile="full_controls", resource_root=None, fixed_root=True,
-                   pose=None, attach_visual=True, collision="coacd"):
+                   pose=None, attach_visual=True, collision="sdf"):
     """Attach without compiling or modifying caller options or collision masks.
 
     No mount means a new frame directly under world. Free roots require this

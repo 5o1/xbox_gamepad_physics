@@ -49,6 +49,10 @@ def main() -> int:
     if python_status:
         return python_status
 
+    backend_status = run([sys.executable, "-m", "pytest", "tests/backends/mujoco", "-ra"])
+    if backend_status:
+        return backend_status
+
     javascript_tests = sorted(
         str(path.relative_to(ROOT)) for path in (ROOT / "tests").glob("test_*.mjs")
     )

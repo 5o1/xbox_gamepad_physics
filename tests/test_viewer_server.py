@@ -4,6 +4,9 @@ from pathlib import Path
 import sys
 import tempfile
 import unittest
+import threading
+import urllib.error
+import urllib.request
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -12,6 +15,43 @@ from serve_viewer import Handler, validate_asset_variant, validate_vendor
 
 
 class ViewerServerTest(unittest.TestCase):
+    def test_overlay_review_video_supports_partial_reads_for_seeking(self):
+        from xbox_gamepad_physics.web.server import create_overlay_server
+        with tempfile.TemporaryDirectory() as directory:
+            payload = b'0123456789'
+            (Path(directory)/'clip.mp4').write_bytes(payload)
+            server = create_overlay_server(trace_dir=directory, port=0)
+            thread = threading.Thread(target=server.serve_forever, daemon=True)
+            thread.start()
+            url = f'http://127.0.0.1:{server.server_port}/traces/clip.mp4'
+            try:
+                with urllib.request.urlopen(url) as response:
+                    self.assertEqual(response.headers['Accept-Ranges'], 'bytes')
+                    self.assertEqual(response.read(), payload)
+                for header, expected in (('bytes=2-5', b'2345'), ('bytes=7-', b'789'),
+                                         ('bytes=-3', b'789'), ('bytes=0-99', payload)):
+                    with self.subTest(header=header):
+                        request = urllib.request.Request(url, headers={'Range':header})
+                        with urllib.request.urlopen(request) as response:
+                            self.assertEqual(response.status, 206)
+                            self.assertEqual(int(response.headers['Content-Length']), len(expected))
+                            self.assertEqual(response.read(), expected)
+                request = urllib.request.Request(url, headers={'Range':'bytes=20-'})
+                with self.assertRaises(urllib.error.HTTPError) as raised:
+                    urllib.request.urlopen(request)
+                self.assertEqual(raised.exception.code, 416)
+                self.assertEqual(raised.exception.headers['Content-Range'], 'bytes */10')
+                raised.exception.close()
+                request = urllib.request.Request(url, method='HEAD', headers={'Range':'bytes=2-5'})
+                with urllib.request.urlopen(request) as response:
+                    self.assertEqual(response.status, 200)
+                    self.assertEqual(response.headers['Content-Length'], '10')
+                    self.assertEqual(response.read(), b'')
+            finally:
+                server.shutdown()
+                server.server_close()
+                thread.join()
+
     def test_routes_cannot_escape_their_configured_roots(self):
         handler = object.__new__(Handler)
         base = Path("/tmp/xbox-viewer-server-test")

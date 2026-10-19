@@ -7,7 +7,9 @@ from xbox_gamepad_physics.mujoco.numerics import numerical_policy
 def test_approved_policy_and_finer_convergence_subdivision():
     policy = numerical_policy()
     assert policy['approval_status'] == 'approved'
-    assert policy['approval_date'] == '2026-10-16'
+    assert policy['approval_date'] == '2026-10-20'
+    assert policy['integrator'] == 'discrete'
+    assert policy['refsafe'] is False
     assert policy['substeps_per_acceptance_step'] == 8
     finer = numerical_policy(physics_timestep_s=.00025)
     assert finer['substeps_per_acceptance_step'] == 16

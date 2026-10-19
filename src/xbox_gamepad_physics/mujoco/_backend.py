@@ -2,14 +2,9 @@
 
 from __future__ import annotations
 
-from typing import NoReturn
 import importlib
 
-from xbox_gamepad_physics.errors import PhysicsNotReadyError, MissingBackendDependencyError
-
-
-def reject_release_backend() -> NoReturn:
-    raise PhysicsNotReadyError("MuJoCo is outside the v0.3 release scope")
+from xbox_gamepad_physics.errors import MissingBackendDependencyError
 
 
 def require_mujoco():

@@ -15,7 +15,7 @@ from ._backend import require_mujoco
 from ._spec import compile_spec, load_spec, make_data
 from .handle import MujocoGamepadHandle, bind_handle
 from .diagnostics import diagnose
-from .numerics import numerical_policy, contact_policy
+from .numerics import numerical_policy, contact_policy, sdf_policy, apply_standalone_policy
 
 
 @dataclass(frozen=True)
@@ -28,6 +28,12 @@ class GamepadSpec:
     signal_controller: Any
     attach_visual: bool = True
     findings: tuple = ()
+    collision: str = "sdf"
+    hard_limits: tuple = ()
+
+    @property
+    def sdf_policy(self):
+        return sdf_policy(self.manifest.get("backend_options", {}).get("mujoco"))
 
     @property
     def numerical_policy(self):
@@ -52,6 +58,10 @@ class LoadedScene:
     model: Any
     data: Any
     gamepad: MujocoGamepadHandle
+
+    def step(self, nstep=1):
+        """Advance native substeps, solving contacts and limits in MuJoCo."""
+        require_mujoco().mj_step(self.model, self.data, nstep=nstep)
 
 
 def _paths(resource_root, profile):
@@ -80,20 +90,31 @@ def _paths(resource_root, profile):
 
 
 def make_spec(*, resource_root=None, profile="full_controls", fixed_root=True,
-              pose=None, attach_visual=True, collision="coacd"):
+              pose=None, attach_visual=True, collision="sdf"):
     """Create a fragment with no global options, lights or cameras.
 
     Pose is local to the eventual mount; for a standalone fragment it is a
     world pose. A free root is added before compile and requires a world mount.
     ``resource_root`` accepts the common resource root or generated profile dir.
     """
-    if collision != "coacd":
-        raise ValueError("M2 supports frozen coacd collision only")
+    if collision not in {"sdf", "coacd"}:
+        raise ValueError("collision must be sdf or coacd (explicit comparison)")
     if type(fixed_root) is not bool:
         raise TypeError("fixed_root must be bool")
     root, artifact, manifest, path = _paths(resource_root, profile)
+    variant = manifest.get('collision_variants', {}).get(collision)
+    if variant is None:
+        raise AssetImportError('Rebuild MuJoCo resources with native SDF and explicit CoACD variants')
+    entry = Path(variant['entrypoint'])
+    if entry.is_absolute() or '..' in entry.parts:
+        raise AssetImportError('Unsafe MuJoCo collision variant entrypoint')
+    path = artifact / entry
     mj = require_mujoco()
     spec = load_spec(mj, path)
+    if collision == 'sdf':
+        policy = sdf_policy(manifest.get('backend_options', {}).get('mujoco'))
+        for name in variant['mesh_names']:
+            spec.mesh(name).octree_maxdepth = policy['octree_maxdepth']
     bindings = manifest["bindings"]
     body_name = bindings.get("root_body", manifest.get("root_body", "controller_body"))
     body = spec.body(body_name)
@@ -110,12 +131,21 @@ def make_spec(*, resource_root=None, profile="full_controls", fixed_root=True,
     motion = motion_from_dict(json.loads(motion_path.read_text()), profile)
     if set(bindings["joints"]) != set(motion.joint_by_name):
         raise AssetImportError("Generated bindings differ from the common motion contract")
+    hard_limits = tuple(dict(item) for item in motion.joint_space_constraints
+                        if item.get('enforcement') == 'hard')
+    if hard_limits != tuple(manifest.get('hard_limits', ())):
+        raise AssetImportError('Rebuild MuJoCo resources: public hard-limit definitions differ from the artifact')
     findings = ()
-    if motion.joint_space_constraints:
+    if hard_limits:
+        findings = (Finding('strict_shaft_limit_unsupported', 'error',
+            'Native spatial-tendon limits are solved together with contacts by ordinary mj_step. Native compliance does not guarantee the common exact hard bound. No post-step correction is used; record actual shaft-angle excess before acceptance.',
+            {'limits': [item['id'] for item in hard_limits], 'native_mj_step_supported': True,
+             'strict_hard_limit_satisfied': False, 'post_step_state_correction': False}),)
+    elif motion.joint_space_constraints:
         findings = (Finding("mechanical_joint_space_constraint_unmapped", "warning",
             "Common coupled radial constraints are projected for signals but are not mechanical MuJoCo constraints; mechanical equivalence is not established.",
             {"constraints": [dict(item) for item in motion.joint_space_constraints]}),)
-    return GamepadSpec(spec, manifest, path, fixed_root, motion.signal_controller, attach_visual, findings)
+    return GamepadSpec(spec, manifest, path, fixed_root, motion.signal_controller, attach_visual, findings, collision, hard_limits)
 
 
 def bind(model, data, *, asset: GamepadSpec, prefix="", suffix="", expected_external_masks=None):
@@ -132,18 +162,19 @@ def bind(model, data, *, asset: GamepadSpec, prefix="", suffix="", expected_exte
         profile=asset.manifest.get("profile", "full_controls"), root_body=body_name,
         root_joint=None if asset.root_fixed else bindings.get("root_joint", "root_free"),
         neutral_targets=asset.manifest.get("neutral_targets"),
-        initial_positions=asset.manifest.get("initial_positions"))
+        initial_positions=asset.manifest.get("initial_positions"), hard_limits=asset.hard_limits)
     body_bindings = bindings.get("bodies", {body_name: body_name})
     body_names = [f"{prefix}{name}{suffix}" for name in body_bindings.values()]
     handle.findings = asset.findings + diagnose(model, body_names=body_names,
         attach_visual=asset.attach_visual, expected_external_masks=expected_external_masks,
-        numerical_policy=asset.numerical_policy)
+        numerical_policy=asset.numerical_policy,
+        sdf_policy=asset.sdf_policy if asset.collision == "sdf" else None)
     handle.reset(ResetRequest())
     return handle
 
 
 def load_standalone(*, resource_root=None, profile="full_controls", fixed_root=True,
-                    pose=None, attach_visual=True, collision="coacd"):
+                    pose=None, attach_visual=True, collision="sdf"):
     """Compile an asset-only standalone model and initialize this instance."""
     asset = make_spec(resource_root=resource_root, profile=profile, fixed_root=fixed_root,
                       pose=pose, attach_visual=attach_visual, collision=collision)
@@ -151,8 +182,10 @@ def load_standalone(*, resource_root=None, profile="full_controls", fixed_root=T
     # Standalone numerical settings match the generated standalone scenes.
     # These are integration choices, not measured gamepad physical parameters;
     # make_spec/attach never apply them to a caller-owned model.
-    asset.spec.option.timestep = asset.numerical_policy['physics_timestep_s']
-    asset.spec.option.integrator = mj.mjtIntegrator.mjINT_IMPLICITFAST
+    apply_standalone_policy(asset.spec.option, asset.numerical_policy)
+    if asset.collision == 'sdf':
+        asset.spec.option.sdf_iterations = asset.sdf_policy['sdf_iterations']
+        asset.spec.option.sdf_initpoints = asset.sdf_policy['sdf_initpoints']
     model = compile_spec(asset.spec, source=str(asset.source_path))
     data = make_data(mj, model, source=str(asset.source_path))
     handle = asset.bind(model, data)

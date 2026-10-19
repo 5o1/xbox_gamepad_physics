@@ -1,7 +1,8 @@
 """Native MuJoCo execution of the public, frozen ruling20 experiment.
 
-Only the probe's three force actuators are driven during a case. Gamepad qpos
-and targets are never changed after constructing the neutral standalone scene.
+Only the probe's three force actuators are commanded during a case. MuJoCo
+solves native tilt limits together with contacts; no gamepad coordinates or
+targets are written by the backend after constructing the neutral scene.
 """
 from __future__ import annotations
 
@@ -13,7 +14,7 @@ from pathlib import Path
 from ..acceptance import load_suite, run_case
 from ..acceptance.records import ResultSink, summarize
 from .builder import CONTACT_NUMERICS, XML_REFERENCE
-from .numerics import numerical_policy, contact_policy
+from .numerics import numerical_policy, contact_policy, apply_standalone_policy
 
 
 def fixture_mapping(suite, policy=None):
@@ -42,7 +43,7 @@ def fixture_mapping(suite, policy=None):
         "numerical_effect": "Friction sets sliding/torsional/rolling contact coefficients; solref/solimp set soft constraint response; margin/gap set contact inclusion distance.",
         "uncertainty": None,
         "uncertainty_reason": "No cross-engine contact calibration or physical uncertainty measurement was supplied.",
-        "integrator": "implicitfast",
+        "integrator": policy['integrator'],
         "integrator_source": "https://github.com/google-deepmind/mujoco/blob/3.16.0/doc/computation/index.rst#numerical-integration",
         "integrator_applicability": "Standalone experimental numerical policy for stiff drives; frozen timestep remains unchanged.",
     }
@@ -51,8 +52,11 @@ def fixture_mapping(suite, policy=None):
 class MujocoPressExecutor:
     """Implement the public PressExecutor using an isolated native model per case."""
 
-    def __init__(self, *, resource_root=None, spec_factory=None, physics_timestep_s=None):
+    def __init__(self, *, resource_root=None, spec_factory=None, physics_timestep_s=None, collision="sdf"):
         self.resource_root = resource_root
+        if collision not in {"sdf", "coacd"}:
+            raise ValueError("collision must be sdf or coacd")
+        self.collision = collision
         self._spec_factory = spec_factory
         self._requested_physics_timestep = physics_timestep_s
 
@@ -65,7 +69,7 @@ class MujocoPressExecutor:
         self.suite, self.case = suite, case
         factory = self._spec_factory or make_spec
         self.asset = factory(resource_root=self.resource_root, fixed_root=True,
-                             pose=case.root_pose, attach_visual=False, collision="coacd")
+                             pose=case.root_pose, attach_visual=False, collision=self.collision)
         configured = getattr(self.asset, 'numerical_policy', None)
         self.policy = numerical_policy({'numerical_stability': configured} if configured else None,
                                        physics_timestep_s=self._requested_physics_timestep)
@@ -73,9 +77,11 @@ class MujocoPressExecutor:
             raise ValueError('Numerical policy must preserve the frozen acceptance timestep')
         self._step_seconds = []
         spec = self.asset.spec
-        spec.option.timestep = self.policy['physics_timestep_s']
+        apply_standalone_policy(spec.option, self.policy)
+        if self.collision == 'sdf':
+            spec.option.sdf_iterations = self.asset.sdf_policy['sdf_iterations']
+            spec.option.sdf_initpoints = self.asset.sdf_policy['sdf_initpoints']
         spec.option.gravity = suite.fixture["gravity_m_s2"]
-        spec.option.integrator = mujoco.mjtIntegrator.mjINT_IMPLICITFAST
         start = np.asarray(case.plan["start_m"]) - np.asarray(case.plan["direction"]) * 0.015
         body = spec.worldbody.add_body(name="ruling20_probe", pos=start)
         mass, radius = suite.settings["mass_kg"], suite.settings["radius_m"]
@@ -106,6 +112,9 @@ class MujocoPressExecutor:
         self._gamepad_body_ids = set(range(1, self.model.nbody)) - {self._ball_id}
         mujoco.mj_forward(self.model, self.data)
         self.mapping = fixture_mapping(suite, self.policy)
+        self.mapping['collision'] = self.collision
+        self.mapping['comparison_only'] = self.collision == 'coacd'
+        self.mapping['backend_options']['mujoco']['sdf'] = self.asset.sdf_policy if self.collision == 'sdf' else None
         self.mapping['gamepad_contact_response'] = getattr(self.asset, 'contact_policy', None)
         probe = self.model.geom('ruling20_probe')
         self.mapping['probe_native_contact'] = {'solref': probe.solref.tolist(),
@@ -196,16 +205,18 @@ class MujocoPressExecutor:
             "joint_velocities": {n: self.gamepad.joint_velocity(n) for n in joints},
             "root_pose": asdict(self.gamepad.root_pose()),
             "root_twist": self.gamepad.root_twist(),
-            "canonical_state": {"values": list(state.values),
+            "canonical_state": {"layout_id": state.layout_id, "device_id": state.device_id,
+                                "values": list(state.values),
                                 "available_mask": list(state.available_mask),
                                 "task_mask": list(state.task_mask),
                                 "action_mask": list(state.action_mask)},
             "contacts": contacts, "gamepad_internal_pairs": len(internal),
             "joint_limit_excess": excess,
+            "shaft_tilt_limits": self.gamepad.tilt_limit_state(),
         }
 
 
-def execute_suite(output, *, resource_root=None, suite=None, case_ids=None, physics_timestep_s=None):
+def execute_suite(output, *, resource_root=None, suite=None, case_ids=None, physics_timestep_s=None, collision="sdf"):
     """Archive incrementally; retain null results and stop on execution errors."""
     suite = suite or load_suite()
     output = Path(output)
@@ -217,7 +228,7 @@ def execute_suite(output, *, resource_root=None, suite=None, case_ids=None, phys
     rows = [{"case": c.case_id, "status": "not_run", "physics_passed": None,
              "target_min": None, "contact_observed": None, "baseline_passed": c.baseline["passed"],
              "regressed": None, "missing_reason": "Case has not been executed."} for c in suite.cases]
-    report = {"suite_id": suite.suite_id, "results": rows,
+    report = {"suite_id": suite.suite_id, "collision": collision, "comparison_only": collision == "coacd", "results": rows,
               "fixture_mapping": fixture_mapping(suite, numerical_policy(physics_timestep_s=physics_timestep_s))}
 
     def persist():
@@ -229,7 +240,7 @@ def execute_suite(output, *, resource_root=None, suite=None, case_ids=None, phys
         temporary.replace(path)
 
     persist()
-    executor = MujocoPressExecutor(resource_root=resource_root, physics_timestep_s=physics_timestep_s)
+    executor = MujocoPressExecutor(resource_root=resource_root, physics_timestep_s=physics_timestep_s, collision=collision)
     for index, case in enumerate(suite.cases):
         if case.case_id not in selected:
             continue

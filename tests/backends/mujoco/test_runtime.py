@@ -9,6 +9,7 @@ from pathlib import Path
 import shutil
 import tempfile
 import unittest
+import xml.etree.ElementTree as ET
 import numpy as np
 
 try:
@@ -22,6 +23,7 @@ from xbox_gamepad_physics.errors import AssetImportError
 from xbox_gamepad_physics.motion import motion_from_dict
 from xbox_gamepad_physics.state import GamepadState, XBOX_ONE_S_CHANNELS
 from xbox_gamepad_physics.mujoco import make_spec, load_standalone, attach_to_spec
+from xbox_gamepad_physics.mujoco.limits import append_native_tilt_limits
 
 ROOT = Path(__file__).resolve().parents[3]
 MOTION = ROOT / 'build/resources/common/xbox_one_s/motion/full_controls.json'
@@ -39,17 +41,27 @@ class RuntimeTest(unittest.TestCase):
         self.motion = motion_from_dict(json.loads(MOTION.read_text()))
         artifact = self.root / 'mujoco/full_controls'
         artifact.mkdir(parents=True)
-        xml = '<mujoco><compiler angle="radian"/><worldbody><body name="controller_body"><inertial mass=".1" pos="0 0 0" diaginertia=".001 .001 .001"/>'
+        hard_limits = [dict(c) for c in self.motion.joint_space_constraints if c.get('enforcement') == 'hard']
+        cone_joints = {name for c in hard_limits for name in c['joint_ids']}
+        tree = ET.fromstring('<mujoco><compiler angle="radian"/><worldbody><body name="controller_body"><inertial mass=".1" pos="0 0 0" diaginertia=".001 .001 .001"/></body></worldbody><actuator/></mujoco>')
+        bodies = {'controller_body':tree.find('worldbody/body')}
         for joint in self.motion.joints:
             axis = ' '.join(str(v) for v in joint.axis)
             kind = 'hinge' if joint.kind == 'revolute' else 'slide'
-            xml += f'<body name="{joint.child}"><joint name="{joint.name}" type="{kind}" axis="{axis}" limited="true" range="{joint.lower} {joint.upper}"/><inertial mass=".01" pos="0 0 0" diaginertia=".0001 .0001 .0001"/><geom name="geom_{joint.name}" type="sphere" size=".001" contype="2" conaffinity="4" group="3"/></body>'
-        xml += '</body></worldbody><actuator>'
+            body = ET.SubElement(bodies[joint.parent], 'body', name=joint.child,
+                pos=' '.join(map(str,joint.origin)), quat=' '.join(map(str,joint.origin_orientation_wxyz)))
+            bodies[joint.child] = body
+            ET.SubElement(body, 'joint', name=joint.name, type=kind, axis=axis,
+                limited='false' if joint.name in cone_joints else 'true', range=f'{joint.lower} {joint.upper}')
+            ET.SubElement(body, 'inertial', mass='.01', pos='0 0 0', diaginertia='.0001 .0001 .0001')
+            ET.SubElement(body, 'geom', name='geom_'+joint.name, type='sphere', size='.001', contype='2', conaffinity='4', group='3')
         for joint in self.motion.joints:
-            xml += f'<position name="return_{joint.name}" joint="{joint.name}" kp="1" kv=".01"/>'
-        xml += '</actuator></mujoco>'
+            ET.SubElement(tree.find('actuator'), 'position', name='return_'+joint.name, joint=joint.name, kp='1', kv='.01')
+        append_native_tilt_limits(tree, hard_limits)
+        xml = ET.tostring(tree, encoding='unicode')
         (artifact/'xbox_one_s.xml').write_text(xml)
         manifest = {'profile':'full_controls','entrypoint':'xbox_one_s.xml',
+            'collision_variants':{kind:{'entrypoint':'xbox_one_s.xml','mesh_names':[]} for kind in ('sdf','coacd')},
             'motion_contract':'common/xbox_one_s/motion/full_controls.json',
             'bindings':{'joints':{j.name:j.name for j in self.motion.joints},
                 'actuators':{j.name:'return_'+j.name for j in self.motion.joints},
@@ -57,6 +69,7 @@ class RuntimeTest(unittest.TestCase):
                 'root_body':'controller_body','root_joint':'root_free'},
             'neutral_targets':{j.name:0.0 for j in self.motion.joints},
             'initial_positions':{j.name:0.0 for j in self.motion.joints}}
+        manifest['hard_limits'] = hard_limits
         (artifact/'manifest.json').write_text(json.dumps(manifest))
 
     def test_compile_bind_and_reset_use_every_common_initial_position(self):
@@ -121,7 +134,7 @@ class RuntimeTest(unittest.TestCase):
         np.testing.assert_array_equal(scene.data.ctrl,0)
 
     def test_caller_options_trajectory_names_and_collision_diagnostics(self):
-        parent = mj.MjSpec.from_string('<mujoco><option timestep=".003" gravity="0 0 -3"/><worldbody><body name="caller" pos="5 0 1"><freejoint name="caller_free"/><geom name="caller_geom" type="sphere" size=".1" contype="8" conaffinity="16"/></body></worldbody></mujoco>')
+        parent = mj.MjSpec.from_string('<mujoco><option timestep=".003" gravity="0 0 -3" sdf_iterations="13" sdf_initpoints="17"/><worldbody><body name="caller" pos="5 0 1"><freejoint name="caller_free"/><geom name="caller_geom" type="sphere" size=".1" contype="8" conaffinity="16"/></body></worldbody></mujoco>')
         baseline = parent.compile()
         baseline_data = mj.MjData(baseline)
         first = attach_to_spec(parent,resource_root=self.root,prefix='one_',pose=[0,0,0,1,0,0,0])
@@ -131,8 +144,17 @@ class RuntimeTest(unittest.TestCase):
         handle = first.bind(model,data,expected_external_masks={'caller_geom':True})
         other = second.bind(model,data)
         self.assertEqual(model.opt.timestep,.003)
+        self.assertEqual(model.opt.integrator,baseline.opt.integrator)
+        self.assertEqual(model.opt.disableflags,baseline.opt.disableflags)
+        self.assertEqual(model.opt.enableflags,baseline.opt.enableflags)
+        self.assertEqual(model.opt.solver,baseline.opt.solver)
+        self.assertEqual(model.opt.sdf_iterations,13)
+        self.assertEqual(model.opt.sdf_initpoints,17)
         stability = next(f for f in handle.findings if f.code == 'numerical_stability_timestep')
         self.assertEqual(stability.context['max_physics_timestep_s'], .0005)
+        self.assertEqual(stability.context['recommended_integrator'], 'discrete')
+        self.assertFalse(stability.context['recommended_refsafe'])
+        self.assertTrue(stability.context['actual_refsafe'])
         self.assertEqual(stability.severity, 'warning')
         np.testing.assert_array_equal(model.opt.gravity,[0,0,-3])
         np.testing.assert_array_equal(model.geom('caller_geom').contype,[8])

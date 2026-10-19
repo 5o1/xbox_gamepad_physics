@@ -3,7 +3,7 @@ from __future__ import annotations
 from xbox_gamepad_physics.backends.common.diagnostics import Finding
 
 
-def diagnose(model, *, body_names, attach_visual=True, expected_external_masks=None, numerical_policy=None):
+def diagnose(model, *, body_names, attach_visual=True, expected_external_masks=None, numerical_policy=None, sdf_policy=None):
     """Report native appearance limits and collisions against caller geometry.
 
     ``expected_external_masks`` maps caller geom names to requested contact
@@ -19,15 +19,37 @@ def diagnose(model, *, body_names, attach_visual=True, expected_external_masks=N
         from .numerics import numerical_policy as resolve_policy
         numerical_policy = resolve_policy()
     bound = numerical_policy['max_physics_timestep_s']
+    from ._backend import require_mujoco
+    mj = require_mujoco()
+    recommended = numerical_policy['integrator']
+    expected_integrator = {'discrete': mj.mjtIntegrator.mjINT_DISCRETE,
+                           'implicitfast': mj.mjtIntegrator.mjINT_IMPLICITFAST}[recommended]
+    refsafe = not bool(model.opt.disableflags & int(mj.mjtDisableBit.mjDSBL_REFSAFE))
+    expected_refsafe = numerical_policy.get('refsafe', True)
+    differs = (model.opt.timestep > bound or int(model.opt.integrator) != int(expected_integrator)
+               or refsafe != expected_refsafe)
     findings.append(Finding('numerical_stability_timestep',
-        'warning' if model.opt.timestep > bound else 'info',
-        'High-frequency button drives require physics timestep <= 0.0005 s with implicitfast; caller options are unchanged. This is a numerical stability policy, not hardware physical properties.',
+        'warning' if differs else 'info',
+        f'Selected button/shaft-limit response uses timestep <= 0.0005 s, {recommended}, '
+        f"refsafe {'enabled' if expected_refsafe else 'disabled'}; caller options are unchanged. "
+        'This is a numerical stability policy, not hardware physical properties.',
         {'max_physics_timestep_s': bound, 'actual_timestep_s': float(model.opt.timestep),
-         'recommended_integrator': 'implicitfast', 'approval_date': numerical_policy['approval_date']}))
+         'recommended_integrator': recommended,
+         'actual_integrator': mj.mjtIntegrator(int(model.opt.integrator)).name,
+         'recommended_refsafe': expected_refsafe, 'actual_refsafe': refsafe,
+         'approval_date': numerical_policy['approval_date']}))
     findings.append(Finding('geom_owned_contact_response', 'info',
         'Gamepad collision geoms carry their own solref/solmix. Equal-priority positive-format mixing uses solmix; friction coefficient mixing remains independent. Caller parameters are not edited. Native priority, direct-format, explicit-pair and global-override rules still apply.',
         {'solref': sorted({tuple(float(v) for v in model.geom_solref[g]) for g in collision}),
          'solmix': sorted({float(model.geom_solmix[g]) for g in collision})}))
+    if sdf_policy is not None:
+        findings.append(Finding('native_sdf_representation', 'info',
+            'Native SDF is the default; mesh depth is selected before compilation. Caller search options are unchanged.',
+            {'octree_maxdepth': sdf_policy['octree_maxdepth'],
+             'actual_sdf_iterations': int(model.opt.sdf_iterations),
+             'actual_sdf_initpoints': int(model.opt.sdf_initpoints),
+             'standalone_sdf_iterations': sdf_policy['sdf_iterations'],
+             'standalone_sdf_initpoints': sdf_policy['sdf_initpoints']}))
     shared = []
     expected = expected_external_masks or {}
     for external in range(model.ngeom):

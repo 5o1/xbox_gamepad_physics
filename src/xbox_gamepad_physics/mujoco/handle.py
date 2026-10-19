@@ -9,6 +9,7 @@ from xbox_gamepad_physics.backends.common.handle import ResetRequest, SignalHand
 from xbox_gamepad_physics.backends.common.model import Pose
 from xbox_gamepad_physics.errors import AssetImportError
 from ._backend import require_mujoco
+from .limits import NativeTiltLimits
 
 
 def _finite(value):
@@ -31,7 +32,8 @@ class MujocoGamepadHandle(SignalHandleMixin):
 
     def __init__(self, model, data, *, joints, actuators, sensors, signal_controller,
                  profile="full_controls", root_body="controller_body", root_joint=None,
-                 neutral_targets=None, initial_positions=None, findings=()):
+                 neutral_targets=None, initial_positions=None, findings=(),
+                 hard_limits=(), prefix="", suffix=""):
         if getattr(data, "model", model) is not model:
             raise AssetImportError("MuJoCo data belongs to a different compiled model")
         self.model, self.data, self.profile = model, data, profile
@@ -60,6 +62,7 @@ class MujocoGamepadHandle(SignalHandleMixin):
             raise AssetImportError("Manifest must provide common initial positions for every control joint")
         self._initial_positions = {name: _finite(value) for name, value in initial_positions.items()}
         self.findings = tuple(findings)
+        self._tilt_limits = NativeTiltLimits(model, data, hard_limits, prefix=prefix, suffix=suffix)
 
     @property
     def joint_names(self):
@@ -90,6 +93,10 @@ class MujocoGamepadHandle(SignalHandleMixin):
     def joint_positions(self):
         return {name: self.joint_position(name) for name in self.joint_names}
 
+    def tilt_limit_state(self):
+        """Observe native shaft-limit error without changing positions or velocities."""
+        return self._tilt_limits.state()
+
     def sensor(self, name):
         return _lookup(self._model_sensors, name, "sensor")
 
@@ -101,9 +108,17 @@ class MujocoGamepadHandle(SignalHandleMixin):
 
     def set_joint_positions(self, positions: Mapping[str, float]):
         checked = [(self.joint_qpos(name), _finite(value)) for name, value in positions.items()]
+        before = self.data.qpos.copy()
         for view, value in checked:
             view[0] = value
-        require_mujoco().mj_forward(self.model, self.data)
+        mj = require_mujoco()
+        try:
+            self._tilt_limits.validate_positions()
+        except Exception:
+            self.data.qpos[:] = before
+            mj.mj_kinematics(self.model, self.data)
+            raise
+        mj.mj_forward(self.model, self.data)
 
     def set_joint_target(self, name, target):
         actuator = _lookup(self._data_actuators, name, "actuator")
@@ -159,14 +174,15 @@ class MujocoGamepadHandle(SignalHandleMixin):
 
 def bind_handle(model, data, *, joints, sensors=None, actuators=None, prefix="", suffix="",
                 signal_controller=None, profile="full_controls", root_body="controller_body",
-                root_joint=None, neutral_targets=None, initial_positions=None, findings=()):
+                root_joint=None, neutral_targets=None, initial_positions=None, findings=(), hard_limits=()):
     qualify = lambda names: {key: f"{prefix}{name}{suffix}" for key, name in names.items()}
     return MujocoGamepadHandle(
         model, data, joints=qualify(joints), sensors=qualify(sensors or {}),
         actuators=qualify(actuators or {}), signal_controller=signal_controller,
         profile=profile, root_body=f"{prefix}{root_body}{suffix}",
         root_joint=None if root_joint is None else f"{prefix}{root_joint}{suffix}",
-        neutral_targets=neutral_targets, initial_positions=initial_positions, findings=findings)
+        neutral_targets=neutral_targets, initial_positions=initial_positions, findings=findings,
+        hard_limits=hard_limits, prefix=prefix, suffix=suffix)
 
 
 def _bind_kind(model, data, kind, names):
