@@ -1,122 +1,86 @@
-"""Attach the Xbox One S model to a caller-owned MuJoCo ``MjSpec``."""
-
+"""Attach a fresh gamepad fragment while preserving caller compilation ownership."""
 from __future__ import annotations
-
 from dataclasses import dataclass
-from pathlib import Path
 from typing import Any
-
 from xbox_gamepad_physics.errors import AssetImportError
-
-from ._backend import require_mujoco, reject_release_backend
-from ._manifest import RuntimeManifest, load_runtime_manifest, resolve_resource
-from ._spec import compile_spec, load_spec, make_data
-from .handle import MujocoGamepadHandle, bind_handle
+from ._backend import require_mujoco
+from ._spec import compile_spec, make_data
+from .loader import GamepadSpec, make_spec
 
 
 @dataclass(frozen=True)
 class CompiledAttachment:
-    """A caller-owned parent spec compiled after gamepad attachment."""
-
     model: Any
     data: Any
-    gamepad: MujocoGamepadHandle
+    gamepad: Any
 
 
 @dataclass(frozen=True)
 class GamepadAttachment:
-    """Attachment metadata retained until the parent model is compiled."""
-
     parent_spec: Any
-    child_spec: Any
+    asset: GamepadSpec
     attached_frame: Any
-    profile: str
-    source_path: Path
     prefix: str
     suffix: str
-    _manifest: RuntimeManifest
 
-    def bind(self, model: Any, data: Any) -> MujocoGamepadHandle:
-        """Bind this instance to an already compiled parent by element names."""
+    @property
+    def child_spec(self):
+        return self.asset.spec
 
-        return bind_handle(
-            model,
-            data,
-            joints=self._manifest.joints,
-            sensors=self._manifest.sensors,
-            prefix=self.prefix,
-            suffix=self.suffix,
-            signal_controller=self._manifest.signal_controller,
-        )
+    @property
+    def source_path(self):
+        return self.asset.source_path
 
-    def compile(self) -> CompiledAttachment:
-        """Compile the caller-owned parent spec and bind this gamepad instance."""
+    def bind(self, model, data, *, expected_external_masks=None):
+        return self.asset.bind(model, data, prefix=self.prefix, suffix=self.suffix,
+                               expected_external_masks=expected_external_masks)
 
-        mujoco = require_mujoco()
-        model = compile_spec(self.parent_spec, source="attached parent MjSpec")
-        data = make_data(mujoco, model, source="attached parent MjSpec")
-        return CompiledAttachment(model=model, data=data, gamepad=self.bind(model, data))
+    def compile(self):
+        model = compile_spec(self.parent_spec, source="caller-owned parent MjSpec")
+        data = make_data(require_mujoco(), model, source="caller-owned parent MjSpec")
+        handle = self.bind(model, data)
+        return CompiledAttachment(model, data, handle)
 
 
-def attach_to_spec(
-    parent_spec: Any,
-    *,
-    frame: Any | None = None,
-    site: Any | None = None,
-    prefix: str = "xbox_",
-    suffix: str = "",
-    profile: str = "full_controls",
-) -> GamepadAttachment:
-    """Attach the gamepad child model to one parent frame or site.
+def attach_to_spec(parent_spec, *, frame=None, site=None, prefix="xbox_", suffix="",
+                   profile="full_controls", resource_root=None, fixed_root=True,
+                   pose=None, attach_visual=True, collision="sdf"):
+    """Attach without compiling or modifying caller options or collision masks.
 
-    The function edits ``parent_spec`` and deliberately leaves compilation to
-    the caller. Call the returned object's :meth:`GamepadAttachment.bind`
-    after compiling, or use :meth:`GamepadAttachment.compile` as a convenience.
-    Exactly one of ``frame`` and ``site`` is required. ``prefix`` must be
-    non-empty so multiple attached assets cannot collide silently.
-
-    The checked-in profile currently has no generated physical MJCF/MJZ. The
-    repository readiness gate therefore raises before this function edits the
-    parent spec.
+    No mount means a new frame directly under world. Free roots require this
+    world mount. If a frame/site is supplied, pose is relative to that mount.
+    Call bind after caller compilation to initialize this instance's controls
+    from public physical initial positions; other caller objects retain state.
     """
-
-    reject_release_backend()
-
-    if (frame is None) == (site is None):
-        raise ValueError("Exactly one of 'frame' and 'site' must be provided.")
+    if frame is not None and site is not None:
+        raise ValueError("Provide at most one mount frame or site")
     if not isinstance(prefix, str) or not prefix:
-        raise ValueError("'prefix' must be a non-empty string.")
+        raise ValueError("prefix must be a non-empty string")
     if not isinstance(suffix, str):
-        raise TypeError("'suffix' must be a string.")
-    attach_method = getattr(parent_spec, "attach", None)
-    if not callable(attach_method):
-        raise TypeError("parent_spec must expose the MuJoCo MjSpec.attach API.")
-
-    manifest = load_runtime_manifest(profile)
-    source_path = resolve_resource(profile, manifest.entrypoint)
-    mujoco = require_mujoco()
-    child_spec = load_spec(mujoco, source_path)
-
-    kwargs: dict[str, Any] = {"prefix": prefix, "suffix": suffix}
-    if frame is not None:
-        kwargs["frame"] = frame
-    else:
-        kwargs["site"] = site
+        raise TypeError("suffix must be a string")
+    if not fixed_root and (frame is not None or site is not None):
+        raise ValueError("Free roots require a direct world mount; omit frame/site")
+    asset = make_spec(resource_root=resource_root, profile=profile, fixed_root=fixed_root,
+                      pose=pose, attach_visual=attach_visual, collision=collision)
+    # Prevent a failed duplicate-name attach from partially editing the parent.
+    for kind, names in (("joint", asset.manifest["bindings"]["joints"].values()),
+                        ("actuator", asset.manifest["bindings"]["actuators"].values()),
+                        ("body", asset.manifest["bindings"].get("bodies", {}).values())):
+        accessor = getattr(parent_spec, kind)
+        for name in names:
+            if accessor(f"{prefix}{name}{suffix}") is not None:
+                raise AssetImportError(f"MuJoCo attachment name already exists: {prefix}{name}{suffix}")
+    if frame is None and site is None:
+        frame = parent_spec.worldbody.add_frame()
+    kwargs = {"prefix": prefix, "suffix": suffix}
+    kwargs["frame" if frame is not None else "site"] = frame if frame is not None else site
     try:
-        attached_frame = attach_method(child_spec, **kwargs)
+        attached_frame = parent_spec.attach(asset.spec, **kwargs)
     except Exception as exc:
-        target = f"frame {frame!r}" if frame is not None else f"site {site!r}"
-        raise AssetImportError(
-            f"MuJoCo could not attach {source_path} to parent {target}: {exc}"
-        ) from exc
+        raise AssetImportError(f"MuJoCo could not attach {asset.source_path}: {exc}") from exc
+    return GamepadAttachment(parent_spec, asset, attached_frame, prefix, suffix)
 
-    return GamepadAttachment(
-        parent_spec=parent_spec,
-        child_spec=child_spec,
-        attached_frame=attached_frame,
-        profile=profile,
-        source_path=source_path,
-        prefix=prefix,
-        suffix=suffix,
-        _manifest=manifest,
-    )
+
+def load_into_scene(scene, **kwargs):
+    """Common lifecycle spelling; ``scene`` is an uncompiled caller MjSpec."""
+    return attach_to_spec(scene, **kwargs)
