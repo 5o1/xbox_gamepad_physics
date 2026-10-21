@@ -2,7 +2,7 @@
 
 The current asset is suitable for native loading, visual inspection, drive and
 signal integration experiments. It has not passed complete contact acceptance
-and is not the final v0.4.0 release. Failed scores retain the frozen thresholds.
+and is distributed as a preview. Failed scores retain the frozen thresholds.
 
 | Area | Observed result | Delivery status |
 | --- | --- | --- |
@@ -16,7 +16,7 @@ and is not the final v0.4.0 release. Failed scores retain the frozen thresholds.
 | Full scaling qualification | Historical curves exist; the final compensated asset has no new complete contact/scaling qualification | Not completed; historical curves are labeled as such |
 | CoACD comparison | Four large convex hulls were changed by the SDK to 32–38 vertices | Comparison representation; not evidence of unchanged cooked hulls |
 | Appearance | PreviewSurface, linear coverage 64/255; shadow exception limited to four ABXY BLEND domes | Not a complete glTF KHR dielectric-specular implementation |
-| Generic build CLI / registry | Shared integration remains pending; readiness remains disabled | Use the dedicated example in this preview |
+| Generic build CLI / registry | The unified USD DAG is not wired; the builder requires a caller-owned AppLauncher process | Use the dedicated load/build example or the public native builder |
 | Training and hardware calibration | Not run / not established | No RL performance or hardware-identified physics claim |
 
 ## L3 / R3 investigation record

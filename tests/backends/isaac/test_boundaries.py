@@ -1,4 +1,4 @@
-"""Engine-free B1 boundary regressions; native gates run review_b1.py."""
+"""Engine-free boundary regressions; native reviews live under experiments/isaac."""
 import json
 from pathlib import Path
 import subprocess

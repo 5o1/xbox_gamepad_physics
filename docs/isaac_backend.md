@@ -78,7 +78,7 @@ finally:
 
 调用者持有应用、scene、reset和步进生命周期。已有场景用同一 `make_articulation_cfg`，reset后绑定。
 不要把状态同步当接触按压；`isaac.step` 是原生 flush/step/update 的便利包装，没有步后关节修正。
-源码检出里的 `examples/isaac/` 提供完整审查脚本；这些 checkout 脚本不随 wheel 分发，上述 API 随包提供。
+源码检出的 `examples/isaac/` 提供用户加载和具名驱动示例；诊断、探针和审查脚本在 `experiments/isaac/`，冻结用例及评分在 `tests/acceptance/`。这些 checkout 工具不随 wheel 分发，上述运行时 API 随包提供。
 
 ## 已知问题与负责人决定
 

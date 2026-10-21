@@ -313,6 +313,14 @@ The following documents are in Chinese:
 - [Collision optimization](docs/collision_optimization.md)
 - [Project background, evidence, and maintenance history](docs/project_background.md)
 
+## Checkout examples
+
+User examples cover [RoboTwin/SAPIEN](examples/robotwin/README.md),
+[MuJoCo](examples/mujoco/README.md) and the [Isaac preview](examples/isaac/README.md).
+They demonstrate loading, named drives, reference rendering and launcher usage.
+Checkout-only frozen suites live in `tests/acceptance/`; diagnostics and one-off
+reviews live in `experiments/`. These directories are excluded from the wheel.
+
 ## Development
 
 Install from a checkout with the build extra, then run the local regression:

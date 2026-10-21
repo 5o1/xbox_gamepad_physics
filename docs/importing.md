@@ -124,7 +124,7 @@ print(state.available_mask, state.task_mask, state.device_id)
 加载过程保留 URDF inertial，并按 joint name 设置 drive、摩擦与中立目标。返回的
 `XboxOneSArticulation` 也只接受 joint name；qpos 数组顺序不会成为公共接口。左摇杆
 profile 将两轴 qpos 归一化到 `[-1, 1]`，并在对角超出单位圆时做径向投影。完整接触
-验证示例见 `examples/robotwin_left_stick.py`。
+接触诊断在 `experiments/robotwin/robotwin_left_stick.py`；用户接入示例见 [RoboTwin 示例](../examples/robotwin/README.md)。
 
 需要把数据文件复制进 RoboTwin 原生资产目录时，可以先查看 copy plan：
 

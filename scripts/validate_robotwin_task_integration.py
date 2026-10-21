@@ -45,7 +45,7 @@ def main() -> int:
     sys.path[:0] = [str(ROOT), str(ROOT / "src"), str(robotwin)]
     os.chdir(robotwin)
 
-    from examples.robotwin_gamepad_asset_probe import robotwin_gamepad_asset_probe
+    from experiments.robotwin.robotwin_gamepad_asset_probe import robotwin_gamepad_asset_probe
     from xbox_gamepad_physics.state import GamepadState
 
     config_root = robotwin / "env_cfg" / "task_config"

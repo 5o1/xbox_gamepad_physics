@@ -69,9 +69,9 @@ RoboTwin `ea8b21121ebb3cd201ff5b3fe361944ac94eda3f` 的 `Base_Task._init_task_en
 `load_actors()` 中加载手柄，并把返回 handle 保存为实例成员。每次 `setup_demo()` 创建
 新 scene 时会得到新的 handle。
 
-可复制的最小任务模块见
-[`examples/robotwin_gamepad_asset_probe.py`](../examples/robotwin_gamepad_asset_probe.py)。
-它只展示消费端接入，不定义机械臂动作、奖励或训练逻辑。
+真实任务生命周期探针见
+[`experiments/robotwin/robotwin_gamepad_asset_probe.py`](../experiments/robotwin/robotwin_gamepad_asset_probe.py)。
+它用于实验性接入检查，不定义机械臂动作、奖励或训练逻辑。下游用户示例见 [`examples/robotwin/README.md`](../examples/robotwin/README.md)。
 
 ## 原生目录复制
 

@@ -22,7 +22,6 @@ def main():
     args = parser.parse_args()
     app = AppLauncher(args).app
     try:
-        import torch
         from isaaclab.assets import Articulation
         from isaaclab.scene import InteractiveScene, InteractiveSceneCfg
         from isaaclab.sim import SimulationCfg, SimulationContext
@@ -32,17 +31,12 @@ def main():
             bind_articulation, bind_batched_articulation, build_usd,
             make_articulation_cfg, step,
         )
-        from tests.acceptance.isaac.readback import readback_articulation
         from xbox_gamepad_physics.motion import motion_from_dict
         from xbox_gamepad_physics.state import CHANNEL_NAMES, TENSOR_LAYOUT_ID
 
         args.output.mkdir(parents=True, exist_ok=True)
         common = args.resources / 'common/xbox_one_s'
         motion = motion_from_dict(json.loads((common / 'motion/full_controls.json').read_text()))
-        hard = [r for r in motion.joint_space_constraints if r.get('type') == 'shaft_tilt_limit'
-                and r.get('enforcement') == 'hard']
-        if len(hard) != 2:
-            raise ValueError('Use the preview resources with both common hard shaft constraints')
         physical = load_physical(resource_directory=common / 'physical')
         usd = args.resources / 'usd' / (args.root_mode + '.usda')
         if args.build:
@@ -57,7 +51,7 @@ def main():
         if not usd.is_file():
             raise FileNotFoundError('Extract the prepared resources first, or use --build')
 
-        dt = .004  # Frozen isolated drive fixture, not a new numerical policy.
+        dt = .004  # Existing demonstration timestep; not a calibrated physical parameter.
         sim = SimulationContext(SimulationCfg(dt=dt, device=args.device, gravity=(0., 0., 0.),
                                              log_dir=str(args.output / 'lab_logs')))
         if args.num_envs == 1:
@@ -80,12 +74,12 @@ def main():
                                                env_origins=scene.env_origins)
             first = handle.select(0)
         if bool(native.is_fixed_base) != (args.root_mode == 'fixed'):
-            raise AssertionError('Loaded root mode differs from requested birth mode')
+            raise ValueError('Loaded root mode differs from requested birth mode')
         result = {
-            'scope': 'load, native readback, drive response and signal preview; contact qualification pending',
+            'scope': 'load, named drive and canonical signal readout; contact qualification is separate',
             'root_mode': args.root_mode, 'num_envs': args.num_envs,
             'versions': {n: importlib.metadata.version(n) for n in ['isaaclab', 'isaacsim', 'torch']},
-            'native': readback_articulation(native, motion=motion, physical=physical),
+            'joint_names': list(first.joint_names),
             'tensor_layout_id': TENSOR_LAYOUT_ID, 'channel_names': list(CHANNEL_NAMES),
             'gravity_m_s2': [0., 0., 0.], 'dt_s': dt,
         }
@@ -104,22 +98,17 @@ def main():
             for _ in range(100):
                 step(sim, gamepads=(handle,))
             result['driven_signals'] = capture()
-            response = result['driven_signals']['values'][CHANNEL_NAMES.index('south')]
-            if response <= .05:
-                raise AssertionError(f'A drive did not respond: {response}')
             handle.restore_passive_targets()
         for _ in range(100):
             step(sim, gamepads=(handle,))
         result['final_signals'] = capture()
         if args.num_envs > 1:
             batch = handle.gamepad_state()
-            if batch.values.shape != (args.num_envs, 32) or not torch.isfinite(batch.values).all():
-                raise AssertionError('Invalid CUDA canonical32 signal batch')
             result['batch_shape'] = list(batch.values.shape)
             result['batch_device'] = str(batch.values.device)
-        result['status'] = 'passed'
+        result['status'] = 'completed'
         (args.output / 'preview_result.json').write_text(json.dumps(result, indent=2) + '\n')
-        print('ISAAC_PREVIEW_PASSED', args.root_mode, args.num_envs, flush=True)
+        print('ISAAC_PREVIEW', args.root_mode, args.num_envs, flush=True)
     finally:
         app.close(skip_cleanup=True)
 

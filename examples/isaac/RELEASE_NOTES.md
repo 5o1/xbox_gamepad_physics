@@ -1,8 +1,8 @@
-# Isaac experimental preview — 0.4.0.dev20261020
+# Isaac preview — 0.4.1
 
-This preview packages the implemented Isaac adapter and the frozen Xbox One S
-resources for installation and review. The combined final v0.4.0 release remains
-pending integration and complete acceptance of both backends.
+The prepared 0.4.1 package includes the Isaac adapter as a preview. User examples
+load prepared resources, drive named controls and read signals; contact acceptance
+and diagnostics are separate checkout tools.
 
 Included capabilities:
 
@@ -15,14 +15,13 @@ Included capabilities:
 - Two regular native spherical cone constraints alongside the existing stick
   hinges; no post-step joint correction or custom mass-matrix solve.
 - SDF 0.5 mm default under the owner's ruling; frozen CoACD comparison option.
-- Latest 26-case comparison and true orthographic front/top/right replay videos
-  with the existing SVG signal overlay, actual angles and pass/fail status.
+- Named-drive and canonical signal-readout examples, using a caller-owned
+  application and the existing private site configuration.
 
 Release preparation also makes USD texture references relative and removes
 machine-specific runtime paths from the adapter and diagnostic tools. The
-launcher reuses the project's private site settings parser. The accompanying
-common-layer patches are applied to the preview wheel in isolated staging;
-source integration remains a separate review step.
+launcher reuses the project's private site settings parser. Common-layer integration is part of the package. Acceptance execution, native
+readback audits and diagnostic renders remain outside the wheel.
 
 The latest frozen suite is **22/26**, including all eight stick directions.
 Guide, Pair, L3 and R3 remain failed. L3/R3 diagnosis is recorded and parked.

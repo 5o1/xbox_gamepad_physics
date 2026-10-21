@@ -18,7 +18,7 @@ def test_cuda_mapper_matches_python_branches():
         str(root / 'build/resources/common/xbox_one_s/motion/full_controls.json')))
     if not motion_path.is_file():
         pytest.skip('Set XGP_B2_MOTION to prepared common motion data')
-    spec = importlib.util.spec_from_file_location('check_mapper_b2', root / 'examples/isaac/check_mapper_b2.py')
+    spec = importlib.util.spec_from_file_location('check_mapper_b2', root / 'experiments/isaac/check_mapper_b2.py')
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     from xbox_gamepad_physics.motion import motion_from_dict

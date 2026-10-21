@@ -44,3 +44,7 @@ as fallback after verified direct failure.
 Keep self-test harnesses, evidence audits, and assertions about validation status in `tests/`.
 Build and runtime paths should load data and report missing or invalid inputs, not gate use on status booleans.
 Unknown physical values remain null with their reasons.
+
+Keep downstream user examples in `examples/`. Put frozen-suite execution and scoring
+in `tests/acceptance/<backend>/`, and one-off diagnostics, probes, benchmarks, and
+review renders in checkout-only `experiments/<backend>/`. Do not duplicate shared tools.

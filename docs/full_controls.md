@@ -139,31 +139,31 @@ correction. First-crossing penetration remains possible; strict 23-degree
 non-penetration has not been established.
 
 On 2026-10-20, the owner provisionally accepted the measured limit response for
-MuJoCo M2, including the documented first-crossing excess. This item no longer
+MuJoCo, including the documented first-crossing excess. This item no longer
 blocks subsequent acceptance work; the strict capability remains unsupported.
 
 Run the frozen headless contact experiment with the current executor:
 
 ```sh
-PYTHONPATH=src python examples/mujoco/acceptance.py \
+PYTHONPATH=src python -m tests.acceptance.mujoco.run_suite \
   --resource-root ./gamepad_resources --output /tmp/mujoco-acceptance
 ```
 
 Appearance and recorded-contact inspection use
 `examples/mujoco/render_reference.py` and
-`examples/mujoco/render_contact_replay.py`. These are separate from contact
+`experiments/mujoco/render_contact_replay.py`. These are separate from contact
 acceptance. The former frozen visual APIs, mocap-probe examples and generators
 are preserved as source snapshots in
 [`scripts/archive/mujoco_legacy`](../scripts/archive/mujoco_legacy/README.md).
 
 The existing project gamepad overlay can display the recorded MuJoCo canonical
 32-value states alongside the videos. See
-[`examples/mujoco/README.md`](../examples/mujoco/README.md) for export, page
+[`experiments/mujoco/README.md`](../experiments/mujoco/README.md) for export, page
 generation and local serving. Pair remains a separate event. The native
 acceptance observations include layout/device metadata; no second signal mapper
 is needed.
 
-## 历史自动运行记录（非当前M2验收）
+## 历史自动运行记录（非当前后端验收）
 
 - SAPIEN 3.0.0b1：20 关节、21 通道、Pair 事件、2000 步有限；并发命令回读最大误差
   `2.02e-8`；

@@ -91,7 +91,7 @@ not new physics or new scores. Side shells show source triangles, not an SDF
 isosurface. Rendering used native MuJoCo classic EGL on GPU 3 only.
 
 To display the existing project SVG overlay synchronized to actual recorded
-32-dimensional states, run examples/mujoco/serve_review.py with this directory
+32-dimensional states, run experiments/mujoco/serve_review.py with this directory
 and open the printed loopback URL. Direct file opening still plays the videos;
 the canonical ES-module overlay requires HTTP. Pair remains a separate event.
 ''')

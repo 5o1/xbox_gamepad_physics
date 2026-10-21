@@ -1,42 +1,44 @@
-# MuJoCo inspection and acceptance
+# MuJoCo user examples
 
-The contact and native readback tools are checkout-only under `tests/acceptance/`;
-they are not installed by the wheel. Run these scripts from the checkout root
-with that directory on the Python search path (the runtime can remain installed):
-
-```sh
-export PYTHONPATH="$PWD${PYTHONPATH:+:$PYTHONPATH}"
-```
-
-Use the generated `mujoco/full_controls` resources and the public loaders.
-`acceptance.py` runs the frozen contact suite; `render_contact_replay.py`
-replays recorded motion without running new physics. `render_reference.py`
-uses the shared comparison camera plan for appearance review.
-
-## Review with the existing gamepad overlay
-
-After generating the contact videos, export the actual canonical states using
-the identical video sample selection, build the page, and serve it locally:
+Use Linux x86_64, Python 3.10/3.11 and the fork wheel installed by `[mujoco]`.
+Install `[build,mujoco]` when generating resources. The fork Release fixes the
+MuJoCo 3.16.0 mesh SDF sign error pending upstream PR #3689.
 
 ```sh
-PYTHONPATH=src python examples/mujoco/export_overlay.py \
-  --traces /path/to/press_results --directory /path/to/review
-python examples/mujoco/build_review.py \
-  --directory /path/to/review --results /path/to/press_results/results.json
-PYTHONPATH=src python examples/mujoco/serve_review.py \
-  --directory /path/to/review --port 8774
+python -m xbox_gamepad_physics build-resources --backend mujoco \
+  --archive ./xbox_gamepad_physics-resources-0.4.1.zip \
+  --resources ./gamepad_resources --offline
+export XBOX_GAMEPAD_PHYSICS_RESOURCES="$PWD/gamepad_resources"
 ```
 
-Open `http://127.0.0.1:8774/traces/index.html`. The page reuses the installed
-`gamepad_overlay` SVG renderer and canonical adapter. Video frame timestamps
-select the recorded 32-value state, availability/task masks and device metadata;
-there is no second signal mapping. Pair is displayed separately. Seeking,
-changing cases and selecting slow clips update the same overlay.
+## Load and drive by name
 
-The server binds only to loopback and uses the existing overlay service's
-explicit review-directory mount. Close it with Ctrl+C. Directly opening the
-HTML file plays the videos but cannot load the ES-module overlay.
+```python
+from xbox_gamepad_physics import GamepadState
+from xbox_gamepad_physics.mujoco import load_standalone
 
-New `MujocoPressExecutor.sample()` records include the complete canonical-frame
-identity. For a live handle, `gamepad.gamepad_state()` returns the same public
-`GamepadState` used by this adapter. The viewer does not control physics.
+scene = load_standalone(fixed_root=True)
+pad = scene.gamepad
+pad.set_gamepad_targets(GamepadState.xbox_one_s({'south': .65}))
+scene.step(100)
+print(pad.joint_positions())
+print(pad.gamepad_state().channel('south'))
+```
+
+The caller owns stepping. Select fixed/free root before compilation; use
+`attach_to_spec` to compose a caller-owned model. The action value above is a
+software demonstration, not physical calibration.
+
+## Render a reference image
+
+`render_reference.py` renders the native geometry using a caller-supplied camera
+plan. Run from the checkout with the package installed:
+
+```sh
+python examples/mujoco/render_reference.py --resource-root ./gamepad_resources \
+  --camera-plan /path/to/camera_plan.json --output ./reference_images
+```
+
+The classic renderer approximates source PBR materials. Rendering and signal
+readout do not establish contact qualification. See [backend usage](../../docs/mujoco_backend.md)
+for the known Pair failure, transient limit overshoot and non-real-time cost.

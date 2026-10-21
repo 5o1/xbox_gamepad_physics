@@ -73,7 +73,7 @@ The historical MuJoCo tree in `src/xbox_gamepad_physics/resource_data/mujoco/` r
 - `muble/` — exports MuJoCo body poses to drive accepted Blender objects.
 - `viewer/` — browser kinematic inspector (Three.js picking + Blender/Cycles worker via `scripts/serve_viewer.py` / `scripts/cycles_worker.py`), plus the vendored `gamepad_overlay` SVG renderer with a canonical-state adapter.
 
-**Validation boundaries:** "loads, steps and round-trips signals" (smoke examples in `examples/*_smoke.py`) establishes software integration only. It is not visual acceptance (user confirms renders), contact/dynamics validation, or real-hardware calibration — keep those claims separate in docs, manifests and commit messages.
+**Validation boundaries:** "loads, steps and round-trips signals" (user examples under `examples/`, acceptance tools under `tests/acceptance/`) establishes software integration only. It is not visual acceptance (user confirms renders), contact/dynamics validation, or real-hardware calibration — keep those claims separate in docs, manifests and commit messages.
 
 ## Conventions
 
@@ -84,3 +84,7 @@ The historical MuJoCo tree in `src/xbox_gamepad_physics/resource_data/mujoco/` r
 Keep self-test harnesses, evidence audits, and assertions about validation status in `tests/`.
 Build and runtime paths should load data and report missing or invalid inputs, not gate use on status booleans.
 Unknown physical values remain null with their reasons.
+
+Keep `examples/` limited to downstream loading, named drives, reference rendering, and launcher usage.
+Frozen suites and repeated acceptance checks belong in `tests/acceptance/<backend>/`;
+one-off reviews, diagnostics, probes, and benchmarks belong in checkout-only `experiments/<backend>/`.
