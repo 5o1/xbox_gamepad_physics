@@ -15,15 +15,15 @@ from isaaclab.sim import SimulationContext,SimulationCfg
 from isaaclab.assets import Articulation,RigidObject,RigidObjectCfg
 from isaaclab.sensors import ContactSensor,ContactSensorCfg
 from xbox_gamepad_physics.isaac import build_usd,make_articulation_cfg,bind_articulation
-from xbox_gamepad_physics.isaac.press import IsaacPressExecutor
+from tests.acceptance.isaac.executor import IsaacPressExecutor
 from xbox_gamepad_physics.isaac.guide_clearance import SdfShapeCollection
 from xbox_gamepad_physics.motion import motion_from_dict
 from xbox_gamepad_physics.backends.common.appearance import load_appearance
 from xbox_gamepad_physics.backends.common.collision import load_collision_sources
 from xbox_gamepad_physics.backends.common.physical import load_physical
 from xbox_gamepad_physics.backends.common.model import Evidence,Parameter
-from xbox_gamepad_physics.acceptance.cases import load_suite
-from xbox_gamepad_physics.acceptance.runner import ball_force
+from tests.acceptance.cases import load_suite
+from tests.acceptance.runner import ball_force
 
 args.output.mkdir(parents=True,exist_ok=True);r=args.resources;c=r/'common/xbox_one_s'
 inputs=json.loads((args.inputs/'targets.json').read_text())
@@ -32,7 +32,7 @@ motion=motion_from_dict(json.loads((c/'motion/full_controls.json').read_text()))
 physical=load_physical(resource_directory=c/'physical')
 appearance=load_appearance(directory=c/'visual',binding=json.loads((r/'review_binding.json').read_text()))
 collisions=load_collision_sources(directory=c/'collision');suite=load_suite();case=suite.case('Guide');root_pose=case.root_pose;settings=suite.settings
-proof=Evidence('build_data/acceptance/ruling20_sdf303_v1.json','fixture.sapien_mapping','Frozen shared fixture offsets.',
+proof=Evidence('tests/acceptance/data/ruling20_sdf303_v1.json','fixture.sapien_mapping','Frozen shared fixture offsets.',
  'Map the existing 0.2 mm contact and zero metre rest offsets.',category='fixture_definition')
 offsets={k:Parameter(suite.fixture['sapien_mapping'][k],'m',(proof,)) for k in ['contact_offset_m','rest_offset_m']}
 artifact=build_usd(args.output/'controller.usda',motion=motion,physical=physical,appearance=appearance,

@@ -61,7 +61,7 @@ try:
     from xbox_gamepad_physics.motion import motion_from_dict
     from xbox_gamepad_physics.backends.common.physical import load_physical
     from xbox_gamepad_physics.backends.common.model import Pose
-    from xbox_gamepad_physics.acceptance.cases import load_suite
+    from tests.acceptance.cases import load_suite
 
     c = a.resources/'common/xbox_one_s'
     motion = motion_from_dict(json.loads((c/'motion/full_controls.json').read_text()))

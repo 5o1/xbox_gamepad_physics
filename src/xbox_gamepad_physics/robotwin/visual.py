@@ -21,10 +21,6 @@ class XboxOneSVisual:
         for entity in self.entities.values():
             entity.pose=pose*conversion
 
-    @property
-    def physics_ready(self):
-        return False
-
 
 @dataclass
 class XboxOneSArticulationVisual:

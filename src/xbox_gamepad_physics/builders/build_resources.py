@@ -209,6 +209,10 @@ def node_status(root: Path, *, inputs: Path | None = None, evidence: Path = DATA
         if selected_config.is_file():
             from xbox_gamepad_physics.backends.common.calibration import resolved_from_dict
             calibration = resolved_from_dict(json.loads(selected_config.read_text()))
+    if graph is None and "isaac" in backends:
+        from ..backends.registry import backend_spec
+        backend_spec("isaac").require_builder_runtime(runtime)
+        raise ResourceError("The unified resource DAG does not author USD yet; inside AppLauncher use xbox_gamepad_physics.isaac.build_usd with prepared common inputs. See docs/isaac_backend.md.")
     graph = _ordered(_selected_graph(inputs, evidence, backends=backends, targets=targets, runtime=runtime, calibration=calibration) if graph is None else graph)
     table = {node.name: node for node in graph}
     stale = set()

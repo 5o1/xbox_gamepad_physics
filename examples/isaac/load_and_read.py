@@ -32,7 +32,7 @@ def main():
             bind_articulation, bind_batched_articulation, build_usd,
             make_articulation_cfg, step,
         )
-        from xbox_gamepad_physics.isaac.diagnostics import readback_articulation
+        from tests.acceptance.isaac.readback import readback_articulation
         from xbox_gamepad_physics.motion import motion_from_dict
         from xbox_gamepad_physics.state import CHANNEL_NAMES, TENSOR_LAYOUT_ID
 

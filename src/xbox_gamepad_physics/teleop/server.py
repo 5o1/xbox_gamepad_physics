@@ -66,8 +66,13 @@ def run(args):
                       input_config=cfg["teleop"]["input"], cursor_config=cfg["stream"]["cursor"],schema_version=SCHEMA_VERSION)
     with open_writer(record_path(run_dir,format=record_format),record_format,background=record_format=='binary') as record, open_writer(record_path(run_dir,'physics_timing',record_format),record_format,background=record_format=='binary') as timing:
         session = make_session(cfg, run_dir, record)
-        from .ball_probe import BallProbe
-        probe = BallProbe(session, run_dir, args.ball_case, args.ball_radius_m, args.ball_plan) if args.ball_case else None
+        probe = None
+        if args.ball_case:
+            try:
+                from tests.acceptance.robotwin.probe import BallProbe
+            except ImportError as error:
+                raise RuntimeError("Ball press experiments require the source checkout tests/acceptance tools.") from error
+            probe = BallProbe(session, run_dir, args.ball_case, args.ball_radius_m, args.ball_plan)
         origin = time.monotonic()
         while not stopping.is_set() and (args.steps is None or session.index < args.steps):
             deadline = origin+session.index*.004
@@ -133,8 +138,7 @@ def main():
     parser.add_argument("--steps", type=int)
     parser.add_argument("--commands", type=Path)
     parser.add_argument("--record-format",choices=['binary','jsonl'],help='override stream.record_format')
-    from .ball_probe import CASES
-    parser.add_argument("--ball-case", choices=CASES)
+    parser.add_argument("--ball-case", help="checkout-only sphere contact experiment")
     parser.add_argument("--ball-radius-m", type=float)
     parser.add_argument("--ball-plan", type=Path)
     parser.add_argument("--collision", choices=["coacd","sdf"], default="sdf")

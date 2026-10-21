@@ -64,7 +64,7 @@ def export_overlay(trace_root, review_directory):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--traces', type=Path, required=True, help='K4 directory with per-case trace.jsonl files.')
+    parser.add_argument('--traces', type=Path, required=True, help='Press results directory with per-case trace.jsonl files.')
     parser.add_argument('--directory', type=Path, required=True, help='Existing video review directory.')
     args = parser.parse_args()
     result = export_overlay(args.traces, args.directory)

@@ -366,7 +366,7 @@ def build(output: Path, *, resource_root: Path, kinematics: Path | None = None):
         "The asset fragment has no global options, lights or cameras. Root fixation is selected before compilation. "
         "Scene files set standalone numerical options only. Bind initializes the instance from common physical initial positions "
         "and neutral targets; default reset restores the same control state. "
-        "This artifact is a simulation estimate; contact readiness requires separate acceptance results and review.\n\n"
+        "This artifact is a simulation estimate; contact results are documented separately.\n\n"
         + usage['numerical_stability'] + "\n\n"
         + usage['contact_response'] + "\n\n"
         + usage['collision'] + "\n\n"
@@ -376,8 +376,8 @@ def build(output: Path, *, resource_root: Path, kinematics: Path | None = None):
         "Frozen collision hulls are never recooked. See mapping_report.json for every mapped/unmapped parameter.\n", encoding="utf-8")
     required = sorted(p.relative_to(output).as_posix() for p in output.rglob("*") if p.is_file())
     manifest = {"schema_version": 1, "asset_id": "xbox_one_s", "backend": "mujoco", "profile": "full_controls",
-        "available": True, "dynamics_ready": False, "hardware_calibrated": False,
-        "evidence_status": "simulation_estimate_pending_backend_acceptance", "reason": None,
+        "hardware_calibrated": False,
+        "reason": None,
         "backend_options": {'mujoco': {'numerical_stability': numerics, 'contact_response': response, 'sdf': sdf, 'limit_response': limit_response}},
         "entrypoint": "xbox_one_s.xml", "default_collision": "sdf",
         "collision_variants": {
@@ -398,7 +398,7 @@ def build(output: Path, *, resource_root: Path, kinematics: Path | None = None):
         "hard_limits": hard_limits,
         "native_tilt_limits": native_tilt_limits,
         "capabilities": {"birth_fixed_free": True, "runtime_root_switch": False,
-                         "named_target_drive": True, "contact_acceptance_validated": False,
+                         "named_target_drive": True,
                          "native_shaft_tilt_limits": bool(native_tilt_limits),
                          "hard_shaft_limits": False, "native_mj_step_hard_shaft_limits": False,
                          "post_step_state_correction": False},

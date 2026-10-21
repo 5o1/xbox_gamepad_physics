@@ -36,8 +36,8 @@ from PIL import Image,ImageDraw,ImageFont
 from xbox_gamepad_physics.motion import motion_from_dict
 from xbox_gamepad_physics.backends.common.model import Pose
 from xbox_gamepad_physics.backends.common.transforms import compose,rotate
-from xbox_gamepad_physics.acceptance import load_suite
-from xbox_gamepad_physics.acceptance.scoring import target_value
+from tests.acceptance import load_suite
+from tests.acceptance.scoring import target_value
 
 
 def link_poses(motion,q,root):

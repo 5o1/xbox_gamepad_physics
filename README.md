@@ -56,7 +56,7 @@ provided separately.
 
 ³ Cycles is the approved Boiler Room appearance reference, not an interactive runtime requirement.
 
-⁴ MuJoCo uses the owner-maintained `3.16.0+concon.sdf3689.2` fork wheels from its Release, selected by `[mujoco]`. They fix 3.16.0 mesh SDF sign errors using upstream PR #3689 before upstream merge. SDF is the default; CoACD is an explicit comparison. The classic-renderer K5 appearance was approved on 2026-10-21. The 23° circular limit has a first peak of about 23.35°, temporarily accepted by the owner; a strict hard bound is not established. Recorded acceptance cost is 10.45 ms per 4 ms simulation step: not real time.
+⁴ MuJoCo uses the owner-maintained `3.16.0+concon.sdf3689.2` fork wheels from its Release, selected by `[mujoco]`. They fix 3.16.0 mesh SDF sign errors using upstream PR #3689 before upstream merge. SDF is the default; CoACD is an explicit comparison. The classic-renderer appearance was approved on 2026-10-21. The 23° circular limit has a first peak of about 23.35°, temporarily accepted by the owner; a strict hard bound is not established. Recorded acceptance cost is 10.45 ms per 4 ms simulation step: not real time.
 
 ⁵ Isaac is a preview with external Python 3.11, Isaac Lab 2.3.2, Isaac Sim 5.1 and compatible torch prerequisites; its extra does not install them. Start AppLauncher before building USD or importing pxr. SDF 0.5 mm is the default. Real-time RTX (`RaytracedLighting`) makes ABXY blurrier; use path tracing for high-quality images. Guide regresses to 0.931 against the baseline; Pair, L3 and R3 also fail. These issues remain open.
 
@@ -107,7 +107,6 @@ python3.10 -m xbox_gamepad_physics build-resources \
   --archive ./xbox_gamepad_physics-resources-0.4.1.zip \
   --resources ./gamepad_resources --offline
 export XBOX_GAMEPAD_PHYSICS_RESOURCES="$PWD/gamepad_resources"
-python3.10 -m xbox_gamepad_physics verify --backend robotwin --profile full_controls
 ```
 
 For MuJoCo on Linux x86_64 with Python 3.10 or 3.11, install the `mujoco`
@@ -148,7 +147,7 @@ The resource zip is build input (source meshes and frozen snapshots), not
 ready-to-load resources: run `build-resources` once to generate the URDF and
 manifests. The wheel builds runtime resources in your resource directory from the approved
 input zip. Basic resource generation requires neither Blender nor a CoACD run.
-`verify` checks resource readiness and required files; see
+Loaders report missing or invalid inputs with build instructions; see
 [resource import documentation](docs/importing.md) for details.
 
 ## Quick start
@@ -337,3 +336,7 @@ The packed Boiler Room HDR by Oliksiy Yakovlyev / Poly Haven is CC0.
 The gamepad-overlay renderer is Unlicense; Three.js is MIT.
 See [third-party notices](THIRD_PARTY_NOTICES.md) and
 [Three.js license](src/xbox_gamepad_physics/web/static/vendor/three/LICENSE).
+
+Contact acceptance tools and the frozen press suite live in `tests/acceptance/`
+in a source checkout. They are excluded from the wheel. Engine adapters remain
+available through the runtime APIs above.

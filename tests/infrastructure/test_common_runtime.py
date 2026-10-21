@@ -28,10 +28,7 @@ from xbox_gamepad_physics.controller import (  # noqa: E402
     ScalarSignalMapping,
     SplitSignalMapping,
 )
-from xbox_gamepad_physics.profiles import (  # noqa: E402
-    load_profile,
-    require_physics_ready,
-)
+from xbox_gamepad_physics.profiles import load_profile  # noqa: E402
 from xbox_gamepad_physics.resources import (  # noqa: E402
     load_json_resource,
     resource_path,
@@ -353,16 +350,12 @@ class ResourceAndProfileTests(unittest.TestCase):
             manifest = load_json_resource(backend, "full_controls")
             self.assertEqual(manifest["asset_id"], "xbox_one_s")
             self.assertEqual(manifest["backend"], backend)
-            self.assertIs(manifest["available"], True)
-            self.assertIs(manifest["dynamics_ready"], True)
             self.assertIsInstance(manifest["entrypoint"], str)
             self.assertTrue(manifest["required_files"])
             self.assertIsNone(manifest["reason"])
 
             profile = load_profile(backend, "full_controls")
-            self.assertTrue(profile.physics_ready)
             self.assertIsInstance(profile.required_files, tuple)
-            self.assertTrue(require_physics_ready(backend, "full_controls").physics_ready)
 
     def test_default_resource_is_manifest(self):
         path = resource_path("robotwin", "full_controls")

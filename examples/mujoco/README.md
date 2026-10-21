@@ -1,9 +1,17 @@
 # MuJoCo inspection and acceptance
 
+The contact and native readback tools are checkout-only under `tests/acceptance/`;
+they are not installed by the wheel. Run these scripts from the checkout root
+with that directory on the Python search path (the runtime can remain installed):
+
+```sh
+export PYTHONPATH="$PWD${PYTHONPATH:+:$PYTHONPATH}"
+```
+
 Use the generated `mujoco/full_controls` resources and the public loaders.
 `acceptance.py` runs the frozen contact suite; `render_contact_replay.py`
 replays recorded motion without running new physics. `render_reference.py`
-uses the shared D2 camera plan for appearance review.
+uses the shared comparison camera plan for appearance review.
 
 ## Review with the existing gamepad overlay
 
@@ -12,9 +20,9 @@ the identical video sample selection, build the page, and serve it locally:
 
 ```sh
 PYTHONPATH=src python examples/mujoco/export_overlay.py \
-  --traces /path/to/K4 --directory /path/to/review
+  --traces /path/to/press_results --directory /path/to/review
 python examples/mujoco/build_review.py \
-  --directory /path/to/review --results /path/to/K4/results.json
+  --directory /path/to/review --results /path/to/press_results/results.json
 PYTHONPATH=src python examples/mujoco/serve_review.py \
   --directory /path/to/review --port 8774
 ```

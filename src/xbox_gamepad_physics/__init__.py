@@ -10,7 +10,7 @@
    scene. Use a static box for SDF support, not add_ground.
 
 Run `xbox-gamepad-physics guide` for integration and rendering options,
-`example export DIRECTORY` for runnable examples, and `doctor` for checks.
+`example export DIRECTORY` for runnable examples.
 """
 
 from .controller import (
@@ -26,7 +26,6 @@ from .errors import (
     AssetImportError,
     MissingBackendDependencyError,
     MissingResourceError,
-    PhysicsNotReadyError,
     ProfileError,
     ProfileManifestError,
     ResourceError,
@@ -36,7 +35,7 @@ from .errors import (
     UnsafeResourcePathError,
     XboxGamepadPhysicsError,
 )
-from .profiles import BackendProfile, load_profile, require_physics_ready
+from .profiles import BackendProfile, load_profile
 from .motion import MotionContract, MotionJoint, load_motion_contract
 from .resources import load_json_resource, resource_path, resource_root, prepare_resources, query_resource_path
 from .state import (
@@ -77,7 +76,6 @@ __all__ = [
     "MissingResourceError",
     "MotionContract",
     "MotionJoint",
-    "PhysicsNotReadyError",
     "PhysicalEventMapping",
     "ProfileError",
     "ProfileManifestError",
@@ -94,7 +92,6 @@ __all__ = [
     "load_json_resource",
     "load_motion_contract",
     "load_profile",
-    "require_physics_ready",
     "resource_path",
     "resource_root",
     "prepare_resources",

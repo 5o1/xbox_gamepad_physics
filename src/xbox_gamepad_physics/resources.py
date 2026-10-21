@@ -99,7 +99,6 @@ def missing_resources(root: Path, *, backends=("robotwin",)) -> list[str]:
     expected = {
         "kinematics/xbox_one_s.json",
         "kinematics/xbox_one_s_evidence.json",
-        "kinematics/kinematics_build_audit.json",
         "common/xbox_one_s/motion/full_controls.json",
         "common/xbox_one_s/visual/manifest.json",
         "common/xbox_one_s/collision/manifest.json",
@@ -148,10 +147,10 @@ def resource_status(*, backends=("robotwin",), targets=None) -> dict:
 def _lock() -> dict:
     path = PACKAGE_ROOT / "_resource_lock.json"
     if not path.is_file():
-        raise ResourceNotFoundError("package has no _resource_lock.json; import the matching input archive after release packaging")
+        raise ResourceNotFoundError("package has no _resource_lock.json; run xbox-gamepad-physics build-resources --archive INPUT.zip --offline with the matching input archive after release packaging")
     lock = json.loads(path.read_text(encoding="utf-8"))
     if lock["version"] != package_version() or lock.get("kind") != "inputs":
-        raise ResourceFormatError("resource lock must describe the matching version's input zip")
+        raise ResourceFormatError("resource lock must describe the matching version's input zip; use the matching wheel and run xbox-gamepad-physics build-resources --archive INPUT.zip --offline")
     return lock
 
 
@@ -171,7 +170,7 @@ def _input_current(root: Path, *, optional_files: tuple[str, ...] = ()) -> bool:
 
 def _import_archive(root: Path, archive: Path, lock: dict, *, locked: bool = False) -> None:
     if hashlib.sha256(archive.read_bytes()).hexdigest() != lock["sha256"]:
-        raise ResourceFormatError("input zip SHA-256 mismatch")
+        raise ResourceFormatError("input zip SHA-256 mismatch; run xbox-gamepad-physics build-resources --archive MATCHING_INPUT.zip --offline")
     with (nullcontext() if locked else cache_lock(root)):
         with tempfile.TemporaryDirectory(prefix=root.name + ".import-", dir=root.parent) as directory:
             staged = Path(directory) / "resources"
@@ -350,7 +349,7 @@ def resource_path(
                 _prepare(root, _repository())
         if candidate.is_file():
             return candidate
-        raise ResourceNotFoundError(f"packaged resource does not exist: {relative}")
+        raise ResourceNotFoundError(f"packaged resource does not exist: {relative}; run xbox-gamepad-physics build-resources --backend {safe_backend if safe_backend in {'robotwin', 'mujoco', 'isaac'} else 'robotwin'} --archive INPUT.zip --offline")
     return candidate
 
 

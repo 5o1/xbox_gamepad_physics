@@ -11,10 +11,10 @@ import time
 from dataclasses import asdict
 from pathlib import Path
 
-from ..acceptance import load_suite, run_case
-from ..acceptance.records import ResultSink, summarize
-from .builder import CONTACT_NUMERICS, XML_REFERENCE
-from .numerics import numerical_policy, contact_policy, apply_standalone_policy
+from tests.acceptance import load_suite, run_case
+from tests.acceptance.records import ResultSink, summarize
+from xbox_gamepad_physics.mujoco.builder import CONTACT_NUMERICS, XML_REFERENCE
+from xbox_gamepad_physics.mujoco.numerics import numerical_policy, contact_policy, apply_standalone_policy
 
 
 def fixture_mapping(suite, policy=None):
@@ -63,7 +63,7 @@ class MujocoPressExecutor:
     def reset_case(self, suite, case):
         import mujoco
         import numpy as np
-        from .loader import make_spec
+        from xbox_gamepad_physics.mujoco.loader import make_spec
 
         self._mj, self._np = mujoco, np
         self.suite, self.case = suite, case

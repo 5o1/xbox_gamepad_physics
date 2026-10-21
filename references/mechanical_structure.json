@@ -38,6 +38,6 @@
     "dpad": "Check coupled pad movement and switch activation, not four separately animated meshes",
     "triggers": "Account for all moving components before validating inertia",
     "clearance": "Sweep Y and RT through measured or source-backed limits; inspect interference",
-    "current_gate": "scripts/asset_spec.py require-dynamics refuses unresolved mechanics"
+    "test_location": "tests/test_evidence.py checks unresolved mechanism evidence"
   }
 }

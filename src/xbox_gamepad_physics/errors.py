@@ -37,13 +37,9 @@ class ProfileManifestError(ProfileError, ValueError):
     """A backend profile manifest violates the public manifest contract."""
 
 
-class PhysicsNotReadyError(ProfileError, RuntimeError):
-    """A profile is intentionally blocked from use by a physics loader."""
-
-
 class MissingBackendDependencyError(XboxGamepadPhysicsError, ImportError):
     """An optional simulator dependency required by a backend is unavailable."""
 
 
 class AssetImportError(XboxGamepadPhysicsError, RuntimeError):
-    """A ready backend artifact failed while entering a simulator scene."""
+    """A backend artifact failed while entering a simulator scene."""

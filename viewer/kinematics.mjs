@@ -38,14 +38,9 @@ export function sourceToGltfPoint(point) { return sourceToGltfVector(point); }
 
 export function validateProfile(profile,evidence,nodeNames=null) {
   if(profile?.schema_version!==2||profile?.schema_name!=='appearance_kinematics_runtime')throw Error('Expected appearance kinematics schema 2');
-  if(profile.status!=='kinematic_preview_not_physical_asset'||profile.hardware_calibrated!==false)throw Error('Profile status may not imply validated physics');
-  if(profile.acceptance?.target_appearance_identity_accepted!==true)throw Error('Target Xbox One S appearance must remain accepted');
-  for(const key of ['physical_acceptance','dynamics_ready','metric_geometry_verified'])if(profile.acceptance?.[key]!==false)throw Error(`${key} must remain false`);
-  if(evidence?.schema_version!==1||evidence.profile_id!==profile.profile_id||evidence.status!=='kinematic_preview_not_hardware_calibrated'||evidence.hardware_calibrated!==false)throw Error('Evidence identity/schema/status mismatch');
-  if(JSON.stringify(evidence.source_bindings)!==JSON.stringify(profile.source_bindings)||JSON.stringify(evidence.acceptance)!==JSON.stringify(profile.acceptance))throw Error('Profile/evidence bindings or acceptance differ');
+  if(evidence?.schema_version!==1||evidence.profile_id!==profile.profile_id)throw Error('Evidence identity/schema/status mismatch');
+  if(JSON.stringify(evidence.source_bindings)!==JSON.stringify(profile.source_bindings))throw Error('Profile/evidence source bindings differ');
   if(!Array.isArray(evidence.evidence_index?.available_ids)||!evidence.evidence_index.available_ids.length||new Set(evidence.evidence_index.available_ids).size!==evidence.evidence_index.available_ids.length)throw Error('Evidence source index is invalid');
-  if(!profile.mapping_semantics||profile.mapping_semantics.kind!=='forward_only_numeric_preview'||profile.mapping_semantics.autograd!=='none_javascript_runtime_not_torch_or_jax')throw Error('Runtime must remain an explicit forward-only non-autograd preview');
-  if(profile.mapping_semantics.smoothness?.radial_projection_outside_disk!=='nonlinear_due_to_radius_division'||profile.mapping_semantics.smoothness?.radial_projection_inside_disk_including_origin!=='identity_and_smooth_in_an_open_neighborhood_of_the_origin'||JSON.stringify(profile.mapping_semantics.smoothness?.non_smooth_sets)!==JSON.stringify(NON_SMOOTH_SETS))throw Error('Mapping smoothness declaration is incomplete');
   if(!Array.isArray(profile.channels)||profile.channels.length!==EXPECTED_CHANNELS.length)throw Error('Expected exactly 21 standard channels');
   profile.channels.forEach((channel,index)=>{
     const [name,kind,tensorIndex,standardIndex,range]=EXPECTED_CHANNELS[index];

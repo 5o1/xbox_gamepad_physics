@@ -21,14 +21,13 @@ python3.10 -m xbox_gamepad_physics build-resources \
   --resources ./gamepad_resources --offline
 export XBOX_GAMEPAD_PHYSICS_RESOURCES="$PWD/gamepad_resources"
 python3.10 -m xbox_gamepad_physics status --backend robotwin
-python3.10 -m xbox_gamepad_physics verify --backend robotwin --profile full_controls
 ```
 
 `[build]` 声明 numpy、trimesh、Pillow 和 manifold3d；不含 CoACD。已有依赖的离线安装
 需要预备这些依赖 wheel。`--offline` 限制资源导入/构建联网，不代替 pip 的离线依赖准备。
-`verify` 检查 readiness 与必需文件，缺失时返回非零；它不执行真实仿真。
+加载器直接检查必需文件；输入缺失、版本或 lock 不匹配时明确报错并提示构建命令。
 
-安装后先运行 `xbox-gamepad-physics guide` 和 `xbox-gamepad-physics doctor`。
+安装后运行 `xbox-gamepad-physics guide` 查看三个后端入口；用 `guide --backend NAME` 选择说明。`doctor --backend NAME` 只报告版本、依赖与资源缺失/过期，不检查验收状态。
 生成资源根目录、外观、URDF 和碰撞目录自动附英文 README，URDF 文件头与 manifest 的
 `usage` 也指向公开的 `load_into_scene`。直接加载网格或 URDF 会绕过材质、SDF 和信号映射。
 新建场景使用 `robotwin.create_scene`，下游不应依赖内部 `examples` 模块；已有场景直接注入。
@@ -92,7 +91,6 @@ RoboTwin 的公共接入约定与任务模板见 [`robotwin_backend.md`](robotwi
 from xbox_gamepad_physics.robotwin import load_visual_into_scene
 
 visual = load_visual_into_scene(self, pose=sapien.Pose([0, 0, 0.8]))
-assert visual.physics_ready is False
 ```
 
 该入口保留 UV、法线和 2K PBR 贴图，不创建碰撞或惯量。完整实验台示例见
@@ -118,7 +116,6 @@ print(state.available_mask, state.task_mask, state.device_id)
 
 加载器执行以下门禁：
 
-- backend manifest 已通过 readiness 检查；
 - URDF、视觉网格、碰撞网格和声明文件全部存在；
 - 每个 link 都有显式 COM、质量和正定惯量；
 - 每个活动 joint 都有显式类型、轴和 limit；
@@ -150,7 +147,7 @@ xbox-gamepad-physics install-robotwin \
 
 0.4.1 的 MuJoCo 使用新的 DAG builder、`status --backend mujoco` 和
 `mujoco.load_standalone` / `attach_to_spec`，见 [mujoco_backend.md](mujoco_backend.md)。
-`verify` 的 readiness 检查不代表所有接触或严格限位通过。
+加载器检查资源输入；加载成功不代表所有接触或严格限位通过。
 旧冻结树仍保留在 Git 原地供历史比对，不进运行时 DAG、wheel 资源数据或输入 zip，
 也不恢复旧生成器。专门针对历史树的测试继续注明原因后跳过；当前适配器另有测试。
 
@@ -163,14 +160,12 @@ schema_version
 asset_id
 backend
 profile
-available
-dynamics_ready
 entrypoint
 required_files
 reason
 ```
 
-RoboTwin ready profile 还需要逐关节 `joint_dynamics`。完整控件的 backend manifest
+RoboTwin profile 还需要逐关节 `joint_dynamics`。完整控件的 backend manifest
 通过 `motion_contract` 指向公共运动
 契约，关节范围和信号约束不在 backend manifest 中重复维护。格式说明见
 `schemas/backend_manifest.schema.json`（文档，运行时不校验）。RoboTwin 的字段取值范围与有限性、URDF 显式惯量与限位等由生成器保证，

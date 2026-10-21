@@ -1,6 +1,6 @@
 """Camera/HDR intent; renderer realization is a backend responsibility."""
 from dataclasses import dataclass
-from ..backends.common.model import Pose
+from xbox_gamepad_physics.backends.common.model import Pose
 
 
 @dataclass(frozen=True)

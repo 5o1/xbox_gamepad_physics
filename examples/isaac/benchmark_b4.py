@@ -27,7 +27,7 @@ from xbox_gamepad_physics.backends.common.appearance import load_appearance
 from xbox_gamepad_physics.backends.common.collision import load_collision_sources
 from xbox_gamepad_physics.backends.common.physical import load_physical
 from xbox_gamepad_physics.backends.common.model import Evidence,Parameter
-from xbox_gamepad_physics.acceptance.cases import load_suite
+from tests.acceptance.cases import load_suite
 
 args.output.mkdir(parents=True,exist_ok=True)
 result={'status':'running','num_envs':args.num_envs,'collision':args.collision,'rendering':False,
@@ -48,7 +48,7 @@ motion=motion_from_dict(json.loads((c/'motion/full_controls.json').read_text()))
 physical=load_physical(resource_directory=c/'physical')
 appearance=load_appearance(directory=c/'visual',binding=json.loads((args.resources/'review_binding.json').read_text()))
 suite=load_suite()
-proof=Evidence('build_data/acceptance/ruling20_sdf303_v1.json','fixture.sapien_mapping',
+proof=Evidence('tests/acceptance/data/ruling20_sdf303_v1.json','fixture.sapien_mapping',
  'Same frozen offsets across performance variants.', 'Copy the explicit metre values; no fitting.',category='fixture_definition')
 offsets={k:Parameter(suite.fixture['sapien_mapping'][k],'m',(proof,)) for k in ['contact_offset_m','rest_offset_m']}
 options={'spacing_m':.0005,'subgrid_resolution':6,'bits_per_pixel':'BitsPerPixel16','margin':.01,'narrow_band_thickness':.02} if args.collision=='sdf' else None

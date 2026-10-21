@@ -4,9 +4,9 @@ import math
 from pathlib import Path
 import unittest
 
-from xbox_gamepad_physics.acceptance import load_suite, PressStop, PressTrajectory, ball_force
-from xbox_gamepad_physics.acceptance.scoring import score_case
-from xbox_gamepad_physics.acceptance.records import summarize
+from tests.acceptance import load_suite, PressStop, PressTrajectory, ball_force
+from tests.acceptance.scoring import score_case
+from tests.acceptance.records import summarize
 from xbox_gamepad_physics.backends.common.model import Pose
 
 ROOT=Path(__file__).resolve().parents[1]

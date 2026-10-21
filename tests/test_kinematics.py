@@ -12,7 +12,7 @@ import build_kinematics as builder
 class KinematicsTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.evidence, cls.profile, cls.audit = builder.build()
+        cls.evidence, cls.profile = builder.build()
 
     def test_profile_is_explicitly_not_physics(self):
         self.assertEqual(self.profile["status"], "kinematic_preview_not_physical_asset")
@@ -21,7 +21,6 @@ class KinematicsTest(unittest.TestCase):
             self.profile["acceptance"]["target_appearance_identity_accepted"]
         )
         self.assertFalse(self.profile["acceptance"]["physical_acceptance"])
-        self.assertFalse(self.profile["acceptance"]["dynamics_ready"])
         self.assertFalse(self.profile["acceptance"]["metric_geometry_verified"])
 
     def test_uniform_width_scale_keeps_other_dimension_residuals(self):

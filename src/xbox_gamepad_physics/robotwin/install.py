@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from pathlib import Path
 import shutil
 
-from xbox_gamepad_physics.profiles import require_physics_ready
+from xbox_gamepad_physics.profiles import load_profile
 from xbox_gamepad_physics.resources import resource_path
 
 from .errors import NativeInstallError
@@ -39,7 +39,7 @@ def install_native_assets(
     Python modules, configuration, or task discovery code.
     """
 
-    ready = require_physics_ready("robotwin", profile)
+    ready = load_profile("robotwin", profile)
     if ready.entrypoint != "mobility.urdf":
         raise NativeInstallError(
             "native RoboTwin installation requires entrypoint='mobility.urdf'"

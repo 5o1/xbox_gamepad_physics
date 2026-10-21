@@ -21,7 +21,7 @@ class IsaacTorchSignalMapper(CommonTorchSignalMapper):
 
     def __init__(self, motion, joint_names, *, device="cuda:0", dtype=torch.float32):
         if dtype != torch.float32:
-            raise ValueError("Isaac B2 mapper requires float32 storage")
+            raise ValueError("Isaac batch mapper requires float32 storage")
         super().__init__(motion, joint_names, device=device, dtype=dtype,
                          decision_mode="float64")
 

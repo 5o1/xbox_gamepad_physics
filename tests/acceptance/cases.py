@@ -4,8 +4,8 @@ from dataclasses import dataclass
 import json
 from pathlib import Path
 from typing import Mapping
-from ..backends.common.model import Pose
-from ..backends.common.transforms import point, inverse, rotate
+from xbox_gamepad_physics.backends.common.model import Pose
+from xbox_gamepad_physics.backends.common.transforms import point, inverse, rotate
 
 
 @dataclass(frozen=True)
@@ -56,7 +56,7 @@ class PressSuite:
 
 
 def load_suite(path: Path | None = None) -> PressSuite:
-    path=Path(path) if path is not None else Path(__file__).resolve().parents[1]/"build_data/acceptance/ruling20_sdf303_v1.json"
+    path=Path(path) if path is not None else Path(__file__).resolve().parent/"data/ruling20_sdf303_v1.json"
     value=json.loads(path.read_text())
     if value["suite_id"] != "ruling20_sdf303_v1":
         raise ValueError("unsupported press suite revision")

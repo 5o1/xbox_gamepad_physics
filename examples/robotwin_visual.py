@@ -113,7 +113,7 @@ def main():
         timings.append(time.perf_counter()-started)
     report={'sapien_version':sapien.__version__,'scene_owner':owner,'parts':len(visual.entities),
             'render_only':all(len(entity.components)==1 for entity in visual.entities.values()),
-            'physics_ready':visual.physics_ready,'captures':records,'orbit_frame_seconds':timings,
+            'captures':records,'orbit_frame_seconds':timings,
             'mean_orbit_fps':1/float(np.mean(timings)),'material_limitations':visual.manifest['sapien_material']['limitations']}
     report['samples_per_pixel']=args.spp
     report['table_scene']=args.table_scene

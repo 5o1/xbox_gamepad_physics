@@ -72,8 +72,6 @@ def main():
         ),
         "samples": samples,
         "validated": "Analytic coordinate envelope and diagnostic boundary only",
-        "physical_gate_validated": False,
-        "simulation_ready": False,
     }
     with args.output.open("x") as out:
         json.dump(report, out, indent=2, allow_nan=False)

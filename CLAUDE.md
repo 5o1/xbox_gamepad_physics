@@ -35,9 +35,8 @@ python3 -m unittest tests.infrastructure.test_resource_resolution -v
 python3 -m unittest discover -s tests -p 'test_kinematics.py' -v
 node --test tests/test_drag2d.mjs
 
-# Backend readiness (non-zero exit if any declared resource is missing / not ready)
+# Backend resource paths and build state
 python3 -m xbox_gamepad_physics status --backend all --profile full_controls
-python3 -m xbox_gamepad_physics verify --backend all --profile full_controls
 
 # Viewer kinematics source check
 python3 scripts/build_kinematics.py --check
@@ -49,7 +48,7 @@ npm run gamepad-overlay   # Open the printed canonical overlay URL
 
 Many tests `skipIf` optional deps (numpy, torch, OpenCV, mujoco, sapien) and only fully run in the GPU-node environments. A skipped test is not a pass — say which ones skipped.
 
-v0.4.1 includes RoboTwin/SAPIEN 3.0.3, the MuJoCo 3.16.0+concon.sdf3689.2 fork and an Isaac preview. MuJoCo's extra selects the fork Release wheel on Python 3.10/3.11 Linux x86_64. Isaac/Sim/torch are external prerequisites; native USD authoring requires an AppLauncher process, and generic registry readiness remains disabled. SDF frozen contact scores are 23/26, 25/26 and 22/26 respectively; consult docs/plan.md for failures. Preserve the historical resource_data/mujoco tree; the new adapter uses the current DAG builder.
+v0.4.1 includes RoboTwin/SAPIEN 3.0.3, the MuJoCo 3.16.0+concon.sdf3689.2 fork and an Isaac preview. MuJoCo's extra selects the fork Release wheel on Python 3.10/3.11 Linux x86_64. Isaac/Sim/torch are external prerequisites; native USD authoring requires an AppLauncher process, and the generic USD builder requires a caller-owned platform process. SDF frozen contact scores are 23/26, 25/26 and 22/26 respectively; consult docs/plan.md for failures. Preserve the historical resource_data/mujoco tree; the new adapter uses the current DAG builder.
 
 ## Architecture
 
@@ -67,17 +66,21 @@ The historical MuJoCo tree in `src/xbox_gamepad_physics/resource_data/mujoco/` r
 - `references/*.json` — evidence records (source, units, applicability, derivation, uncertainty). Builders read physical parameters from here (notably `references/full_controls.json`, `references/catalog.json`). `specs/` holds target specs and explicit unknowns; `assets/asset_index.json` is the source of truth for candidate/admission status.
 - `common/xbox_one_s/` (in the resource root) — backend-neutral visual (glTF + 2K textures) and the **motion contract** (`motion/full_controls.json`: joint topology, per-axis ranges, radial constraints, signal bindings). All three backends and the signal controller read this one contract; backend manifests do not duplicate motion limits.
 - `collision` reads frozen CoACD and locally prepares per-shell SDF OBJ meshes from meshbase, preserving output paths; all full-controls backend builders consume its sources; cooking remains engine-specific.
-- `<backend>/<profile>/manifest.json` (in the resource root) — format documented in `schemas/backend_manifest.schema.json` (documentation, not enforced at runtime); declares readiness flags and required files. RoboTwin provides `full_controls` and `left_stick`; MuJoCo and the Isaac preview provide `full_controls`. Readiness flags are not full contact acceptance.
+- `<backend>/<profile>/manifest.json` (in the resource root) — format documented in `schemas/backend_manifest.schema.json` (documentation, not enforced at runtime); lists entrypoints and required files. RoboTwin provides `full_controls` and `left_stick`; MuJoCo and the Isaac preview provide `full_controls`. Loading is separate from contact acceptance.
 - `state.py` — versioned 32-channel `sdl3-gamepad-core-v1` tensor (6 SDL3 axes + 26 buttons) with `available_mask`, `task_mask`, `device_id`. Xbox One S uses 21 channels; Pair is a physical event, not a game channel. Adapt by channel name, never by index. The browser side uses the 21-float W3C layout only at its boundary (`W3C_STANDARD_TO_CANONICAL`).
 - `controller.py` — `GamepadSignalController`: backend-independent mapping between named joint positions and `GamepadState` (normalization, saturation, dual-stick radial clamp, D-pad split, deadzones, masks), both directions.
-- `robotwin/`, `mujoco/` and `isaac/` — loaders that consume a caller-owned scene/`MjSpec` and pose. The RoboTwin loader gates only on readiness, file presence and joint-name agreement; the motion contract and `GamepadSignalController` still validate their own inputs, while the native MuJoCo and preview Isaac layers retain their backend checks. RoboTwin field ranges/finiteness and explicit URDF physics (inertials, limits, axes) are generator guarantees checked on built output by the asset tests (`tests/infrastructure/built_profile_checks.py`), not on every load; public handles expose joints by name only (qpos order is not API). The package never imports RoboTwin task modules or chooses table/fixture poses.
+- `robotwin/`, `mujoco/` and `isaac/` — loaders that consume a caller-owned scene/`MjSpec` and pose. The RoboTwin loader checks file presence and joint-name agreement; the motion contract and `GamepadSignalController` still validate their own inputs, while the native MuJoCo and preview Isaac layers retain their backend checks. RoboTwin field ranges/finiteness and explicit URDF physics (inertials, limits, axes) are generator guarantees checked on built output by the asset tests (`tests/infrastructure/built_profile_checks.py`), not on every load; public handles expose joints by name only (qpos order is not API). The package never imports RoboTwin task modules or chooses table/fixture poses.
 - `muble/` — exports MuJoCo body poses to drive accepted Blender objects.
 - `viewer/` — browser kinematic inspector (Three.js picking + Blender/Cycles worker via `scripts/serve_viewer.py` / `scripts/cycles_worker.py`), plus the vendored `gamepad_overlay` SVG renderer with a canonical-state adapter.
 
-**Readiness vs. validation:** "loads, steps and round-trips signals" (smoke examples in `examples/*_smoke.py`, CLI `verify`) is infrastructure readiness only. It is not visual acceptance (user confirms renders), contact/dynamics validation, or real-hardware calibration — keep those claims separate in docs, manifests and commit messages.
+**Validation boundaries:** "loads, steps and round-trips signals" (smoke examples in `examples/*_smoke.py`) establishes software integration only. It is not visual acceptance (user confirms renders), contact/dynamics validation, or real-hardware calibration — keep those claims separate in docs, manifests and commit messages.
 
 ## Conventions
 
 - Outputs of experiments, review videos and generated viewer kinematics go under `build/` (git-ignored); they describe one run, not current HEAD.
 - `pyproject.toml` is canonical package metadata (setup.py reads its version); `setup.py` is a mirror for setuptools 59 — keep dependencies/extras in sync.
 - Commit messages use conventional-commit prefixes (`feat:`, `fix:`, `refactor:`, `docs:`, `chore:`).
+
+Keep self-test harnesses, evidence audits, and assertions about validation status in `tests/`.
+Build and runtime paths should load data and report missing or invalid inputs, not gate use on status booleans.
+Unknown physical values remain null with their reasons.

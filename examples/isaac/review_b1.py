@@ -1,4 +1,4 @@
-"""B1 native review. All application, scene and stepping lifetime lives here."""
+"""Native USD, loading and rendering review. All application, scene and stepping lifetime lives here."""
 import argparse
 import importlib.metadata
 import json
@@ -26,7 +26,7 @@ from xbox_gamepad_physics.backends.common.appearance import load_appearance
 from xbox_gamepad_physics.backends.common.collision import load_collision_sources
 from xbox_gamepad_physics.backends.common.physical import load_physical
 from xbox_gamepad_physics.isaac import build_usd,make_articulation_cfg,bind_articulation,step as gamepad_step
-from xbox_gamepad_physics.isaac.diagnostics import readback_usd,readback_articulation
+from tests.acceptance.isaac.readback import readback_usd,readback_articulation
 
 common=args.resources/'common/xbox_one_s'
 motion=motion_from_dict(json.loads((common/'motion/full_controls.json').read_text()))
@@ -65,7 +65,7 @@ if not args.render_mode:
     q1=handle.joint_positions()
     response={j.name:abs(q1[j.name]-q0[j.name])/(j.upper-j.lower) for j in motion.joints}
     result['drive']={'initial':q0,'final':q1,'targets':targets,'normalized_response':response,'trace':trace,
-        'gravity_m_s2':[0,0,0],'gravity_basis':'B1 isolated drive response fixture; not a physical gravity calibration'}
+        'gravity_m_s2':[0,0,0],'gravity_basis':'Isolated drive response fixture; not a physical gravity calibration'}
     save()
     assert all(v>.05 for v in response.values()),response
     handle.restore_passive_targets()
@@ -90,7 +90,7 @@ else:
     from pxr import UsdGeom,UsdLux,Gf
     from PIL import Image
     if not args.camera_plan or not args.hdr or not args.hdr.is_file():
-        raise ValueError('render review requires the frozen D2 camera plan and approved HDR')
+        raise ValueError('render review requires the frozen comparison camera plan and approved HDR')
     plan=json.loads(args.camera_plan.read_text())
     omni.usd.get_context().new_stage()
     stage=omni.usd.get_context().get_stage()
@@ -113,7 +113,7 @@ else:
         '/rtx/material/translucencyAsOpacity':False,'/rtx/sceneDb/translucencyAsOpacity':False}
     result['render']={'captures':[],'hdr':'<APPROVED_BOILER_ROOM_HDR>',
         'dome_intensity':2000.,'radiometric_calibration':False,
-        'intensity_basis':'Same B1b explicit rounded independent neutral-sphere unit approximation; no ABXY fitting',
+        'intensity_basis':'Same reviewed rounded independent neutral-sphere unit approximation; no ABXY fitting',
         'display':'HdrColor linear RGB converted once to standard sRGB; no fitted gain'}
     for view in ['full','abxy']:
         v=plan['views'][view];w,h=v['resolution']

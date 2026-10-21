@@ -12,7 +12,6 @@ python -m xbox_gamepad_physics build-resources \
   --archive ./xbox_gamepad_physics-resources-0.4.1.zip \
   --resources ./gamepad_resources --offline
 export XBOX_GAMEPAD_PHYSICS_RESOURCES="$PWD/gamepad_resources"
-python -m xbox_gamepad_physics verify --backend robotwin --profile full_controls
 ```
 
 wheel 自带 DAG、生成器与小证据；输入 zip 保存原 GLB、冻结 static visual、visual_meshbase、collision meshbase、
@@ -44,7 +43,7 @@ SAPIEN scene。`GamepadState`、通道 mask 和信号映射位于后端无关的
 
 资源目录中的网格和 URDF 是内部构建产物。直接导入会绕过外观材质、SDF 配置与信号映射；
 应使用 `load_into_scene`。英文完整接入指引见 `xbox-gamepad-physics guide`，环境、资源与
-可选 extras 检查见 `xbox-gamepad-physics doctor`；场景建好后可调用公开的
+安装依赖见上面的 extras；场景建好后可调用公开的
 `diagnose_scene(scene)`，它只报告、不修改场景，并识别直接导入和 SDF 配平面等常见错误。
 
 新建实验台使用公开的 `xbox_gamepad_physics.robotwin.create_scene`；下游不要导入内部

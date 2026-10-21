@@ -6,9 +6,9 @@ import math
 def readback_usd(artifact, *, motion, physical, appearance, collision_sources):
     from pxr import Usd, UsdGeom, UsdPhysics, PhysxSchema, Gf
     import numpy as np
-    from ..backends.common.collision import bind_collision_to_links
-    from ..backends.common.transforms import neutral_link_poses, rotate, multiply
-    from .constraints import NATIVE_CONE_ANGLE_SCALE, require_supported_constraints
+    from xbox_gamepad_physics.backends.common.collision import bind_collision_to_links
+    from xbox_gamepad_physics.backends.common.transforms import neutral_link_poses, rotate, multiply
+    from xbox_gamepad_physics.isaac.constraints import NATIVE_CONE_ANGLE_SCALE, require_supported_constraints
     from pxr import Tf
     stage = Usd.Stage.Open(str(artifact.usd_path))
     comparisons = []

@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import argparse
 
-from xbox_gamepad_physics.mujoco.acceptance import execute_suite
+from tests.acceptance.mujoco.executor import execute_suite
 
 
 def main():

@@ -5,7 +5,7 @@ not separately measured implicit drive forces. Feedforward actuation forces and
 Isaac Lab's actuator effort estimates are deliberately not relabeled as drives.
 """
 import torch
-from xbox_gamepad_physics.isaac.press import IsaacPressExecutor
+from tests.acceptance.isaac.executor import IsaacPressExecutor
 
 
 class NativeClickLoggingExecutor(IsaacPressExecutor):
@@ -89,8 +89,8 @@ def run_constant_hold_case(executor,suite,case,sink,*,axial_only=False):
     would-be PD command in the trace so this diagnostic cannot masquerade as the
     frozen acceptance runner.
     """
-    from xbox_gamepad_physics.acceptance.runner import PressTrajectory,ball_force
-    from xbox_gamepad_physics.acceptance.scoring import target_value,score_case
+    from tests.acceptance.runner import PressTrajectory,ball_force
+    from tests.acceptance.scoring import target_value,score_case
     import math
     executor.reset_case(suite,case)
     trajectory=PressTrajectory(suite,case);rows=[];last_force=None;held_force=None

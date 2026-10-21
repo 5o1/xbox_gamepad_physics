@@ -57,7 +57,7 @@ class IsaacGamepadHandle(SignalHandleMixin):
         if not articulation.is_initialized:
             raise ValueError('bind_articulation requires an initialized caller articulation')
         if articulation.num_instances != 1:
-            raise ValueError('B1 scalar binding requires one instance; batch support belongs to B2')
+            raise ValueError('Scalar binding requires one instance; use bind_batched_articulation for multiple instances')
         names = tuple(articulation.joint_names)
         if len(names) != len(set(names)) or set(names) != set(motion.joint_by_name):
             raise ValueError('native articulation and common motion joint sets differ')
@@ -173,4 +173,5 @@ class IsaacGamepadHandle(SignalHandleMixin):
 
 def bind_articulation(articulation, *, motion, physical):
     """Bind initialized native data without taking ownership of its lifecycle."""
+    print("Isaac backend preview: see docs/isaac_backend.md for known limitations.")
     return IsaacGamepadHandle(articulation, motion=motion, physical=physical)

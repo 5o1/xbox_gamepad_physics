@@ -8,15 +8,15 @@ import json
 from contextlib import closing
 from pathlib import Path
 
-from .gripper import ASSET_URDF, JOINTS, LINKS, derive_urdf, parse_builder
-from .session import pose_data
-from .record import iter_records
+from xbox_gamepad_physics.teleop.gripper import ASSET_URDF, JOINTS, LINKS, derive_urdf, parse_builder
+from xbox_gamepad_physics.teleop.session import pose_data
+from xbox_gamepad_physics.teleop.record import iter_records
 
 
 def pose_error(a, b):
     import numpy as np
     # atan2 avoids losing tiny rotations to acos rounding near identity.
-    from .session import quat_multiply
+    from xbox_gamepad_physics.teleop.session import quat_multiply
     q = quat_multiply(a[3:], (b[3], *(-np.asarray(b[4:]))))
     return float(np.linalg.norm(np.asarray(a[:3])-b[:3])), float(2*np.arctan2(np.linalg.norm(q[1:]), abs(q[0])))
 
@@ -95,7 +95,7 @@ def fixed_root_probe(cfg, output):
     art.set_qpos([.011, .015])
     snapshots = []
     def capture(name):
-        from .session import articulation_data
+        from xbox_gamepad_physics.teleop.session import articulation_data
         snapshots.append({"stage": name, "actual": articulation_data(art, True),
                           "root_aabb": art.get_root().compute_global_aabb_tight().tolist()})
     capture("before_setter")
@@ -120,8 +120,8 @@ def fixed_root_probe(cfg, output):
 def transfer_probe(record_path, output):
     """Recreate the recorded prefix and inspect the copy before physics runs."""
     from xbox_gamepad_physics.teleop.replay import read_record
-    from .runtime import make_session
-    from .session import Command, articulation_data
+    from xbox_gamepad_physics.teleop.runtime import make_session
+    from xbox_gamepad_physics.teleop.session import Command, articulation_data
     header, rows = read_record(record_path)
     index = next(r["step"] for r in rows if r["phase"] == "k2_hold")
     session = make_session(header["config"], output)
@@ -176,8 +176,8 @@ def grip_episode(cfg, output, freeze=False, p0_only=False):
     """P0 prefix is identical in P0 and both K2 conditions, with identical cfg."""
     import numpy as np
     import time
-    from .runtime import make_session
-    from .session import Command
+    from xbox_gamepad_physics.teleop.runtime import make_session
+    from xbox_gamepad_physics.teleop.session import Command
     output.mkdir(parents=True, exist_ok=True)
     (output/"config.json").write_text(json.dumps(cfg, indent=2)+"\n")
     with (output/"record.jsonl").open("w") as record:
@@ -286,8 +286,8 @@ def overlap_witness(session):
 
 def k3(cfg, output):
     import numpy as np
-    from .runtime import make_session
-    from .session import Command, GHOST_GROUP, NORMAL_GROUP, State
+    from xbox_gamepad_physics.teleop.runtime import make_session
+    from xbox_gamepad_physics.teleop.session import Command, GHOST_GROUP, NORMAL_GROUP, State
     output.mkdir(parents=True, exist_ok=True)
     with (output/"record.jsonl").open("w") as record:
         session = make_session(cfg, output, record)
@@ -382,8 +382,8 @@ def collision_vertices(link):
 def n1(cfg, output):
     """One finite-PD A-button press with an original collision finger tip."""
     import numpy as np
-    from .runtime import make_session
-    from .session import Command
+    from xbox_gamepad_physics.teleop.runtime import make_session
+    from xbox_gamepad_physics.teleop.session import Command
     episode = copy.deepcopy(cfg)
     test = cfg["teleop"]["a_press_test"]
     episode["teleop"]["fixture"]["include_block"] = False
@@ -438,7 +438,7 @@ def n1(cfg, output):
 
 def k5(record_paths, output):
     """Scan every recorded physics step, including both command replays."""
-    from .session import GHOST_GROUP, NORMAL_GROUP
+    from xbox_gamepad_physics.teleop.session import GHOST_GROUP, NORMAL_GROUP
     results = []
     for path in record_paths:
         maximum, steps, groups_ok = 0, 0, True
@@ -471,7 +471,7 @@ def main():
     parser.add_argument("--records", nargs="+", type=Path)
     args = parser.parse_args()
     from xbox_gamepad_physics.examples.runner import load_config
-    from .site import resolve_config
+    from xbox_gamepad_physics.teleop.site import resolve_config
     cfg = resolve_config(load_config(args.config))
     args.output.mkdir(parents=True, exist_ok=True)
     if args.gate == "K5":

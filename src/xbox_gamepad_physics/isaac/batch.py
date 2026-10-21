@@ -211,4 +211,5 @@ class _SelectedHandle(SignalHandleMixin):
 
 
 def bind_batched_articulation(articulation,*,motion,physical,env_origins):
+    print("Isaac backend preview: see docs/isaac_backend.md for known limitations.")
     return IsaacBatchedGamepadHandle(articulation,motion=motion,physical=physical,env_origins=env_origins)

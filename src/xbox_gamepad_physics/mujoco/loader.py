@@ -1,4 +1,4 @@
-"""Load generated M2 resources, then let the caller own compilation."""
+"""Load generated MuJoCo resources, then let the caller own compilation."""
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -66,7 +66,7 @@ class LoadedScene:
 
 def _paths(resource_root, profile):
     if profile != "full_controls":
-        raise ValueError("M2 supports only full_controls")
+        raise ValueError("MuJoCo supports only full_controls")
     if resource_root is None:
         from xbox_gamepad_physics.resources import resource_root as discover
         root = discover(backend="mujoco")
@@ -78,11 +78,15 @@ def _paths(resource_root, profile):
         root = root.parent.parent
     path = artifact / "manifest.json"
     if not path.is_file():
-        raise MissingResourceError(f"Build the M2 MuJoCo artifact first: {path}")
+        raise MissingResourceError(f"Run xbox-gamepad-physics build-resources --backend mujoco --archive INPUT.zip --offline; missing: {path}")
     manifest = json.loads(path.read_text())
+    for relative in manifest.get("required_files", ()):
+        required = artifact / relative
+        if not required.is_file():
+            raise MissingResourceError(f"Missing MuJoCo resource {required}; run xbox-gamepad-physics build-resources --backend mujoco --archive INPUT.zip --offline")
     # Historical resources have a different identity and remain gated.
     if not manifest.get("bindings", {}).get("actuators"):
-        raise AssetImportError("This is not a generated M2 full-controls artifact (no return actuator bindings)")
+        raise AssetImportError("This is not a generated full-controls artifact (no return actuator bindings)")
     entry = Path(manifest.get("entrypoint", "xbox_one_s.xml"))
     if entry.is_absolute() or ".." in entry.parts:
         raise AssetImportError("Unsafe MuJoCo manifest entrypoint")
@@ -128,6 +132,8 @@ def make_spec(*, resource_root=None, profile="full_controls", fixed_root=True,
             if int(geom.group) == 1:
                 spec.delete(geom)
     motion_path = root / manifest.get("motion_contract", f"common/xbox_one_s/motion/{profile}.json")
+    if not motion_path.is_file():
+        raise MissingResourceError(f"Missing motion contract {motion_path}; run xbox-gamepad-physics build-resources --backend mujoco --archive INPUT.zip --offline")
     motion = motion_from_dict(json.loads(motion_path.read_text()), profile)
     if set(bindings["joints"]) != set(motion.joint_by_name):
         raise AssetImportError("Generated bindings differ from the common motion contract")
@@ -195,7 +201,7 @@ def load_standalone(*, resource_root=None, profile="full_controls", fixed_root=T
 
 
 def load_scene(*, profile="full_controls", scene="fixed", resource_root=None):
-    """Compatibility spelling for generated M2 standalone fixed/free models."""
+    """Compatibility spelling for generated MuJoCo standalone fixed/free models."""
     if scene not in {"fixed", "free"}:
         raise ValueError("scene must be fixed or free")
     return load_standalone(resource_root=resource_root, profile=profile, fixed_root=scene == "fixed")

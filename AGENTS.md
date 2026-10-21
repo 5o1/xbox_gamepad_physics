@@ -40,3 +40,7 @@ Keep large meshes, datasets, weights and intermediates on the GPU node. Respect
 upstream licenses and keep source files unchanged. Downloads must follow the
 user's real-IP direct-first networking requirement, with port FALLBACK_PROXY_PORT proxy only
 as fallback after verified direct failure.
+
+Keep self-test harnesses, evidence audits, and assertions about validation status in `tests/`.
+Build and runtime paths should load data and report missing or invalid inputs, not gate use on status booleans.
+Unknown physical values remain null with their reasons.

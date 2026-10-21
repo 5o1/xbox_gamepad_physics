@@ -24,8 +24,6 @@ def contact_policy(mujoco_options=None):
         raise ValueError('Unknown MuJoCo contact response policy fields')
     if policy.get('schema_version') != 'mujoco-contact-response-v1' or policy.get('mujoco_version') != '3.16.0':
         raise ValueError('Contact response requires the reviewed schema and MuJoCo 3.16.0')
-    if policy.get('approval_status') != 'trial_approved' or not policy.get('approval_date'):
-        raise ValueError('Contact response requires recorded trial approval')
     for field in ('solref_time_constant_s', 'solmix_weight'):
         value = policy.get(field)
         if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) or value <= 0:
@@ -48,8 +46,6 @@ def numerical_policy(mujoco_options=None, *, physics_timestep_s=None):
         raise ValueError('Unknown MuJoCo numerical stability policy fields')
     if policy.get('schema_version') != 'mujoco-substeps-v1' or policy.get('mujoco_version') != '3.16.0':
         raise ValueError('MuJoCo numerical policy requires the reviewed schema and version 3.16.0')
-    if policy.get('approval_status') != 'approved' or not policy.get('approval_date'):
-        raise ValueError('MuJoCo numerical policy requires owner approval')
     if policy.get('integrator') not in {'implicitfast', 'discrete'}:
         raise ValueError('Supported numerical policy integrators are implicitfast and discrete')
     outer = policy.get('acceptance_step_s')

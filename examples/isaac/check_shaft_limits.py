@@ -43,7 +43,7 @@ try:
     from isaaclab.utils import configclass
     from xbox_gamepad_physics.isaac import build_usd, make_articulation_cfg, bind_batched_articulation, step
     from xbox_gamepad_physics.isaac.shaft_limits import _rotate
-    from xbox_gamepad_physics.isaac.diagnostics import readback_usd, readback_articulation
+    from tests.acceptance.isaac.readback import readback_usd, readback_articulation
     from xbox_gamepad_physics.motion import motion_from_dict
     from xbox_gamepad_physics.backends.common.appearance import load_appearance
     from xbox_gamepad_physics.backends.common.collision import load_collision_sources
@@ -268,7 +268,7 @@ try:
     result['return_angle_deg'] = torch.rad2deg(limits.geometry(art.data.joint_pos)[0].amax(0)).cpu().tolist()
     check('return_reduces_deflection', bool((limits.geometry(art.data.joint_pos)[0].amax(0) < peak).all()))
 
-    # Keep the existing B2 row-permutation tolerances unchanged.
+    # Keep the existing row-permutation tolerances unchanged.
     if not a.boundary_start:
         initial[:, index] = torch.linspace(-.15, .15, n, device=pad.device)
     def advance(order):
@@ -285,7 +285,7 @@ try:
     root_error = (root_second[:, :3]-root_first[reverse, :3]).abs().max().item()
     check('row_permutation', joint_error <= 2e-4 and root_error <= 3e-6,
           normalized_joint_error=joint_error, root_position_error_m=root_error,
-          tolerance_source='existing B2 D08 quantization policy')
+          tolerance_source='existing row-permutation quantization policy')
     result['torch_allocated_bytes'] = torch.cuda.memory_allocated()
     result['torch_reserved_bytes'] = torch.cuda.memory_reserved()
     result['strict_contract_passed'] = all(row['passed'] for row in result['strict_contract'].values())

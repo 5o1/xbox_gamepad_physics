@@ -598,7 +598,6 @@
     }
   ],
   "readiness": {
-    "dynamics_ready": false,
     "contact_validated": false,
     "blockers": [
       "metric_geometry_registration",

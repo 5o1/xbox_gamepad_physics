@@ -180,7 +180,7 @@ class BallProbe:
 
     def before_step(self):
         import numpy as np
-        from .gripper import clip_norm
+        from xbox_gamepad_physics.teleop.gripper import clip_norm
         dt=.004;age=(self.session.index-self.phase_start)*dt
         start=np.asarray(self.plan['start_m']);direction=np.asarray(self.plan['direction'])
         if self.phase=='approach':

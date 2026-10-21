@@ -1,4 +1,4 @@
-"""B3 native cook, actual SDF tensor and contact comparison fixture."""
+"""Native cook, actual SDF tensor and contact comparison fixture."""
 import argparse
 import json
 import math
@@ -57,15 +57,15 @@ from isaaclab.sim import SimulationContext,SimulationCfg
 from isaaclab.assets import Articulation,RigidObject,RigidObjectCfg
 from isaaclab.sensors import ContactSensor,ContactSensorCfg
 from xbox_gamepad_physics.isaac import build_usd,make_articulation_cfg,bind_articulation
-from xbox_gamepad_physics.isaac.press import IsaacPressExecutor
+from tests.acceptance.isaac.executor import IsaacPressExecutor
 from xbox_gamepad_physics.motion import motion_from_dict
 from xbox_gamepad_physics.backends.common.appearance import load_appearance
 from xbox_gamepad_physics.backends.common.collision import load_collision_sources
 from xbox_gamepad_physics.backends.common.physical import load_physical
 from xbox_gamepad_physics.backends.common.model import Evidence,Parameter
-from xbox_gamepad_physics.acceptance.cases import load_suite
-from xbox_gamepad_physics.acceptance.runner import run_case,ball_force
-from xbox_gamepad_physics.acceptance.records import ResultSink
+from tests.acceptance.cases import load_suite
+from tests.acceptance.runner import run_case,ball_force
+from tests.acceptance.records import ResultSink
 
 args.output.mkdir(parents=True,exist_ok=True)
 result={'status':'running','collision':args.collision,'candidate_spacing_mm':args.spacing_mm if args.collision=='sdf' else None,
@@ -85,7 +85,7 @@ physical=load_physical(resource_directory=c/'physical')
 appearance=load_appearance(directory=c/'visual',binding=json.loads((r/'review_binding.json').read_text()))
 collisions=load_collision_sources(directory=c/'collision')
 suite=load_suite();root_pose=suite.cases[0].root_pose
-proof=Evidence('build_data/acceptance/ruling20_sdf303_v1.json','fixture.sapien_mapping',
+proof=Evidence('tests/acceptance/data/ruling20_sdf303_v1.json','fixture.sapien_mapping',
  'Same frozen PhysX length-valued contact/rest offsets for the Isaac comparison fixture.',
  'Map the frozen 0.2 mm and zero metre offsets to native PhysxCollisionAPI attributes; no value fitting.',category='fixture_definition')
 offsets={k:Parameter(suite.fixture['sapien_mapping'][k],'m',(proof,)) for k in ['contact_offset_m','rest_offset_m']}
@@ -112,7 +112,7 @@ result['diagnostic_lock_stick_tilt']=args.diagnostic_lock_stick_tilt
 if args.diagnostic_refresh_force_frame and not args.comparison_only:
     raise ValueError('force-frame controls require --comparison-only')
 result['fixture']={'suite':suite.suite_id,'sphere':suite.settings,'contact_offsets':{k:v.as_dict() for k,v in offsets.items()},
- 'sdf_cook_controls':options,'sdf_controls_basis':'B0 explicit probe cook controls; candidate experiment, not calibrated defaults',
+ 'sdf_cook_controls':options,'sdf_controls_basis':'Explicit probe cook controls; candidate experiment, not calibrated defaults',
  'gravity_m_s2':suite.fixture['gravity_m_s2'],'dt_s':.004}
 result['gpu_before']=gpu();result['cooking_before']=cooking()
 artifact=build_usd(args.output/'controller.usda',motion=motion,physical=physical,appearance=appearance,

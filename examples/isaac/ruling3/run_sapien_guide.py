@@ -8,8 +8,8 @@ import sapien.physx as physx
 import torch
 import sapien_sdf_bridge as bridge
 from isolated_gpu import enable_gpu
-from xbox_gamepad_physics.acceptance.cases import load_suite
-from xbox_gamepad_physics.acceptance.runner import ball_force
+from tests.acceptance.cases import load_suite
+from tests.acceptance.runner import ball_force
 import xbox_gamepad_physics.resources as resources
 from xbox_gamepad_physics.robotwin import load_into_scene
 

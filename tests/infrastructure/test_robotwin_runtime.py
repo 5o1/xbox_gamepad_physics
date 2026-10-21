@@ -153,8 +153,6 @@ def ready_profile(urdf):
         asset_id="xbox_one_s",
         backend="robotwin",
         profile="test_ready",
-        available=True,
-        dynamics_ready=True,
         entrypoint="mobility.urdf",
         required_files=("mobility.urdf",),
         reason=None,
@@ -168,8 +166,6 @@ def ready_manifest():
         "asset_id": "xbox_one_s",
         "backend": "robotwin",
         "profile": "test_ready",
-        "available": True,
-        "dynamics_ready": True,
         "entrypoint": "mobility.urdf",
         "required_files": ["mobility.urdf"],
         "reason": None,
@@ -273,7 +269,7 @@ class RoboTwinRuntimeTest(unittest.TestCase):
         with (
             mock.patch.object(loader_module.metadata, "version", return_value=version),
             mock.patch.object(
-                loader_module, "require_physics_ready", return_value=ready_profile(urdf)
+                loader_module, "load_profile", return_value=ready_profile(urdf)
             ),
             mock.patch.object(
                 loader_module, "load_json_resource", return_value=manifest
@@ -392,7 +388,7 @@ class RoboTwinRuntimeTest(unittest.TestCase):
         pose = SimpleNamespace(p=(0, 0, 0), q=(1, 0, 0, 0))
         with (
             mock.patch.object(
-                loader_module, "require_physics_ready", return_value=ready_profile(urdf)
+                loader_module, "load_profile", return_value=ready_profile(urdf)
             ),
             mock.patch.object(
                 loader_module, "load_json_resource", return_value=ready_manifest()
@@ -456,7 +452,7 @@ class RoboTwinRuntimeTest(unittest.TestCase):
         scene = FakeScene(FakeLoader(FakeArticulation()))
         with (
             mock.patch.object(
-                loader_module, "require_physics_ready", return_value=ready_profile(urdf)
+                loader_module, "load_profile", return_value=ready_profile(urdf)
             ),
             mock.patch.object(loader_module, "load_json_resource", return_value=manifest),
             mock.patch.object(loader_module, "resource_path", return_value=urdf),
@@ -520,6 +516,25 @@ class RoboTwinRuntimeTest(unittest.TestCase):
             )
         self.assertEqual(scene.loader.paths, [])
 
+    def test_missing_declared_mesh_fails_before_scene_mutation(self):
+        from dataclasses import replace
+        with tempfile.TemporaryDirectory() as directory:
+            urdf = Path(directory) / "mobility.urdf"
+            urdf.write_text(ready_urdf())
+            profile = replace(ready_profile(urdf), required_files=("mobility.urdf", "collision/missing.obj"))
+            requested = []
+            def resolve(backend, selected, *parts, **kwargs):
+                requested.append(parts[0])
+                if parts[0] == "collision/missing.obj":
+                    raise ResourceNotFoundError("missing mesh; run build-resources --backend robotwin")
+                return urdf
+            scene = FakeScene(FakeLoader(FakeArticulation()))
+            with mock.patch.object(loader_module, "load_profile", return_value=profile), mock.patch.object(loader_module, "resource_path", side_effect=resolve):
+                with self.assertRaisesRegex(ResourceNotFoundError, "build-resources"):
+                    loader_module.load_into_scene(scene, SimpleNamespace(p=(0, 0, .4), q=(1, 0, 0, 0)), fixed_root=True, profile="test_ready")
+            self.assertEqual(requested, ["mobility.urdf", "collision/missing.obj"])
+            self.assertEqual(scene.loader.paths, [])
+
 
 class NativeInstallTest(unittest.TestCase):
     def test_dry_run_plans_data_copies_without_touching_robotwin(self):
@@ -538,7 +553,7 @@ class NativeInstallTest(unittest.TestCase):
 
             with (
                 mock.patch(
-                    "xbox_gamepad_physics.robotwin.install.require_physics_ready",
+                    "xbox_gamepad_physics.robotwin.install.load_profile",
                     return_value=profile,
                 ),
                 mock.patch(

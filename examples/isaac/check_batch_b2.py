@@ -1,4 +1,4 @@
-"""D08 native CUDA row-isolation gate; owns its entire app and scene."""
+"""Native CUDA row-isolation checks; owns its entire app and scene."""
 import argparse
 import json
 from pathlib import Path
@@ -129,7 +129,7 @@ same('stepped_row_permutation_root',r_second[:,:3],r_first[perm,:3],atol=3e-6)
 result={'status':'passed','num_envs':n,'joint_names':pad.joint_names,'checks':checks,
  'seconds':time.perf_counter()-started,'torch_allocated_bytes':torch.cuda.memory_allocated(),
  'torch_reserved_bytes':torch.cuda.memory_reserved(),'gravity_m_s2':[0,0,0],
- 'fixture_note':'isolated D08 drive/row test; no contact validation',
+ 'fixture_note':'isolated drive/row test; no contact validation',
  'replicate_physics':True,'filter_collisions':True}
 (args.output/'result.json').write_text(json.dumps(result,indent=2)+'\n')
 print('B2_DONE '+str(n),flush=True)

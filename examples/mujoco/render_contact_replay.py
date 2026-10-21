@@ -49,8 +49,8 @@ def main():
     from OpenGL import GL
     from PIL import Image, ImageDraw, ImageFont
     from mujoco.rendering.classic import renderer as classic
-    from xbox_gamepad_physics.acceptance import load_suite
-    from xbox_gamepad_physics.acceptance.scoring import target_value
+    from tests.acceptance import load_suite
+    from tests.acceptance.scoring import target_value
     from xbox_gamepad_physics.mujoco import make_spec
     from xbox_gamepad_physics.mujoco.numerics import apply_standalone_policy
 

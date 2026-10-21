@@ -44,7 +44,7 @@ def _reject_structure(raw, path="calibration"):
     if isinstance(raw, Mapping):
         for key, value in raw.items():
             if key in _FORBIDDEN or key.startswith("travel_") or key.endswith("_limits"):
-                raise ValueError(f"{path}.{key}: travel/joint-range overrides are not supported in C1; no overrides were applied")
+                raise ValueError(f"{path}.{key}: travel/joint-range overrides are not supported; no overrides were applied")
             if key != "evidence":
                 _reject_structure(value, f"{path}.{key}")
 
@@ -58,7 +58,7 @@ def _validate(raw: Mapping[str, object]) -> CalibrationOverride:
     if value.schema_version != SCHEMA or value.asset_id != "xbox_one_s" or value.profile not in {"full_controls", "left_stick"}:
         raise ValueError("calibration schema, asset or profile mismatch")
     if set(value.physical) - {"joints", "contact_materials"}:
-        raise ValueError("C1 physical overrides support joints and contact_materials only")
+        raise ValueError("Physical overrides support joints and contact_materials only")
     for group, units in (("joints", _JOINT_UNITS), ("contact_materials", _CONTACT_UNITS)):
         records = value.physical.get(group, {})
         if not isinstance(records, Mapping):
@@ -83,7 +83,7 @@ def _validate(raw: Mapping[str, object]) -> CalibrationOverride:
         if not isinstance(namespace, Mapping):
             raise ValueError("calibration namespaces must be objects")
     if value.signal_policy or value.spawn:
-        raise ValueError("C1 calibration supports physical properties and backend mappings only; signal/spawn overrides are not supported")
+        raise ValueError("Calibration supports physical properties and backend mappings only; signal/spawn overrides are not supported")
     if "root_mode" in value.spawn and value.spawn["root_mode"] not in {"fixed", "free"}:
         raise ValueError("spawn.root_mode must be fixed or free")
     return value

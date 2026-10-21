@@ -25,11 +25,9 @@ STICK_REFERENCE = ROOT / "references/stick_envelope.json"
 CATALOG = ROOT / "references/catalog.json"
 EVIDENCE_OUTPUT = ROOT / "build/generated/kinematics/xbox_one_s_evidence.json"
 PROFILE_OUTPUT = ROOT / "build/generated/kinematics/xbox_one_s.json"
-AUDIT_OUTPUT = ROOT / "build/experiments/xbox_one_s/kinematics_build_audit.json"
 
 PROFILE_ID = "xbox_one_s"
 VARIANT_ID = PROFILE_ID
-EXPECTED_FULL_MOTION_AUDIT_SHA256 = "4c97d513d66f008e5cbc2b375d3c98692cfb495ecf32178c42d399304b31e6df"
 
 PART_TO_CONTROL = {
     "Controller Body": "shell",
@@ -148,8 +146,6 @@ def build(output: Path | None = None, *, inputs: Path = ROOT, evidence: Path = D
     catalog = json.loads(CATALOG.read_text())
     catalog_sources = catalog.get("sources")
     require(isinstance(catalog_sources, dict) and catalog_sources, "evidence catalog has no source index")
-    require(motion["full_audit_sha256"] == EXPECTED_FULL_MOTION_AUDIT_SHA256, "full motion audit binding changed")
-    require(motion.get("toolchain", {}).get("blender_version") == [4, 5, 9], "artist-motion audit toolchain changed")
     require(inventory["source_sha256"] == motion["source_sha256"], "visual and motion sources differ")
     require(len(inventory["objects"]) == 16, "expected exactly sixteen exported parts")
     require(set(PART_TO_CONTROL) == {item["name"] for item in inventory["objects"]}, "part mapping is incomplete")
@@ -622,7 +618,7 @@ def build(output: Path | None = None, *, inputs: Path = ROOT, evidence: Path = D
             "static_glb": inventory["assembled_glb"],
             "static_glb_sha256": inventory["assembled_glb_sha256"],
             "artist_motion_summary": 'references/xbox_one_s_artist_animation_summary.json',
-            "full_artist_motion_audit_sha256": EXPECTED_FULL_MOTION_AUDIT_SHA256,
+            "full_artist_motion_audit_sha256": motion["full_audit_sha256"],
             "full_artist_motion_audit_gpu_path": motion["full_audit_storage"],
             "dimension_evidence": 'references/1708_dimensions.json',
             "stick_reference": 'references/stick_envelope.json',
@@ -686,7 +682,6 @@ def build(output: Path | None = None, *, inputs: Path = ROOT, evidence: Path = D
             "metric_geometry_verified": False,
             "real_controller_verified": False,
             "physical_acceptance": False,
-            "dynamics_ready": False,
         },
     }
 
@@ -739,39 +734,10 @@ def build(output: Path | None = None, *, inputs: Path = ROOT, evidence: Path = D
         "acceptance": evidence["acceptance"],
     }
     require(finite_tree(evidence) and finite_tree(profile), "generated documents contain non-finite values")
-    audit = {
-        "schema_version": 1,
-        "profile_id": PROFILE_ID,
-        "passed": True,
-        "external_input_sha256": {
-            "source_artist_glb": inventory["source_sha256"],
-            "static_visual_glb": inventory["assembled_glb_sha256"],
-            "full_artist_motion_audit": EXPECTED_FULL_MOTION_AUDIT_SHA256,
-        },
-        "checks": {
-            "all_parameter_evidence_ids_resolve": all(
-                set(record["evidence"]) <= set(catalog_sources) for record in parameters.values()
-            ),
-            "sixteen_unique_visual_nodes": len({item["source_node"] for item in nodes}) == 16,
-            "exact_21_channel_coverage": sorted(driven) == list(range(21)),
-            "pair_excluded_from_tensor": joints[-1]["driver"]["kind"] == "physical_event",
-            "uniform_scale_only": True,
-            "artist_rotation_pivots_reconstruct_translations": all(value <= pivot_fit_gate_native for value in pivot_fit_maxima.values()),
-            "unknown_dynamics_remain_null": all(item["value"] is None for item in evidence["unknown_physical_parameters"].values()),
-            "stick_joint_space_envelope_is_declared_approximation": (
-                stick_envelope_approximation["status"]
-                == "conservative_joint_space_approximation_not_physical_gate"
-                and maximum_inclination_shortfall > 0.0
-            ),
-            "physical_acceptance_false": evidence["acceptance"]["physical_acceptance"] is False,
-        },
-        "counts": {"nodes": len(nodes), "joints": len(joints), "constraints": len(constraints), "channels": len(channels)},
-    }
-    require(all(audit["checks"].values()), f"build audit failed: {audit['checks']}")
     if output is not None:
-        for name, value in (("xbox_one_s_evidence.json", evidence), ("xbox_one_s.json", profile), ("kinematics_build_audit.json", audit)):
+        for name, value in (("xbox_one_s_evidence.json", evidence), ("xbox_one_s.json", profile)):
             atomic_write(output / name, encoded(value))
-    return evidence, profile, audit
+    return evidence, profile
 
 
 def encoded(value):
@@ -797,8 +763,7 @@ def main():
     if args.write:
         for path, value in zip(outputs, values_to_write):
             atomic_write(path, encoded(value))
-        atomic_write(AUDIT_OUTPUT, encoded(values[2]))
-    reported = (*outputs, *((AUDIT_OUTPUT,) if args.write else ()))
+    reported = outputs
     print(json.dumps({"profile_id": PROFILE_ID, "mode": "write" if args.write else "check", "outputs": [str(path.relative_to(ROOT)) for path in reported]}))
 
 

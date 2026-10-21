@@ -125,43 +125,25 @@ class DiagnosticTest(unittest.TestCase):
 
 
 class EntryPointTest(unittest.TestCase):
-    def test_doctor_missing_runtime_and_resources_has_actionable_result(self):
-        with mock.patch.object(integration, "_version", return_value=None), mock.patch.object(integration, "resource_status", return_value={"root": "/tmp/test", "missing": ["a"], "nodes": [{"name": "visual", "stale": True}]}):
-            stream = io.StringIO()
-            with contextlib.redirect_stdout(stream):
-                code = cli.main(["doctor", "--json"])
-        result = json.loads(stream.getvalue())
-        self.assertEqual(code, 1)
-        self.assertFalse(result["sdf_supported"])
-        self.assertFalse(result["resources"]["ready"])
-        self.assertFalse(result["extras"]["example"]["installed"])
 
-    def test_doctor_ready_and_old_sapien(self):
-        with mock.patch.object(integration, "_version", return_value="3.0.3"), mock.patch.object(integration, "resource_status", return_value={"root": "/tmp/test", "missing": [], "nodes": []}):
-            output = io.StringIO()
-            with contextlib.redirect_stdout(output):
-                self.assertEqual(cli.main(["doctor"]), 0)
-            self.assertIn("diagnose_scene(scene)", output.getvalue())
-        with mock.patch.object(integration, "_version", return_value="3.0.0b1"), mock.patch.object(integration, "resource_status", return_value={"missing": [], "nodes": []}):
-            self.assertFalse(integration.diagnose_environment()["sdf_supported"])
 
-    def test_newer_sapien_capability_does_not_claim_supported_baseline(self):
-        with mock.patch.object(integration, "_version", return_value="4.0.0"), mock.patch.object(integration, "resource_status", return_value={"missing": [], "nodes": []}):
-            result = integration.diagnose_environment()
-        self.assertTrue(result["sdf_supported"])
-        self.assertFalse(result["supported_sapien"])
 
     def test_guide_and_help_expose_the_correct_path(self):
         output = io.StringIO()
         with contextlib.redirect_stdout(output):
             self.assertEqual(cli.main(["guide"]), 0)
-        for token in ("load_into_scene", "example export", "GLOBAL", "static box", "doctor", "channel name"):
+        for token in ("load_into_scene", "example export", "GLOBAL", "static box", "channel name"):
             self.assertIn(token, output.getvalue())
+        rendered = output.getvalue()
+        for backend in ("robotwin", "mujoco", "isaac"):
+            self.assertIn("--backend " + backend, rendered)
+        self.assertLess(rendered.index("MuJoCo:"), rendered.index("1. Environment"))
+        self.assertIn("Isaac (preview)", rendered)
         help_text = cli._parser().format_help()
-        for token in ("guide", "example export", "doctor"):
+        for token in ("guide", "example export"):
             self.assertIn(token, help_text[:700])
 
-    def test_mujoco_guide_documents_caller_compilation_and_physics_gate(self):
+    def test_mujoco_guide_documents_caller_compilation(self):
         output = io.StringIO()
         with contextlib.redirect_stdout(output):
             self.assertEqual(cli.main(["guide", "--backend", "mujoco"]), 0)
@@ -169,19 +151,6 @@ class EntryPointTest(unittest.TestCase):
             self.assertIn(token, output.getvalue())
         self.assertNotIn("SDF requires", output.getvalue())
 
-    def test_mujoco_doctor_does_not_require_sapien(self):
-        versions = lambda name: "3.16.0+concon.sdf3689.2" if name == "mujoco" else None
-        ready = {"root": "/tmp/test", "missing": [], "nodes": []}
-        with mock.patch.object(integration, "_version", side_effect=versions), \
-             mock.patch.object(integration, "resource_status", return_value=ready) as inspect:
-            output = io.StringIO()
-            with contextlib.redirect_stdout(output):
-                self.assertEqual(cli.main(["doctor", "--backend", "mujoco", "--json"]), 0)
-        result = json.loads(output.getvalue())
-        self.assertTrue(result["runtime_ready"])
-        self.assertTrue(result["supported_mujoco"])
-        self.assertFalse(result["sdf_supported"])
-        inspect.assert_called_once_with(backends=("mujoco",))
 
     def test_public_scene_does_not_apply_global_settings(self):
         sapien = mock.MagicMock()

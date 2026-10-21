@@ -1,5 +1,13 @@
 # Isaac experimental preview
 
+The contact and native readback tools are checkout-only under `tests/acceptance/`;
+they are not installed by the wheel. Run these scripts from the checkout root
+with that directory on the Python search path (the runtime can remain installed):
+
+```sh
+export PYTHONPATH="$PWD${PYTHONPATH:+:$PYTHONPATH}"
+```
+
 Native Xbox One S asset generation, scalar/CUDA handles and canonical32 signal
 readout. This is an experimental installation candidate, not final contact
 acceptance. See [release notes](RELEASE_NOTES.md) and [known issues](KNOWN_ISSUES.md).
@@ -53,7 +61,7 @@ XGP_B2_MOTION="$TELEOP_RESOURCE_ROOT/common/xbox_one_s/motion/full_controls.json
   "$TELEOP_ISAAC_PYTHON" -m pytest -q tests/backends/isaac
 ```
 
-The CUDA D07 test compares the vectorized mapper with the scalar Python oracle.
+The CUDA branch comparison test compares the vectorized mapper with the scalar Python oracle.
 These tests complement the native load/drive example; they do not rerun the
 26-case contact suite or establish full physical acceptance.
 
@@ -101,7 +109,7 @@ The caller starts AppLauncher before importing pxr or Isaac native modules.
 
 `build_usd` takes prepared common motion, physical, appearance and collision
 descriptions. Appearance must already be bound to the common motion chain.
-The B1 review accepts an explicit `--binding` JSON; the shared appearance-binding
+The native review accepts an explicit `--binding` JSON; the shared appearance-binding
 patch is owned by the main integration session. No production code reads the
 RoboTwin resource tree.
 
@@ -118,7 +126,7 @@ reviews add `--enable_cameras --render-mode RaytracedLighting` or
 `--render-mode PathTracing`, plus `--camera-plan "$TELEOP_CAMERA_PLAN"` and
 `--hdr "$TELEOP_HDR"` from the private site configuration. The experiment launcher under
 `build/experiments/mb_i2/run_remote.sh` isolates the target machine's Kit and
-cache directories. Images use D2 full and ABXY cameras and the B1b render policy.
+cache directories. Images use full-view and ABXY cameras and the transparent-dome shadow policy.
 
 Create the caller's `Articulation` with `make_articulation_cfg`. After the
 caller's reset initializes it, call `bind_articulation`.
@@ -127,8 +135,8 @@ commands, advances one native physics tick and updates gamepad data. The same
 native SDK calls can be used directly. The caller flushes/updates its other actors and sensors. State
 synchronization writes joint state without stepping.
 Reset restores passive targets by default. Root mode is fixed at USD creation;
-there is no runtime root switch. The B1 scalar binding accepts one instance;
-CUDA batching belongs to B2.
+there is no runtime root switch. The scalar binding accepts one instance;
+Use bind_batched_articulation for CUDA batches.
 
 The USD contains explicit mass, COM, principal inertia, limits, force drives and
 separate native viscous friction. Angular conversion occurs at the USD boundary
@@ -137,12 +145,12 @@ SDF is the default collision policy under ruling 3, using the unchanged 0.5 mm
 baseline cook settings. Full contact qualification remains pending. CoACD is an
 explicit comparison option; each frozen object remains an individual convex shape.
 
-The four ABXY BLEND domes alone disable shadow casting, following B1b's actual
+The four ABXY BLEND domes alone disable shadow casting, following the reviewed
 no-shadow control. Their opacity is constant linear coverage 64/255. OPAQUE
 letter geometry remains visible. PreviewSurface's metallic workflow does not
 fully implement glTF KHR dielectric specular F0 semantics.
 
-B1 validates authoring, loading and appearance review. It does not establish
+The preview validates authoring, loading and appearance review. It does not establish
 contact readiness, the 26-case pressing regression, CUDA mapping or throughput.
 
 ## Ruling 2 diagnostics and comparison

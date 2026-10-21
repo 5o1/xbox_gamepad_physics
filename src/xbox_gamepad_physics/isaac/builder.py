@@ -102,7 +102,7 @@ def build_usd(output_path, *, motion, physical, appearance, collision_sources,
     if collision_mode == 'sdf' and not sdf_options:
         raise ValueError('SDF requires nonempty cook settings')
     if physical.profile != motion.profile or motion.profile != 'full_controls':
-        raise ValueError('B1 requires matching full_controls motion and physical descriptions')
+        raise ValueError('USD authoring requires matching full_controls motion and physical descriptions')
     collision_overrides = collision_overrides or {}
     components = {source.component for source in collision_sources}
     if not set(collision_overrides) <= components:
@@ -120,7 +120,7 @@ def build_usd(output_path, *, motion, physical, appearance, collision_sources,
             _known(getattr(law, field), f'{name}.{field}')
         for field in ('dry_friction_effort', 'armature'):
             if getattr(law, field).value is not None:
-                raise ValueError(f'{name}.{field}: no verified Isaac mapping in B1')
+                raise ValueError(f'{name}.{field}: no adopted Isaac mapping')
     validate_initial_positions(motion, physical)
     # pxr is deliberately imported only inside the platform-process entry point.
     from pxr import Usd, UsdGeom, UsdPhysics, UsdShade, PhysxSchema, Gf, Sdf, Vt, Tf
@@ -226,7 +226,7 @@ def build_usd(output_path, *, motion, physical, appearance, collision_sources,
         def texture(role, suffix, color_space='raw', scale=(1,1,1,1), bias=(0,0,0,0)):
             t = textures[role]
             if t.uv_set != 0 or t.transform:
-                raise ValueError('B1 supports the frozen untransformed UV0 textures')
+                raise ValueError('USD authoring supports the frozen untransformed UV0 textures')
             sh = UsdShade.Shader.Define(stage, path+'/'+suffix)
             sh.CreateIdAttr('UsdUVTexture')
             asset_path=Path(os.path.relpath(visual_root/t.resource,output.parent)).as_posix()
@@ -283,7 +283,7 @@ def build_usd(output_path, *, motion, physical, appearance, collision_sources,
                 if desc.alpha_mode == 'BLEND':
                     if part.name not in {f'{i:02d}_{n}_Button_VISUAL_UNCALIBRATED' for i,n in ((0,'A'),(1,'B'),(13,'X'),(15,'Y'))}:
                         raise ValueError('unreviewed BLEND geometry: selective shadow rule needs review')
-                    # B1b no_shadow control: letters are on OPAQUE geometry.
+                    # Transparent-dome shadow control: letters are on OPAQUE geometry.
                     UsdGeom.PrimvarsAPI(mesh).CreatePrimvar('doNotCastShadows', Sdf.ValueTypeNames.Bool, 'constant').Set(True)
                     shadow_paths.append(str(mesh.GetPath()))
     contact_materials = {}
@@ -295,7 +295,7 @@ def build_usd(output_path, *, motion, physical, appearance, collision_sources,
         api.CreateRestitutionAttr(float(_known(desc.restitution, 'restitution')))
         for field in ('rolling_resistance_length', 'torsional_resistance_length'):
             if getattr(desc, field).value is not None:
-                raise ValueError(f'{field}: no verified Isaac mapping in B1')
+                raise ValueError(f'{field}: no adopted Isaac mapping')
         contact_materials[desc.material_id] = mat
     if set(contact_materials) != {'controller'}:
         raise ValueError('expected the common controller contact material')
@@ -375,7 +375,6 @@ def build_usd(output_path, *, motion, physical, appearance, collision_sources,
                    'joint_load_dependent_friction_coefficient': None},
                'unknown_reason': 'No adopted Isaac-specific calibration; SDK effective values must be recorded by native validation.',
                'appearance_limitations': ['PreviewSurface metallic workflow is not full KHR dielectric F0 equivalence.'],
-               'sdf_default_gate_passed': False,
                'default_collision_policy': 'sdf',
                'default_policy_source': 'User ruling 3; contact qualification remains separate',
                'sdf_candidate_settings': sdf_options,

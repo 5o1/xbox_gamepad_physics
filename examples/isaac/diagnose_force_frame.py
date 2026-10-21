@@ -12,9 +12,9 @@ import torch
 import isaaclab.sim as sim_utils
 from isaaclab.sim import SimulationContext,SimulationCfg
 from isaaclab.assets import RigidObject,RigidObjectCfg
-from xbox_gamepad_physics.acceptance.cases import load_suite
-from xbox_gamepad_physics.acceptance.runner import ball_force
-from xbox_gamepad_physics.isaac.press import IsaacPressExecutor
+from tests.acceptance.cases import load_suite
+from tests.acceptance.runner import ball_force
+from tests.acceptance.isaac.executor import IsaacPressExecutor
 
 args.output.mkdir(parents=True,exist_ok=True);suite=load_suite();settings=suite.settings;dt=.004
 sim=SimulationContext(SimulationCfg(dt=dt,device=args.device,gravity=tuple(suite.fixture['gravity_m_s2']),log_dir=str(args.output/'lab_logs')))

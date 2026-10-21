@@ -234,7 +234,7 @@ class ReleaseDownloadTest(unittest.TestCase):
             if target.is_file():
                 return
             manifest = {"schema_version": 1, "asset_id": "xbox_one_s", "backend": "robotwin",
-                        "profile": "full_controls", "available": True, "dynamics_ready": True,
+                        "profile": "full_controls",
                         "entrypoint": "mobility.urdf", "required_files": ["mobility.urdf"], "reason": None}
             for name in ("kinematics/xbox_one_s.json", "kinematics/xbox_one_s_evidence.json",
                          "kinematics/kinematics_build_audit.json", "common/xbox_one_s/motion/full_controls.json",
@@ -278,12 +278,11 @@ class ReleaseDownloadTest(unittest.TestCase):
         return package, project, lock, requests
 
     def test_download_verify_extract_load_and_reuse(self):
-        from xbox_gamepad_physics.profiles import require_physics_ready
+        from xbox_gamepad_physics.profiles import load_profile
         with tempfile.TemporaryDirectory() as directory:
             package, project, lock, requests = self._release(Path(directory))
             with mock.patch.object(resources, "PACKAGE_ROOT", package), working_directory(project):
-                profile = require_physics_ready("robotwin", "full_controls")
-                self.assertTrue(profile.physics_ready)
+                profile = load_profile("robotwin", "full_controls")
                 root = resources.resource_root()
                 self.assertEqual(root, project / ".xbox_gamepad_physics/resources")
                 self.assertEqual(resources.missing_resources(root), [])
@@ -363,8 +362,8 @@ class ReleaseDownloadTest(unittest.TestCase):
                 import inspect, textwrap
                 helper = textwrap.dedent(inspect.getsource(self._fake_build))
                 helper = helper.replace("@staticmethod\n", "").replace("_fake_build", "fake_build", 1)
-                code = "from pathlib import Path\nimport json\nfrom xbox_gamepad_physics import resources, require_physics_ready\n" + helper
-                code += "\nresources._build = fake_build\nassert require_physics_ready('robotwin', 'full_controls').physics_ready\nassert resources.resource_root() == Path.cwd() / '.xbox_gamepad_physics/resources'\n"
+                code = "from pathlib import Path\nimport json\nfrom xbox_gamepad_physics import resources, load_profile\n" + helper
+                code += "\nresources._build = fake_build\nassert load_profile('robotwin', 'full_controls').entrypoint == 'mobility.urdf'\nassert resources.resource_root() == Path.cwd() / '.xbox_gamepad_physics/resources'\n"
                 processes = [subprocess.Popen([sys.executable, "-B", "-c", code], cwd=project, env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True) for _ in range(2)]
                 for process in processes:
                     stdout, stderr = process.communicate(timeout=30)

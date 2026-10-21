@@ -162,7 +162,7 @@ python3 -m xbox_gamepad_physics build-resources \
   --archive ./xbox_gamepad_physics-resources-0.3.0.zip \
   --resources ./gamepad_resources --offline
 export XBOX_GAMEPAD_PHYSICS_RESOURCES="$PWD/gamepad_resources"
-python3 -m xbox_gamepad_physics verify --backend robotwin --profile full_controls
+python3 -m xbox_gamepad_physics status --backend robotwin --profile full_controls
 ```
 
 wheel 包含构建器、小证据与规则；输入 zip 只含作者原 GLB、已批准静态 visual、meshbase、

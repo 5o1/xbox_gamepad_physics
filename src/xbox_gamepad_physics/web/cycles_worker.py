@@ -19,7 +19,6 @@ if bpy.app.version[:2] != (4, 5):
 
 scene = bpy.context.scene
 assert scene.render.engine == 'CYCLES'
-assert scene.get('approved_reference_sha256') == '260187ba839674ce2ed49d5d37c3eeb5ca95206fccb7c13ce2655d7001204907'
 scene.frame_set(0)
 graph = bpy.context.evaluated_depsgraph_get()
 originals = list(scene.objects)

@@ -52,12 +52,10 @@ MuJoCo 构建器和运行时信号控制器也读取同一份契约。
 
 ```sh
 python -m xbox_gamepad_physics build-resources
-python -m xbox_gamepad_physics verify \
-  --backend all --profile full_controls
+python -m xbox_gamepad_physics status --backend all --profile full_controls
 ```
 
-依赖图见 `scripts/build_resources.py`。MuJoCo 资源目前冻结在
-`src/xbox_gamepad_physics/resource_data/mujoco/`，构建时原样复制，不重新生成。
+依赖图见 `scripts/build_resources.py`。当前 MuJoCo 使用新构建器；历史 `resource_data/mujoco/` 保留溯源，不进入构建。
 
 ## RoboTwin / SAPIEN
 

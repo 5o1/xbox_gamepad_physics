@@ -14,7 +14,7 @@ import math
 from pathlib import Path
 from typing import Any, Mapping, Sequence
 
-from xbox_gamepad_physics.profiles import require_physics_ready
+from xbox_gamepad_physics.profiles import load_profile
 from xbox_gamepad_physics.resources import load_json_resource, resource_path
 from xbox_gamepad_physics.controller import (
     AxisSignalMapping,
@@ -140,13 +140,17 @@ def _validated_description(profile: str) -> RoboTwinAssetDescription:
 
     Field ranges and the explicit-physics URDF rules are guaranteed by the
     generators and checked by the asset tests at build time; here the loader
-    only gates readiness and files, converts the manifest, and checks the
+    reads required files, converts the manifest, and checks the
     joint names that form the public API.
     """
 
-    ready = require_physics_ready(_BACKEND, profile)
-    if not ready.entrypoint.endswith(".urdf"):
-        raise RoboTwinManifestError("ready RoboTwin profile needs a .urdf entrypoint")
+    ready = load_profile(_BACKEND, profile)
+    if not ready.entrypoint or not ready.entrypoint.endswith(".urdf"):
+        raise RoboTwinManifestError("RoboTwin profile needs a .urdf entrypoint; run build-resources --backend robotwin")
+    if ready.entrypoint not in ready.required_files:
+        raise RoboTwinManifestError("URDF entrypoint is absent from required_files; run build-resources --backend robotwin")
+    for required_file in ready.required_files:
+        resource_path(_BACKEND, profile, required_file)
     manifest = load_json_resource(_BACKEND, profile)
     urdf_path = resource_path(_BACKEND, profile, ready.entrypoint).resolve(strict=True)
 

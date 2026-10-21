@@ -6,7 +6,7 @@ non-passive targets are written during a press trajectory.
 from __future__ import annotations
 import math
 import torch
-from ..state import CHANNEL_NAMES
+from xbox_gamepad_physics.state import CHANNEL_NAMES
 
 
 class IsaacPressExecutor:
@@ -44,7 +44,7 @@ class IsaacPressExecutor:
 
     def step(self,dt_s):
         if dt_s!=self.dt_s:raise ValueError('unexpected shared runner timestep')
-        from .stepping import step
+        from xbox_gamepad_physics.isaac.stepping import step
         self.probe.write_data_to_sim()
         step(self.simulation,gamepads=(self.gamepad,),render=False)
         self.probe.update(dt_s)

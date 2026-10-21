@@ -38,7 +38,7 @@ def main():
     data=json.dumps({'entries':entries,'cases':cases},ensure_ascii=False).replace('</',r'<\/')
     reference = ''
     if all((directory/'reference'/name).is_file() for name in ('mujoco_full.png','mujoco_abxy.png')):
-        reference = '''<details><summary>D2统一取景参考图 · 待外观确认</summary><div style="display:flex;flex-wrap:wrap;gap:16px"><a href="reference/mujoco_full.png" style="max-width:48%"><img src="reference/mujoco_full.png" alt="MuJoCo D2 full view" style="width:100%;height:auto"></a><a href="reference/mujoco_abxy.png" style="max-width:48%"><img src="reference/mujoco_abxy.png" alt="MuJoCo D2 ABXY close-up" style="width:100%;height:auto"></a></div></details>'''
+        reference = '''<details><summary>Comparison views · pending appearance review</summary><div style="display:flex;flex-wrap:wrap;gap:16px"><a href="reference/mujoco_full.png" style="max-width:48%"><img src="reference/mujoco_full.png" alt="MuJoCo reference full view" style="width:100%;height:auto"></a><a href="reference/mujoco_abxy.png" style="max-width:48%"><img src="reference/mujoco_abxy.png" alt="MuJoCo reference ABXY close-up" style="width:100%;height:auto"></a></div></details>'''
     page='''<!doctype html>
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>MuJoCo 最新接触测试 · 25/26通过</title>

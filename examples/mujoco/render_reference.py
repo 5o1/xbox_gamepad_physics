@@ -1,4 +1,4 @@
-"""Render complete native geometry with the unchanged D2 camera plan using EGL."""
+"""Render complete native geometry with the unchanged comparison camera plan using EGL."""
 from __future__ import annotations
 
 import argparse
@@ -56,7 +56,7 @@ def render(resource_root, camera_plan, output):
               "camera_plan": plan, "root_pose": "identity", "state": "common physical initial positions; no physics steps",
               "initial_positions": gamepad.joint_positions(),
               "physical_validation": False, "appearance_approved": None,
-              "environment": "D2 headlight approximation; classic does not reproduce HDR IBL/PBR.",
+              "environment": "Reference headlight approximation; classic does not reproduce HDR IBL/PBR.",
               "headlight": {"ambient": 0.25, "diffuse": 0.7, "specular": 0.2},
               "material_rgba": model.mat_rgba.tolist(), "captures": []}
     for name, view in plan["views"].items():
@@ -64,7 +64,7 @@ def render(resource_root, camera_plan, output):
         with classic.Renderer(model, height=height, width=width) as renderer:
             gpu = GL.glGetString(GL.GL_RENDERER).decode()
             if "nvidia" not in GL.glGetString(GL.GL_VENDOR).decode().lower():
-                raise RuntimeError(f"D2 delivery requires GPU EGL; renderer is {gpu}")
+                raise RuntimeError(f"Appearance rendering requires GPU EGL; renderer is {gpu}")
             renderer.update_scene(data, camera=f"d2_{name}")
             renderer.scene.flags[mujoco.mjtRndFlag.mjRND_SHADOW] = False
             pixels = renderer.render().copy()

@@ -17,7 +17,7 @@
 平台解释器、动态库目录、GPU选择来自调用者自己的现有环境或私有 site 配置，不写入源码。
 
 普通环境执行 `build-resources --backend isaac` 会明确报需要 `isaac_app` / AppLauncher。
-预览的通用 registry readiness 尚未开启，该命令不会自动启动平台。原生构建入口是
+通用入口不会自动启动平台。原生构建入口是
 `xbox_gamepad_physics.isaac.build_usd`，必须先由调用者启动 AppLauncher，再导入 pxr/原生模块。
 
 ## 在平台进程中构建并加载

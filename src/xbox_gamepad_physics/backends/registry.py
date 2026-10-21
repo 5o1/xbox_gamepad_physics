@@ -32,7 +32,6 @@ class BackendSpec:
     usage: UsageSpec
     capabilities: frozenset[str] = frozenset()
     builder_runtime: Literal["python", "isaac_app"] = "python"
-    implemented: bool = True
 
     def require_builder_runtime(self, runtime: str = "python") -> None:
         if runtime not in {"python", "isaac_app"}:
@@ -43,8 +42,6 @@ class BackendSpec:
                 "start Isaac Sim through the caller's AppLauncher first and invoke "
                 "the builder inside that platform process. Automatic startup is disabled."
             )
-        if not self.implemented:
-            raise ResourceError(f"{self.name} backend builder is not implemented in C1")
 
 
 _WARNING = ("These are internal build artifacts. Direct mesh or URDF loading loses "
@@ -75,12 +72,11 @@ MUJOCO = BackendSpec("mujoco", ("full_controls",), ("mujoco_full_controls",),
                                backend_notes=("Caller compiles make_spec/attach_to_spec, then binds by name.",
                                               "Fixed/free root choice is structural before compilation.",
                                               MUJOCO_RELEASE_GUIDANCE)),
-                     capabilities=frozenset({"named_joints", "signals", "birth_fixed_free", "target_drive"}),
-                     implemented=True)
+                     capabilities=frozenset({"named_joints", "signals", "birth_fixed_free", "target_drive"}))
 ISAAC = BackendSpec("isaac", ("full_controls",), ("isaac_full_controls",),
                     "xbox_gamepad_physics.isaac.bind_articulation", "xbox_gamepad_physics.isaac.builder.build_usd",
                     UsageSpec("xbox_gamepad_physics.isaac.bind_articulation", ""),
-                    builder_runtime="isaac_app", implemented=False)
+                    builder_runtime="isaac_app")
 BACKENDS = {item.name: item for item in (ROBOTWIN, MUJOCO, ISAAC)}
 
 

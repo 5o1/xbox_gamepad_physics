@@ -127,7 +127,7 @@ def test_native_step_preserves_solver_results_without_projection():
 def test_press_sample_reports_native_residual_without_state_changes(required_motion):
     torch = pytest.importorskip('torch')
     from xbox_gamepad_physics.backends.common.model import Pose
-    from xbox_gamepad_physics.isaac.press import IsaacPressExecutor
+    from tests.acceptance.isaac.executor import IsaacPressExecutor
     limits, q, names = bound_geometry(required_motion)
     q[:, names.index('left_stick_x')] = math.radians(23.04)
     v = torch.zeros_like(q)

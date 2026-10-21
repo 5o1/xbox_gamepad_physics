@@ -10,7 +10,7 @@ import sys
 from typing import Sequence
 
 from .errors import XboxGamepadPhysicsError, ResourceNotFoundError
-from .profiles import load_profile, require_physics_ready
+from .profiles import load_profile
 from .resources import prepare_resources, resource_status
 from .backends.registry import BACKENDS, backend_spec
 
@@ -20,7 +20,7 @@ _BACKENDS = tuple(BACKENDS)
 
 def _selected_backends(value: str) -> tuple[str, ...]:
     if value == "all":
-        return tuple(name for name,spec in BACKENDS.items() if spec.implemented)
+        return tuple(name for name,spec in BACKENDS.items() if spec.builder_runtime == "python")
     backend_spec(value).require_builder_runtime()
     return (value,)
 
@@ -39,7 +39,6 @@ def _status(args: argparse.Namespace) -> int:
         for profile in profiles:
             item = asdict(profile)
             item["manifest_path"] = str(item["manifest_path"])
-            item["physics_ready"] = profile.physics_ready
             item["resources"] = resources
             item["resource_root"] = resources["root"]
             payload.append(item)
@@ -47,30 +46,13 @@ def _status(args: argparse.Namespace) -> int:
         return 0
 
     for profile in profiles:
-        state = "ready" if profile.physics_ready else "blocked"
-        print(f"{profile.backend}/{profile.profile}: {state}")
-        print(f"  available: {str(profile.available).lower()}")
-        print(f"  dynamics_ready: {str(profile.dynamics_ready).lower()}")
+        print(f"{profile.backend}/{profile.profile}:")
         print(f"  entrypoint: {profile.entrypoint}")
         if profile.default_collision:
             print(f"  default_collision: {profile.default_collision}")
             print(f"  min_sapien: {profile.min_sapien}")
         if profile.reason:
             print(f"  reason: {profile.reason}")
-    return 0
-
-
-def _verify(args: argparse.Namespace) -> int:
-    selected = _selected_backends(args.backend)
-    _print_resources(resource_status(backends=selected))
-    for backend in selected:
-        profile = require_physics_ready(backend, args.profile)
-        print(
-            f"{backend}/{args.profile}: ready "
-            f"({len(profile.required_files)} required files)"
-        )
-        if profile.default_collision:
-            print(f"  default_collision: {profile.default_collision}; min_sapien: {profile.min_sapien}")
     return 0
 
 
@@ -109,57 +91,49 @@ def _export_example(args):
 
 
 def _guide(args):
-    from .integration import GUIDE, MUJOCO_GUIDE
-    if args.backend in {"robotwin", "all"}:
+    from .integration import GUIDE, MUJOCO_GUIDE, ISAAC_GUIDE, BACKEND_ENTRIES
+    if args.backend is None:
+        print(BACKEND_ENTRIES)
         print(GUIDE)
-    if args.backend in {"mujoco", "all"}:
-        print(MUJOCO_GUIDE)
+    else:
+        for name, guide in (("robotwin", GUIDE), ("mujoco", MUJOCO_GUIDE), ("isaac", ISAAC_GUIDE)):
+            if args.backend in {name, "all"}:
+                print(guide)
     return 0
 
 
 def _doctor(args):
     from .integration import diagnose_environment
-    result = diagnose_environment(backends=_selected_backends(args.backend))
+    selected = tuple(BACKENDS) if args.backend == "all" else (args.backend,)
+    result = diagnose_environment(backends=selected)
     if args.json:
         print(json.dumps(result, indent=2))
     else:
-        print(f"Python: {result['python']} (core/MuJoCo: 3.10, 3.11; RoboTwin: 3.10)")
-        if "robotwin" in result["backends"]:
-            print(f"SAPIEN: {result['sapien'] or 'not installed'} (supported version: 3.0.3; {'matched' if result['supported_sapien'] else 'outside supported baseline'})")
-            print(f"SDF version capability (>=3.0.3): {'available' if result['sdf_supported'] else 'unavailable'}")
-        resources = result['resources']
-        print(f"Resources: {'ready' if resources['ready'] else 'not ready'}")
-        if 'root' in resources:
-            print(f"  root: {resources['root']}")
-            print(f"  missing: {', '.join(resources['missing']) or 'none'}")
-            print(f"  stale: {', '.join(node['name'] for node in resources['nodes'] if node['stale']) or 'none'}")
-        if 'error' in resources:
-            print(f"  {resources['error']}")
-        for name, extra in result['extras'].items():
-            missing = [dep for dep, version in extra['distributions'].items() if version is None]
-            print(f"[{name}]: {'installed' if extra['installed'] else 'missing ' + ', '.join(missing)}")
-        if "mujoco" in result["backends"]:
-            print(f"MuJoCo: {result['mujoco'] or 'not installed'} (supported version: 3.16.0+concon.sdf3689.2)")
-            print("For model-level checks, inspect handle.findings in your code.")
-        print("Next: xbox-gamepad-physics guide; example export DIRECTORY")
-        if "robotwin" in result["backends"]:
-            print("For scene-level checks, call diagnose_scene(scene) in your code.")
-    return 0 if result['runtime_ready'] and result['resources']['ready'] else 1
+        print(f"Python: {result['python']}")
+        for name, version in result['versions'].items():
+            print(f"{name}: {version or 'not installed'}")
+        print("Resources: " + json.dumps(result['resources']))
+        for extra, versions in result['extras'].items():
+            print(f"[{extra}]: " + json.dumps(versions))
+        for issue in result['issues']:
+            print(issue)
+        print("Next: xbox-gamepad-physics guide --backend NAME")
+    return 1 if result['issues'] else 0
 
 
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="xbox-gamepad-physics",
-        description="Start with guide, example export DIRECTORY, and doctor. Inspect or load the packaged Xbox One S physical asset.",
+        description="Start with guide and example export DIRECTORY. Inspect or load the packaged Xbox One S physical asset.",
     )
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     guide = subparsers.add_parser("guide", help="read the integration guide")
-    guide.add_argument("--backend", choices=("robotwin", "mujoco", "all"), default="all")
+    guide.add_argument("--backend", choices=("robotwin", "mujoco", "isaac", "all"), default=None)
     guide.set_defaults(handler=_guide)
-    doctor = subparsers.add_parser("doctor", help="check Python, selected backend, resources and optional extras")
+    doctor = subparsers.add_parser("doctor", help="inspect Python, engine versions, extras and resource files")
+    doctor.add_argument("--backend", choices=(*_BACKENDS, "all"), default="robotwin")
     doctor.add_argument("--json", action="store_true")
-    doctor.add_argument("--backend", choices=("robotwin", "mujoco", "all"), default="robotwin")
     doctor.set_defaults(handler=_doctor)
 
     build = subparsers.add_parser("build-resources", help="build stale project-local resources")
@@ -173,7 +147,7 @@ def _parser() -> argparse.ArgumentParser:
     build.set_defaults(handler=_build_resources)
 
     status = subparsers.add_parser(
-        "status", help="show declared backend artifact readiness"
+        "status", help="show backend entrypoints and resource files"
     )
     status.add_argument(
         "--backend", choices=(*_BACKENDS, "all"), default="all"
@@ -182,18 +156,9 @@ def _parser() -> argparse.ArgumentParser:
     status.add_argument("--json", action="store_true")
     status.set_defaults(handler=_status)
 
-    verify = subparsers.add_parser(
-        "verify", help="fail unless declared backend artifacts are complete"
-    )
-    verify.add_argument(
-        "--backend", choices=(*_BACKENDS, "all"), default="all"
-    )
-    verify.add_argument("--profile", default="full_controls")
-    verify.set_defaults(handler=_verify)
-
     install = subparsers.add_parser(
         "install-robotwin",
-        help="inspect or copy ready resources into a RoboTwin checkout",
+        help="inspect or copy generated resources into a RoboTwin checkout",
     )
     install.add_argument("--root", required=True)
     install.add_argument("--profile", default="full_controls")

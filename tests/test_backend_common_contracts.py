@@ -26,7 +26,7 @@ class CommonContractsTest(unittest.TestCase):
     def test_common_import_does_not_load_engines(self):
         code="""import sys
 from xbox_gamepad_physics.backends.common import model, calibration, physical, appearance, collision, handle, diagnostics
-from xbox_gamepad_physics import acceptance
+from tests import acceptance
 from xbox_gamepad_physics.backends import registry
 assert not {'sapien','mujoco','pxr','isaaclab'} & set(sys.modules)
 assert 'torch' not in sys.modules
@@ -38,8 +38,7 @@ assert 'torch' not in sys.modules
         self.assertEqual([n.name for n in selected_nodes(graph,('a',))],['root','a'])
         with self.assertRaisesRegex(ResourceError,'isaac_app'):
             _selected_graph(ROOT,ROOT,backends=('isaac',))
-        with self.assertRaisesRegex(ResourceError,'not implemented'):
-            backend_spec('isaac').require_builder_runtime('isaac_app')
+        backend_spec('isaac').require_builder_runtime('isaac_app')
         self.assertEqual(backend_spec('robotwin').builder_runtime,'python')
 
     def test_query_does_not_prepare_pending_backends(self):

@@ -21,3 +21,12 @@ def test_signed_and_near_antiparallel_axes_keep_source_direction(axis):
 def test_plain_adapter_import_does_not_start_platform():
     code="import sys; import xbox_gamepad_physics.isaac; assert not {'pxr','torch','isaaclab','sapien','mujoco'}.intersection(sys.modules)"
     subprocess.run([sys.executable,'-c',code],check=True)
+
+
+def test_preview_binding_message_does_not_block_loading(monkeypatch, capsys):
+    from xbox_gamepad_physics.isaac import articulation
+    expected = object()
+    monkeypatch.setattr(articulation, 'IsaacGamepadHandle', lambda *args, **kwargs: expected)
+    assert articulation.bind_articulation(object(), motion=object(), physical=object()) is expected
+    message = capsys.readouterr().out
+    assert len(message.splitlines()) == 1 and 'preview' in message

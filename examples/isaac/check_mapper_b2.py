@@ -1,4 +1,4 @@
-"""D07 CUDA float32 oracle gate, independent of AppLauncher and physics.
+"""CUDA float32 branch comparison, independent of AppLauncher and physics.
 
 The Python oracle receives exactly the float32-representable coordinates used
 by CUDA. Zero/nonzero branch decisions, masks and device IDs require equality;
@@ -107,7 +107,7 @@ def _compare(motion, names, q, device):
     mismatches = (actual == 0) != torch.tensor(expected_zero, dtype=torch.bool)
     if bool(mismatches.any()):
         first = mismatches.nonzero()[0].tolist()
-        raise AssertionError(f'D07 branch mismatch at row/channel {first}: {actual[tuple(first)]} != {expected[tuple(first)]}')
+        raise AssertionError(f'CUDA branch mismatch at row/channel {first}: {actual[tuple(first)]} != {expected[tuple(first)]}')
     torch.testing.assert_close(actual, expected, rtol=1e-6, atol=1e-7)
     torch.testing.assert_close(events, torch.tensor(expected_events, dtype=torch.float32), rtol=1e-6, atol=1e-7)
     torch.testing.assert_close(decoded.values.cpu(), torch.tensor(targets, dtype=torch.float32), rtol=1e-6, atol=1e-7)

@@ -3,9 +3,9 @@ from types import SimpleNamespace
 
 import pytest
 
-from xbox_gamepad_physics.acceptance import load_suite
+from tests.acceptance import load_suite
 from xbox_gamepad_physics.backends.common.model import Pose
-from xbox_gamepad_physics.mujoco.acceptance import MujocoPressExecutor, execute_suite, fixture_mapping
+from tests.acceptance.mujoco.executor import MujocoPressExecutor, execute_suite, fixture_mapping
 from xbox_gamepad_physics.state import GamepadState
 
 

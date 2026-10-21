@@ -128,7 +128,7 @@ def build(output: Path = DEFAULT_OUTPUT, *, kinematics: Path | None = None, inpu
                       'groups':groups})
     assert len(parts)==16
     manifest={
-        'asset_id':'xbox_one_s','stage':'visual','dynamics_ready':False,
+        'asset_id':'xbox_one_s','stage':'visual',
         'source_sha256':profile['source_bindings']['source_glb_sha256'],
         'geometry_sha256':profile['visual']['sha256'],
         'geometry_source':'assets/xbox_one_s/visual_meshbase/visual_meshbase.glb',

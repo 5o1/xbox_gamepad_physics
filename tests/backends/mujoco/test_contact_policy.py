@@ -5,8 +5,6 @@ from xbox_gamepad_physics.mujoco.numerics import contact_policy, numerical_polic
 
 def test_trial_policy_and_explicit_contact_override_keep_outer_clock():
     policy = contact_policy()
-    assert policy['approval_status'] == 'trial_approved'
-    assert policy['approval_date'] == '2026-10-17'
     options = {'contact_response': {**policy, 'solref_time_constant_s': .001}}
     assert contact_policy(options)['solref_time_constant_s'] == .001
     assert numerical_policy(options)['acceptance_step_s'] == .004

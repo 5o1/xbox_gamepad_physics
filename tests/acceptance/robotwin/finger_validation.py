@@ -6,10 +6,10 @@ import math
 from itertools import chain
 from pathlib import Path
 
-from .record import iter_records, open_writer, read_header
-from .runtime import make_session
-from .session import Command, SCHEMA_VERSION
-from .site import resolve_config
+from xbox_gamepad_physics.teleop.record import iter_records, open_writer, read_header
+from xbox_gamepad_physics.teleop.runtime import make_session
+from xbox_gamepad_physics.teleop.session import Command, SCHEMA_VERSION
+from xbox_gamepad_physics.teleop.site import resolve_config
 
 
 def finite(value):
@@ -151,7 +151,7 @@ def run(source, reference, output):
             return False
     finally:
         stream.close()
-    from .validate import k2, k3, k4
+    from tests.acceptance.robotwin.validation import k2, k3, k4
     for name, call in (
         ('K2', lambda: k2(base, output/'K2')),
         ('K3', lambda: k3(base, output/'K3')),

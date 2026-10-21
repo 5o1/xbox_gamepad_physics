@@ -8,7 +8,7 @@ from xbox_gamepad_physics.errors import MissingBackendDependencyError
 
 
 def require_mujoco():
-    """Import only when loading; M2 is validated against exactly 3.16.0."""
+    """Import only when loading; The adapter supports exactly 3.16.0."""
     try:
         module = importlib.import_module("mujoco")
     except ImportError as exc:
@@ -17,6 +17,6 @@ def require_mujoco():
         ) from exc
     if module.__version__ != "3.16.0":
         raise MissingBackendDependencyError(
-            f"MuJoCo M2 requires 3.16.0; installed {module.__version__}."
+            f"MuJoCo requires 3.16.0; installed {module.__version__}."
         )
     return module
