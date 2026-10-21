@@ -1,6 +1,6 @@
 # 安装与资源导入
 
-首发支持 Linux x86_64 + NVIDIA、Python 3.10、RoboTwin fork + SAPIEN 3.0.3。
+0.4.1 包含 RoboTwin/SAPIEN、MuJoCo 和 Isaac 预览。RoboTwin 使用 Linux x86_64 + NVIDIA、Python 3.10 与 SAPIEN 3.0.3；MuJoCo 支持 Linux x86_64 的 Python 3.10/3.11；Isaac 前置为外部 Python 3.11 / Lab 2.3.2 / Sim 5.1 / torch。
 Release 附件为 wheel、输入 zip 和 `SHA256SUMS`，不上 PyPI。自有代码为 MIT，资产沿用
 第三方许可；CC BY 4.0 正文规范链接与署名见 `THIRD_PARTY_NOTICES.md`。
 
@@ -15,9 +15,9 @@ SAPIEN 材质按 `materials.json` 用常数 64/255 选择透明 pass，源贴图
 ## 安装与离线导入
 
 ```sh
-python3.10 -m pip install "./xbox_gamepad_physics-0.4.0-py3-none-any.whl[build,robotwin]"
+python3.10 -m pip install "./xbox_gamepad_physics-0.4.1-py3-none-any.whl[build,robotwin]"
 python3.10 -m xbox_gamepad_physics build-resources \
-  --archive ./xbox_gamepad_physics-resources-0.4.0.zip \
+  --archive ./xbox_gamepad_physics-resources-0.4.1.zip \
   --resources ./gamepad_resources --offline
 export XBOX_GAMEPAD_PHYSICS_RESOURCES="$PWD/gamepad_resources"
 python3.10 -m xbox_gamepad_physics status --backend robotwin
@@ -51,7 +51,7 @@ python3.10 -m xbox_gamepad_physics verify --backend robotwin --profile full_cont
 在线首次准备可下载 `_resource_lock.json` 指向的版本化输入 zip，然后本地构建。
 离线机器应提前取得本地 zip 并用上面的 `--archive ... --offline` 导入。在线入口关闭环境
 代理后先直连，确认失败且显式设置 `FALLBACK_PROXY_PORT` 时才回退。使用 fake-IP DNS 的
-站点应先提供真实解析或采用离线导入；本阶段没有访问尚未发布的 v0.3.0 在线附件。
+站点应先提供真实解析或采用离线导入；尚未发布的0.4.1演练使用明确提供的离线输入zip，不以在线附件可用为前提。
 
 ## 维护者打包
 
@@ -59,7 +59,7 @@ python3.10 -m xbox_gamepad_physics verify --backend robotwin --profile full_cont
 `SHA256SUMS` 与 `_resource_lock.json`；不调用完整构建，也不调用 CoACD。
 随后构建 wheel，并让 `SHA256SUMS` 同时覆盖最终 wheel 和输入 zip，作为 Release 附件。
 发布前检查 wheel 中的小证据和生成器齐全、zip 中无运行时产物或其他型号。
-B1+B2 只产出待审文件，不上传、打 tag 或发布。
+本轮发布准备只产出待审文件，不上传、打 tag 或发布。
 
 仓库开发仍可 `python -m pip install -e ".[build]"`；setuptools 59 环境使用
 `--no-build-isolation`，`setup.py` 镜像保持版本、extras、package_data、入口与 MIT 同步。
@@ -146,12 +146,13 @@ xbox-gamepad-physics install-robotwin \
 这个命令只复制已审核的资源文件，不修改 RoboTwin Python 源码或任务注册。公共 backend
 接口不要求执行复制；任务代码可以直接调用 `load_into_scene(task.scene, ...)`。
 
-## MuJoCo 历史基线
+## MuJoCo 当前入口与历史基线
 
-MuJoCo 不在 v0.3+ 发布范围内。冻结树保留在 Git 原地供历史比对，不进运行时 DAG、
-wheel 资源数据或输入 zip，也不恢复其生成器。`status` / `verify --backend mujoco` 与
-MuJoCo 加载入口会明确提示此范围；相关运行时、资产与 MuBlE 真实集成测试注明原因后跳过。
-旧示例与历史实验记录保留，不作为当前安装或验收入口。
+0.4.1 的 MuJoCo 使用新的 DAG builder、`status --backend mujoco` 和
+`mujoco.load_standalone` / `attach_to_spec`，见 [mujoco_backend.md](mujoco_backend.md)。
+`verify` 的 readiness 检查不代表所有接触或严格限位通过。
+旧冻结树仍保留在 Git 原地供历史比对，不进运行时 DAG、wheel 资源数据或输入 zip，
+也不恢复旧生成器。专门针对历史树的测试继续注明原因后跳过；当前适配器另有测试。
 
 ## Backend manifest
 
@@ -191,7 +192,7 @@ RoboTwin ready profile 还需要逐关节 `joint_dynamics`。完整控件的 bac
 这些入口直接使用 wheel 内实现和静态模块，不需要本项目检出、CDN 或首次 npm 下载。
 
 ```sh
-python3.10 -m pip install "./xbox_gamepad_physics-0.4.0-py3-none-any.whl[example]"
+python3.10 -m pip install "./xbox_gamepad_physics-0.4.1-py3-none-any.whl[example]"
 xbox-gamepad-physics example export ./gamepad_example
 python3.10 ./gamepad_example/run_robotwin.py --help
 ```
@@ -236,8 +237,8 @@ overlay 默认打印带小型 canonical demo trace 的本地地址；demo 是合
 路径为 `assets/embodiments/aloha-agilex/urdf/arx5_description_isaac.urdf`；这些外部资产不放入本包的 zip。
 
 ```sh
-python3.10 -m pip install './xbox_gamepad_physics-0.4.0-py3-none-any.whl[robotwin,teleop]'
-xbox-gamepad-physics build-resources --archive ./xbox_gamepad_physics-resources-0.4.0.zip --resources ./gamepad_resources --offline
+python3.10 -m pip install './xbox_gamepad_physics-0.4.1-py3-none-any.whl[robotwin,teleop]'
+xbox-gamepad-physics build-resources --archive ./xbox_gamepad_physics-resources-0.4.1.zip --resources ./gamepad_resources --offline
 xbox-gamepad-physics teleop --robotwin-root /path/to/RoboTwin --gpu 0 --resources ./gamepad_resources --output ./teleop_session --port 8775
 ```
 
@@ -272,3 +273,12 @@ xbox-gamepad-physics teleop-replay ./record.xgpr --resources ./gamepad_resources
 
 去掉 `--steps` 则回放全部可读记录；JSONL 和二进制 xgpr 均支持。资源和 SAPIEN 版本须与源记录匹配；
 记录内的外部资产路径可由 `--robotwin-root` 重定位。`experiments/teleop_replay.py` 和旧 `teleop.*` 检出入口保留兼容包装。
+
+
+## 0.4.1 多后端入口
+
+MuJoCo 安装 `"./xbox_gamepad_physics-0.4.1-py3-none-any.whl[build,mujoco]"`。extra 按 Python3.10/3.11 选择负责人 fork Release 的哈希固定直链，使用 PR #3689 修复3.16.0网格SDF符号错误。资源构建时显式传 `--backend mujoco`；默认SDF。详细加载及25/26已知边界见 [mujoco_backend.md](mujoco_backend.md)。
+
+Isaac 为随版预览，不安装平台依赖。在已有平台环境安装 `[build,isaac]`，先启动 AppLauncher，再使用专用 build_usd 入口；普通环境 `--backend isaac` 明确报平台前置，不自动启动。准备共用输入时可只选择 common_physical / sim_visual 及其上游闭包；操作顺序见 [isaac_backend.md](isaac_backend.md)。
+
+输入白名单与内容未变时，输入zip的sha256和files内容锁保持；版本号与下载URL仍必须匹配0.4.1，以满足现有加载器的版本门禁。打包演练分别核对这两部分，不改物性或冻结评分输入。

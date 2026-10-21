@@ -10,12 +10,12 @@ Use English for README, code, comments, configuration, and asset documentation. 
 
 ## Commands
 
-Python 3.10 is the baseline (RoboTwin/SAPIEN env). Node 22 (`.node-version`) for JS tests and the viewer.
+Python 3.10 is the RoboTwin/SAPIEN baseline. Common code and MuJoCo support Python 3.10/3.11; the Isaac preview uses external Python 3.11 / Lab 2.3.2 / Sim 5.1 / torch. Node 22 (`.node-version`) is used for JS tests and the viewer.
 
 ```sh
 # User installation: Release wheel + input zip; not on PyPI
-python3.10 -m pip install "./xbox_gamepad_physics-0.4.0-py3-none-any.whl[build,robotwin]"
-python3.10 -m xbox_gamepad_physics build-resources --archive ./xbox_gamepad_physics-resources-0.4.0.zip --resources ./gamepad_resources --offline
+python3.10 -m pip install "./xbox_gamepad_physics-0.4.1-py3-none-any.whl[build,robotwin]"
+python3.10 -m xbox_gamepad_physics build-resources --archive ./xbox_gamepad_physics-resources-0.4.1.zip --resources ./gamepad_resources --offline
 export XBOX_GAMEPAD_PHYSICS_RESOURCES="$PWD/gamepad_resources"
 # Maintainer checkout: thin wrappers call the same packaged build chain; default build/resources
 python3 scripts/build_resources.py
@@ -23,7 +23,7 @@ python3 scripts/build_resources.py
 python3 -m pip install -e . --no-build-isolation
 npm ci
 
-# Full regression (unittest discover over tests/ + node --test tests/test_*.mjs)
+# Full regression (unittest, MuJoCo pytest, then Node tests)
 python3 scripts/run_regression.py fast               # == npm test
 
 # Experiment platform (run from the repo root; needs the RoboTwin/SAPIEN env and PyYAML)
@@ -32,7 +32,7 @@ python3 run_robotwin.py configs/render_review.yaml --set scene.robotwin_root=/pa
 
 # Single test
 python3 -m unittest tests.infrastructure.test_resource_resolution -v
-python3 -m unittest tests.test_kinematics.<Class>.<test_method>
+python3 -m unittest discover -s tests -p 'test_kinematics.py' -v
 node --test tests/test_drag2d.mjs
 
 # Backend readiness (non-zero exit if any declared resource is missing / not ready)
@@ -49,7 +49,7 @@ npm run gamepad-overlay   # Open the printed canonical overlay URL
 
 Many tests `skipIf` optional deps (numpy, torch, OpenCV, mujoco, sapien) and only fully run in the GPU-node environments. A skipped test is not a pass — say which ones skipped.
 
-v0.3+ supports Linux x86_64 + NVIDIA, Python 3.10, and the RoboTwin fork / SAPIEN 3.0.3 only. MuJoCo is outside the release scope: loading and explicit status/verify report this exclusion. The historical frozen tree remains in Git; related tests skip with an explanation.
+v0.4.1 includes RoboTwin/SAPIEN 3.0.3, the MuJoCo 3.16.0+concon.sdf3689.2 fork and an Isaac preview. MuJoCo's extra selects the fork Release wheel on Python 3.10/3.11 Linux x86_64. Isaac/Sim/torch are external prerequisites; native USD authoring requires an AppLauncher process, and generic registry readiness remains disabled. SDF frozen contact scores are 23/26, 25/26 and 22/26 respectively; consult docs/plan.md for failures. Preserve the historical resource_data/mujoco tree; the new adapter uses the current DAG builder.
 
 ## Architecture
 
@@ -65,12 +65,12 @@ The historical MuJoCo tree in `src/xbox_gamepad_physics/resource_data/mujoco/` r
 
 **Layering:**
 - `references/*.json` — evidence records (source, units, applicability, derivation, uncertainty). Builders read physical parameters from here (notably `references/full_controls.json`, `references/catalog.json`). `specs/` holds target specs and explicit unknowns; `assets/asset_index.json` is the source of truth for candidate/admission status.
-- `common/xbox_one_s/` (in the resource root) — backend-neutral visual (glTF + 2K textures) and the **motion contract** (`motion/full_controls.json`: joint topology, per-axis ranges, radial constraints, signal bindings). Both backends and the signal controller read this one contract; backend manifests do not duplicate motion limits.
-- `collision` reads frozen CoACD and locally prepares per-shell SDF OBJ meshes from meshbase, preserving output paths; only RoboTwin `full_controls` depends on this node.
-- `<backend>/<profile>/manifest.json` (in the resource root) — format documented in `schemas/backend_manifest.schema.json` (documentation, not enforced at runtime); declares readiness flags and required files. v0.3+ profiles are RoboTwin `full_controls` (20 active joints) and `left_stick`.
+- `common/xbox_one_s/` (in the resource root) — backend-neutral visual (glTF + 2K textures) and the **motion contract** (`motion/full_controls.json`: joint topology, per-axis ranges, radial constraints, signal bindings). All three backends and the signal controller read this one contract; backend manifests do not duplicate motion limits.
+- `collision` reads frozen CoACD and locally prepares per-shell SDF OBJ meshes from meshbase, preserving output paths; all full-controls backend builders consume its sources; cooking remains engine-specific.
+- `<backend>/<profile>/manifest.json` (in the resource root) — format documented in `schemas/backend_manifest.schema.json` (documentation, not enforced at runtime); declares readiness flags and required files. RoboTwin provides `full_controls` and `left_stick`; MuJoCo and the Isaac preview provide `full_controls`. Readiness flags are not full contact acceptance.
 - `state.py` — versioned 32-channel `sdl3-gamepad-core-v1` tensor (6 SDL3 axes + 26 buttons) with `available_mask`, `task_mask`, `device_id`. Xbox One S uses 21 channels; Pair is a physical event, not a game channel. Adapt by channel name, never by index. The browser side uses the 21-float W3C layout only at its boundary (`W3C_STANDARD_TO_CANONICAL`).
 - `controller.py` — `GamepadSignalController`: backend-independent mapping between named joint positions and `GamepadState` (normalization, saturation, dual-stick radial clamp, D-pad split, deadzones, masks), both directions.
-- `robotwin/` and `mujoco/` — loaders that consume a caller-owned scene/`MjSpec` and pose. The RoboTwin loader gates only on readiness, file presence and joint-name agreement; the motion contract and `GamepadSignalController` still validate their own inputs, and the frozen MuJoCo layer keeps its checks. RoboTwin field ranges/finiteness and explicit URDF physics (inertials, limits, axes) are generator guarantees checked on built output by the asset tests (`tests/infrastructure/built_profile_checks.py`), not on every load; public handles expose joints by name only (qpos order is not API). The package never imports RoboTwin task modules or chooses table/fixture poses.
+- `robotwin/`, `mujoco/` and `isaac/` — loaders that consume a caller-owned scene/`MjSpec` and pose. The RoboTwin loader gates only on readiness, file presence and joint-name agreement; the motion contract and `GamepadSignalController` still validate their own inputs, while the native MuJoCo and preview Isaac layers retain their backend checks. RoboTwin field ranges/finiteness and explicit URDF physics (inertials, limits, axes) are generator guarantees checked on built output by the asset tests (`tests/infrastructure/built_profile_checks.py`), not on every load; public handles expose joints by name only (qpos order is not API). The package never imports RoboTwin task modules or chooses table/fixture poses.
 - `muble/` — exports MuJoCo body poses to drive accepted Blender objects.
 - `viewer/` — browser kinematic inspector (Three.js picking + Blender/Cycles worker via `scripts/serve_viewer.py` / `scripts/cycles_worker.py`), plus the vendored `gamepad_overlay` SVG renderer with a canonical-state adapter.
 

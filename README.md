@@ -1,6 +1,7 @@
 # Xbox One S Gamepad Physics
 
-Xbox One S physical gamepad assets for RoboTwin/SAPIEN, with 20 active joints,
+Xbox One S physical gamepad assets for RoboTwin/SAPIEN and MuJoCo, with an
+Isaac Lab preview, 20 active joints,
 21 game input channels plus a separate Pair event, and a 32-dimensional canonical
 state. The `full_controls` profile uses SDF collision meshes by default; CoACD
 is available as an explicit option.
@@ -24,9 +25,11 @@ https://github.com/user-attachments/assets/437b2daa-8db3-4d99-9adf-82efef8c7dae
 
 ## Requirements
 
-The runtime targets Linux x86_64 with NVIDIA graphics, Python 3.10,
+Targets are Linux x86_64. RoboTwin uses NVIDIA graphics, Python 3.10,
 the [RoboTwin fork](https://github.com/5o1/RoboTwin), and SAPIEN 3.0.3.
-Optional tools depend on the entry point:
+MuJoCo supports Python 3.10/3.11 with the fork wheel below; rendering requires
+a working graphics driver. The Isaac preview requires the external Python 3.11,
+Lab 2.3.2 / Sim 5.1 stack and compatible torch. Optional tools depend on the entry point:
 
 | Feature | Additional requirements |
 | --- | --- |
@@ -44,20 +47,30 @@ provided separately.
 | --- | --- | --- | --- | --- |
 | SAPIEN | 3.0.3 | Yes¹ | Optional² | Ready |
 | Blender | 4.5.9 | — | Cycles³ | Reference |
-| MuJoCo | 3.16 | Yes⁴ | — | Not released |
-| Isaac Sim | — | Untested | Untested | In dev⁵ |
+| MuJoCo | 3.16.0 | Yes⁴ | — | Ready |
+| Isaac Sim | 5.1 | — | Yes⁵ | Preview |
 
-¹ SAPIEN raster needs the frozen `visual_meshbase` face groups to display ABXY lettering. Use `load_into_scene`; direct mesh or URDF imports bypass material setup. SDF and CoACD are available; SDF requires SAPIEN 3.0.3 and a static box for support.
+¹ SAPIEN raster uses the frozen `visual_meshbase` face groups for ABXY lettering. Use `load_into_scene`; direct mesh/URDF imports bypass materials and SDF setup. SDF is the default; provide a static box, not `add_ground`, as support.
 
-² Ray tracing is optional. Enable OIDN denoising; firefly noise is a known issue. ABXY legends can look faint under ray tracing depending on view (most visibly A); raster shows them clearly. Review images use the existing review configuration, with 4 samples per pixel and path depth 8. Applying review rendering settings changes SAPIEN's global camera shader settings.
+² SAPIEN ray tracing is optional. Firefly noise and faint ABXY lettering are known issues; OIDN helps noise but does not resolve the lettering limitation. Opting into review rendering changes global shader settings.
 
-³ Cycles uses the approved viewer scene, with 64 samples and denoising. It is an appearance reference.
+³ Cycles is the approved Boiler Room appearance reference, not an interactive runtime requirement.
 
-⁴ MuJoCo classic images are experimental, using `visual_meshbase` and constant alpha 64/255 for translucent groups. The experiment is not part of the release; its lighting and material support differ from the PBR renderers.
+⁴ MuJoCo uses the owner-maintained `3.16.0+concon.sdf3689.2` fork wheels from its Release, selected by `[mujoco]`. They fix 3.16.0 mesh SDF sign errors using upstream PR #3689 before upstream merge. SDF is the default; CoACD is an explicit comparison. The classic-renderer K5 appearance was approved on 2026-10-21. The 23° circular limit has a first peak of about 23.35°, temporarily accepted by the owner; a strict hard bound is not established. Recorded acceptance cost is 10.45 ms per 4 ms simulation step: not real time.
 
-⁵ Isaac Sim support is in development. No reference image is supplied.
+⁵ Isaac is a preview with external Python 3.11, Isaac Lab 2.3.2, Isaac Sim 5.1 and compatible torch prerequisites; its extra does not install them. Start AppLauncher before building USD or importing pxr. SDF 0.5 mm is the default. Real-time RTX (`RaytracedLighting`) makes ABXY blurrier; use path tracing for high-quality images. Guide regresses to 0.931 against the baseline; Pair, L3 and R3 also fail. These issues remain open.
 
-⁶ Appearance support does not establish contact, dynamics, or real-device validation. Reference images were rendered on 2026-10-16 with the v0.4.0 pipeline.
+⁶ Ready describes supported loading and reviewed appearance; Preview retains the documented limitations. Neither rendering support nor the press scores below establish hardware calibration or complete contact qualification. SAPIEN and Cycles images were rendered on 2026-10-16; MuJoCo and Isaac images were rendered by the released backends and reviewed on 2026-10-21.
+
+### Contact acceptance (26 frozen presses)
+
+| Backend | Passed⁷ |
+| --- | --- |
+| SAPIEN | 23/26 |
+| MuJoCo | 25/26 |
+| Isaac | 22/26 |
+
+⁷ SDF results with the frozen rules: SAPIEN fails Pair/L3/R3; MuJoCo fails Pair; Isaac fails Guide/Pair/L3/R3. The owner parked Isaac Guide and L3/R3 investigation on 2026-10-21. These are simulation observations, not hardware calibration. See [the current plan and known issues](docs/plan.md), [MuJoCo usage](docs/mujoco_backend.md) and [Isaac preview usage](docs/isaac_backend.md).
 
 <table>
 <tr>
@@ -73,8 +86,12 @@ provided separately.
 <td><a href="docs/media/backends/c_cycles_abxy.webp"><img src="docs/media/backends/c_cycles_abxy.webp" width="320" alt="Cycles reference ABXY close-up"></a><br>Blender · Cycles<br>ABXY · 2026-10-16</td>
 </tr>
 <tr>
-<td><a href="docs/media/backends/d_mujoco_classic_full.webp"><img src="docs/media/backends/d_mujoco_classic_full.webp" width="320" alt="Experimental MuJoCo classic full view"></a><br>MuJoCo · classic<br>Full · 2026-10-16</td>
-<td><a href="docs/media/backends/d_mujoco_classic_abxy.webp"><img src="docs/media/backends/d_mujoco_classic_abxy.webp" width="320" alt="Experimental MuJoCo classic ABXY close-up"></a><br>MuJoCo · classic<br>ABXY · 2026-10-16</td>
+<td><a href="docs/media/backends/e_mujoco_m2_full.webp"><img src="docs/media/backends/e_mujoco_m2_full.webp" width="320" alt="Approved MuJoCo classic full view"></a><br>MuJoCo · classic<br>Full · review 2026-10-21</td>
+<td><a href="docs/media/backends/e_mujoco_m2_abxy.webp"><img src="docs/media/backends/e_mujoco_m2_abxy.webp" width="320" alt="Approved MuJoCo classic ABXY close-up"></a><br>MuJoCo · classic<br>ABXY · review 2026-10-21</td>
+</tr>
+<tr>
+<td><a href="docs/media/backends/f_isaac_pathtracing_full.webp"><img src="docs/media/backends/f_isaac_pathtracing_full.webp" width="320" alt="Isaac preview path tracing full view"></a><br>Isaac Sim · path tracing<br>Full · review 2026-10-21</td>
+<td><a href="docs/media/backends/f_isaac_pathtracing_abxy.webp"><img src="docs/media/backends/f_isaac_pathtracing_abxy.webp" width="320" alt="Isaac preview path tracing ABXY close-up"></a><br>Isaac Sim · path tracing<br>ABXY · review 2026-10-21</td>
 </tr>
 </table>
 
@@ -85,9 +102,9 @@ Download the wheel and resource zip from the
 The package is distributed through Release attachments rather than PyPI.
 
 ```sh
-python3.10 -m pip install "./xbox_gamepad_physics-0.4.0-py3-none-any.whl[build,robotwin]"
+python3.10 -m pip install "./xbox_gamepad_physics-0.4.1-py3-none-any.whl[build,robotwin]"
 python3.10 -m xbox_gamepad_physics build-resources \
-  --archive ./xbox_gamepad_physics-resources-0.4.0.zip \
+  --archive ./xbox_gamepad_physics-resources-0.4.1.zip \
   --resources ./gamepad_resources --offline
 export XBOX_GAMEPAD_PHYSICS_RESOURCES="$PWD/gamepad_resources"
 python3.10 -m xbox_gamepad_physics verify --backend robotwin --profile full_controls
@@ -97,7 +114,7 @@ For MuJoCo on Linux x86_64 with Python 3.10 or 3.11, install the `mujoco`
 extra (add `build` when generating resources):
 
 ```sh
-python -m pip install "./xbox_gamepad_physics-0.4.0-py3-none-any.whl[mujoco]"
+python -m pip install "./xbox_gamepad_physics-0.4.1-py3-none-any.whl[mujoco]"
 ```
 
 The extra selects a matching wheel directly from the owner-maintained
@@ -108,6 +125,19 @@ that patch is merged upstream. The installed distribution is
 `3.16.0+concon.sdf3689.2`. Other Python/platform combinations have no fork wheel
 selected by this extra. Isaac Lab, Isaac Sim and torch are external prerequisites;
 the `isaac` extra does not install them.
+
+For the Isaac preview, use your existing Python 3.11 / Lab 2.3.2 / Sim 5.1
+installation and its compatible torch. Install the wheel in that environment
+(or a venv inheriting it); these platform dependencies are external:
+
+```sh
+python -m pip install "./xbox_gamepad_physics-0.4.1-py3-none-any.whl[build,isaac]"
+```
+
+Start AppLauncher before the dedicated `isaac.build_usd` path. The generic
+`build-resources --backend isaac` entry reports the platform prerequisite;
+it does not launch Isaac automatically. Follow [Isaac preview usage](docs/isaac_backend.md)
+for the common-input preparation and native build/load sequence.
 
 Add the `example` extra for exported examples or `teleop` for teleoperation,
 for example `[build,robotwin,example,teleop]`. The repository is private:
@@ -260,9 +290,12 @@ boundary adapter. See [full controls](docs/full_controls.md) for the interface a
   inertia, and depenetration; diagnosis remains unresolved.
 - Gripper contact with sticks can penetrate by approximately 2 mm.
 - Freezing a tilted gamepad can produce stick signals of approximately 0.03.
-- SDF does not collide with `add_ground` planes or another SDF object; use a
+- SAPIEN SDF does not collide with `add_ground` planes or another SDF object; use a
   static box for the supporting table.
-- MuJoCo is outside the v0.3+ release scope. Its frozen files are historical.
+- MuJoCo requires the fork wheel; transient limit overshoot and non-real-time
+  acceptance cost remain as documented above.
+- Isaac is a preview with the contact, batch and rendering limits in its
+  [usage guide](docs/isaac_backend.md).
 
 Loading and signal round trips do not establish contact-physics readiness or RL
 results. See [release status and limitations](docs/plan.md) for the recorded scope.
@@ -273,6 +306,8 @@ The following documents are in Chinese:
 
 - [Installation and resource import](docs/importing.md)
 - [RoboTwin backend integration](docs/robotwin_backend.md)
+- [MuJoCo backend integration](docs/mujoco_backend.md)
+- [Isaac preview integration](docs/isaac_backend.md)
 - [Full controls and signal interface](docs/full_controls.md)
 - [Pending visual review and measurements](docs/pending_user_review.md)
 - [Release status and plans](docs/plan.md)

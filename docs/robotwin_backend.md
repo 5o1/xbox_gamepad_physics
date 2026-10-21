@@ -7,9 +7,9 @@
 依赖；不通过 PyPI 分发。
 
 ```sh
-python -m pip install "./xbox_gamepad_physics-0.4.0-py3-none-any.whl[build,robotwin]"
+python -m pip install "./xbox_gamepad_physics-0.4.1-py3-none-any.whl[build,robotwin]"
 python -m xbox_gamepad_physics build-resources \
-  --archive ./xbox_gamepad_physics-resources-0.4.0.zip \
+  --archive ./xbox_gamepad_physics-resources-0.4.1.zip \
   --resources ./gamepad_resources --offline
 export XBOX_GAMEPAD_PHYSICS_RESOURCES="$PWD/gamepad_resources"
 python -m xbox_gamepad_physics verify --backend robotwin --profile full_controls
@@ -21,8 +21,7 @@ v0.2.0 CoACD 和批准的 Cycles 场景及其必要归属。首次使用在用�
 第二次检查缓存，缺失或过期时只重建相关下游。环境变量目录同样执行 prepare。
 完整导入和维护者说明见 [`importing.md`](importing.md)。
 
-MuJoCo 不在 v0.3+ 发布范围内。B1+B2 验证资源构建；新 wheel 的真实 SAPIEN 加载、
-交互与原生渲染在 B4 的 GPU 环境单独验收。
+0.4.1 同时包含当前 MuJoCo 后端和 Isaac 预览；本文只说明 RoboTwin/SAPIEN。其他入口见 [MuJoCo](mujoco_backend.md) 与 [Isaac 预览](isaac_backend.md)。三个后端的加载、外观、接触验收与硬件标定分别表述。
 
 ## 接口边界
 
@@ -107,7 +106,7 @@ articulation；第二次 `setup_demo()` 会重建 scene/handle，并从中立手
 这些入口直接使用 wheel 内实现和静态模块，不需要本项目检出、CDN 或首次 npm 下载。
 
 ```sh
-python3.10 -m pip install "./xbox_gamepad_physics-0.4.0-py3-none-any.whl[example]"
+python3.10 -m pip install "./xbox_gamepad_physics-0.4.1-py3-none-any.whl[example]"
 xbox-gamepad-physics example export ./gamepad_example
 python3.10 ./gamepad_example/run_robotwin.py --help
 ```
@@ -152,8 +151,8 @@ overlay 默认打印带小型 canonical demo trace 的本地地址；demo 是合
 路径为 `assets/embodiments/aloha-agilex/urdf/arx5_description_isaac.urdf`；这些外部资产不放入本包的 zip。
 
 ```sh
-python3.10 -m pip install './xbox_gamepad_physics-0.4.0-py3-none-any.whl[robotwin,teleop]'
-xbox-gamepad-physics build-resources --archive ./xbox_gamepad_physics-resources-0.4.0.zip --resources ./gamepad_resources --offline
+python3.10 -m pip install './xbox_gamepad_physics-0.4.1-py3-none-any.whl[robotwin,teleop]'
+xbox-gamepad-physics build-resources --archive ./xbox_gamepad_physics-resources-0.4.1.zip --resources ./gamepad_resources --offline
 xbox-gamepad-physics teleop --robotwin-root /path/to/RoboTwin --gpu 0 --resources ./gamepad_resources --output ./teleop_session --port 8775
 ```
 
@@ -226,3 +225,8 @@ for _ in range(100):
 本接口的实际切换在 `PhysxGpuSystem` 下明确抛出 `SceneCompatibilityError`，包括 GPU/批量 PhysX。原因是完整的释放/记录契约需要逐对象 CPU 速度和状态访问，而 [PhysX 5.3.1 的根速度写入](https://github.com/NVIDIA-Omniverse/PhysX/blob/105.1-physx-5.3.1/physx/source/physx/src/NpArticulationReducedCoordinate.cpp#L448) 在 Direct GPU API 初始化后非法；[SAPIEN 的 GPU 状态接口](https://github.com/haosulab/SAPIEN/blob/3.0.3/src/physx/articulation.cpp#L239) 也限制逐对象 qvel。不能仅凭 flag getter 改变就声称 GPU 整套语义成立。本接口不提供重建 GPU batch 或缓存重初始化方案。GPU 机器上的 CPU 物理配合 GPU 渲染属于支持路径；多个 CPU 场景也不等同于 GPU 批量物理。重复请求相同状态仍为无操作。
 
 已知问题：手柄倾斜冻结后，摇杆信号会偏约 **0.03**。负责人决定暂不处理；观察和证据见 [倾斜摇杆偏移报告](reports/stick_tilt_deflection_20261013/REPORT.md)。本接口不补偿该偏移。
+
+
+## 0.4.1 已知边界
+
+SDF 默认的26项冻结按压为23通过，Pair、L3、R3失败，未在本版修复。光栅下 ABXY 可辨；光追的萤火虫噪点和 ABXY 字母变淡仍是已知问题。OIDN降噪不等于字母问题已解决。上述结果不代表硬件标定。
