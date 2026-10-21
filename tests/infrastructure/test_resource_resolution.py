@@ -58,6 +58,27 @@ class ResourceResolutionTest(unittest.TestCase):
                 self.assertEqual(resources.resource_root(), root)
             self.assertEqual(resources._resolve_root()[1], "environment")
 
+    def test_mujoco_resolution_prepares_only_selected_backend(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            with mock.patch.object(resources, "_resolve_root", return_value=(root, "fixture", ROOT)), \
+                 mock.patch.object(resources, "prepare_resources") as prepare:
+                self.assertEqual(resources.resource_root(backend="mujoco"), root)
+                self.assertEqual(resources.resource_root(backend="mujoco"), root)
+            prepare.assert_called_once_with(backends=("mujoco",), resources=root)
+
+    def test_mujoco_manifest_and_declared_files_are_inspected(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            profile = root / "mujoco/full_controls"
+            profile.mkdir(parents=True)
+            (profile / "manifest.json").write_text(json.dumps({"required_files": ["xbox_one_s.xml"]}))
+            missing = resources.missing_resources(root, backends=("mujoco",))
+            self.assertIn("mujoco/full_controls/xbox_one_s.xml", missing)
+            self.assertNotIn("robotwin/full_controls/manifest.json", missing)
+            (profile / "xbox_one_s.xml").write_text("<mujoco/>")
+            self.assertNotIn("mujoco/full_controls/xbox_one_s.xml", resources.missing_resources(root, backends=("mujoco",)))
+
     def test_repository_precedes_project_root(self):
         with tempfile.TemporaryDirectory() as directory:
             with working_directory(Path(directory)):

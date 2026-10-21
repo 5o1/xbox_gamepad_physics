@@ -1,8 +1,9 @@
-"""Optional CPU tensor execution of the canonical scalar controller semantics.
+"""Optional tensor execution of the canonical scalar controller semantics.
 
 Torch is an external prerequisite, imported only on explicit module use. All
 arithmetic and branch decisions use float64; outputs preserve the requested
-float32/float64 dtype. CUDA verification belongs to the Isaac implementation.
+float32/float64 dtype. CPU oracle mode preserves boundary corrections; the
+explicit float64 mode supports vectorized CUDA, validated by the Isaac D07 gate.
 """
 from __future__ import annotations
 from dataclasses import dataclass
@@ -30,14 +31,18 @@ class NamedJointBatch:
 
 
 class TorchSignalMapper:
-    def __init__(self, motion, joint_names, *, device="cpu", dtype=torch.float64):
+    def __init__(self, motion, joint_names, *, device="cpu", dtype=torch.float64,
+                 decision_mode="cpu_oracle"):
         self.motion = motion
         self.controller = motion.signal_controller
         self.joint_names = tuple(joint_names)
         self.device = torch.device(device)
         self.dtype = dtype
-        if self.device.type != "cpu":
-            raise NotImplementedError("C1 verifies CPU tensors only; CUDA requires the Isaac validation stage")
+        if decision_mode not in {"cpu_oracle", "float64"}:
+            raise ValueError("decision_mode must be cpu_oracle or float64")
+        if self.device.type != "cpu" and decision_mode != "float64":
+            raise NotImplementedError("CUDA mapping requires explicit float64 decisions")
+        self.decision_mode = decision_mode
         if dtype not in (torch.float32,torch.float64):
             raise ValueError("mapper dtype must be float32 or float64")
         if len(set(self.joint_names)) != len(self.joint_names):
@@ -63,7 +68,7 @@ class TorchSignalMapper:
         # CPython math.hypot is the branch oracle. Only boundary-adjacent CPU
         # rows need its correctly rounded decision; normal rows stay vectorized.
         near = ((radius-group.neutral_epsilon).abs() <= 16*math.ulp(max(group.neutral_epsilon,1e-300))) | ((radius-group.radius).abs() <= 16*math.ulp(group.radius))
-        if bool(near.any()):
+        if self.decision_mode == "cpu_oracle" and bool(near.any()):
             radius = radius.clone()
             for index in near.nonzero().flatten().tolist():
                 radius[index] = math.hypot(float(first[index]),float(second[index]))
@@ -107,7 +112,8 @@ class TorchSignalMapper:
                     values[:,index]=torch.where(values[:,index]<threshold,0.,values[:,index])
         # Projection followed by a discontinuous closure can amplify a 1-ulp
         # hypot difference. Re-evaluate only those boundary rows with the oracle.
-        for row in adjacent.nonzero().flatten().tolist():
+        for row in (adjacent.nonzero().flatten().tolist()
+                    if self.decision_mode == "cpu_oracle" else ()):
             state=c.encode({name:float(q[row,index]) for name,index in self.indices.items()})
             values[row]=torch.tensor(state.values,dtype=torch.float64,device=self.device)
         events=torch.empty((n,len(c.physical_event_mappings)),dtype=torch.float64,device=self.device)

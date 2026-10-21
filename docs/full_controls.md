@@ -113,37 +113,59 @@ python3.10 ./gamepad_example/run_robotwin.py ./gamepad_example/smoke_full_contro
 
 ## MuJoCo
 
+The current backend uses MuJoCo 3.16.0 and generated `mujoco/full_controls`
+resources. Select the MuJoCo calibration when preparing resources; the artifact's
+README and mapping report record its numerical policy and known limitations.
+
 ```python
-from xbox_gamepad_physics.mujoco import load_scene
+import mujoco
+from xbox_gamepad_physics.mujoco import load_standalone
+from xbox_gamepad_physics.state import GamepadState
 
-loaded = load_scene(profile="full_controls", scene="fixed")
-state = loaded.gamepad.gamepad_state()
-loaded.gamepad.set_gamepad_state(state)
-loaded.gamepad.set_physical_events({"pair_bind_connect": 0.0})
+scene = load_standalone(resource_root="./gamepad_resources", fixed_root=True)
+scene.gamepad.set_gamepad_targets(GamepadState.xbox_one_s({"south": 1.0}))
+mujoco.mj_step(scene.model, scene.data, nstep=8)
+state = scene.gamepad.gamepad_state()
+shaft_limits = scene.gamepad.tilt_limit_state()
 ```
 
-非视觉运行脚本：
+Use `fixed_root=False` for a free root. To compose a caller-owned model, use
+`make_spec` or `attach_to_spec`, compile in the caller, then bind. Attachment
+preserves caller global options; diagnostics report differences from the
+recommended numerical settings.
+
+Standalone and acceptance models use `discrete`, 0.0005 s physical steps and
+refsafe disabled. One frozen 0.004 s acceptance step contains eight substeps.
+Circular stick limits use native tendon constraints, with no post-step state
+correction. First-crossing penetration remains possible; strict 23-degree
+non-penetration has not been established.
+
+On 2026-10-20, the owner provisionally accepted the measured limit response for
+MuJoCo M2, including the documented first-crossing excess. This item no longer
+blocks subsequent acceptance work; the strict capability remains unsupported.
+
+Run the frozen headless contact experiment with the current executor:
 
 ```sh
-python examples/mujoco_full_controls_smoke.py \
-  --steps 2000 --output /tmp/mujoco-full-controls.json
+PYTHONPATH=src python examples/mujoco/acceptance.py \
+  --resource-root ./gamepad_resources --output /tmp/mujoco-acceptance
 ```
 
-自编译 MuJoCo 3.15 使用 Conda 环境内的新版 `libstdc++`。将仓库中的激活脚本安装到
-对应环境后，普通 `conda activate` 即可加载：
+Appearance and recorded-contact inspection use
+`examples/mujoco/render_reference.py` and
+`examples/mujoco/render_contact_replay.py`. These are separate from contact
+acceptance. The former frozen visual APIs, mocap-probe examples and generators
+are preserved as source snapshots in
+[`scripts/archive/mujoco_legacy`](../scripts/archive/mujoco_legacy/README.md).
 
-```sh
-cp requirements/conda/activate.d/concon-mujoco-libstdcxx.sh \
-  "$CONDA_PREFIX/etc/conda/activate.d/"
-cp requirements/conda/deactivate.d/concon-mujoco-libstdcxx.sh \
-  "$CONDA_PREFIX/etc/conda/deactivate.d/"
-```
+The existing project gamepad overlay can display the recorded MuJoCo canonical
+32-value states alongside the videos. See
+[`examples/mujoco/README.md`](../examples/mujoco/README.md) for export, page
+generation and local serving. Pair remains a separate event. The native
+acceptance observations include layout/device metadata; no second signal mapper
+is needed.
 
-构建产物的 `_specs.so` 需要 `CXXABI_1.3.15` 和 `GLIBCXX_3.4.32`；Ubuntu 22.04
-系统库不满足，环境内 `libstdc++.so.6.0.36` 满足。该问题已经定位为动态链接路径，
-不属于 MJCF 编译错误。
-
-## 自动运行记录
+## 历史自动运行记录（非当前M2验收）
 
 - SAPIEN 3.0.0b1：20 关节、21 通道、Pair 事件、2000 步有限；并发命令回读最大误差
   `2.02e-8`；

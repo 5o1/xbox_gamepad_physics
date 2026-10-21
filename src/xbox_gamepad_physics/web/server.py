@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 import sys
 from functools import partial
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
@@ -143,6 +144,61 @@ class Handler(SimpleHTTPRequestHandler):
         self.cycles = cycles
         self.cycles_error = cycles_error
         super().__init__(*args, **kwargs)
+
+    def send_head(self):
+        """Support a single byte range for seekable MP4 review playback."""
+        path = Path(self.translate_path(self.path))
+        self._range_bytes = None
+        self._video_ranges = path.suffix.lower() == '.mp4' and path.is_file()
+        header = self.headers.get('Range')
+        if not self._video_ranges or not header or self.command != 'GET':
+            return super().send_head()
+        match = re.fullmatch(r'bytes=([0-9]*)-([0-9]*)', header.strip())
+        if match is None or not any(match.groups()):
+            return super().send_head()
+        stat = path.stat()
+        if_range = self.headers.get('If-Range')
+        if if_range and if_range != self.date_time_string(stat.st_mtime):
+            return super().send_head()
+        size = stat.st_size
+        first, last = match.groups()
+        if first:
+            start = int(first)
+            end = min(int(last), size-1) if last else size-1
+        else:
+            start, end = max(0, size-int(last)), size-1
+        if start >= size or end < start:
+            self.send_response(416)
+            self.send_header('Content-Range', f'bytes */{size}')
+            self.send_header('Content-Length', '0')
+            self.end_headers()
+            return None
+        stream = path.open('rb')
+        stream.seek(start)
+        self._range_bytes = end-start+1
+        self.send_response(206)
+        self.send_header('Content-Type', self.guess_type(str(path)))
+        self.send_header('Content-Length', str(self._range_bytes))
+        self.send_header('Content-Range', f'bytes {start}-{end}/{size}')
+        self.send_header('Last-Modified', self.date_time_string(stat.st_mtime))
+        self.end_headers()
+        return stream
+
+    def end_headers(self):
+        if getattr(self, '_video_ranges', False):
+            self.send_header('Accept-Ranges', 'bytes')
+        super().end_headers()
+
+    def copyfile(self, source, outputfile):
+        if self._range_bytes is None:
+            return super().copyfile(source, outputfile)
+        remaining = self._range_bytes
+        while remaining:
+            chunk = source.read(min(64*1024, remaining))
+            if not chunk:
+                break
+            outputfile.write(chunk)
+            remaining -= len(chunk)
 
     def do_GET(self):
         if urlsplit(self.path).path == "/favicon.ico":

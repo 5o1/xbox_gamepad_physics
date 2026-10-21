@@ -32,6 +32,7 @@ RESOURCE_OUTPUTS = {
     "common_physical": "common/xbox_one_s/physical",
     "robotwin_left_stick": "robotwin/left_stick",
     "robotwin_full_controls": "robotwin/full_controls",
+    "mujoco_full_controls": "mujoco/full_controls",
 }
 
 
@@ -83,7 +84,9 @@ def nodes(inputs: Path, *, evidence: Path = DATA_ROOT, calibration=None) -> tupl
         return root / "common/xbox_one_s/visual"
     meshbase = inputs / "assets/xbox_one_s/collision_meshbase"
     policy = evidence / "references/full_controls.json"
+    from xbox_gamepad_physics.mujoco.builder import resource_node
     return (
+        resource_node(),
         Node("kinematics", (
             asset("assets/xbox_one_s/visual/inventory.json"),
             proof("references/xbox_one_s_artist_animation_summary.json"),

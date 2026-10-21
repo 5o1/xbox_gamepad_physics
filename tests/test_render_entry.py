@@ -44,7 +44,7 @@ class RenderEntryTest(unittest.TestCase):
         ).decode().split("\0")
         errors = []
         for name in sorted(set(files)):
-            if not name.endswith(".py") or any(name == item or (item.endswith("/") and name.startswith(item)) for item in WHITELIST):
+            if not name.endswith(".py") or not (ROOT/name).is_file() or any(name == item or (item.endswith("/") and name.startswith(item)) for item in WHITELIST):
                 continue
             errors.extend(violations((ROOT/name).read_text(), name))
         self.assertEqual(errors, [], "Bypasses the public rendering entry point:\n" + "\n".join(errors))

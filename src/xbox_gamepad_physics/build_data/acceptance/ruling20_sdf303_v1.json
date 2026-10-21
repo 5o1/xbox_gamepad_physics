@@ -316,7 +316,7 @@
           "right_trigger_hinge": 3.1362529240297476e-10
         },
         "passed": true,
-        "source_directory": "/mnt/wsl/shared/ConCon/xbox_gamepad_physics/build/experiments/teleop_gripper_p2_20261011/ruling20/buttons/A"
+        "source_directory": "build/experiments/teleop_gripper_p2_20261011/ruling20/buttons/A"
       },
       "source_paths": {
         "plan": "build/experiments/teleop_gripper_p2_20261011/ruling20/buttons/A/server/ball_plan.json",
@@ -577,7 +577,7 @@
           "left_trigger_hinge": 7.192444417825072e-10
         },
         "passed": true,
-        "source_directory": "/mnt/wsl/shared/ConCon/xbox_gamepad_physics/build/experiments/teleop_gripper_p2_20261011/ruling20/buttons/B"
+        "source_directory": "build/experiments/teleop_gripper_p2_20261011/ruling20/buttons/B"
       },
       "source_paths": {
         "plan": "build/experiments/teleop_gripper_p2_20261011/ruling20/buttons/B/server/ball_plan.json",
@@ -838,7 +838,7 @@
           "left_trigger_hinge": 7.192444417825072e-10
         },
         "passed": true,
-        "source_directory": "/mnt/wsl/shared/ConCon/xbox_gamepad_physics/build/experiments/teleop_gripper_p2_20261011/ruling20/buttons/X"
+        "source_directory": "build/experiments/teleop_gripper_p2_20261011/ruling20/buttons/X"
       },
       "source_paths": {
         "plan": "build/experiments/teleop_gripper_p2_20261011/ruling20/buttons/X/server/ball_plan.json",
@@ -1099,7 +1099,7 @@
           "left_trigger_hinge": 7.192444417825072e-10
         },
         "passed": true,
-        "source_directory": "/mnt/wsl/shared/ConCon/xbox_gamepad_physics/build/experiments/teleop_gripper_p2_20261011/ruling20/buttons/Y"
+        "source_directory": "build/experiments/teleop_gripper_p2_20261011/ruling20/buttons/Y"
       },
       "source_paths": {
         "plan": "build/experiments/teleop_gripper_p2_20261011/ruling20/buttons/Y/server/ball_plan.json",
@@ -1360,7 +1360,7 @@
           "left_trigger_hinge": 7.192444417825072e-10
         },
         "passed": true,
-        "source_directory": "/mnt/wsl/shared/ConCon/xbox_gamepad_physics/build/experiments/teleop_gripper_p2_20261011/ruling20/buttons/LB"
+        "source_directory": "build/experiments/teleop_gripper_p2_20261011/ruling20/buttons/LB"
       },
       "source_paths": {
         "plan": "build/experiments/teleop_gripper_p2_20261011/ruling20/buttons/LB/server/ball_plan.json",
@@ -1621,7 +1621,7 @@
           "left_trigger_hinge": 7.192444417825072e-10
         },
         "passed": true,
-        "source_directory": "/mnt/wsl/shared/ConCon/xbox_gamepad_physics/build/experiments/teleop_gripper_p2_20261011/ruling20/buttons/RB"
+        "source_directory": "build/experiments/teleop_gripper_p2_20261011/ruling20/buttons/RB"
       },
       "source_paths": {
         "plan": "build/experiments/teleop_gripper_p2_20261011/ruling20/buttons/RB/server/ball_plan.json",
@@ -1882,7 +1882,7 @@
           "left_trigger_hinge": 7.192444417825072e-10
         },
         "passed": true,
-        "source_directory": "/mnt/wsl/shared/ConCon/xbox_gamepad_physics/build/experiments/teleop_gripper_p2_20261011/ruling20/buttons/View"
+        "source_directory": "build/experiments/teleop_gripper_p2_20261011/ruling20/buttons/View"
       },
       "source_paths": {
         "plan": "build/experiments/teleop_gripper_p2_20261011/ruling20/buttons/View/server/ball_plan.json",
@@ -2143,7 +2143,7 @@
           "left_trigger_hinge": 7.192444417825072e-10
         },
         "passed": true,
-        "source_directory": "/mnt/wsl/shared/ConCon/xbox_gamepad_physics/build/experiments/teleop_gripper_p2_20261011/ruling20/buttons/Menu"
+        "source_directory": "build/experiments/teleop_gripper_p2_20261011/ruling20/buttons/Menu"
       },
       "source_paths": {
         "plan": "build/experiments/teleop_gripper_p2_20261011/ruling20/buttons/Menu/server/ball_plan.json",
@@ -2405,7 +2405,7 @@
           "left_trigger_hinge": 7.192444417825072e-10
         },
         "passed": true,
-        "source_directory": "/mnt/wsl/shared/ConCon/xbox_gamepad_physics/build/experiments/teleop_gripper_p2_20261011/ruling20/buttons/Guide"
+        "source_directory": "build/experiments/teleop_gripper_p2_20261011/ruling20/buttons/Guide"
       },
       "source_paths": {
         "plan": "build/experiments/teleop_gripper_p2_20261011/ruling20/buttons/Guide/server/ball_plan.json",
@@ -2664,7 +2664,7 @@
           "left_trigger_hinge": 7.192444417825072e-10
         },
         "passed": false,
-        "source_directory": "/mnt/wsl/shared/ConCon/xbox_gamepad_physics/build/experiments/teleop_gripper_p2_20261011/ruling20/buttons/Pair"
+        "source_directory": "build/experiments/teleop_gripper_p2_20261011/ruling20/buttons/Pair"
       },
       "source_paths": {
         "plan": "build/experiments/teleop_gripper_p2_20261011/ruling20/buttons/Pair/server/ball_plan.json",
@@ -2926,7 +2926,7 @@
           "right_trigger_hinge": 3.1362529240297476e-10
         },
         "passed": false,
-        "source_directory": "/mnt/wsl/shared/ConCon/xbox_gamepad_physics/build/experiments/teleop_gripper_p2_20261011/ruling20/sticks/L3"
+        "source_directory": "build/experiments/teleop_gripper_p2_20261011/ruling20/sticks/L3"
       },
       "source_paths": {
         "plan": "build/experiments/teleop_gripper_p2_20261011/ruling20/sticks/L3/server/ball_plan.json",
@@ -3188,7 +3188,7 @@
           "right_trigger_hinge": 3.1362529240297476e-10
         },
         "passed": false,
-        "source_directory": "/mnt/wsl/shared/ConCon/xbox_gamepad_physics/build/experiments/teleop_gripper_p2_20261011/ruling20/sticks/R3"
+        "source_directory": "build/experiments/teleop_gripper_p2_20261011/ruling20/sticks/R3"
       },
       "source_paths": {
         "plan": "build/experiments/teleop_gripper_p2_20261011/ruling20/sticks/R3/server/ball_plan.json",
@@ -3450,7 +3450,7 @@
           "right_trigger_hinge": 3.1362529240297476e-10
         },
         "passed": true,
-        "source_directory": "/mnt/wsl/shared/ConCon/xbox_gamepad_physics/build/experiments/teleop_gripper_p2_20261011/ruling20/dpad_triggers/Dpad_up"
+        "source_directory": "build/experiments/teleop_gripper_p2_20261011/ruling20/dpad_triggers/Dpad_up"
       },
       "source_paths": {
         "plan": "build/experiments/teleop_gripper_p2_20261011/ruling20/dpad_triggers/Dpad_up/server/ball_plan.json",
@@ -3712,7 +3712,7 @@
           "right_trigger_hinge": 3.1362529240297476e-10
         },
         "passed": true,
-        "source_directory": "/mnt/wsl/shared/ConCon/xbox_gamepad_physics/build/experiments/teleop_gripper_p2_20261011/ruling20/dpad_triggers/Dpad_down"
+        "source_directory": "build/experiments/teleop_gripper_p2_20261011/ruling20/dpad_triggers/Dpad_down"
       },
       "source_paths": {
         "plan": "build/experiments/teleop_gripper_p2_20261011/ruling20/dpad_triggers/Dpad_down/server/ball_plan.json",
@@ -3974,7 +3974,7 @@
           "right_trigger_hinge": 3.1362529240297476e-10
         },
         "passed": true,
-        "source_directory": "/mnt/wsl/shared/ConCon/xbox_gamepad_physics/build/experiments/teleop_gripper_p2_20261011/ruling20/dpad_triggers/Dpad_left"
+        "source_directory": "build/experiments/teleop_gripper_p2_20261011/ruling20/dpad_triggers/Dpad_left"
       },
       "source_paths": {
         "plan": "build/experiments/teleop_gripper_p2_20261011/ruling20/dpad_triggers/Dpad_left/server/ball_plan.json",
@@ -4236,7 +4236,7 @@
           "right_trigger_hinge": 3.1362529240297476e-10
         },
         "passed": true,
-        "source_directory": "/mnt/wsl/shared/ConCon/xbox_gamepad_physics/build/experiments/teleop_gripper_p2_20261011/ruling20/dpad_triggers/Dpad_right"
+        "source_directory": "build/experiments/teleop_gripper_p2_20261011/ruling20/dpad_triggers/Dpad_right"
       },
       "source_paths": {
         "plan": "build/experiments/teleop_gripper_p2_20261011/ruling20/dpad_triggers/Dpad_right/server/ball_plan.json",
@@ -4498,7 +4498,7 @@
           "right_trigger_hinge": 3.1362529240297476e-10
         },
         "passed": true,
-        "source_directory": "/mnt/wsl/shared/ConCon/xbox_gamepad_physics/build/experiments/teleop_gripper_p2_20261011/ruling20/sticks/left_x_pos"
+        "source_directory": "build/experiments/teleop_gripper_p2_20261011/ruling20/sticks/left_x_pos"
       },
       "source_paths": {
         "plan": "build/experiments/teleop_gripper_p2_20261011/ruling20/sticks/left_x_pos/server/ball_plan.json",
@@ -4760,7 +4760,7 @@
           "right_trigger_hinge": 3.1362529240297476e-10
         },
         "passed": true,
-        "source_directory": "/mnt/wsl/shared/ConCon/xbox_gamepad_physics/build/experiments/teleop_gripper_p2_20261011/ruling20/sticks/left_x_neg"
+        "source_directory": "build/experiments/teleop_gripper_p2_20261011/ruling20/sticks/left_x_neg"
       },
       "source_paths": {
         "plan": "build/experiments/teleop_gripper_p2_20261011/ruling20/sticks/left_x_neg/server/ball_plan.json",
@@ -5022,7 +5022,7 @@
           "right_trigger_hinge": 3.1362529240297476e-10
         },
         "passed": true,
-        "source_directory": "/mnt/wsl/shared/ConCon/xbox_gamepad_physics/build/experiments/teleop_gripper_p2_20261011/ruling20/sticks/left_y_pos"
+        "source_directory": "build/experiments/teleop_gripper_p2_20261011/ruling20/sticks/left_y_pos"
       },
       "source_paths": {
         "plan": "build/experiments/teleop_gripper_p2_20261011/ruling20/sticks/left_y_pos/server/ball_plan.json",
@@ -5284,7 +5284,7 @@
           "right_trigger_hinge": 3.1362529240297476e-10
         },
         "passed": true,
-        "source_directory": "/mnt/wsl/shared/ConCon/xbox_gamepad_physics/build/experiments/teleop_gripper_p2_20261011/ruling20/sticks/left_y_neg"
+        "source_directory": "build/experiments/teleop_gripper_p2_20261011/ruling20/sticks/left_y_neg"
       },
       "source_paths": {
         "plan": "build/experiments/teleop_gripper_p2_20261011/ruling20/sticks/left_y_neg/server/ball_plan.json",
@@ -5546,7 +5546,7 @@
           "right_trigger_hinge": 3.1362529240297476e-10
         },
         "passed": true,
-        "source_directory": "/mnt/wsl/shared/ConCon/xbox_gamepad_physics/build/experiments/teleop_gripper_p2_20261011/ruling20/sticks/right_x_pos"
+        "source_directory": "build/experiments/teleop_gripper_p2_20261011/ruling20/sticks/right_x_pos"
       },
       "source_paths": {
         "plan": "build/experiments/teleop_gripper_p2_20261011/ruling20/sticks/right_x_pos/server/ball_plan.json",
@@ -5808,7 +5808,7 @@
           "right_trigger_hinge": 3.1362529240297476e-10
         },
         "passed": true,
-        "source_directory": "/mnt/wsl/shared/ConCon/xbox_gamepad_physics/build/experiments/teleop_gripper_p2_20261011/ruling20/sticks/right_x_neg"
+        "source_directory": "build/experiments/teleop_gripper_p2_20261011/ruling20/sticks/right_x_neg"
       },
       "source_paths": {
         "plan": "build/experiments/teleop_gripper_p2_20261011/ruling20/sticks/right_x_neg/server/ball_plan.json",
@@ -6070,7 +6070,7 @@
           "right_trigger_hinge": 3.1362529240297476e-10
         },
         "passed": true,
-        "source_directory": "/mnt/wsl/shared/ConCon/xbox_gamepad_physics/build/experiments/teleop_gripper_p2_20261011/ruling20/sticks/right_y_pos"
+        "source_directory": "build/experiments/teleop_gripper_p2_20261011/ruling20/sticks/right_y_pos"
       },
       "source_paths": {
         "plan": "build/experiments/teleop_gripper_p2_20261011/ruling20/sticks/right_y_pos/server/ball_plan.json",
@@ -6332,7 +6332,7 @@
           "right_trigger_hinge": 3.1362529240297476e-10
         },
         "passed": true,
-        "source_directory": "/mnt/wsl/shared/ConCon/xbox_gamepad_physics/build/experiments/teleop_gripper_p2_20261011/ruling20/sticks/right_y_neg"
+        "source_directory": "build/experiments/teleop_gripper_p2_20261011/ruling20/sticks/right_y_neg"
       },
       "source_paths": {
         "plan": "build/experiments/teleop_gripper_p2_20261011/ruling20/sticks/right_y_neg/server/ball_plan.json",
@@ -6593,7 +6593,7 @@
           "right_trigger_hinge": 3.1362529240297476e-10
         },
         "passed": true,
-        "source_directory": "/mnt/wsl/shared/ConCon/xbox_gamepad_physics/build/experiments/teleop_gripper_p2_20261011/ruling20/dpad_triggers/LT"
+        "source_directory": "build/experiments/teleop_gripper_p2_20261011/ruling20/dpad_triggers/LT"
       },
       "source_paths": {
         "plan": "build/experiments/teleop_gripper_p2_20261011/ruling20/dpad_triggers/LT/server/ball_plan.json",
@@ -6854,7 +6854,7 @@
           "right_trigger_hinge": 3.1362529240297476e-10
         },
         "passed": true,
-        "source_directory": "/mnt/wsl/shared/ConCon/xbox_gamepad_physics/build/experiments/teleop_gripper_p2_20261011/ruling20/dpad_triggers/RT"
+        "source_directory": "build/experiments/teleop_gripper_p2_20261011/ruling20/dpad_triggers/RT"
       },
       "source_paths": {
         "plan": "build/experiments/teleop_gripper_p2_20261011/ruling20/dpad_triggers/RT/server/ball_plan.json",

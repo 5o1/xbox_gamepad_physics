@@ -99,6 +99,37 @@ def build(output: Path = DEFAULT_OUTPUT, *, kinematics: Path | None = None,
         elif driver["kind"] == "physical_event":
             events.append({"event": driver["event"], "joint": name})
 
+    # The owner-requested circular mechanical boundary is expressed in shaft
+    # direction, independently of the existing approximate signal envelopes.
+    mechanical_limits = []
+    for side in ("left", "right"):
+        x_name, y_name = f"{side}_stick_x", f"{side}_stick_y"
+        envelope = next(item for item in profile["constraints"]
+                        if item["id"] == f"{side}_stick_radial_envelope")
+        mechanical_limits.append({
+            "id": f"{side}_stick_circular_limit",
+            "type": "shaft_tilt_limit",
+            "joint_ids": [x_name, y_name],
+            "reference_link": topology[x_name]["parent"],
+            "moving_link": topology[y_name]["child"],
+            "pivot_in_reference_m": topology[x_name]["origin"],
+            "pivot_in_moving_m": [0.0, 0.0, 0.0],
+            "reference_axis": [0.0, 0.0, 1.0],
+            "moving_axis": [0.0, 0.0, 1.0],
+            "max_angle_rad": envelope["radius"],
+            "enforcement": "hard",
+            "required_stages": ["initialization", "state_write", "each_physics_substep"],
+            "boundary_velocity": "no_outward_velocity",
+            "on_unsupported": "error",
+            "signal_projection_is_enforcement": False,
+            "parameter_ref": envelope["parameter_ref"],
+            "coordinate_space": "relative_shaft_direction",
+            "boundary": "acos(dot(reference_axis, moving_axis_in_reference)) <= max_angle_rad",
+            "model_status": "owner_requested_circular_simulation_gate",
+            "basis": "Owner request 2026-10-19; retain the existing cardinal tilt limit. This is not hardware identification.",
+            "independent_of": [f"{side}_stick_click"],
+        })
+
     contract = {
         "schema_version": 1,
         "asset_id": "xbox_one_s",
@@ -136,7 +167,7 @@ def build(output: Path = DEFAULT_OUTPUT, *, kinematics: Path | None = None,
             "physical_events": events,
         },
         "signal_policy": source["signal_policy"],
-        "joint_space_constraints": profile["constraints"],
+        "joint_space_constraints": [*profile["constraints"], *mechanical_limits],
     }
     encoded = json.dumps(contract, indent=2) + "\n"
     output.parent.mkdir(parents=True, exist_ok=True)

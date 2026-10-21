@@ -1,4 +1,4 @@
-"""Command-line inspection and explicit RoboTwin asset installation."""
+"""Backend inspection, preparation and explicit RoboTwin asset installation."""
 
 from __future__ import annotations
 
@@ -11,7 +11,7 @@ from typing import Sequence
 
 from .errors import XboxGamepadPhysicsError, ResourceNotFoundError
 from .profiles import load_profile, require_physics_ready
-from .resources import build_resources, prepare_resources, resource_root, resource_status
+from .resources import prepare_resources, resource_status
 from .backends.registry import BACKENDS, backend_spec
 
 
@@ -27,7 +27,7 @@ def _selected_backends(value: str) -> tuple[str, ...]:
 
 def _status(args: argparse.Namespace) -> int:
     _selected_backends(args.backend)
-    resources = resource_status()
+    resources = resource_status(backends=_selected_backends(args.backend))
     if not args.json:
         _print_resources(resources)
     profiles = [
@@ -41,7 +41,7 @@ def _status(args: argparse.Namespace) -> int:
             item["manifest_path"] = str(item["manifest_path"])
             item["physics_ready"] = profile.physics_ready
             item["resources"] = resources
-            item["resource_root"] = str(resource_root())
+            item["resource_root"] = resources["root"]
             payload.append(item)
         print(json.dumps(payload, ensure_ascii=False, indent=2))
         return 0
@@ -62,7 +62,7 @@ def _status(args: argparse.Namespace) -> int:
 
 def _verify(args: argparse.Namespace) -> int:
     selected = _selected_backends(args.backend)
-    _print_resources(resource_status())
+    _print_resources(resource_status(backends=selected))
     for backend in selected:
         profile = require_physics_ready(backend, args.profile)
         print(
@@ -109,20 +109,24 @@ def _export_example(args):
 
 
 def _guide(args):
-    from .integration import GUIDE
-    print(GUIDE)
+    from .integration import GUIDE, MUJOCO_GUIDE
+    if args.backend in {"robotwin", "all"}:
+        print(GUIDE)
+    if args.backend in {"mujoco", "all"}:
+        print(MUJOCO_GUIDE)
     return 0
 
 
 def _doctor(args):
     from .integration import diagnose_environment
-    result = diagnose_environment()
+    result = diagnose_environment(backends=_selected_backends(args.backend))
     if args.json:
         print(json.dumps(result, indent=2))
     else:
-        print(f"Python: {result['python']} (supported baseline: 3.10)")
-        print(f"SAPIEN: {result['sapien'] or 'not installed'} (supported version: 3.0.3; {'matched' if result['supported_sapien'] else 'outside supported baseline'})")
-        print(f"SDF version capability (>=3.0.3): {'available' if result['sdf_supported'] else 'unavailable'}")
+        print(f"Python: {result['python']} (core/MuJoCo: 3.10, 3.11; RoboTwin: 3.10)")
+        if "robotwin" in result["backends"]:
+            print(f"SAPIEN: {result['sapien'] or 'not installed'} (supported version: 3.0.3; {'matched' if result['supported_sapien'] else 'outside supported baseline'})")
+            print(f"SDF version capability (>=3.0.3): {'available' if result['sdf_supported'] else 'unavailable'}")
         resources = result['resources']
         print(f"Resources: {'ready' if resources['ready'] else 'not ready'}")
         if 'root' in resources:
@@ -134,9 +138,13 @@ def _doctor(args):
         for name, extra in result['extras'].items():
             missing = [dep for dep, version in extra['distributions'].items() if version is None]
             print(f"[{name}]: {'installed' if extra['installed'] else 'missing ' + ', '.join(missing)}")
+        if "mujoco" in result["backends"]:
+            print(f"MuJoCo: {result['mujoco'] or 'not installed'} (supported version: 3.16.0+concon.sdf3689.2)")
+            print("For model-level checks, inspect handle.findings in your code.")
         print("Next: xbox-gamepad-physics guide; example export DIRECTORY")
-        print("For scene-level checks, call diagnose_scene(scene) in your code.")
-    return 0 if result['sdf_supported'] and result['resources']['ready'] else 1
+        if "robotwin" in result["backends"]:
+            print("For scene-level checks, call diagnose_scene(scene) in your code.")
+    return 0 if result['runtime_ready'] and result['resources']['ready'] else 1
 
 
 def _parser() -> argparse.ArgumentParser:
@@ -147,9 +155,11 @@ def _parser() -> argparse.ArgumentParser:
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     guide = subparsers.add_parser("guide", help="read the integration guide")
+    guide.add_argument("--backend", choices=("robotwin", "mujoco", "all"), default="all")
     guide.set_defaults(handler=_guide)
-    doctor = subparsers.add_parser("doctor", help="check Python, SAPIEN, resources and optional extras")
+    doctor = subparsers.add_parser("doctor", help="check Python, selected backend, resources and optional extras")
     doctor.add_argument("--json", action="store_true")
+    doctor.add_argument("--backend", choices=("robotwin", "mujoco", "all"), default="robotwin")
     doctor.set_defaults(handler=_doctor)
 
     build = subparsers.add_parser("build-resources", help="build stale project-local resources")

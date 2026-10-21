@@ -161,6 +161,28 @@ class EntryPointTest(unittest.TestCase):
         for token in ("guide", "example export", "doctor"):
             self.assertIn(token, help_text[:700])
 
+    def test_mujoco_guide_documents_caller_compilation_and_physics_gate(self):
+        output = io.StringIO()
+        with contextlib.redirect_stdout(output):
+            self.assertEqual(cli.main(["guide", "--backend", "mujoco"]), 0)
+        for token in ("3.16.0", "parent.compile()", "binding.bind(model, data)", "contact acceptance", "fixed_root", "channel name"):
+            self.assertIn(token, output.getvalue())
+        self.assertNotIn("SDF requires", output.getvalue())
+
+    def test_mujoco_doctor_does_not_require_sapien(self):
+        versions = lambda name: "3.16.0" if name == "mujoco" else None
+        ready = {"root": "/tmp/test", "missing": [], "nodes": []}
+        with mock.patch.object(integration, "_version", side_effect=versions), \
+             mock.patch.object(integration, "resource_status", return_value=ready) as inspect:
+            output = io.StringIO()
+            with contextlib.redirect_stdout(output):
+                self.assertEqual(cli.main(["doctor", "--backend", "mujoco", "--json"]), 0)
+        result = json.loads(output.getvalue())
+        self.assertTrue(result["runtime_ready"])
+        self.assertTrue(result["supported_mujoco"])
+        self.assertFalse(result["sdf_supported"])
+        inspect.assert_called_once_with(backends=("mujoco",))
+
     def test_public_scene_does_not_apply_global_settings(self):
         sapien = mock.MagicMock()
         with mock.patch.object(public_scene, "require_sapien", return_value=sapien):

@@ -94,7 +94,7 @@ def _inputs(root: Path, repo: Path | None = None) -> Path:
     return root / "inputs" if (root / ".input-release.json").is_file() else (repo or root / "inputs")
 
 
-def missing_resources(root: Path) -> list[str]:
+def missing_resources(root: Path, *, backends=("robotwin",)) -> list[str]:
     """Inspect file presence, without hashes or simulator imports."""
     expected = {
         "kinematics/xbox_one_s.json",
@@ -103,9 +103,10 @@ def missing_resources(root: Path) -> list[str]:
         "common/xbox_one_s/motion/full_controls.json",
         "common/xbox_one_s/visual/manifest.json",
         "common/xbox_one_s/collision/manifest.json",
-        "robotwin/left_stick/manifest.json",
-        "robotwin/full_controls/manifest.json",
     }
+    from .backends.registry import backend_spec
+    for name in backends:
+        expected.update(f"{name}/{profile}/manifest.json" for profile in backend_spec(name).profiles)
     for relative in tuple(expected):
         path = root / relative
         if not path.is_file():
@@ -141,7 +142,7 @@ def resource_status(*, backends=("robotwin",), targets=None) -> dict:
     root, mode, repo = _resolve_root()
     statuses = _builder(repo).node_status(root, inputs=_inputs(root, repo), backends=backends, targets=targets)
     return {"root": str(root), "mode": mode, "nodes": statuses,
-            "missing": missing_resources(root)}
+            "missing": missing_resources(root, backends=backends)}
 
 
 def _lock() -> dict:
@@ -256,11 +257,14 @@ def prepare_inputs(*, resources: Path | None = None, archive: Path | None = None
     return root, _inputs(root, repo)
 
 
-@lru_cache(maxsize=1)
-def resource_root() -> Path:
+@lru_cache(maxsize=None)
+def resource_root(*, backend: str = "robotwin") -> Path:
     """Resolve and prepare; existing environment roots also run the DAG."""
     root, _, repo = _resolve_root()
-    _prepare(root, repo)
+    if backend == "robotwin":
+        _prepare(root, repo)
+    else:
+        prepare_resources(backends=(backend,), resources=root)
     return root
 
 
@@ -316,7 +320,8 @@ def resource_path(
     safe_profile = _safe_component(profile, "profile")
     relative_parts = _safe_relative_parts(parts)
 
-    root = (resource_root() if prepare else _resolve_root()[0]).resolve()
+    root = ((resource_root(backend=safe_backend) if safe_backend in {"mujoco", "isaac"}
+             else resource_root()) if prepare else _resolve_root()[0]).resolve()
     profile_root = (root / safe_backend / safe_profile).resolve()
     try:
         profile_root.relative_to(root)
@@ -337,8 +342,12 @@ def resource_path(
         relative = "/".join((safe_backend, safe_profile, *relative_parts))
         # Repair declared files deleted after first use; the resolved location
         # remains cached even when cwd or environment variables change.
-        if prepare and relative in missing_resources(root):
-            _prepare(root, _repository())
+        selected_backends = (safe_backend,) if safe_backend in {"robotwin", "mujoco", "isaac"} else ("robotwin",)
+        if prepare and relative in missing_resources(root, backends=selected_backends):
+            if safe_backend in {"mujoco", "isaac"}:
+                prepare_resources(backends=(safe_backend,), resources=root)
+            else:
+                _prepare(root, _repository())
         if candidate.is_file():
             return candidate
         raise ResourceNotFoundError(f"packaged resource does not exist: {relative}")
