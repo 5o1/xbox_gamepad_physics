@@ -85,8 +85,15 @@ def nodes(inputs: Path, *, evidence: Path = DATA_ROOT, calibration=None) -> tupl
     meshbase = inputs / "assets/xbox_one_s/collision_meshbase"
     policy = evidence / "references/full_controls.json"
     from xbox_gamepad_physics.mujoco.builder import resource_node
+    from xbox_gamepad_physics.backends.registry import MUJOCO_RELEASE_GUIDANCE
+    from .usage import document_dependency
+    from dataclasses import replace
+    mujoco_node = resource_node()
+    def generate_mujoco(out, root):
+        mujoco_node.generate(out, root)
+        document_dependency(out, MUJOCO_RELEASE_GUIDANCE)
     return (
-        resource_node(),
+        replace(mujoco_node, generate=generate_mujoco),
         Node("kinematics", (
             asset("assets/xbox_one_s/visual/inventory.json"),
             proof("references/xbox_one_s_artist_animation_summary.json"),

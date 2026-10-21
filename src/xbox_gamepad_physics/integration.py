@@ -108,9 +108,11 @@ def diagnose_environment(*, backends=("robotwin",)):
 MUJOCO_GUIDE = """MuJoCo Xbox One S integration guide
 
 1. Install with [build,mujoco] in Python 3.10 or 3.11 (MuJoCo 3.16.0+concon.sdf3689.2):
-     python -m pip install --no-index --find-links=FORK_WHEELHOUSE 'xbox-gamepad-physics[build,mujoco]'
-   Obtain the matching Python/platform fork wheel and other offline dependencies
-   from the owner-maintained 5o1/mujoco build artifacts; official 3.16.0 is not a substitute.
+     python -m pip install './xbox_gamepad_physics-VERSION-py3-none-any.whl[build,mujoco]'
+   The extra selects the owner-maintained fork Release wheel for Python 3.10/3.11
+   on Linux x86_64, including its SHA256. This corrects MuJoCo 3.16.0 mesh SDF
+   sign errors with upstream PR #3689 before upstream merge:
+     https://github.com/5o1/mujoco/releases/tag/v3.16.0-concon.sdf3689.2
      xbox-gamepad-physics build-resources --backend mujoco --archive INPUT.zip --resources ./gamepad_resources --offline
    Set XBOX_GAMEPAD_PHYSICS_RESOURCES to the prepared directory.
    Inspect with status --backend mujoco and doctor --backend mujoco.

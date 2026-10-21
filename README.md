@@ -93,6 +93,22 @@ export XBOX_GAMEPAD_PHYSICS_RESOURCES="$PWD/gamepad_resources"
 python3.10 -m xbox_gamepad_physics verify --backend robotwin --profile full_controls
 ```
 
+For MuJoCo on Linux x86_64 with Python 3.10 or 3.11, install the `mujoco`
+extra (add `build` when generating resources):
+
+```sh
+python -m pip install "./xbox_gamepad_physics-0.4.0-py3-none-any.whl[mujoco]"
+```
+
+The extra selects a matching wheel directly from the owner-maintained
+[fork Release v3.16.0-concon.sdf3689.2](https://github.com/5o1/mujoco/releases/tag/v3.16.0-concon.sdf3689.2),
+with a pinned SHA256. It corrects MuJoCo 3.16.0 mesh SDF sign errors using
+[upstream PR #3689](https://github.com/google-deepmind/mujoco/pull/3689) before
+that patch is merged upstream. The installed distribution is
+`3.16.0+concon.sdf3689.2`. Other Python/platform combinations have no fork wheel
+selected by this extra. Isaac Lab, Isaac Sim and torch are external prerequisites;
+the `isaac` extra does not install them.
+
 Add the `example` extra for exported examples or `teleop` for teleoperation,
 for example `[build,robotwin,example,teleop]`. The repository is private:
 automatic downloads fail without authentication. Download the attachments while

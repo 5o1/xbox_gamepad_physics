@@ -54,3 +54,16 @@ def document_outputs(directory, usage: UsageSpec | None = None):
             or any(child.suffix in (".obj", ".gltf", ".glb", ".urdf") for child in path.iterdir() if child.is_file())
         ):
             write_resource_readme(path, None if selected == ROBOTWIN.usage else (selected,))
+
+
+def document_dependency(directory: Path, guidance: str) -> None:
+    """Annotate one backend's generated documentation without changing physics."""
+    directory = Path(directory)
+    manifest_path = directory / "manifest.json"
+    record = json.loads(manifest_path.read_text(encoding="utf-8"))
+    record.setdefault("usage", {})["dependency_installation"] = guidance
+    manifest_path.write_text(json.dumps(record, indent=2) + "\n", encoding="utf-8")
+    readme = directory / "README.md"
+    text = readme.read_text(encoding="utf-8")
+    if guidance not in text:
+        readme.write_text(text + "\n## Dependency installation\n\n" + guidance + "\n", encoding="utf-8")

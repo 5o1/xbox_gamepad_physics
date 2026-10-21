@@ -170,7 +170,7 @@ class EntryPointTest(unittest.TestCase):
         self.assertNotIn("SDF requires", output.getvalue())
 
     def test_mujoco_doctor_does_not_require_sapien(self):
-        versions = lambda name: "3.16.0" if name == "mujoco" else None
+        versions = lambda name: "3.16.0+concon.sdf3689.2" if name == "mujoco" else None
         ready = {"root": "/tmp/test", "missing": [], "nodes": []}
         with mock.patch.object(integration, "_version", side_effect=versions), \
              mock.patch.object(integration, "resource_status", return_value=ready) as inspect:

@@ -62,6 +62,8 @@ ROBOTWIN = BackendSpec(
     UsageSpec("xbox_gamepad_physics.robotwin.load_into_scene", _EXAMPLE, warning=_WARNING),
     frozenset({"named_joints", "signals", "birth_fixed_free", "runtime_root_switch_cpu"}),
 )
+MUJOCO_RELEASE_GUIDANCE = 'The [mujoco] extra downloads Python 3.10/3.11 Linux x86_64 wheels from the owner-maintained https://github.com/5o1/mujoco/releases/tag/v3.16.0-concon.sdf3689.2 fork Release. It uses upstream PR #3689 to correct MuJoCo 3.16.0 mesh SDF sign errors before that patch is merged upstream. The selected distribution is 3.16.0+concon.sdf3689.2; official 3.16.0 is not the adopted build.'
+
 MUJOCO = BackendSpec("mujoco", ("full_controls",), ("mujoco_full_controls",),
                      "xbox_gamepad_physics.mujoco.bind", "xbox_gamepad_physics.mujoco.builder.build",
                      UsageSpec("xbox_gamepad_physics.mujoco.bind",
@@ -71,7 +73,8 @@ MUJOCO = BackendSpec("mujoco", ("full_controls",), ("mujoco_full_controls",),
                                guide_command="xbox-gamepad-physics guide --backend mujoco",
                                example_export_command="See examples/mujoco/README.md in the source checkout.",
                                backend_notes=("Caller compiles make_spec/attach_to_spec, then binds by name.",
-                                              "Fixed/free root choice is structural before compilation.")),
+                                              "Fixed/free root choice is structural before compilation.",
+                                              MUJOCO_RELEASE_GUIDANCE)),
                      capabilities=frozenset({"named_joints", "signals", "birth_fixed_free", "target_drive"}),
                      implemented=True)
 ISAAC = BackendSpec("isaac", ("full_controls",), ("isaac_full_controls",),

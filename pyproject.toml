@@ -15,7 +15,10 @@ build = ["numpy>=1.24", "trimesh>=4.4", "Pillow>=9", "manifold3d==3.5.4"]
 teleop = ["aiohttp>=3.9", "PyYAML>=6", "numpy>=1.24", "Pillow>=9", "transforms3d>=0.4", "opencv-python>=4.8", "trimesh>=4.4", "manifold3d==3.5.4"]
 maintainer = ["coacd==1.0.14"]
 robotwin = ["sapien==3.0.3"]
-mujoco = ["mujoco==3.16.0+concon.sdf3689.2"]
+mujoco = [
+    'mujoco @ https://github.com/5o1/mujoco/releases/download/v3.16.0-concon.sdf3689.2/mujoco-3.16.0%2Bconcon.sdf3689.2-cp310-cp310-linux_x86_64.whl#sha256=cc0a30b40bb75bf117ef2d0aa1fef3e4d62aad1cfe7bbdb9ac36fbefd06fc22a ; python_version == "3.10" and platform_system == "Linux" and platform_machine == "x86_64"',
+    'mujoco @ https://github.com/5o1/mujoco/releases/download/v3.16.0-concon.sdf3689.2/mujoco-3.16.0%2Bconcon.sdf3689.2-cp311-cp311-linux_x86_64.whl#sha256=ca623da60501970ac047b596e9bc2c9ed31b6186dbe7e2c7b0991e6a7d85b75d ; python_version == "3.11" and platform_system == "Linux" and platform_machine == "x86_64"',
+]
 isaac = []
 example = ["PyYAML>=6", "numpy>=1.24", "Pillow>=9", "transforms3d>=0.4"]
 
