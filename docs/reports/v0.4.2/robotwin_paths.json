@@ -1,0 +1,37 @@
+{
+  "release": "0.4.2",
+  "historical_provenance": "Old records used old paths at execution time; path relocation does not rewrite that fact. Original bytes retained by the release-work archive, not distributed as a private directory dump.",
+  "shared_readback_helper": "experiments/robotwin/joint_readback.py",
+  "paths": [
+    {
+      "old": "tests/acceptance/robotwin/candidate_boundary.py",
+      "new": "experiments/robotwin/candidate_boundary.py",
+      "original_sha256": "4e7a2595fd0bf53110ad4b391df078be71c2a90f6eb2b078918ae992a78b83d8",
+      "current_sha256": "4e7a2595fd0bf53110ad4b391df078be71c2a90f6eb2b078918ae992a78b83d8"
+    },
+    {
+      "old": "tests/acceptance/robotwin/click_anchor.py",
+      "new": "experiments/robotwin/click_anchor.py",
+      "original_sha256": "8eb7b91df573d028420722c73601b628dcaf80f09cb2189246e27ede686e7315",
+      "current_sha256": "8eb7b91df573d028420722c73601b628dcaf80f09cb2189246e27ede686e7315"
+    },
+    {
+      "old": "tests/acceptance/robotwin/click_anchor_protocol.json",
+      "new": "experiments/robotwin/click_anchor_protocol.json",
+      "original_sha256": "00e4f41a46b8e9a945d133435b7260451ae4dc776204221cf6fc9fdf2adda773",
+      "current_sha256": "00e4f41a46b8e9a945d133435b7260451ae4dc776204221cf6fc9fdf2adda773"
+    },
+    {
+      "old": "tests/acceptance/robotwin/stick_click_factors.py",
+      "new": "experiments/robotwin/stick_click_factors.py",
+      "original_sha256": "9f1f39db51fcd72dff2802608866b1aa68816ff090774dcdd9f573c70d72c733",
+      "current_sha256": "25822dbfaadaacfa3f1ec3923cbf973ee700af983814d3becb21836798a02992"
+    },
+    {
+      "old": "tests/acceptance/robotwin/stick_click_factor_protocol.json",
+      "new": "experiments/robotwin/stick_click_factor_protocol.json",
+      "original_sha256": "27e8b4a6ba8f229f409e6c88babdbba2ee4cb071e4ea1d973a2ba65d955041a8",
+      "current_sha256": "27e8b4a6ba8f229f409e6c88babdbba2ee4cb071e4ea1d973a2ba65d955041a8"
+    }
+  ]
+}

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import copy
 import json
 from pathlib import Path
 import xml.etree.ElementTree as ET
@@ -312,6 +313,7 @@ def build(output: Path, *, kinematics: Path | None = None,
     ]
     required.extend(relative for record in collision_records.values() for variant in ("coacd", "sdf") for relative in record[variant])
     manifest = {
+        "backend_options": {"robotwin": copy.deepcopy(source["backend_options"]["robotwin"])},
         "default_collision": "sdf",
         "min_sapien": "3.0.3",
         "collision_variants": {
@@ -346,10 +348,35 @@ def build(output: Path, *, kinematics: Path | None = None,
         "contact_material": contact,
         "visual_binding": visual_binding,
     }
+    if calibration is not None:
+        manifest["backend_options"]["robotwin"].update(copy.deepcopy(calibration.backend_options.get("robotwin", {})))
+    selected_options = manifest["backend_options"]["robotwin"]
+    if selected_options.get("shaft_tilt_limit", {}).get("mechanism") == "native_d6_cone":
+        from ..robotwin.physical import NATIVE_D6_SAPIEN_VERSION, NATIVE_D6_COMPATIBLE_VERSIONS
+        manifest["min_sapien"] = NATIVE_D6_COMPATIBLE_VERSIONS[0]
+        manifest["dependency_requirements"] = {"sapien": "==" + NATIVE_D6_SAPIEN_VERSION,
+            "compatible_sapien_versions": list(NATIVE_D6_COMPATIBLE_VERSIONS),
+            "reason": "native_d6_cone requires enabled SWING1/SWING2 motion; stock/a1 are incompatible"}
+        manifest["collision_variants"]["sdf"]["min_sapien"] = NATIVE_D6_COMPATIBLE_VERSIONS[0]
+    elif selected_options.get("joint_friction_params"):
+        manifest["min_sapien"] = "3.0.3+concon.physx5.6.1.a1"
+    preload_policy = manifest["backend_options"]["robotwin"]["stick_click_preload"]
+    preload_policy["generalized_preload_n"] = {
+        name: joint["stiffness"] * joint["target"]
+        for name, joint in dynamics.items() if name.endswith("_stick_click")
+    }
+    for record in manifest["joint_dynamics"]:
+        if record["name"] in preload_policy["generalized_preload_n"]:
+            record["target"] = preload_policy["drive_target_m"]
     (output / "manifest.json").write_text(
         json.dumps(manifest, indent=2) + "\n", encoding="utf-8"
     )
-    document_outputs(output)
+    from dataclasses import replace
+    from ..backends.registry import ROBOTWIN
+    from ..robotwin.mappings import CPU_PRELOAD_NOTICE
+    usage = replace(ROBOTWIN.usage, warning=(
+        "Use the public loader to retain appearance, collision and signals. " + CPU_PRELOAD_NOTICE))
+    document_outputs(output, usage)
     print(json.dumps({
         "output": str(output),
         "joints": len(dynamics),

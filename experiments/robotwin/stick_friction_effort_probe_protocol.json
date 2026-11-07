@@ -1,0 +1,118 @@
+{
+  "protocol_id": "full_model_effort_a1_20261107",
+  "purpose": "Full-model CPU TGS mechanism diagnosis only; no production adoption or T3/T4.",
+  "reuse_protocol": "tests/acceptance/robotwin/stick_cone_production_protocol.json",
+  "reuse_executor": "tests/acceptance/robotwin/stick_cone_production.py",
+  "conditions": [
+    {
+      "name": "legacy_7p4",
+      "legacy_coefficient": 0.1,
+      "friction_params": [
+        0,
+        0,
+        0
+      ],
+      "click_qf_n": -7.4
+    },
+    {
+      "name": "effort_7p4",
+      "legacy_coefficient": 0,
+      "friction_params": [
+        0.002,
+        0.002,
+        0
+      ],
+      "click_qf_n": -7.4
+    },
+    {
+      "name": "zero_7p4",
+      "legacy_coefficient": 0,
+      "friction_params": [
+        0,
+        0,
+        0
+      ],
+      "click_qf_n": -7.4
+    },
+    {
+      "name": "effort_0",
+      "legacy_coefficient": 0,
+      "friction_params": [
+        0.002,
+        0.002,
+        0
+      ],
+      "click_qf_n": 0
+    },
+    {
+      "name": "effort_2",
+      "legacy_coefficient": 0,
+      "friction_params": [
+        0.002,
+        0.002,
+        0
+      ],
+      "click_qf_n": -2
+    }
+  ],
+  "sides": [
+    "left",
+    "right"
+  ],
+  "directions": [
+    "diagonal45",
+    "positive_x",
+    "positive_y"
+  ],
+  "planned_cases": 30,
+  "friction_units": {
+    "legacy": "dimensionless",
+    "static": "N m",
+    "dynamic": "N m",
+    "viscous": "N m s/rad"
+  },
+  "test_values_only": true,
+  "intervention": "Only tested-side two tilt joints friction + tested click qf; after loader, before first settle. Fresh scene per case. No other setter, no qf refresh per step.",
+  "H1": {
+    "hypothesis": "New effort friction removes near-lock induced by fictitious click preload under the original full-model TGS conditions.",
+    "support": "For each side/direction both effort_7p4 and zero_7p4 load peak >=1deg; legacy_7p4 <1deg in matching case supports replacement-restores-motion interpretation.",
+    "motion_min_deg": 1,
+    "scope": "Motion is not cone/return or false-click acceptance; keep original cone scoring separately."
+  },
+  "H2": {
+    "hypothesis": "Observe full-mechanism behavior at 0/2/7.4N preload; springs/closed loop can affect total angle.",
+    "interpretation": "No full-angle <5% friction claim. Observe q/qvel, angle, raw click travel/fraction, public signal and return; no new numerical pass threshold."
+  },
+  "unchanged": "dt/gravity/force/point/timing/drives/mass/inertia/collision/cone/iterations/sleep follow reused production cone executor; force and scoring are not reimplemented.",
+  "cpu_scene_adapter": {
+    "reason": "Existing create_scene(render=False) calls sapien.Scene(), whose default systems include RenderSystem in this wheel.",
+    "implementation": "Only experiment-local executor create_scene factory override: sapien.Scene([sapien.physx.PhysxCpuSystem()]); inherited scene config and original dt retained. No rendering/GPU, no public helper edits."
+  },
+  "required_tgs": true,
+  "snapshot": "Caller-selected immutable historical resource snapshot",
+  "critical_gates": [
+    "missing API",
+    "resource mismatch",
+    "unexpected parameter mutation",
+    "qf persistence loss",
+    "nonfinite state",
+    "executor exception"
+  ],
+  "noncritical_results": [
+    "near-lock",
+    "cone criterion failure",
+    "return criterion failure",
+    "click bias"
+  ],
+  "stop_policy": "Critical gate stops batch; noncritical diagnostic failures do not stop 30 cases. No parameter tuning. Execution-bug repair budget 3.",
+  "repair_log": [
+    {
+      "attempt": 1,
+      "error": "Missing XBOX_GAMEPAD_PHYSICS_RESOURCES environment variable required by reused executor",
+      "fix": "Forward validated --resources to process-local environment before loading",
+      "completed_physics_cases_before_error": 0,
+      "physics_protocol_changed": false
+    }
+  ],
+  "trace_join": "state_trace.jsonl covers all 750 steps including settle; original cone trace.jsonl covers load/release 500 steps with actual force_world_n and point_world_m. Join cone step i with state step i+250 (zero based). Settle has no probe force."
+}

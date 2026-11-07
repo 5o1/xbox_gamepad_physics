@@ -99,6 +99,7 @@ def nodes(inputs: Path, *, evidence: Path = DATA_ROOT, calibration=None) -> tupl
             proof("references/xbox_one_s_artist_animation_summary.json"),
             proof("references/1708_dimensions.json"), proof("references/stick_envelope.json"),
             proof("references/catalog.json"), proof("assets/asset_index.json"),
+            proof("references/1708_face_button_travel.json"),
         ), (), RESOURCE_OUTPUTS["kinematics"],
              lambda out, root: _generator("build_kinematics", out, inputs=inputs, evidence=evidence),
              code("build_kinematics", "asset_spec", "paths")),
@@ -131,7 +132,8 @@ def nodes(inputs: Path, *, evidence: Path = DATA_ROOT, calibration=None) -> tupl
         Node("robotwin_full_controls", (str(policy), proof("references/left_stick.json"), str(meshbase)),
              ("kinematics", "common_motion", "sim_visual", "collision", "common_physical"), RESOURCE_OUTPUTS["robotwin_full_controls"],
              lambda out, root: _generator("build_robotwin_full_controls", out, kinematics=kin(root), visual_root=visual(root), common_motion=root / "common/xbox_one_s/motion/full_controls.json", collision_root=root / RESOURCE_OUTPUTS["collision"], meshbase=meshbase, source=policy, left_stick_source=evidence / "references/left_stick.json", calibration=calibrated("full_controls")),
-             (*code("build_robotwin_full_controls", "common_collision"), *physical_sources, adapter_source), options),
+             (*code("build_robotwin_full_controls", "common_collision"), *physical_sources,
+              adapter_source, str(BUILDER_ROOT.parent / "robotwin/mappings.py")), options),
     )
 
 

@@ -56,10 +56,17 @@ ROBOTWIN = BackendSpec(
     ("robotwin_left_stick", "robotwin_full_controls"),
     "xbox_gamepad_physics.robotwin.load_into_scene",
     "xbox_gamepad_physics.builders.build_resources.build",
-    UsageSpec("xbox_gamepad_physics.robotwin.load_into_scene", _EXAMPLE, warning=_WARNING),
+    UsageSpec("xbox_gamepad_physics.robotwin.load_into_scene", _EXAMPLE, warning=_WARNING +
+              " Full-controls stick clicks use a zero-target spring drive plus a persistent "
+              "-7.4 N native generalized preload. The 10.4 N effort cap applies only to "
+              "the spring drive. Preload shares the DOF external-force channel: a later "
+              "caller set_qf overwrite removes it; compose caller loads with the preload. "
+              "SAPIEN GPU physics currently does not support stick-click preload. "
+              "Use CPU PhysX; GPU rendering is supported. CPU loading applies "
+              "preload automatically; the loader never initializes or steps a scene."),
     frozenset({"named_joints", "signals", "birth_fixed_free", "runtime_root_switch_cpu"}),
 )
-MUJOCO_RELEASE_GUIDANCE = 'The [mujoco] extra downloads Python 3.10/3.11 Linux x86_64 wheels from the owner-maintained https://github.com/5o1/mujoco/releases/tag/v3.16.0-concon.sdf3689.2 fork Release. It uses upstream PR #3689 to correct MuJoCo 3.16.0 mesh SDF sign errors before that patch is merged upstream. The selected distribution is 3.16.0+concon.sdf3689.2; official 3.16.0 is not the adopted build.'
+MUJOCO_RELEASE_GUIDANCE = 'The [mujoco] extra downloads Python 3.10/3.11 Linux x86_64 wheels from the owner-maintained https://github.com/5o1/mujoco/releases/tag/v3.16.0-concon.sdf3689.2 fork Release. It uses upstream PR #3689 to correct MuJoCo 3.16.0 mesh SDF sign errors (merged 2026-10-21); this release retains the tested fork. The selected distribution is 3.16.0+concon.sdf3689.2; official 3.16.0 is not the adopted build.'
 
 MUJOCO = BackendSpec("mujoco", ("full_controls",), ("mujoco_full_controls",),
                      "xbox_gamepad_physics.mujoco.bind", "xbox_gamepad_physics.mujoco.builder.build",

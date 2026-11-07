@@ -144,6 +144,7 @@ def build(output: Path | None = None, *, inputs: Path = ROOT, evidence: Path = D
     dimensions = json.loads(DIMENSIONS.read_text())
     stick_reference = json.loads(STICK_REFERENCE.read_text())
     catalog = json.loads(CATALOG.read_text())
+    face_measurement = json.loads((evidence / "references/1708_face_button_travel.json").read_text())
     catalog_sources = catalog.get("sources")
     require(isinstance(catalog_sources, dict) and catalog_sources, "evidence catalog has no source index")
     require(inventory["source_sha256"] == motion["source_sha256"], "visual and motion sources differ")
@@ -271,6 +272,16 @@ def build(output: Path | None = None, *, inputs: Path = ROOT, evidence: Path = D
     ]
     for control in translation_controls:
         parameters[f"{control}_travel"] = artist_translation_parameter(control)
+        if control in {"a", "b", "x", "y"}:
+            parameters[f"{control}_travel"] = parameter(
+                value=face_measurement["adopted_travel_m"], unit_name="m",
+                status="derived" if control == "a" else "measurement",
+                evidence=[face_measurement["source_id"]],
+                derivation={"method": face_measurement["derivation"],
+                            "inputs": face_measurement["samples"]},
+                uncertainty=face_measurement["uncertainty"],
+                applicability=face_measurement["per_control_applicability"][control],
+            )
         direction = unit(bones[CONTROL_TO_BONE[control]]["peak_translation"]["vector_native"])
         parameters[f"{control}_motion_axis"] = parameter(
             value=direction,
@@ -342,11 +353,11 @@ def build(output: Path | None = None, *, inputs: Path = ROOT, evidence: Path = D
         status="estimated",
         evidence=["batony_xbox_one_s_visual"],
         derivation={
-            "method": "Use the inward negative source-Z face-normal direction for the visual click surrogate.",
+            "method": "Owner decision 2026-11-05: translate along the inward neutral shaft direction fixed in the shell, before both tilt joints.",
             "inputs": {"source_frame": "blender_source_z_up_right_handed", "artist_click_animation": None},
         },
         uncertainty=None,
-        applicability="Visual click-direction assumption only. The artist asset has no verified stick-click animation or mechanical guide axis.",
+        applicability="Adopted generic push-switch kinematics, not measured Xbox 1708 transmission. The artist asset has no verified stick-click animation.",
     )
 
     stick_limit = math.radians(float(stick_reference["half_sweep_max_deg"]))
@@ -513,6 +524,14 @@ def build(output: Path | None = None, *, inputs: Path = ROOT, evidence: Path = D
     ):
         node = node_by_control[control]["source_node"]
         shared_pivot = pivot(control)
+        add_joint({
+            "id": f"{side}_stick_click", "node": node, "type": "prismatic",
+            "axis_source": [0.0, 0.0, -1.0], "pivot_source_m": shared_pivot,
+            "axis_parameter_ref": "stick_click_axis", "pivot_parameter_ref": f"{control}_artist_anchor",
+            "limits": [0.0, parameters["stick_click_travel"]["value"]], "unit": "m",
+            "parameter_ref": "stick_click_travel",
+            "driver": {"kind": "linear_channel", "channel": channel_index(click_channel), "signal_range": [0.0, 1.0]},
+        })
         for suffix, axis, channel in (
             ("x", [0.0, 1.0, 0.0], x_channel),
             ("y", [1.0, 0.0, 0.0], y_channel),
@@ -525,14 +544,6 @@ def build(output: Path | None = None, *, inputs: Path = ROOT, evidence: Path = D
                 "limits": [-stick_limit, stick_limit], "unit": "rad", "parameter_ref": "stick_tilt_limit",
                 "driver": {"kind": "linear_channel", "channel": channel_index(channel), "signal_range": [-1.0, 1.0]},
             })
-        add_joint({
-            "id": f"{side}_stick_click", "node": node, "type": "prismatic",
-            "axis_source": [0.0, 0.0, -1.0], "pivot_source_m": shared_pivot,
-            "axis_parameter_ref": "stick_click_axis", "pivot_parameter_ref": f"{control}_artist_anchor",
-            "limits": [0.0, parameters["stick_click_travel"]["value"]], "unit": "m",
-            "parameter_ref": "stick_click_travel",
-            "driver": {"kind": "linear_channel", "channel": channel_index(click_channel), "signal_range": [0.0, 1.0]},
-        })
 
     dpad_limit = parameters["dpad_rotation"]["value"]
     dpad_node = node_by_control["dpad"]["source_node"]

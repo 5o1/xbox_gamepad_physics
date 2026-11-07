@@ -42,6 +42,7 @@ from .errors import (
     RoboTwinManifestError,
     SceneCompatibilityError,
 )
+from .physical import joint_friction_params, require_native_cone_engine, viscous_mapping, solver_iterations
 
 
 _BACKEND = "robotwin"
@@ -53,6 +54,7 @@ class JointDynamics:
     force_limit: float
     friction: float
     target: float
+    friction_params: tuple[float, float, float] | None = None
 
 
 @dataclass(frozen=True)
@@ -64,6 +66,7 @@ class RoboTwinAssetDescription:
     contact_material: "ContactMaterial"
     visual_binding: Mapping[str, Any]
     collision_variants: Mapping[str, Any]
+    backend_options: Mapping[str, Any] | None = None
 
 
 @dataclass(frozen=True)
@@ -200,6 +203,28 @@ def _validated_description(profile: str) -> RoboTwinAssetDescription:
             f"state_mapping references undeclared joints {sorted(referenced - names)}"
         )
 
+    backend_options = manifest.get("backend_options", {})
+    if not isinstance(backend_options, Mapping) or not isinstance(backend_options.get("robotwin", {}), Mapping):
+        raise RoboTwinManifestError("backend_options.robotwin must be an object")
+    options = backend_options.get("robotwin", {})
+    friction_units = {j.name: j.unit for j in joint_motion}
+    if options.get("joint_friction_params") and not joint_motion:
+        # Historical profiles can predate the common sidecar. Their native
+        # URDF joint types still define unambiguous SI coordinate units.
+        import xml.etree.ElementTree as ET
+        friction_units = {j.get("name"): "m" if j.get("type") == "prismatic" else "rad"
+                          for j in ET.parse(urdf_path).findall("joint")
+                          if j.get("name") in names and j.get("type") in {"prismatic", "revolute", "continuous"}}
+    resolved_friction = joint_friction_params(options.get("joint_friction_params", {}),
+        friction_units)
+    if resolved_friction:
+        from dataclasses import replace
+        channel = viscous_mapping(options)
+        dynamics = tuple(replace(d, friction=0.0,
+                         damping=d.damping + (resolved_friction[d.name][2] if channel == "drive_damping" else 0),
+                         friction_params=(resolved_friction[d.name][:2] + (0.0,) if channel == "drive_damping" else resolved_friction[d.name]))
+                         if d.name in resolved_friction else d for d in dynamics)
+    solver_iterations(options)
     raw_contact = _field(manifest, "contact_material", "manifest")
     contact = ContactMaterial(
         static_friction=float(_field(raw_contact, "static_friction", "contact_material")),
@@ -216,6 +241,7 @@ def _validated_description(profile: str) -> RoboTwinAssetDescription:
         contact,
         _field(manifest, "visual_binding", "manifest"),
         manifest.get("collision_variants", {}),
+        options,
     )
 
 
@@ -345,6 +371,12 @@ def _configure_joints(
             force_limit=configuration.force_limit,
         )
         set_friction(configuration.friction)
+        if configuration.friction_params is not None:
+            setter = getattr(joint, "set_friction_params", None)
+            if not callable(setter):
+                raise SceneCompatibilityError(f"{configuration.name}: dimensional friction requires the approved SAPIEN PhysX5.6.1 port")
+            set_friction(0.0)
+            setter(*configuration.friction_params)
         set_target(configuration.target)
     return wrapper
 
@@ -443,8 +475,19 @@ def load_into_scene(
     if type(attach_visual) is not bool:
         raise TypeError("attach_visual must be bool")
     description = _validated_description(profile)
+    cone_policy = (description.backend_options or {}).get("shaft_tilt_limit", {})
+    if cone_policy.get("mechanism") == "native_d6_cone":
+        try:
+            require_native_cone_engine(cone_policy, metadata.version("sapien"))
+        except metadata.PackageNotFoundError as error:
+            from .physical import NATIVE_D6_SAPIEN_VERSION
+            raise MissingBackendDependencyError(f"native_d6_cone requires sapien=={NATIVE_D6_SAPIEN_VERSION}") from error
+        except ValueError as error:
+            raise SceneCompatibilityError(str(error)) from error
     physx = _sdf_physx() if collision == "sdf" else None
     resolved_scene = _resolve_scene(scene)
+    if (description.backend_options or {}).get("stick_click_preload") and type(resolved_scene.physx_system).__name__ == "PhysxGpuSystem":
+        raise SceneCompatibilityError("SAPIEN GPU mode currently does not support stick-click preload; use a CPU PhysX scene.")
     root_pose = _coerce_pose(pose)
     loader = resolved_scene.create_urdf_loader()
     if loader is None:
@@ -465,6 +508,10 @@ def load_into_scene(
             "SAPIEN URDF loader exposes neither load_multiple() nor load()"
         )
     articulation = _extract_one_articulation(result)
+    iterations = solver_iterations(description.backend_options or {})
+    if iterations is not None:
+        articulation.set_solver_position_iterations(iterations[0])
+        articulation.set_solver_velocity_iterations(iterations[1])
 
     set_pose = getattr(articulation, "set_root_pose", None)
     if not callable(set_pose):
@@ -497,7 +544,16 @@ def load_into_scene(
             wrapper.configuration_id = configured["configuration_id"]
     wrapper.profile = profile
     wrapper._passive_targets = {item.name: item.target for item in description.joint_dynamics}
+    options = description.backend_options or {}
+    from .mappings import apply_preload, attach_shaft_limits
+    preload = options.get("stick_click_preload", {}).get("generalized_preload_n", {})
+    if preload:
+        apply_preload(articulation, resolved_scene, preload)
+    wrapper._generalized_preload_n = dict(preload)
+    if "shaft_tilt_limit" in options:
+        wrapper._native_shaft_limits, wrapper._shaft_limit_mapping = attach_shaft_limits(
+            resolved_scene, articulation, load_motion_contract(profile), options["shaft_tilt_limit"])
     from .diagnostics import _mark_loaded
     _mark_loaded(resolved_scene, articulation, profile=profile, collision=collision,
-                 attach_visual=attach_visual)
+                 attach_visual=attach_visual, generalized_preload=preload)
     return wrapper

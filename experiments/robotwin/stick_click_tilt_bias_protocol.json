@@ -1,0 +1,46 @@
+{
+  "id": "stick_click_tilt_bias_ruling8_20261107_v1",
+  "base": "Same T1 fixed-root SDF scene, CPU PhysX, timestep.004s, original geometry/mass/drive/friction/velocity. No external cap force, no q/qvel writes. Public layer frozen.",
+  "matrix": {
+    "sides": [
+      "left",
+      "right"
+    ],
+    "angles_deg": [
+      0,
+      12,
+      20,
+      23
+    ],
+    "hold_after_original_1s_settle_s": 6
+  },
+  "contrasts_at_20deg_both_sides": [
+    {
+      "name": "tilt_stiffness10",
+      "factor": "Only tilt holding K100->10 Nm/rad; damping1 and targets/effort unchanged."
+    },
+    {
+      "name": "without_distance_constraint",
+      "factor": "Only omit native distance connection at loading by experiment-only patch; production unchanged."
+    },
+    {
+      "name": "without_preload",
+      "factor": "Only subtract installed negative7.4N click qf contribution; preserve other qf."
+    },
+    {
+      "name": "prismatic_upper4mm",
+      "factor": "Only diagnostic click upper limit.0004->.004m, lower0 unchanged; normalization still original.0004m."
+    },
+    {
+      "name": "sleep_disabled",
+      "factor": "Only diagnostic articulation sleep threshold0; record sleeping state to distinguish persistent load from a sleeping residual. No production policy change."
+    }
+  ],
+  "observations": "Native q/qvel, raw q/.0004 and original signal, actual shaft angle, click qf and drive policy; total incoming joint-frame wrench on click child and both tilt joints; both coordinate-space limit distances; compare loaded residual against zero-force angle hold.",
+  "interpretation": "A matching zero-force residual proves cap pushing is not necessary. K-only contrast tests fixture stiffness effect but is not a production fix; actual angle must be compared. Distance-off contrast isolates cone involvement. qf and upper-stop interventions test preload/limit influence, not authorize parameter adoption. Incoming joint wrench is mixed transmitted force, not isolated drive torque. Only with a confirmed fixture cause may repair and rerun acceptance; model-caused response requires proposal.",
+  "criteria_unchanged": {
+    "low_signal_max": 0.05,
+    "no_new_threshold": true
+  },
+  "stop": "Complete registered diagnostic batch then stop if no uniquely supported fixture repair. No parameter search; no production/public parameter changes."
+}

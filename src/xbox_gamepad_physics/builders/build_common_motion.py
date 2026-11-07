@@ -53,6 +53,10 @@ def build(output: Path = DEFAULT_OUTPUT, *, kinematics: Path | None = None,
         parent = "controller_body"
         for index, joint_name in enumerate(node["joint_ids"]):
             child = control if index == len(node["joint_ids"]) - 1 else f"{joint_name}_frame"
+            if control in {"left_stick", "right_stick"}:
+                # Preserve every historical link identity and neutral transform.
+                # The frame names are stable identifiers, not joint attachments.
+                child = [f"{control}_x_frame", f"{control}_y_frame", control][index]
             topology[joint_name] = {
                 "parent": parent,
                 "child": child,
@@ -110,9 +114,9 @@ def build(output: Path = DEFAULT_OUTPUT, *, kinematics: Path | None = None,
             "id": f"{side}_stick_circular_limit",
             "type": "shaft_tilt_limit",
             "joint_ids": [x_name, y_name],
-            "reference_link": topology[x_name]["parent"],
+            "reference_link": "controller_body",
             "moving_link": topology[y_name]["child"],
-            "pivot_in_reference_m": topology[x_name]["origin"],
+            "pivot_in_reference_m": profile_joints[x_name]["pivot_source_m"],
             "pivot_in_moving_m": [0.0, 0.0, 0.0],
             "reference_axis": [0.0, 0.0, 1.0],
             "moving_axis": [0.0, 0.0, 1.0],

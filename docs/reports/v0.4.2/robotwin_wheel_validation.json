@@ -1,0 +1,257 @@
+{
+  "release": "0.4.2",
+  "scope": "Fresh installed final wheel and source-free tests path; CPU native SDF, offline normal DAG from matching One S input zip",
+  "wheel_sha256": "ae7923f45e11c8b82829833c8e8aeacd5794b5bca3e367efcff1a309c4010079",
+  "input_zip_sha256": "96dc0a6fd4a936dc82912ce331d2c4493e87cc02105332f4c4eeffa236f659ce",
+  "engine_version": "3.0.3+concon.physx5.6.1.a3",
+  "native_joint_count": 20,
+  "solver_iterations": [
+    64,
+    16
+  ],
+  "total_mass_kg": 0.2799999951967038,
+  "signal_roundtrip": {
+    "method": "Physical12N load, encode joint state, decode through original motion controller and serialize GamepadState. No q/qvel or drive-target writes.",
+    "loaded_public_signal": 0.9880152356345206,
+    "loaded_raw_fraction": 0.9880152356345206,
+    "decoded_q_m": 0.00039520609425380826,
+    "actual_q_m": 0.00039520609425380826,
+    "decode_error_m": 0.0,
+    "serialized_values_equal": true,
+    "released_signal": 0.0
+  },
+  "T1": [
+    {
+      "side": "left",
+      "angle": 0,
+      "passed": true,
+      "lowmax": 2.7114569270403344e-08,
+      "window": 0.41600000000000037
+    },
+    {
+      "side": "left",
+      "angle": 12,
+      "passed": true,
+      "lowmax": 2.639074288962595e-08,
+      "window": 0.41600000000000037
+    },
+    {
+      "side": "left",
+      "angle": 20,
+      "passed": true,
+      "lowmax": 2.472732088532048e-08,
+      "window": 0.4479999999999986
+    },
+    {
+      "side": "right",
+      "angle": 0,
+      "passed": true,
+      "lowmax": 3.88846954635369e-06,
+      "window": 0.41600000000000037
+    },
+    {
+      "side": "right",
+      "angle": 12,
+      "passed": true,
+      "lowmax": 3.8669550894709914e-06,
+      "window": 0.4320000000000004
+    },
+    {
+      "side": "right",
+      "angle": 20,
+      "passed": true,
+      "lowmax": 3.7910174999211677e-06,
+      "window": 0.4319999999999986
+    }
+  ],
+  "T2": [
+    {
+      "side": "left",
+      "multiple": 0.5,
+      "passed": true
+    },
+    {
+      "side": "left",
+      "multiple": 0.8,
+      "passed": true
+    },
+    {
+      "side": "left",
+      "multiple": 0.95,
+      "passed": true
+    },
+    {
+      "side": "left",
+      "multiple": 1.1,
+      "passed": true
+    },
+    {
+      "side": "left",
+      "multiple": 1.3,
+      "passed": true
+    },
+    {
+      "side": "left",
+      "multiple": 1.6,
+      "passed": true
+    },
+    {
+      "side": "right",
+      "multiple": 0.5,
+      "passed": true
+    },
+    {
+      "side": "right",
+      "multiple": 0.8,
+      "passed": true
+    },
+    {
+      "side": "right",
+      "multiple": 0.95,
+      "passed": true
+    },
+    {
+      "side": "right",
+      "multiple": 1.1,
+      "passed": true
+    },
+    {
+      "side": "right",
+      "multiple": 1.3,
+      "passed": true
+    },
+    {
+      "side": "right",
+      "multiple": 1.6,
+      "passed": true
+    }
+  ],
+  "cone": [
+    {
+      "side": "left",
+      "direction": "diagonal45",
+      "passed": true
+    },
+    {
+      "side": "left",
+      "direction": "positive_x",
+      "passed": true
+    },
+    {
+      "side": "left",
+      "direction": "positive_y",
+      "passed": true
+    },
+    {
+      "side": "right",
+      "direction": "diagonal45",
+      "passed": true
+    },
+    {
+      "side": "right",
+      "direction": "positive_x",
+      "passed": true
+    },
+    {
+      "side": "right",
+      "direction": "positive_y",
+      "passed": true
+    }
+  ],
+  "T3v2": [
+    {
+      "side": "left",
+      "force": 1,
+      "valid": true,
+      "passed": true
+    },
+    {
+      "side": "left",
+      "force": 2,
+      "valid": true,
+      "passed": true
+    },
+    {
+      "side": "left",
+      "force": 4,
+      "valid": true,
+      "passed": true
+    },
+    {
+      "side": "left",
+      "force": 6,
+      "valid": true,
+      "passed": true
+    },
+    {
+      "side": "left",
+      "force": 8.14,
+      "valid": true,
+      "passed": true
+    },
+    {
+      "side": "right",
+      "force": 1,
+      "valid": true,
+      "passed": true
+    },
+    {
+      "side": "right",
+      "force": 2,
+      "valid": true,
+      "passed": true
+    },
+    {
+      "side": "right",
+      "force": 4,
+      "valid": true,
+      "passed": true
+    },
+    {
+      "side": "right",
+      "force": 6,
+      "valid": true,
+      "passed": true
+    },
+    {
+      "side": "right",
+      "force": 8.14,
+      "valid": true,
+      "passed": true
+    }
+  ],
+  "T4": {
+    "passed": 23,
+    "regressions": [],
+    "failures": [
+      "Pair",
+      "L3",
+      "R3"
+    ]
+  },
+  "historical_default10_control": {
+    "scope": "Retained historical a2 raw trace re-scored, not recollected on final wheel",
+    "result": {
+      "passed": 21,
+      "regressions": [
+        "View",
+        "Menu",
+        "Guide"
+      ],
+      "failures": [
+        "View",
+        "Menu",
+        "Guide",
+        "Pair",
+        "R3"
+      ]
+    }
+  },
+  "ordinary_criteria_passed": true,
+  "retained_limitations": [
+    "Pair/L3/R3 frozen failures",
+    "Extra overdrive-plus-press shortfall not requalified",
+    "Hardware calibration and arbitrary contact loads unqualified",
+    "GPU full-controls preload unsupported"
+  ]
+}

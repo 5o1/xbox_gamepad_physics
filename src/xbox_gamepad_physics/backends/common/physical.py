@@ -111,7 +111,7 @@ def derive_joint_dynamics(profile: str, joints: Mapping[str, dict], source: dict
         "left_stick_x", "left_stick_y", "right_stick_x", "right_stick_y"
     }
     stick_clicks = {"left_stick_click", "right_stick_click"}
-    one_sided = face | small | shoulders | triggers | stick_clicks
+    one_sided = face | small | shoulders | triggers
     preload_fraction = float(
         source["passive_preload_policy"]["preload_fraction"]
     )
@@ -150,7 +150,8 @@ def derive_joint_dynamics(profile: str, joints: Mapping[str, dict], source: dict
             velocity, effective = 10.0, 1e-6
         else:
             raise ValueError(f"joint {name!r} has no dynamics policy")
-        ratio = 0.7
+        ratio = (float(source["control_groups"]["sticks"]["click_damping_ratio"])
+                 if name in stick_clicks else 0.7)
         damping = critical_damping(stiffness, effective, ratio)
         joint.update(
             effort=effort,
@@ -158,7 +159,9 @@ def derive_joint_dynamics(profile: str, joints: Mapping[str, dict], source: dict
             stiffness=stiffness,
             drive_damping=damping,
             passive_damping=damping * 0.05,
-            target=(-preload_fraction * travel if name in one_sided else 0.0),
+            target=(float(source["control_groups"]["sticks"]["click_rest_position_m"])
+                    if name in stick_clicks else
+                    -preload_fraction * travel if name in one_sided else 0.0),
         )
         joint["effective_mass_or_inertia"] = effective
         joint["damping_ratio"] = ratio
@@ -382,6 +385,21 @@ def derive_physical(motion, geometry: MassGeometry, calibration: ResolvedCalibra
                 reference = f"builders/build_robotwin_{geometry.profile}.py@7c79b29"
                 locator = "build: joint initialization and numerical damping assumptions"
                 category = "legacy_numerical_assumption"
+            if geometry.profile == "full_controls" and name in {"left_stick_click", "right_stick_click"} and field != "initial_position":
+                model = geometry.source["control_groups"]["sticks"]["click_threshold_model"]
+                entry = model[{
+                    "stiffness": "stiffness", "neutral_target": "rest_position",
+                    "rest_position": "rest_position", "effort_limit": "force_limit",
+                    "drive_damping": "damping", "passive_damping": "damping",
+                    "damping_ratio": "damping", "effective_mass_or_inertia": "damping",
+                }.get(field, "stiffness")]
+                if field != "velocity_limit":
+                    return Parameter(value, field_unit, (Evidence(source_name,
+                        "control_groups.sticks.click_threshold_model",
+                        model["applicability"], entry["derivation"],
+                        (entry["source"],), "simulation_estimate",
+                        {"description": entry["uncertainty"]} if entry.get("uncertainty") is not None else None,
+                        entry.get("uncertainty_reason")),))
             parameter_value = _parameter(value, field_unit, locator, source=reference, category=category, derivation=derivation)
             interval = None
             if reference == "references/left_stick.json" and field == "stiffness":
@@ -390,7 +408,8 @@ def derive_physical(motion, geometry: MassGeometry, calibration: ResolvedCalibra
                 item = parameter_value.evidence[0]
                 parameter_value = Parameter(value, field_unit, (Evidence(item.source, item.locator, item.applicability, item.derivation, item.assumptions, item.category, {"kind": "sensitivity_range", "bounds": interval}, None),))
             return parameter_value
-        laws[name] = ReturnLaw(parameter("initial_position", 0.0, unit), parameter("rest_position", 0.0, unit),
+        rest = record["target"] if geometry.profile == "full_controls" and name.endswith("_stick_click") else 0.0
+        laws[name] = ReturnLaw(parameter("initial_position", 0.0, unit), parameter("rest_position", rest, unit),
             parameter("stiffness", record["stiffness"], units["stiffness"]),
             parameter("drive_damping", record["drive_damping"], units["drive_damping"]),
             parameter("passive_damping", record["passive_damping"], units["passive_damping"]),

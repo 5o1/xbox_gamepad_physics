@@ -93,13 +93,23 @@ class RoboTwinFullControlsAssetTest(unittest.TestCase):
             [0.02, 0.02],
         )
         dynamics = {item.name: item for item in description.joint_dynamics}
+        motion = {item.name: item for item in description.joint_motion}
+        for control in ("a", "b", "x", "y"):
+            name = control + "_press"
+            self.assertAlmostEqual(motion[name].upper, 0.00122)
+            self.assertAlmostEqual(dynamics[name].stiffness, 1.57 / 0.00122)
+        for side in ("left", "right"):
+            name = side + "_stick_click"
+            self.assertEqual(dynamics[name].target, 0)
+            self.assertEqual(description.backend_options["stick_click_preload"]["generalized_preload_n"][name], -7.4)
         for name in (
             "left_stick_x",
             "left_stick_y",
             "right_stick_x",
             "right_stick_y",
         ):
-            self.assertEqual(dynamics[name].friction, 0.1)
+            self.assertEqual(dynamics[name].friction, 0.0)
+            self.assertEqual(dynamics[name].friction_params, (0.0, 0.0, 0.0))
 
     def test_isolated_joint_endpoints_produce_named_signals(self):
         description = _validated_description("full_controls")

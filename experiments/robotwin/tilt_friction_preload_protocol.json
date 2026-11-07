@@ -1,0 +1,13 @@
+{
+ "id":"tilt_friction_preload_ruling12_20261107_v1",
+ "fixture_protocol":"tests/acceptance/robotwin/stick_cone_production_protocol.json",
+ "models":{"new":"ruling6_resources","old":"baseline snapshot main73c8676"},
+ "conditions":["new_baseline","tilt_friction_zero","click_preload_zero","click_preload_0p111","main_73c8676"],
+ "directions":["diagonal45","positive_x","positive_y"],"sides":["left","right"],
+ "force_n":2.910747149685873,"dt_s":0.004,"settle_s":1,"load_s":1,"release_s":1,
+ "overrides":"Applied immediately after normal loading and before settling. Only measured-side two tilt joints friction0, OR only measured-side click qf0, OR only measured-side click qf-.111N. Preserve all other joints/qf and normal drive policies. Baseline and old model have no overrides.",
+ "old_preload_basis":"Old k18500 *(.015*.0004)=.111N. Diagnostic new low spring remains1000 when qf-.111; old model remains entirely original, not a single-field contrast.",
+ "observations":"All joint policies and qf before/after; every step from initial settle to release: named q/qvel, actual total tilt, incoming child-joint-frame wrench for both tilt joints. Net transmitted force is not the isolated friction solver bound or drive/limit force.",
+ "interpretation":"If zero tilt friction restores loading and removing/lowering preload also restores it, evidence supports a friction-preload interaction; one-factor contributions do not alone prove the precise internal load path. If only friction helps and preload changes do not, do not claim preload-driven friction. Main-model results are a multi-model control. No production policy changes.",
+ "stop":"Finish preregistered batch, report cause and remaining uncertainty/options; no T3v2/T4, no numerical search or automatic production fix."
+}

@@ -1,0 +1,17 @@
+{
+  "id":"stick_click_force_output_ruling5_20261106_v1",
+  "fixture":"Same new-chain left0 T1 setup, fixed root, SDF, native CPU physics, dt=.004 s, 1 s settle, 751-step 0 to12 N loading in3 s. No signal mapping changes.",
+  "conditions":[
+    {"name":"baseline","overrides":{}},
+    {"name":"a_large_force_limit","overrides":{"force_limit":100000}},
+    {"name":"b_target_zero","overrides":{"target":0}},
+    {"name":"c_near_negative_target_same_preload","overrides":{"target":-0.0004,"stiffness":18500}}
+  ],
+  "override_timing":"Immediately after normal loader configuration, before unchanged tilt-hold setup and1s settling; no click q/qvel writes.",
+  "units":{"target":"m","stiffness":"N/m","damping":"N*s/m","force_limit":"N"},
+  "large_limit_basis":"Diagnostic-only100000 N selected before observations to remove drive clipping; not a hardware or production value.",
+  "c_interpretation":"Owner-requested paired K/target change preserves7.4 N neutral elastic load; damping2.8 and limit10.4 remain unchanged. This pair does not isolate target distance from stiffness. Static full-travel elastic load14.8 N is clipped by10.4 N.",
+  "capture":"Record all native setter arguments via forwarding proxies inside original _configure_joints; no mutation except registered diagnostic override. Preserve physical Parameter units and URDF fragments; capture native policies. Every step preserve raw incoming-link Nx6 wrenches and user qf separately, native q/qvel and force projection. Isolated drive force is null if no native getter.",
+  "reference":"Compute k*(q-q0) and clipped(-k*(q-q0)-D*qvel) as labeled mathematical reference only, never as measured drive output.",
+  "stop":"No production changes unless unit/mapping bug proven. Engine-semantics or numerical policy changes require owner decision; no tuning sweep."
+}

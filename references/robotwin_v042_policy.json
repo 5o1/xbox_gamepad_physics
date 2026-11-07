@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "reference_id": "robotwin_v042_policy",
+  "release": "0.4.2",
+  "date": "2026-11-07",
+  "category": "simulation_estimate",
+  "scope": "RoboTwin full_controls only; simulation compatibility selection, not hardware identification or a policy for other engines",
+  "selection": {
+    "protocol": "tests/acceptance/robotwin/data/v042_compatibility_protocol.json",
+    "reference": "Regenerated historical primitive-resource free-root shake; original search retained aggregate only, not per-step waveform or complete launch argv",
+    "selected_id": "s0_d0_v8",
+    "static_effort": {
+      "value": 0.0,
+      "unit": "N*m",
+      "meaning": "Selected simulation family value; not a claim that hardware dry friction is zero"
+    },
+    "dynamic_effort": {
+      "value": 0.0,
+      "unit": "N*m",
+      "meaning": "Selected simulation family value; not hardware identified"
+    },
+    "viscous": {
+      "value": 0.0018707873827064705,
+      "unit": "N*m*s/rad",
+      "derivation": "8 times the previously approved drive damping0.00023384842283830882; chosen by preregistered480Hz compatibility score before T1-T4"
+    },
+    "linear_stiffness": {
+      "value": 0.03487569187752837,
+      "unit": "N*m/rad",
+      "change": "Preserved approved linear return model, not a reconstructed full ALPS torque curve"
+    },
+    "uncertainty": null,
+    "uncertainty_reason": "Finite simulation compatibility family; no hardware identification or statistical confidence interval"
+  },
+  "mapping": {
+    "viscous_channel": "drive_damping",
+    "law": "Native force-mode totalD=originalD+b; dimensional friction receives(static,dynamic,0); legacy coefficient cleared",
+    "force_limit": "Original native drive cap retained and shared by spring+damping; equivalence to unbounded tau=-b*v only before saturation",
+    "native_cone": "Two swing limits only; parent click.child, child stick, common pivot, joint frame+X along shaft; translation/twist FREE; angle read from motion contract",
+    "preload": "Persistent CPU generalized force=-7.4N per click; target0 spring1000N/m; original10.4N cap covers spring drive only; set_qf overwrite removes preload",
+    "engine": "Public a3 rebuild preserves verified a2 physics semantics; a1/stock same-named setter is insufficient"
+  },
+  "solver_policy": {
+    "position": 64,
+    "velocity": 16,
+    "unit": "1",
+    "source": "docs/reports/v0.4.2/robotwin_validation.json#view_same_input",
+    "basis": "Both official3.0.3 and a1 fail isolated View at10/1; both pass at64/16; idle-only control fails. Owner authorized explicit per-articulation numerical policy. This is not a spring/friction-family derivation.",
+    "historical_gamepad_effective_iterations": null,
+    "uncertainty_reason": "Historical gripper64/16 was recorded; historical gamepad effective solver-group count was not",
+    "group_scope": "Gamepad per-art properties only; connected solver groups may use the maximum iteration count"
+  },
+  "validation": "docs/reports/v0.4.2/robotwin_validation.json",
+  "limitations": [
+    "Static960Hz drift and240Hz shake differ from regenerated old reference; neither used for fitting",
+    "Potential transient cap saturation and extra overdrive+press click shortfall retained",
+    "T4 historical Pair/L3/R3 failures retained",
+    "GPU physics preload unsupported; CPU physics with GPU rendering supported",
+    "Representative ALPS specifications do not identify the actual1708 module"
+  ],
+  "history": {
+    "legacy_tilt_coefficient": {
+      "value": 0.1,
+      "unit": "1",
+      "source": "references/full_controls.json control_groups.sticks.tilt_joint_friction_basis",
+      "status": "Owner-selected2026-10-09 numerical value retained for provenance and legacy resources; replaced by dimensional effort plus drive-damping mapping in v0.4.2 full_controls"
+    },
+    "distance_policy_as_recorded": {
+      "mechanism": "native_distance_upper_bound",
+      "anchor_length_m": 0.017914746775954664,
+      "anchor_length_basis": "Neutral left-stick collision cap maximum local Z above the common tilt pivot; a geometric constraint scale, not measured hardware shaft length. Same scale on both sides gives the same exact angular boundary.",
+      "minimum_distance_m": 0.0,
+      "stiffness_n_per_m": 0.0,
+      "damping_ns_per_m": 0.0,
+      "numerical_policy": "Owner-approved hard native inequality, no spring; SAPIEN3.0.3 distance joint has explicit zero tolerance in C++",
+      "source": "build/experiments/stick_click_threshold/cone_limit/REPORT.md"
+    },
+    "distance_status": "Historical native hard-distance angular equivalent; replaced by native_d6_cone to avoid additional closed-loop numerical coupling; historical resources remain loadable"
+  }
+}

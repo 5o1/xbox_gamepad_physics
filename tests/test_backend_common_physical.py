@@ -36,15 +36,19 @@ class PhysicalTests(unittest.TestCase):
         script = "import sys; from xbox_gamepad_physics.backends.common import model, calibration, physical; assert not ({'sapien','mujoco','pxr','isaaclab'} & set(sys.modules))"
         subprocess.run([sys.executable, "-c", script], check=True)
 
-    def test_legacy_default_return_and_preload(self):
-        actual = derive_joint_dynamics("full_controls", joints(), FULL, LEFT)
+    def test_default_return_and_preload(self):
+        full_joints = joints()
+        for axis in ("x", "y"):
+            name = f"right_stick_{axis}"
+            full_joints[name] = dict(full_joints[f"left_stick_{axis}"], id=name)
+        actual = derive_joint_dynamics("full_controls", full_joints, FULL, LEFT)
         self.assertEqual(actual["a_press"]["stiffness"], 1.57 / .001)
         self.assertEqual(actual["a_press"]["drive_damping"], 2 * .7 * math.sqrt((1.57 / .001) * .001))
         self.assertEqual(actual["a_press"]["passive_damping"], actual["a_press"]["drive_damping"] * .05)
         self.assertEqual(actual["a_press"]["target"], -.015 * .001)
         self.assertNotIn("friction", actual["left_stick_x"])
         configure_robotwin_dynamics(actual, FULL, "full_controls")
-        self.assertEqual(actual["left_stick_x"]["friction"], .1)
+        self.assertEqual(actual["left_stick_x"]["friction"], 0.)
         self.assertEqual(actual["left_stick_x"]["target"], 0.)
 
     def test_component_mass_clamp_scales_complete_tensor(self):

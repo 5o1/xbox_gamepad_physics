@@ -56,7 +56,8 @@ MUJOCO_GUIDE = """MuJoCo Xbox One S integration guide
      python -m pip install './xbox_gamepad_physics-VERSION-py3-none-any.whl[build,mujoco]'
    The extra selects the owner-maintained fork Release wheel for Python 3.10/3.11
    on Linux x86_64, including its SHA256. This corrects MuJoCo 3.16.0 mesh SDF
-   sign errors with upstream PR #3689 before upstream merge:
+   sign errors with upstream PR #3689 (merged 2026-10-21); this release retains
+   the tested fork:
      https://github.com/5o1/mujoco/releases/tag/v3.16.0-concon.sdf3689.2
      xbox-gamepad-physics build-resources --backend mujoco --archive INPUT.zip --resources ./gamepad_resources --offline
    Set XBOX_GAMEPAD_PHYSICS_RESOURCES to the prepared directory.
@@ -100,20 +101,24 @@ The default instructions follow for RoboTwin.
 ISAAC_GUIDE = """Isaac Xbox One S preview integration guide
 
 External prerequisites: Python 3.11, Isaac Lab 2.3.2, Isaac Sim 5.1 and compatible
- torch. Install the Release wheel with [build,isaac] in that platform environment;
-the extra does not install Isaac or torch.
+torch. The [isaac] extra does not install or upgrade these platform packages.
+Start AppLauncher before importing pxr or authoring USD.
+Prepare common resources from the matching Release input zip, then build_usd
+with root_mode="fixed" or "free". Construct cfg=make_articulation_cfg(...), then
+native=cfg.class_type(cfg), or let InteractiveScene honor cfg.class_type.
+After caller reset, bind_articulation; the caller owns flush/step/update.
+The configured class initializes the persistent -7.4 N click effort. USD alone
+contains a zero-target spring, not that runtime preload. A caller replacing
+click effort targets must include the bias in new commands.
+The generic build-resources --backend isaac does not launch the platform.
+See docs/isaac_backend.md and examples/isaac for the direct authoring example.
 
-Start AppLauncher before importing pxr or using xbox_gamepad_physics.isaac.build_usd.
-Prepare common inputs with prepare_resources(targets=("common_physical", "sim_visual"),
-backends=("robotwin",), archive=INPUT_ZIP, offline=True, resources=OUTPUT_ROOT).
-Use build_usd(..., root_mode="fixed" or "free"), make_articulation_cfg, then reset
-your native simulation and bind_articulation. The caller owns stepping and lifetime.
-The generic build-resources --backend isaac reports the platform prerequisite;
-it does not launch Isaac. Full native example: docs/isaac_backend.md.
-
-This backend is a preview. Frozen SDF presses: 22/26; Guide/Pair/L3/R3 fail.
-Guide investigation and L3/R3 diagnosis are parked. These results are not hardware
-calibration. Use path tracing for clear ABXY; real-time RTX is blurrier.
+Historical source-native validation: T1 6/6, T2 12/12, new-model point T3 v2 10/10,
+and frozen SDF T4 23/26; Guide, Pair and R3 fail. These are not measurements of
+the final integrated v0.4.2 wheel. Keep 4 ms/TGS, the historical 32/1 articulation
+readback and 0.998 native cone margin. Strict transient/batch limits, contact
+readiness, hardware calibration and RL remain unqualified. Use path tracing
+for clearer ABXY; PreviewSurface is not full glTF specular equivalence.
 """
 
 
@@ -162,3 +167,13 @@ def diagnose_environment(*, backends=("robotwin",)):
             'versions': versions, 'resources': resources,
             'extras': {name: {dep: version(dep) for dep in dependencies} for name, dependencies in extras.items()},
             'issues': issues}
+
+GUIDE += """
+SAPIEN GPU physics currently does not support stick-click preload.
+Use CPU PhysX; GPU rendering is supported. CPU load_into_scene adds persistent
+-7.4 N preload without initializing or stepping the caller's scene. The 10.4 N
+cap applies only to the spring drive. Later set_qf overwrites remove preload;
+compose caller loads with the existing qf. native_d6_cone full-controls defaults
+require the approved sapien==3.0.3+concon.physx5.6.1.a3 port; the validated a2
+build is also supported. Stock/a1 do not enable the required swing limits.
+"""

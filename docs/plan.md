@@ -1,9 +1,9 @@
 # Xbox One S 物理手柄：计划
 
-更新于 2026-10-21。目标是把 Xbox One S 手柄做成可交互的物理资产，供下游的灵巧手操作、游戏强化学习和视觉-语言-动作实验使用。
+更新于 2026-11-07。目标是把 Xbox One S 手柄做成可交互的物理资产，供下游的灵巧手操作、游戏强化学习和视觉-语言-动作实验使用。
 
-- **当前发布准备**：v0.4.1 包含 RoboTwin/SAPIEN、MuJoCo，以及 Isaac 预览版（负责人决定，2026-10-21）；尚未发布。
-- **默认碰撞体**：三个后端均使用 SDF；SAPIEN 需要 3.0.3，MuJoCo 需要负责人 fork，Isaac 预览默认使用 0.5 mm 网格。CoACD 保留为可显式选择的变体。
+- **当前版本**：v0.4.2 整合摇杆按压、回中与ABXY行程；包含RoboTwin/SAPIEN、MuJoCo和Isaac预览。安装与制品见 [Release](https://github.com/5o1/xbox_gamepad_physics/releases/tag/v0.4.2)。
+- **默认碰撞体**：三个后端均使用 SDF；SAPIEN full_controls 需要随Release提供的 PhysX 5.6.1/a3 port，MuJoCo 需要负责人 fork，Isaac 预览默认使用 0.5 mm 网格。CoACD 保留为可显式选择的变体。
 - **完整过程与证据**：见阶段报告 `docs/reports/xbox_one_s_physics_asset_report.html`。
 - **需要负责人确认或实物测量的事项**：见 `docs/pending_user_review.md`。
 
@@ -28,7 +28,15 @@
 | MuJoCo 小球端到端按压（同一份 26 项冻结用例） | SDF 下 25/26；仅 Pair 失败，不是实时性能验收 | `build/experiments/mb_m2/acceptance_round_20261020/` |
 | Isaac 小球端到端按压（同一份 26 项冻结用例） | SDF 0.5 mm 下 22/26；Guide、Pair、L3、R3 失败，预览交付 | `build/experiments/mb_i2/` |
 
-### 版本 v0.4.1（2026-10-21 发布准备）
+### 版本 v0.4.2（2026-11-07）
+
+公共层采用壳体系前置click轴、7.4N+1000N/m×q的按压近似、0.4mm行程和23°角锥；ABXY采用负责人测量组均值1.22mm（A未直接测量）。原信号归一化与死区保留。三个后端各用原生机制：RoboTwin CPU持久qf和D6角锥、MuJoCo被动弹簧与原生tendon、Isaac运行时effort和原生球关节角锥，不互相套用求解器参数。
+
+RoboTwin full_controls默认纳入已独立选择的drive damping粘性映射及64/16数值策略，无需额外实验calibration。公开SAPIEN a3 wheel、固定源码补丁/构建脚本及许可与主wheel、仅One S输入zip放在同一Release。MuJoCo固定fork保持不变；上游PR #3689已于2026-10-21合并，不据此自动升级尚未验收的引擎。
+
+历史原生冻结26项结果为RoboTwin23/26（Pair/L3/R3失败）、MuJoCo25/26（Pair失败）、Isaac23/26（Guide/Pair/R3失败）。新模型点力T3v2三个后端均10/10；球夹具旧T3不作为有效物理证据。Isaac继续preview，严格瞬态角界限、任意负载、接触就绪、实物标定和RL均不能由上述分数推定。最终安装包验收与制品摘要见[本版本记录](reports/v0.4.2/README.md)，RoboTwin参数选择和限制见[专项记录](reports/v0.4.2/robotwin.md)。
+
+### 版本 v0.4.1（2026-10-21 历史发布准备记录）
 
 负责人决定版本号为 **0.4.1**，Isaac 以 **preview** 一起交付。MuJoCo K5 外观通过；Isaac Guide 暂不诊断，L3/R3 暂不恢复调查。本轮不调整物性、冻结用例、阈值或已批准的数值政策。发布准备和三个后端的干净环境演练见 `build/experiments/v041_release/REPORT.md`；本轮不提交、不打 tag、不推送、不发布。
 
@@ -114,6 +122,7 @@ CoACD 凸体优化 P2 第 1 段已暂停（负责人决定，2026-10-14）：外
 
 | 事项 | 当前进度 | 参考 |
 |---|---|---|
+| RoboTwin distance圆锥闭环引起click数值偏移 | 20–22°倾斜时存在click偏移，右20°约0.0523（约21 µm），21–22°细扫可更大。已排除body锚点误挂；证据指向distance附加闭环与articulation在TGS下的数值响应。后续选项：A 固定版依赖增加测力/日志绑定；B 修补原生D6角锥启用；C 求解器/步长/迭代单因素机制验证。负责人2026-11-07裁定11：记为已知问题、判据不放宽、继续；T1仍标右20°边界未通过，不当作修复 | `build/experiments/stick_click_threshold/ruling10/`，方案及代价见其中`OPTIONS.md` |
 | 实物标定：按键力和行程曲线、扳机与摇杆的回中特性、质量分布 | 未开始，需要真手柄和测量工具 | `docs/pending_user_review.md` |
 | 正面朝下掉落时手柄停不住 | 原因未定位（推测与摇杆回中弹簧有关） | 报告第 8.8 节 |
 | 摇杆推动时偏到另一根轴（左 +y、右 ±x） | 2026-10-12 小球端到端验证中，CoACD 下保持阶段目标方向分量低于 0.9。例如右 −x 推到 (−1, +1)，归一化后只剩 0.707。SDF 下这 3 项都通过，改进测试方法后为 0.980–0.982。负责人决定以后在网页遥操作时亲手测试；与凸块形状的关系见第 3 节 | `build/experiments/teleop_gripper_p2_20261011/ruling16/`、`ruling18/`、`ruling20/` |

@@ -72,8 +72,8 @@ test('source-to-gltf conversion and ordered node steps are explicit',()=>{
   const result=evaluateProfile(profile,new Float32Array(21));
   const left=profile.nodes.find(node=>node.control==='left_stick');
   const steps=nodeSteps(profile,left.source_node,result);
-  assert.deepEqual(steps.map(step=>step.id),['left_stick_x','left_stick_y','left_stick_click']);
-  assert.deepEqual(steps.map(step=>step.type),['revolute','revolute','prismatic']);
+  assert.deepEqual(steps.map(step=>step.id),['left_stick_click','left_stick_x','left_stick_y']);
+  assert.deepEqual(steps.map(step=>step.type),['prismatic','revolute','revolute']);
 });
 
 test('joint-coordinate editing uses the same signal path',()=>{

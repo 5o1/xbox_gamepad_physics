@@ -2,14 +2,14 @@
 
 ## 安装与构建
 
-首发面向 Linux x86_64 + NVIDIA、Python 3.10、RoboTwin fork + SAPIEN 3.0.3。
+当前 full_controls 默认面向 Linux x86_64、Python 3.10 和 SAPIEN `3.0.3+concon.physx5.6.1.a3`；已实测同物理语义的 a2 也受支持。stock/a1 不满足原生角锥能力，旧 left_stick profile 不自动套用 full_controls 策略。CPU物理可与GPU渲染组合。
 从 Release 取得 wheel、输入 zip 和 `SHA256SUMS`，安装 wheel 的 `[build,robotwin]`
 依赖；不通过 PyPI 分发。
 
 ```sh
-python -m pip install "./xbox_gamepad_physics-0.4.1-py3-none-any.whl[build,robotwin]"
+python -m pip install "./xbox_gamepad_physics-0.4.2-py3-none-any.whl[build,robotwin]"
 python -m xbox_gamepad_physics build-resources \
-  --archive ./xbox_gamepad_physics-resources-0.4.1.zip \
+  --archive ./xbox_gamepad_physics-resources-0.4.2.zip \
   --resources ./gamepad_resources --offline
 export XBOX_GAMEPAD_PHYSICS_RESOURCES="$PWD/gamepad_resources"
 ```
@@ -20,7 +20,7 @@ v0.2.0 CoACD 和批准的 Cycles 场景及其必要归属。首次使用在用�
 第二次检查缓存，缺失或过期时只重建相关下游。环境变量目录同样执行 prepare。
 完整导入和维护者说明见 [`importing.md`](importing.md)。
 
-0.4.1 同时包含当前 MuJoCo 后端和 Isaac 预览；本文只说明 RoboTwin/SAPIEN。其他入口见 [MuJoCo](mujoco_backend.md) 与 [Isaac 预览](isaac_backend.md)。三个后端的加载、外观、接触验收与硬件标定分别表述。
+0.4.2 同时包含当前 MuJoCo 后端和 Isaac 预览；本文只说明 RoboTwin/SAPIEN。其他入口见 [MuJoCo](mujoco_backend.md) 与 [Isaac 预览](isaac_backend.md)。三个后端的加载、外观、接触验收与硬件标定分别表述。
 
 ## 接口边界
 
@@ -105,7 +105,7 @@ articulation；第二次 `setup_demo()` 会重建 scene/handle，并从中立手
 这些入口直接使用 wheel 内实现和静态模块，不需要本项目检出、CDN 或首次 npm 下载。
 
 ```sh
-python3.10 -m pip install "./xbox_gamepad_physics-0.4.1-py3-none-any.whl[example]"
+python3.10 -m pip install "./xbox_gamepad_physics-0.4.2-py3-none-any.whl[example]"
 xbox-gamepad-physics example export ./gamepad_example
 python3.10 ./gamepad_example/run_robotwin.py --help
 ```
@@ -150,8 +150,8 @@ overlay 默认打印带小型 canonical demo trace 的本地地址；demo 是合
 路径为 `assets/embodiments/aloha-agilex/urdf/arx5_description_isaac.urdf`；这些外部资产不放入本包的 zip。
 
 ```sh
-python3.10 -m pip install './xbox_gamepad_physics-0.4.1-py3-none-any.whl[robotwin,teleop]'
-xbox-gamepad-physics build-resources --archive ./xbox_gamepad_physics-resources-0.4.1.zip --resources ./gamepad_resources --offline
+python3.10 -m pip install './xbox_gamepad_physics-0.4.2-py3-none-any.whl[robotwin,teleop]'
+xbox-gamepad-physics build-resources --archive ./xbox_gamepad_physics-resources-0.4.2.zip --resources ./gamepad_resources --offline
 xbox-gamepad-physics teleop --robotwin-root /path/to/RoboTwin --gpu 0 --resources ./gamepad_resources --output ./teleop_session --port 8775
 ```
 
@@ -226,6 +226,49 @@ for _ in range(100):
 已知问题：手柄倾斜冻结后，摇杆信号会偏约 **0.03**。负责人决定暂不处理；观察和证据见 [倾斜摇杆偏移报告](reports/stick_tilt_deflection_20261013/REPORT.md)。本接口不补偿该偏移。
 
 
-## 0.4.1 已知边界
+## 0.4.2 已知边界
 
 SDF 默认的26项冻结按压为23通过，Pair、L3、R3失败，未在本版修复。光栅下 ABXY 可辨；光追的萤火虫噪点和 ABXY 字母变淡仍是已知问题。OIDN降噪不等于字母问题已解决。上述结果不代表硬件标定。
+
+## 2026-11-06：摇杆预压与原生圆锥映射
+
+公共按压弹性力律仍为 `7.4 + 1000*q` N。RoboTwin 为避开 PhysX5.3.1 TGS 的限位外远目标与窄行程止挡耦合，将驱动目标映射为0，并在加载时将−7.4 N预压叠加到具名click DOF的原生qf。CPU上该qf持续到调用方修改，无需每步重施加。依据为 `build/experiments/stick_click_threshold/physx_rootcause/REPORT.md` 和负责人裁定6；这是后端数值映射，不是新的硬件参数。
+
+- The 10.4 N effort cap applies only to the spring drive; the constant preload is outside this cap.
+- Preload shares the click DOF external generalized-force channel. A later caller `set_qf` overwrite removes it. Compose external loads with the existing qf rather than replacing it.
+
+距离上限圆锥将父端挂在click child（随按压平移、尚未倾斜），子端挂在最终stick。在同一转心沿中立杆轴取等距L锚点，最大距离 `2*L*sin(23 degrees/2)`。L来自中立collision cap的几何尺度17.914746775954664 mm；它不是硬件杆长测量。原生distance joint禁用最小距离，K=C=0为硬限位类型；保留逐轴23°，不在步后修改位置或速度。离散求解误差仍须以生产参数检测报告为准。
+
+### 裁定8：CPU场景范围（2026-11-07）
+
+RoboTwin 的 `envs/_base_task.py` 使用CPU PhysX场景。**SAPIEN GPU模式暂不支持按压预压。** 此前公开GPU预压函数仅做过模拟buffer测试，未完成native GPU验证，本轮已删除该函数及公开推荐。CPU预压仍在load_into_scene时叠加，无需调用方额外函数。CPU物理配合GPU渲染不受此限制。
+
+SAPIEN3.0.3没有gpu_init后的原生钩子；加载器不替调用方初始化、步进或管理全局生命周期。GPU模式不应静默加载成没有预压的软弹簧；full_controls的GPU加载明确报告暂不支持。
+
+## 2026-11-07：a2 后端候选
+
+候选代码和原始数据位于 `build/experiments/stick_click_threshold/robotwin_candidate/`。新摩擦输入 `joint_friction_params` 按关节名给出 `static_effort`、`dynamic_effort`、`viscous` 三个带证据的 Parameter；转轴单位分别为 N*m、N*m、N*m*s/rad。新模式清零对应关节的旧系数，未配置的关节保持原路径。
+
+显式选择 `joint_friction_viscous_mapping=drive_damping` 时，总原生 drive 阻尼为 D原+b，friction getter 的 viscous 实际为0。它与弹簧共用原 drive force_limit，未饱和区间才对应无界的线性粘性项；不在两个通道重复施加 b。实际小惯量的 native-friction viscous 通道存在已复现的数值响应差异，候选报告保留了对照。
+
+`native_d6_cone` 从公共 motion 读取角度和 pivot，只限两 swing，平移与 twist 为 FREE；默认依赖随Release提供的 `sapien==3.0.3+concon.physx5.6.1.a3`（已验证a2兼容）。旧 stock/a1 虽有同名 setter，但未启用 swing motion。历史 distance 资源继续可加载。
+
+候选在手柄 articulation 上显式设置64/16迭代，全局配置和球体属性未修改；PhysX关联求解组的迭代仍可能受组内最大值影响。默认10/1对照的 View/Menu/Guide 退化结果保留。64/16候选按原书面判据通过T1/T2、圆锥和T3，T4保持原23个通过项；Pair/L3/R3仍为历史失败。参数是仿真兼容拟合，未作实物识别，保留工况差异和额外过界驱动压力诊断在报告中单列。
+
+
+## v0.4.2 默认策略
+
+本版本将已验证的 RoboTwin full_controls 策略纳入默认 reference 和 packaged build_data，正常构建不再需要外传实验 calibration，也不依赖忽略的 build 目录。上方2026-11-07的“候选”节保留为历史过程。当前证据见[版本报告](reports/v0.4.2/robotwin.md)、[公开验证摘要](reports/v0.4.2/robotwin_validation.json)和[版本化参数记录](../references/robotwin_v042_policy.json)。
+
+默认四个倾斜关节 static/dynamic effort=0Nm，b=.0018707873827064705N*m*s/rad，旧 coefficient 清零；0是独立仿真兼容族的选择，不是硬件干摩擦识别。原线性K不变，D总=D原+b，native friction getter 的 viscous 为0。弹簧/粘性共享原力限，饱和区间不等价于无界线性粘性。显式per-articulation64/16来自双引擎同输入View数值对照；球体属性不改，关联求解组仍可能取组内最大次数。
+
+默认角锥为native_d6_cone；click.child和stick共pivot，只限两swing，角度读公共23°，平移/twist为FREE。CPU加载继续叠加−7.4N预压，target0弹簧1000N/m，click行程0.4mm。ABXY1.22mm、原信号/死区保持。历史distance和旧mu=.1来源留在版本化记录，历史资源仍可加载。
+
+checkout中已有批准输入时可直接运行：
+
+```sh
+python scripts/build_resources.py --inputs . --output ./gamepad_resources --backend robotwin
+export XBOX_GAMEPAD_PHYSICS_RESOURCES="$PWD/gamepad_resources"
+```
+
+调用方仍通过load_into_scene加载自己创建的CPU场景；场景设置和生命周期由调用方管理。a3制品及最终集成验证由发布流程提供，历史完整物理结果来自a2，不把依赖声明冒充a3实测。

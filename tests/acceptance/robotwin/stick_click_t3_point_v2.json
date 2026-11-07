@@ -1,0 +1,72 @@
+{
+  "protocol_id": "stick_click_t3_point_v2_owner_20261107",
+  "version": 2,
+  "backend": "robotwin",
+  "approved_by": "Owner ruling11, 2026-11-07; common numerical definition for all backends",
+  "models": [
+    "new_production_candidate",
+    "main_73c8676"
+  ],
+  "sides": [
+    "left",
+    "right"
+  ],
+  "dt_s": 0.004,
+  "fixed_root": true,
+  "collision": "sdf",
+  "point": {
+    "frame": "stick-local, fixed to the cap and transformed to world each step",
+    "neutral_definition": "Cap top center offset along push direction by0.5*cap radius; intersect the actual cap triangle surface along shell +Z and select the highest surface intersection.",
+    "cap_identification": "Native collision mesh component with highest neutral localZ; derive its XY bounding center and directional half-width radius, report values and selected triangle/barycentric coordinates.",
+    "offset_radius_fraction": 0.5,
+    "record_local_coordinate": true
+  },
+  "force": {
+    "frame": "controller_body shell frame; transform to world each step",
+    "horizontal_n": 1.0,
+    "left_push_direction": [
+      1,
+      0,
+      0
+    ],
+    "right_push_direction": [
+      -1,
+      0,
+      0
+    ],
+    "vertical_direction": [
+      0,
+      0,
+      -1
+    ],
+    "vertical_levels_n": [
+      1,
+      2,
+      4,
+      6,
+      8.14
+    ],
+    "positive_control_n": 8.14,
+    "native_api": "stick_link.add_force_at_point(world_force, world_point, mode='force'); reapply before each step"
+  },
+  "timing_s": {
+    "settle": 1.0,
+    "ramp_up": 0.5,
+    "hold": 1.0,
+    "ramp_down": 0.5,
+    "observe": 0.5
+  },
+  "criteria": {
+    "hold_min_tilt_deg": 1.0,
+    "fixture_invalid_means_no_physics_conclusion": true,
+    "low_vertical_force_cutoff_n": 6.66,
+    "low_hold_max_click_signal": 0.05,
+    "positive_control_final_hold_window_s": 0.5,
+    "positive_control_min_click_signal": 0.95,
+    "after_unload_max_click_signal": 0.05
+  },
+  "scoring": "Entire hold must tilt>=1deg; low-force entire hold signal<=.05; positive-control final.5s hold signal>=.95; final observation sample<=.05 after unloading. Preserve full trace and raw travel fraction alongside unchanged public signal.",
+  "visualization": "One image per model/side/force level, actual local cap mesh and measured hold pose/trajectory, force point marker plus horizontal/vertical arrows, no sphere; explicitly label geometry schematic if not native renderer. Write diagrams to a caller-selected output directory.",
+  "v1": "Preserve existing stick_click_protocol.json ball version; owner supersedes it as fixture-invalid, retain actual execution/setup-error provenance without inventing v1 physics results.",
+  "stop_policy": "Original task gates remain unless owner explicitly authorizes continuation after another failed prerequisite; no parameter changes or score tuning. New and old results both reported; old low-force misfire is an observation, not a new-model gate."
+}

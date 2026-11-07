@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "source_id": "owner_1708_face_button_travel_20261106",
+  "category": "measurement",
+  "date": "2026-11-06",
+  "hardware": "Owner Xbox One S model1708",
+  "method": "Caliper depth rod, manual finger press, neutral-to-pressed displacement. Owner-reported observations; no additional raw data requested.",
+  "unit": "m",
+  "samples": {
+    "y": [
+      0.00116,
+      0.00124
+    ],
+    "b": [
+      0.00124
+    ],
+    "x": [
+      0.00125
+    ],
+    "a": null
+  },
+  "sample_count": 4,
+  "arithmetic_mean_m": 0.0012225,
+  "adopted_travel_m": 0.00122,
+  "derivation": "Mean(1.16,1.24,1.24,1.25) mm=1.2225 mm, rounded to1.22 mm and adopted for all four caps by owner.",
+  "uncertainty": {
+    "estimated_absolute_error_m": [
+      5e-05,
+      0.0001
+    ],
+    "type": "Owner-estimated instrument/press-method uncertainty, not a statistical confidence interval"
+  },
+  "per_control_applicability": {
+    "b": "measured sample; adopted group mean",
+    "x": "measured sample; adopted group mean",
+    "y": "two measured samples; adopted group mean",
+    "a": "not measured; inferred from matching construction, owner-approved shared travel"
+  },
+  "a_category": "inferred_not_direct_measurement",
+  "geometry": "Neutral cap geometry and scale unchanged; replace artist endpoint displacement only."
+}

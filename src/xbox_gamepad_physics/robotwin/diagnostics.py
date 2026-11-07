@@ -10,7 +10,7 @@ from .scene import require_sapien
 _LOADS_ATTRIBUTE = "_xbox_gamepad_physics_loads"
 
 
-def _mark_loaded(scene, articulation, *, profile, collision, attach_visual):
+def _mark_loaded(scene, articulation, *, profile, collision, attach_visual, generalized_preload=None):
     # Scene is SAPIEN's Python wrapper; native Entity objects do not allow attrs.
     records = getattr(scene, _LOADS_ATTRIBUTE, None)
     if records is None:
@@ -18,6 +18,7 @@ def _mark_loaded(scene, articulation, *, profile, collision, attach_visual):
         setattr(scene, _LOADS_ATTRIBUTE, records)
     records[articulation] = legacy_load_record(profile=profile, collision=collision,
                                                attach_visual=attach_visual)
+    records[articulation]["generalized_preload_n"] = generalized_preload or {}
 
 
 def _name(value):
@@ -105,6 +106,15 @@ def diagnose_scene(scene):
         gamepads.append({"name": _name(art), "via_load_into_scene": official,
                          "collision": record["collision"] if official else "unknown",
                          "profile": record["profile"] if official else None})
+        if official and record.get("generalized_preload_n"):
+            qf = art.get_qf().tolist()
+            offset, observed = 0, {}
+            for joint in art.get_active_joints():
+                if joint.name in record["generalized_preload_n"]:
+                    observed[joint.name] = {"current_total_qf_n": qf[offset],
+                        "installed_preload_contribution_n": record["generalized_preload_n"][joint.name]}
+                offset += joint.dof
+            gamepads[-1]["generalized_preload_observation"] = observed
         if official and not record["attach_visual"]:
             findings.append({"code": "visual_disabled", "severity": "info",
                              "message": "Gamepad was loaded with attach_visual=False."})

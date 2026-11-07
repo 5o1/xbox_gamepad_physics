@@ -124,6 +124,18 @@
       "scope": "Triangle-mesh simulation support matrix: static and kinematic meshes, query-only shapes, and non-kinematic dynamic meshes cooked with SDF for GPU dynamics",
       "verification_status": "automated_primary_page_fetch_verified_2026-10-06",
       "limitation": "Defines backend capability and cooking gates only; it supplies no controller collision mesh or SDF parameters."
+    },
+    "owner_1708_face_button_travel_20261106": {
+      "category": "measurement",
+      "title": "Owner1708 face-button caliper depth measurement, 2026-11-06",
+      "path": "references/1708_face_button_travel.json",
+      "applicability": "B/X/Y measured; A inferred, no direct A measurement"
+    },
+    "robotwin_v042_policy": {
+      "kind": "backend_simulation_compatibility_policy",
+      "path": "references/robotwin_v042_policy.json",
+      "scope": "v0.4.2 RoboTwin full_controls dimensional friction, implicit drive damping, native angular cone and64/16 numerical policy",
+      "limitation": "Not hardware identification; capped-force mapping, holdout differences and historical contact failures remain explicit"
     }
   },
   "reference_values": {

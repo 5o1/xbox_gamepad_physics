@@ -1,0 +1,10 @@
+{
+ "id":"click_anchor_verification_ruling9_20261107_v1",
+ "sides":["left","right"],"angles_deg":[0,12,20,23],
+ "fixture":"Original T1 setup: fixed root, SDF, .004s, tilt hold K100 D1 effort10, original production click preload and native physics parameters. 1s settle plus6s zero cap force. No q/qvel writes.",
+ "native_readback":"Actual distance component parent, child entity and both local poses; click child, tilt-x parent, common pivot and L; compare with historical records and requested structure.",
+ "geometric_translation_sweep_m":[0,0.0002,0.0004],
+ "geometric_scope":"Derived common translations of actual native anchor points using verified ancestry; not a native dynamic press sweep. No engine state is changed.",
+ "criterion":{"no_load_click_max_fraction":0.05,"unchanged":true},
+ "stop":"If requested click-child structure is already present and residual persists, report hypothesis refuted for this RoboTwin model; no fictitious production change, tuning or later cone/T1/T3/T4 acceptance."
+}

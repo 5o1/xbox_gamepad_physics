@@ -1,0 +1,85 @@
+{
+  "id": "robotwin_compatibility_a2_implicit_viscous_candidate_v3",
+  "classification": "Simulation compatibility identification, not hardware calibration; no parameter adoption implied",
+  "reference": {
+    "source": "docs/reports/v0.4.2/robotwin_validation.json#historical_reference",
+    "historical_raw_radial_peak": 0.007750210484528151,
+    "historical_max_joint_q_rad": 0.003109581535682082,
+    "raw_waveform": "Not saved by original search; new replay is labeled regenerated, not recovered original data",
+    "baseline_replay_gate_relative_peak_error": 0.1,
+    "contact_scope": "Historical loader applies material/offsets but no modern group filter. Record internal manifold count separately from active impulses; no external environment/support."
+  },
+  "approved_linear_spring": {
+    "k_nm_per_rad": 0.03487569187752837,
+    "drive_damping_nms_per_rad": 0.00023384842283830882,
+    "change": false
+  },
+  "train": {
+    "root": "free",
+    "gravity": [
+      0,
+      0,
+      0
+    ],
+    "dt_s": 0.0020833333333333333,
+    "duration_s": 4,
+    "forcing": "tests/acceptance/robotwin/data/v042_shake_reference.json",
+    "initial_q_qvel": 0
+  },
+  "family": {
+    "reference_torque_formula": "k*historical_max_joint_q_rad",
+    "static_fractions": [
+      0,
+      0.1,
+      0.25
+    ],
+    "dynamic_over_static": [
+      0,
+      0.5,
+      1
+    ],
+    "viscous_over_approved_drive_D": [
+      0,
+      1,
+      2,
+      4,
+      8,
+      16
+    ],
+    "deduplicate_zero_static": true,
+    "expected_candidates": 42,
+    "basis": "Effort scale derives from approved spring and accepted old raw excursion, NOT coefficient0.1 interpreted as Nm and NOT diagnostic0.002Nm. Viscous scale derives from existing documented damping. Fractions/multipliers are a finite declared compatibility family, not a measured confidence interval; static range also remains below k*(.1deg)/sqrt2 necessary two-axis centering torque budget.",
+    "viscous_sensitivity_basis": "Before any candidate run, extend sensitivity coverage using historical root angular-speed peak8.9443798065rad/s, torque frequencies up to8Hz, documented numerical effective tilt inertia0.8e-6kgm2 and q_ref=.00310958rad. I*(2*pi*8*omega_peak)/(2*pi*6*q_ref) is order.0031Nms/rad, about13*existingD;16*D covers this rough scale. This is a declared simulation search range, not an identified mechanical value or guaranteed bound."
+  },
+  "selection": {
+    "eligible": "Historical replay peak matches old aggregate within10%; candidate raw peak<=original0.01 shake bound, finite state and no nonzero contact response",
+    "score": "Mean squared difference between new/old per-tick four tilt q normalized by23deg, using regenerated waveform only if replay gate passed",
+    "tie": "Within1% score choose lower static, then lower dynamic, then lower viscosity",
+    "freeze": "Freeze selected configuration SHA before original acceptance; if no eligible candidate or replay gate fails, do not invent selected values or tune family from T1-T4 scores."
+  },
+  "holdout": [
+    {
+      "name": "static960",
+      "hz": 960,
+      "duration_s": 3,
+      "force": "none",
+      "basis": "Historical no_force_no_collision static condition; record raw drift and old/new compare"
+    },
+    {
+      "name": "shake240",
+      "hz": 240,
+      "duration_s": 4,
+      "force": "same analytic excitation",
+      "basis": "Held-out timebase sensitivity; no use during selection, not claimed historical240Hz waveform."
+    }
+  ],
+  "acceptance_use": "T1-T4,23deg/.1deg cone criteria and T3v2 are not fitting scores. No signal/deadzone changes. Holdout failures are reported, not used to tune this family.",
+  "a1_scope": "Supersedes a1 exploratory direct-viscous channel; identical registered effort/b family, no enlargement. a2 native_d6 mapping. Freeze selected config before original acceptance and validate holdouts.",
+  "revision_reason": "Supervisor2 authorized equivalent physical viscous mapping after no-work channel check, plus explicit64/16 candidate policy; no T1-T4 scores used for friction selection.",
+  "viscous_channel": "drive_damping",
+  "candidate_solver_iterations": [
+    64,
+    16
+  ],
+  "solver_policy_basis": "Supervisor ruling2 permits explicit per-articulation64/16 numerical candidate; View paired experiment shows both official/a1 isolated default fail and64/16pass. Not asserted historical gamepad effective count. Old reference replay retains original default10/1; candidate numerical model aims compatibility."
+}

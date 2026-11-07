@@ -1,0 +1,73 @@
+{
+  "version": "3.0.3+concon.physx5.6.1.a3",
+  "cpu_friction": {
+    "onset_cases": 36,
+    "dimension_cases": 24,
+    "passed": {
+      "new_threshold": true,
+      "preload_independence": true,
+      "dimensions": true,
+      "lifetime": true
+    },
+    "new_effort_threshold_Nm": [
+      0.00201,
+      0.00201
+    ],
+    "test_effort_is_production_calibration": false
+  },
+  "native_tgs_cone": {
+    "cases": 64,
+    "controls": 64,
+    "freedom_probes": 2,
+    "passed": true,
+    "steady_angle_deg": [
+      23.02041248455845,
+      23.073530602954076
+    ],
+    "no_cone_min_deg": 45.95666743783674
+  },
+  "sdf": {
+    "historical": true,
+    "release_default": true,
+    "steps": 20,
+    "active_dofs": 20
+  },
+  "gpu": {
+    "status": "passed",
+    "direct_a3_install": true,
+    "step_count": 20,
+    "wall_seconds": 4.66,
+    "compute_device": "RTX4090 device3",
+    "scope": "GPU runtime load, init, DLPack access, DirectGPUAPI qpos round trip and qf-driven motion"
+  },
+  "reset": {
+    "status": "passed",
+    "direct_a3_install": true,
+    "task": "stack_blocks_two",
+    "seed": 0,
+    "wall_seconds": 64.98,
+    "reset_seconds": 35.29800743004307,
+    "camera_count": 4,
+    "comparison": {
+      "baseline": "official3.0.3 original seed0 reset evidence retained",
+      "robot_qpos_max_abs_delta": 1.4542820281349123e-09,
+      "block1_max_abs_delta_m": 0.0,
+      "block2_max_abs_delta_m": 0.0,
+      "a2_qpos_max_abs_delta": 0.0
+    }
+  },
+  "portability": {
+    "elf_count": 11,
+    "zip_private_path_hits": 0,
+    "cuda_components": 254,
+    "cuda_private_path_hits": 0,
+    "cuda_debug_line_sections": 0,
+    "rpath": "origin relative or absent",
+    "gpu_soname": "libPhysXGpu_64.so"
+  },
+  "source_consistency": {
+    "compared_a2_files": 108,
+    "differences": [],
+    "scope": "src/include/python-pybind vs preserved a2; setup/build metadata/license overlays excluded"
+  }
+}

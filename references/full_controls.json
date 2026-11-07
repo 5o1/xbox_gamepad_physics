@@ -12,7 +12,8 @@
     "target_structure": "references/mechanical_structure.json",
     "trigger_structure": "references/1708_trigger_mechanism.json",
     "dpad_structure": "references/1708_dpad_assembly.json",
-    "whole_mass": "references/1708_dimensions.json"
+    "whole_mass": "references/1708_dimensions.json",
+    "robotwin_v042_policy": "references/robotwin_v042_policy.json"
   },
   "control_groups": {
     "face_buttons": {
@@ -24,10 +25,12 @@
       ],
       "reference_force_n": 1.57,
       "reference_force_evidence": "catalog.reference_values.front_force",
-      "travel": "artist animation per joint",
+      "travel": "Owner1708 caliper measurement group mean; A inferred from matching construction",
       "stiffness_method": "reference_force_n / artist_endpoint_travel_m",
       "force_limit_n": 3.14,
-      "damping_ratio": 0.7
+      "damping_ratio": 0.7,
+      "travel_m": 0.00122,
+      "travel_evidence": "references/1708_face_button_travel.json"
     },
     "small_buttons": {
       "joints": [
@@ -84,8 +87,8 @@
       ],
       "tilt_dynamics": "reuse references/left_stick.json for both identical reference modules",
       "tilt_joint_friction_coefficient": 0.1,
-      "tilt_joint_friction_status": "owner_selected_simulation_value_not_hardware_measurement",
-      "tilt_joint_friction_basis": "Selected by the owner after the 2026-10-09 bounded free-root shake search bracketed the 0.01-signal transition between dimensionless PhysX joint-friction coefficients 0.076123046875 and 0.076171875. The adopted 0.1 is a simulation setting, not an identified Xbox parameter.",
+      "tilt_joint_friction_status": "historical_owner_selected_simulation_value_replaced_in_robotwin_v042_full_controls",
+      "tilt_joint_friction_basis": "Selected by the owner after the 2026-10-09 bounded free-root shake search bracketed the 0.01-signal transition between dimensionless PhysX joint-friction coefficients 0.076123046875 and 0.076171875. The adopted 0.1 is a simulation setting, not an identified Xbox parameter. Retained as historical provenance; v0.4.2 RoboTwin full_controls replaces this coefficient with the explicit backend_options.robotwin policy in references/robotwin_v042_policy.json.",
       "click_force_n": 7.4,
       "click_force_range_n": [
         4.4,
@@ -94,9 +97,80 @@
       "click_force_evidence": "catalog.reference_values.stick_click_force",
       "click_travel_m": 0.0004,
       "click_travel_evidence": "catalog.reference_values.stick_click_travel",
-      "click_stiffness_n_per_m": 18500.0,
+      "click_stiffness_n_per_m": 1000.0,
       "click_force_limit_n": 10.4,
-      "click_damping_ratio": 0.7
+      "click_damping_ratio": 0.7,
+      "click_rest_position_m": -0.0074,
+      "click_threshold_model": {
+        "model": "Owner-approved preloaded low-stiffness linear drive with hard travel limits; no snap-through, force drop or signal quantization.",
+        "decision_date": "2026-11-05",
+        "applicability": "Generic joystick push-switch behavior; not a measured Xbox 1708 module.",
+        "source_A1": {
+          "url": "https://tech.alpsalpine.com/e/products/detail/RKJXV122400R/",
+          "locator": "Mechanical performance: Push operating force; Basic information: Center push part Travel",
+          "applicability": "Representative ALPS RKJXV122400R; not established as the Xbox 1708 module."
+        },
+        "operating_force": {
+          "value": 7.4,
+          "unit": "N",
+          "range": [
+            4.4,
+            10.4
+          ],
+          "source": "[A1]",
+          "derivation": "7.4 +/- 3 N manufacturer specification; adopted as initial restoring force by owner.",
+          "uncertainty": "Specification tolerance, not a probability distribution; transfer to 1708 unquantified."
+        },
+        "stiffness": {
+          "value": 1000.0,
+          "unit": "N/m",
+          "source": "Owner decision 2026-11-05, informed by [A1] operating-force scale",
+          "derivation": "Simulation value chosen so k * 0.0004 m = 0.4 N intermediate-equilibrium window; not measured stiffness.",
+          "uncertainty": null,
+          "uncertainty_reason": "Numerical modeling choice; hardware stiffness and force drop are unknown."
+        },
+        "rest_position": {
+          "value": -0.0074,
+          "unit": "m",
+          "source": "Owner decision and [A1] representative operating force",
+          "derivation": "F0 = -k*q0 = 7.4 N; q0 = -7.4/1000 = -0.0074 m. Target deliberately lies outside [0,0.0004] m to maintain preload at the neutral lower stop. It is a drive target, not an accessible physical rest position.",
+          "uncertainty": "For fixed simulation stiffness, force-specification interval would imply [-0.0104,-0.0044] m; no measured 1708 preload."
+        },
+        "damping": {
+          "drive_value": 2.8,
+          "passive_value": 0.13999999999999999,
+          "unit": "N*s/m",
+          "ratio": 0.7,
+          "effective_mass_kg": 0.004,
+          "source": "Existing common numerical damping policy; stiffness replaced by owner-approved value",
+          "derivation": "drive = 2*zeta*sqrt(k*m_eff); passive = 0.05*drive; retain original zeta and numerical effective mass.",
+          "uncertainty": null,
+          "uncertainty_reason": "Numerical damping assumptions, not identified module damping; actual translated subtree is rederived separately."
+        },
+        "force_limit": {
+          "value": 10.4,
+          "unit": "N",
+          "source": "[A1] operating-force upper specification, retained as simulation drive cap",
+          "derivation": "Full-stroke static restoring force = 1000*(0.0004+0.0074) = 7.8 N < 10.4 N; static force is not clipped. Dynamic damping may reach the existing cap.",
+          "uncertainty": "Simulation cap; not a measured actuator or stop strength."
+        },
+        "axis": {
+          "value": [
+            0,
+            0,
+            -1
+          ],
+          "unit": "unit_vector_in_controller_body_frame",
+          "source": "Owner kinematic decision 2026-11-05; neutral shaft basis from artist geometry",
+          "derivation": "Move click before both tilt joints, along inward neutral shaft direction fixed in the shell; native engine projects applied shaft force.",
+          "uncertainty": null,
+          "uncertainty_reason": "Adopted generic switch geometry, not mechanically measured 1708 transmission."
+        },
+        "post_snap_force_n": null,
+        "release_force_n": null,
+        "trigger_position_m": null,
+        "unknown_reason": "No applicable quantitative module force-displacement curve or electrical trigger position found; no invented values."
+      }
     },
     "dpad": {
       "joints": [
@@ -297,7 +371,7 @@
     "accepted_known_error": {
       "decision_date": "2026-10-11",
       "decision_by": "owner",
-      "description": "Approximately 1–1.5 mm of outward expansion in the touchable D-pad and stick-opening regions is provisionally accepted; revise after simulation experiments establish its effect on results"
+      "description": "Approximately 1\u20131.5 mm of outward expansion in the touchable D-pad and stick-opening regions is provisionally accepted; revise after simulation experiments establish its effect on results"
     },
     "internal_filter": {
       "g0_g1": "preserve existing",
@@ -318,7 +392,7 @@
       "triggers": 0.35,
       "sticks": 0.81
     },
-    "method": "Closed meshbase volume × density × component fill factor; the body receives the remaining mass",
+    "method": "Closed meshbase volume \u00d7 density \u00d7 component fill factor; the body receives the remaining mass",
     "minimum_moving_mass_kg": 0.0002,
     "minimum_diagonal_inertia_kg_m2": 1e-10,
     "stick_fill_derivation": {
@@ -339,8 +413,8 @@
   "passive_preload_policy": {
     "one_sided_joint_spring_reference": "-0.015 * positive travel",
     "preload_fraction": 0.015,
-    "applies_to": "buttons, shoulders, triggers, stick clicks and Pair",
-    "does_not_apply_to": "bidirectional stick tilt and D-pad rocker joints",
+    "applies_to": "buttons, shoulders, triggers and Pair",
+    "does_not_apply_to": "bidirectional stick tilt, D-pad rocker joints, and stick clicks (use control_groups.sticks.click_rest_position_m)",
     "derivation": "The no-preload MuJoCo trigger settled at 1.216% of travel under gravity; 1.5% adds a 0.284 percentage-point stop preload margin.",
     "status": "simulation estimate derived from the no-preload run; replace with measured preload"
   },
@@ -389,7 +463,7 @@
       "button normalized travel",
       "D-pad normalized rocker magnitude"
     ],
-    "derivation": "2026-10-12 owner-selected 0.02 radial stick deadzone for simulation/game input. With the unchanged owner-selected PhysX tilt-joint friction coefficient 0.1, spring return can stop at normalized residuals about 0.005–0.0101; 0.02 leaves margin. This is a simulation setting, not a measured hardware value. Inside the radial deadzone output is zero, outside it values are not rescaled. The 2026-10-09 shake-experiment friction provenance is retained in control_groups.sticks.tilt_joint_friction_basis; the remaining 1e-4 device epsilon is unchanged.",
+    "derivation": "2026-10-12 owner-selected 0.02 radial stick deadzone for simulation/game input. With the unchanged owner-selected PhysX tilt-joint friction coefficient 0.1, spring return can stop at normalized residuals about 0.005\u20130.0101; 0.02 leaves margin. This is a simulation setting, not a measured hardware value. Inside the radial deadzone output is zero, outside it values are not rescaled. The 2026-10-09 shake-experiment friction provenance is retained in control_groups.sticks.tilt_joint_friction_basis; the remaining 1e-4 device epsilon is unchanged.",
     "external_behavior_references": {
       "microsoft_xinput": {
         "url": "https://learn.microsoft.com/en-us/windows/win32/xinput/getting-started-with-xinput#dead-zone",
@@ -431,5 +505,257 @@
     "Cap-to-shell clearances and hidden guide geometry",
     "Pair button has no canonical game action channel"
   ],
-  "replacement_plan": "Replace estimated values with owner measurements listed in docs/pending_user_review.md without changing joint or channel names."
+  "replacement_plan": "Replace estimated values with owner measurements listed in docs/pending_user_review.md without changing joint or channel names.",
+  "backend_options": {
+    "robotwin": {
+      "stick_click_preload": {
+        "mapping": "zero_target_drive_plus_persistent_generalized_preload",
+        "basis": "Owner ruling6, 2026-11-06: avoid PhysX5.3.1 TGS far-outside-target/limit interaction. Public elastic law remains7.4+1000q N.",
+        "source": "references/robotwin_v042_policy.json#mapping.preload",
+        "drive_target_m": 0.0,
+        "spring_effort_limit_scope": "spring drive only; constant preload is outside this cap",
+        "qf_ownership": "Preload shares the DOF external generalized-force channel; a later caller set_qf overwrite removes it."
+      },
+      "shaft_tilt_limit": {
+        "mechanism": "native_d6_cone"
+      },
+      "joint_friction_params": {
+        "left_stick_x": {
+          "static_effort": {
+            "value": 0.0,
+            "unit": "N*m",
+            "evidence": [
+              {
+                "source": "references/robotwin_v042_policy.json",
+                "locator": "selection.static_effort",
+                "applicability": "RoboTwin full_controls simulation compatibility; not hardware identified",
+                "derivation": "Selected simulation family value; not a claim that hardware dry friction is zero",
+                "category": "simulation_estimate",
+                "uncertainty": null,
+                "uncertainty_reason": "Finite simulation compatibility family; no hardware identification or statistical confidence interval"
+              }
+            ],
+            "missing_reason": null
+          },
+          "dynamic_effort": {
+            "value": 0.0,
+            "unit": "N*m",
+            "evidence": [
+              {
+                "source": "references/robotwin_v042_policy.json",
+                "locator": "selection.dynamic_effort",
+                "applicability": "RoboTwin full_controls simulation compatibility; not hardware identified",
+                "derivation": "Selected simulation family value; not hardware identified",
+                "category": "simulation_estimate",
+                "uncertainty": null,
+                "uncertainty_reason": "Finite simulation compatibility family; no hardware identification or statistical confidence interval"
+              }
+            ],
+            "missing_reason": null
+          },
+          "viscous": {
+            "value": 0.0018707873827064705,
+            "unit": "N*m*s/rad",
+            "evidence": [
+              {
+                "source": "references/robotwin_v042_policy.json",
+                "locator": "selection.viscous",
+                "applicability": "RoboTwin full_controls simulation compatibility; not hardware identified",
+                "derivation": "8 times the previously approved drive damping0.00023384842283830882; chosen by preregistered480Hz compatibility score before T1-T4",
+                "category": "simulation_estimate",
+                "uncertainty": null,
+                "uncertainty_reason": "Finite simulation compatibility family; no hardware identification or statistical confidence interval"
+              }
+            ],
+            "missing_reason": null
+          }
+        },
+        "left_stick_y": {
+          "static_effort": {
+            "value": 0.0,
+            "unit": "N*m",
+            "evidence": [
+              {
+                "source": "references/robotwin_v042_policy.json",
+                "locator": "selection.static_effort",
+                "applicability": "RoboTwin full_controls simulation compatibility; not hardware identified",
+                "derivation": "Selected simulation family value; not a claim that hardware dry friction is zero",
+                "category": "simulation_estimate",
+                "uncertainty": null,
+                "uncertainty_reason": "Finite simulation compatibility family; no hardware identification or statistical confidence interval"
+              }
+            ],
+            "missing_reason": null
+          },
+          "dynamic_effort": {
+            "value": 0.0,
+            "unit": "N*m",
+            "evidence": [
+              {
+                "source": "references/robotwin_v042_policy.json",
+                "locator": "selection.dynamic_effort",
+                "applicability": "RoboTwin full_controls simulation compatibility; not hardware identified",
+                "derivation": "Selected simulation family value; not hardware identified",
+                "category": "simulation_estimate",
+                "uncertainty": null,
+                "uncertainty_reason": "Finite simulation compatibility family; no hardware identification or statistical confidence interval"
+              }
+            ],
+            "missing_reason": null
+          },
+          "viscous": {
+            "value": 0.0018707873827064705,
+            "unit": "N*m*s/rad",
+            "evidence": [
+              {
+                "source": "references/robotwin_v042_policy.json",
+                "locator": "selection.viscous",
+                "applicability": "RoboTwin full_controls simulation compatibility; not hardware identified",
+                "derivation": "8 times the previously approved drive damping0.00023384842283830882; chosen by preregistered480Hz compatibility score before T1-T4",
+                "category": "simulation_estimate",
+                "uncertainty": null,
+                "uncertainty_reason": "Finite simulation compatibility family; no hardware identification or statistical confidence interval"
+              }
+            ],
+            "missing_reason": null
+          }
+        },
+        "right_stick_x": {
+          "static_effort": {
+            "value": 0.0,
+            "unit": "N*m",
+            "evidence": [
+              {
+                "source": "references/robotwin_v042_policy.json",
+                "locator": "selection.static_effort",
+                "applicability": "RoboTwin full_controls simulation compatibility; not hardware identified",
+                "derivation": "Selected simulation family value; not a claim that hardware dry friction is zero",
+                "category": "simulation_estimate",
+                "uncertainty": null,
+                "uncertainty_reason": "Finite simulation compatibility family; no hardware identification or statistical confidence interval"
+              }
+            ],
+            "missing_reason": null
+          },
+          "dynamic_effort": {
+            "value": 0.0,
+            "unit": "N*m",
+            "evidence": [
+              {
+                "source": "references/robotwin_v042_policy.json",
+                "locator": "selection.dynamic_effort",
+                "applicability": "RoboTwin full_controls simulation compatibility; not hardware identified",
+                "derivation": "Selected simulation family value; not hardware identified",
+                "category": "simulation_estimate",
+                "uncertainty": null,
+                "uncertainty_reason": "Finite simulation compatibility family; no hardware identification or statistical confidence interval"
+              }
+            ],
+            "missing_reason": null
+          },
+          "viscous": {
+            "value": 0.0018707873827064705,
+            "unit": "N*m*s/rad",
+            "evidence": [
+              {
+                "source": "references/robotwin_v042_policy.json",
+                "locator": "selection.viscous",
+                "applicability": "RoboTwin full_controls simulation compatibility; not hardware identified",
+                "derivation": "8 times the previously approved drive damping0.00023384842283830882; chosen by preregistered480Hz compatibility score before T1-T4",
+                "category": "simulation_estimate",
+                "uncertainty": null,
+                "uncertainty_reason": "Finite simulation compatibility family; no hardware identification or statistical confidence interval"
+              }
+            ],
+            "missing_reason": null
+          }
+        },
+        "right_stick_y": {
+          "static_effort": {
+            "value": 0.0,
+            "unit": "N*m",
+            "evidence": [
+              {
+                "source": "references/robotwin_v042_policy.json",
+                "locator": "selection.static_effort",
+                "applicability": "RoboTwin full_controls simulation compatibility; not hardware identified",
+                "derivation": "Selected simulation family value; not a claim that hardware dry friction is zero",
+                "category": "simulation_estimate",
+                "uncertainty": null,
+                "uncertainty_reason": "Finite simulation compatibility family; no hardware identification or statistical confidence interval"
+              }
+            ],
+            "missing_reason": null
+          },
+          "dynamic_effort": {
+            "value": 0.0,
+            "unit": "N*m",
+            "evidence": [
+              {
+                "source": "references/robotwin_v042_policy.json",
+                "locator": "selection.dynamic_effort",
+                "applicability": "RoboTwin full_controls simulation compatibility; not hardware identified",
+                "derivation": "Selected simulation family value; not hardware identified",
+                "category": "simulation_estimate",
+                "uncertainty": null,
+                "uncertainty_reason": "Finite simulation compatibility family; no hardware identification or statistical confidence interval"
+              }
+            ],
+            "missing_reason": null
+          },
+          "viscous": {
+            "value": 0.0018707873827064705,
+            "unit": "N*m*s/rad",
+            "evidence": [
+              {
+                "source": "references/robotwin_v042_policy.json",
+                "locator": "selection.viscous",
+                "applicability": "RoboTwin full_controls simulation compatibility; not hardware identified",
+                "derivation": "8 times the previously approved drive damping0.00023384842283830882; chosen by preregistered480Hz compatibility score before T1-T4",
+                "category": "simulation_estimate",
+                "uncertainty": null,
+                "uncertainty_reason": "Finite simulation compatibility family; no hardware identification or statistical confidence interval"
+              }
+            ],
+            "missing_reason": null
+          }
+        }
+      },
+      "joint_friction_viscous_mapping": "drive_damping",
+      "solver_iterations": {
+        "position": {
+          "value": 64,
+          "unit": "1",
+          "evidence": [
+            {
+              "source": "docs/reports/v0.4.2/robotwin_validation.json#view_same_input",
+              "locator": "Same-input official3.0.3/a1 View default/iterations/idle matrix",
+              "applicability": "RoboTwin per-articulation numerical policy, not a mechanical parameter",
+              "derivation": "Both official3.0.3 and a1 fail isolated View at10/1; both pass at64/16; idle-only control fails. Owner authorized explicit per-articulation numerical policy. This is not a spring/friction-family derivation.",
+              "category": "simulation_estimate",
+              "uncertainty": null,
+              "uncertainty_reason": "Historical gripper64/16 was recorded; historical gamepad effective solver-group count was not"
+            }
+          ],
+          "missing_reason": null
+        },
+        "velocity": {
+          "value": 16,
+          "unit": "1",
+          "evidence": [
+            {
+              "source": "docs/reports/v0.4.2/robotwin_validation.json#view_same_input",
+              "locator": "Same-input official3.0.3/a1 View default/iterations/idle matrix",
+              "applicability": "RoboTwin per-articulation numerical policy, not a mechanical parameter",
+              "derivation": "Both official3.0.3 and a1 fail isolated View at10/1; both pass at64/16; idle-only control fails. Owner authorized explicit per-articulation numerical policy. This is not a spring/friction-family derivation.",
+              "category": "simulation_estimate",
+              "uncertainty": null,
+              "uncertainty_reason": "Historical gripper64/16 was recorded; historical gamepad effective solver-group count was not"
+            }
+          ],
+          "missing_reason": null
+        }
+      }
+    }
+  }
 }

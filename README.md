@@ -22,11 +22,16 @@ https://github.com/user-attachments/assets/437b2daa-8db3-4d99-9adf-82efef8c7dae
 - Fix or release the root at runtime with CPU PhysX.
 - Packaged examples, browser viewer, signal overlay, and local teleoperation.
 - Offline resource import and local generation from approved inputs.
+- Threshold-force stick presses, shell-fixed click motion, and 1.22 mm ABXY travel.
 
 ## Requirements
 
-Targets are Linux x86_64. RoboTwin uses NVIDIA graphics, Python 3.10,
-the [RoboTwin fork](https://github.com/5o1/RoboTwin), and SAPIEN 3.0.3.
+Targets are Linux x86_64. RoboTwin uses Python 3.10, glibc 2.35 or newer,
+the [RoboTwin fork](https://github.com/5o1/RoboTwin), and the supplied
+`3.0.3+concon.physx5.6.1.a3` SAPIEN build. Its wheel and reproducible source
+bundle are attached to the same Release. CPU physics works without a CUDA
+toolkit; rendering needs a compatible graphics driver. Stick-click preload is
+currently supported by CPU physics, with GPU rendering available.
 MuJoCo supports Python 3.10/3.11 with the fork wheel below; rendering requires
 a working graphics driver. The Isaac preview requires the external Python 3.11,
 Lab 2.3.2 / Sim 5.1 stack and compatible torch. Optional tools depend on the entry point:
@@ -45,7 +50,7 @@ provided separately.
 
 | Backend | Version | Raster | Ray tracing | Status⁶ |
 | --- | --- | --- | --- | --- |
-| SAPIEN | 3.0.3 | Yes¹ | Optional² | Ready |
+| SAPIEN | 3.0.3 port / PhysX 5.6.1 | Yes¹ | Optional² | Ready |
 | Blender | 4.5.9 | — | Cycles³ | Reference |
 | MuJoCo | 3.16.0 | Yes⁴ | — | Ready |
 | Isaac Sim | 5.1 | — | Yes⁵ | Preview |
@@ -56,9 +61,9 @@ provided separately.
 
 ³ Cycles is the approved Boiler Room appearance reference, not an interactive runtime requirement.
 
-⁴ MuJoCo uses the owner-maintained `3.16.0+concon.sdf3689.2` fork wheels from its Release, selected by `[mujoco]`. They fix 3.16.0 mesh SDF sign errors using upstream PR #3689 before upstream merge. SDF is the default; CoACD is an explicit comparison. The classic-renderer appearance was approved on 2026-10-21. The 23° circular limit has a first peak of about 23.35°, temporarily accepted by the owner; a strict hard bound is not established. Recorded acceptance cost is 10.45 ms per 4 ms simulation step: not real time.
+⁴ MuJoCo uses the owner-maintained `3.16.0+concon.sdf3689.2` fork wheels from its Release, selected by `[mujoco]`. They fix 3.16.0 mesh SDF sign errors using upstream PR #3689 (merged on 2026-10-21); this release retains the tested fork. SDF is the default; CoACD is an explicit comparison. The classic-renderer appearance was approved on 2026-10-21. A strict continuous 23° bound is not established; the historical first-peak overrun remains documented. Archived acceptance cost was 10.45 ms per 4 ms simulation step, not a real-time guarantee for this release.
 
-⁵ Isaac is a preview with external Python 3.11, Isaac Lab 2.3.2, Isaac Sim 5.1 and compatible torch prerequisites; its extra does not install them. Start AppLauncher before building USD or importing pxr. SDF 0.5 mm is the default. Real-time RTX (`RaytracedLighting`) makes ABXY blurrier; use path tracing for high-quality images. Guide regresses to 0.931 against the baseline; Pair, L3 and R3 also fail. These issues remain open.
+⁵ Isaac is a preview with external Python 3.11, Isaac Lab 2.3.2, Isaac Sim 5.1 and compatible torch prerequisites; its extra does not install them. Start AppLauncher before building USD or importing pxr. SDF 0.5 mm is the default. Real-time RTX (`RaytracedLighting`) makes ABXY blurrier; use path tracing for high-quality images. Guide, Pair and R3 remain frozen-contact failures. Instantiate the returned asset configuration's `class_type` so click preload is initialized automatically; see the Isaac guide.
 
 ⁶ Ready describes supported loading and reviewed appearance; Preview retains the documented limitations. Neither rendering support nor the press scores below establish hardware calibration or complete contact qualification. SAPIEN and Cycles images were rendered on 2026-10-16; MuJoCo and Isaac images were rendered by the released backends and reviewed on 2026-10-21.
 
@@ -68,9 +73,9 @@ provided separately.
 | --- | --- |
 | SAPIEN | 23/26 |
 | MuJoCo | 25/26 |
-| Isaac | 22/26 |
+| Isaac | 23/26 |
 
-⁷ SDF results with the frozen rules: SAPIEN fails Pair/L3/R3; MuJoCo fails Pair; Isaac fails Guide/Pair/L3/R3. The owner parked Isaac Guide and L3/R3 investigation on 2026-10-21. These are simulation observations, not hardware calibration. See [the current plan and known issues](docs/plan.md), [MuJoCo usage](docs/mujoco_backend.md) and [Isaac preview usage](docs/isaac_backend.md).
+⁷ SDF results with the frozen rules: SAPIEN fails Pair/L3/R3; MuJoCo fails Pair; Isaac fails Guide/Pair/R3. The RoboTwin full-controls profile explicitly uses its documented 64/16 articulation solver policy. These are simulation observations, not hardware calibration or qualification for arbitrary loads. See [the current plan and known issues](docs/plan.md), [MuJoCo usage](docs/mujoco_backend.md) and [Isaac preview usage](docs/isaac_backend.md).
 
 <table>
 <tr>
@@ -102,9 +107,9 @@ Download the wheel and resource zip from the
 The package is distributed through Release attachments rather than PyPI.
 
 ```sh
-python3.10 -m pip install "./xbox_gamepad_physics-0.4.1-py3-none-any.whl[build,robotwin]"
+python3.10 -m pip install "./xbox_gamepad_physics-0.4.2-py3-none-any.whl[build,robotwin]"
 python3.10 -m xbox_gamepad_physics build-resources \
-  --archive ./xbox_gamepad_physics-resources-0.4.1.zip \
+  --archive ./xbox_gamepad_physics-resources-0.4.2.zip \
   --resources ./gamepad_resources --offline
 export XBOX_GAMEPAD_PHYSICS_RESOURCES="$PWD/gamepad_resources"
 ```
@@ -113,14 +118,14 @@ For MuJoCo on Linux x86_64 with Python 3.10 or 3.11, install the `mujoco`
 extra (add `build` when generating resources):
 
 ```sh
-python -m pip install "./xbox_gamepad_physics-0.4.1-py3-none-any.whl[mujoco]"
+python -m pip install "./xbox_gamepad_physics-0.4.2-py3-none-any.whl[mujoco]"
 ```
 
 The extra selects a matching wheel directly from the owner-maintained
 [fork Release v3.16.0-concon.sdf3689.2](https://github.com/5o1/mujoco/releases/tag/v3.16.0-concon.sdf3689.2),
 with a pinned SHA256. It corrects MuJoCo 3.16.0 mesh SDF sign errors using
-[upstream PR #3689](https://github.com/google-deepmind/mujoco/pull/3689) before
-that patch is merged upstream. The installed distribution is
+[upstream PR #3689](https://github.com/google-deepmind/mujoco/pull/3689), merged
+on 2026-10-21. This release retains the tested fork. The installed distribution is
 `3.16.0+concon.sdf3689.2`. Other Python/platform combinations have no fork wheel
 selected by this extra. Isaac Lab, Isaac Sim and torch are external prerequisites;
 the `isaac` extra does not install them.
@@ -130,7 +135,7 @@ installation and its compatible torch. Install the wheel in that environment
 (or a venv inheriting it); these platform dependencies are external:
 
 ```sh
-python -m pip install "./xbox_gamepad_physics-0.4.1-py3-none-any.whl[build,isaac]"
+python -m pip install "./xbox_gamepad_physics-0.4.2-py3-none-any.whl[build,isaac]"
 ```
 
 Start AppLauncher before the dedicated `isaac.build_usd` path. The generic
@@ -139,9 +144,9 @@ it does not launch Isaac automatically. Follow [Isaac preview usage](docs/isaac_
 for the common-input preparation and native build/load sequence.
 
 Add the `example` extra for exported examples or `teleop` for teleoperation,
-for example `[build,robotwin,example,teleop]`. The repository is private:
-automatic downloads fail without authentication. Download the attachments while
-signed in, then import the zip with `--archive` as shown above.
+for example `[build,robotwin,example,teleop]`. The Release attachments are public.
+For offline or restricted networks, download them first and import the zip with
+`--archive` as shown above.
 
 The resource zip is build input (source meshes and frozen snapshots), not
 ready-to-load resources: run `build-resources` once to generate the URDF and
@@ -189,7 +194,7 @@ integration details are in [RoboTwin backend documentation](docs/robotwin_backen
 
 ## Integration checklist
 
-1. Use Linux x86_64 with NVIDIA graphics, Python 3.10 and SAPIEN 3.0.3
+1. Use Linux x86_64 with compatible graphics, Python 3.10 and the supplied SAPIEN build
    (required for SDF). Install the wheel with `[build,robotwin]`, import the input
    zip offline, and run `xbox-gamepad-physics doctor`.
 2. Load through `xbox_gamepad_physics.robotwin.load_into_scene` into your own

@@ -1,0 +1,11 @@
+{
+ "protocol_id":"robotwin_production_cone_20261107_v1",
+ "sides":["left","right"],"directions":["diagonal45","positive_x","positive_y"],
+ "fixed_root":true,"dt_s":0.004,"settle_s":1,"load_s":1,"release_s":1,
+ "force_n":2.910747149685873,"force_basis":"Reuse prototype fixed load2*0.024/(L*cos23deg), L=.017914746775954664m; no force tuning. Apply native horizontal force at shaft-local(0,0,L).",
+ "production_parameters":"No overrides of friction, max velocity, spring, gravity, iterations, sleep, collision or constraints. Original CPU SDF scene; persistent click preload retained.",
+ "steady_window_s":[0.8,1.0],"release_window_s":[1.8,2.0],
+ "criteria":{"diagonal_max_deg":23.1,"single_axis_min_deg":22.9,"single_axis_max_deg":23.1,"release_max_deg":0.1,"release_joint_speed_max_rad_s":0.01},
+ "control_validity":"Report if boundary not reached; a diagonal staying below23.1 alone is not proof of a working boundary. Record first local peak and overall peak without truncation.",
+ "stop":"Do not adjust production settings or criteria to pass; report failed conditions. Owner ruling11 waives only the known T1 right20 boundary failure."
+}

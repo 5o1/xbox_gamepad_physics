@@ -1,0 +1,1073 @@
+{
+  "schema_version": 1,
+  "release": "0.4.2",
+  "scope": "A2 measured full-controls policy promoted unchanged to v0.4.2 RoboTwin default; not hardware identification",
+  "engine": {
+    "measured": "3.0.3+concon.physx5.6.1.a2",
+    "public_default": "3.0.3+concon.physx5.6.1.a3",
+    "a3_full_model_execution": "robotwin_wheel_validation.json",
+    "reason": "Historical a2 selection and policy evidence retained; fresh final-wheel a3 execution recorded separately"
+  },
+  "historical_reference": {
+    "URDF_sha256": "f882b47c05407269babe6d38427c0070fd248bcb4b8046211f055285a58e09fd",
+    "manifest_sha256": "8e1ee8c7abe03683136472a3b1cf015d8ad40c9a5d4d9aa89b4cdf0e9c158700",
+    "original_aggregate_raw_peak": 0.007750210484528151,
+    "regenerated_a2_raw_peak": 0.00775025342985111,
+    "limitation": "Original per-step waveform and complete launch argv were not saved/recovered; regenerated replay is not original raw data"
+  },
+  "selection": {
+    "id": "s0_d0_v8",
+    "static_Nm": 0.0,
+    "dynamic_Nm": 0.0,
+    "viscous_Nms_rad": 0.0018707873827064705,
+    "raw_peak": 0.009323471838973576,
+    "score": 2.5821671548940667e-06,
+    "eligible": true
+  },
+  "view_same_input": [
+    {
+      "engine": "official303",
+      "profile": "iterations64_16",
+      "target_min": 0.9918716727553695,
+      "target_max": 0.9920217619105611,
+      "passed": true,
+      "iterations": [
+        64,
+        16
+      ],
+      "ball_iterations": [
+        64,
+        16
+      ],
+      "idle_steps": 0
+    },
+    {
+      "engine": "official303",
+      "profile": "idle808",
+      "target_min": 0.7892759451471669,
+      "target_max": 1.0,
+      "passed": false,
+      "iterations": [
+        10,
+        1
+      ],
+      "ball_iterations": [
+        10,
+        1
+      ],
+      "idle_steps": 808
+    },
+    {
+      "engine": "official303",
+      "profile": "default",
+      "target_min": 0.7892759451471669,
+      "target_max": 1.0,
+      "passed": false,
+      "iterations": [
+        10,
+        1
+      ],
+      "ball_iterations": [
+        10,
+        1
+      ],
+      "idle_steps": 0
+    },
+    {
+      "engine": "official303",
+      "profile": "iterations64_16_idle808",
+      "target_min": 0.9918716727553695,
+      "target_max": 0.9920217619105611,
+      "passed": true,
+      "iterations": [
+        64,
+        16
+      ],
+      "ball_iterations": [
+        64,
+        16
+      ],
+      "idle_steps": 808
+    },
+    {
+      "engine": "a1",
+      "profile": "iterations64_16",
+      "target_min": 0.9918722242158294,
+      "target_max": 0.9920218538206378,
+      "passed": true,
+      "iterations": [
+        64,
+        16
+      ],
+      "ball_iterations": [
+        64,
+        16
+      ],
+      "idle_steps": 0
+    },
+    {
+      "engine": "a1",
+      "profile": "idle808",
+      "target_min": 0.7768936357988928,
+      "target_max": 0.7768963011911161,
+      "passed": false,
+      "iterations": [
+        10,
+        1
+      ],
+      "ball_iterations": [
+        10,
+        1
+      ],
+      "idle_steps": 808
+    },
+    {
+      "engine": "a1",
+      "profile": "default",
+      "target_min": 0.7768936357988928,
+      "target_max": 0.7768963011911161,
+      "passed": false,
+      "iterations": [
+        10,
+        1
+      ],
+      "ball_iterations": [
+        10,
+        1
+      ],
+      "idle_steps": 0
+    },
+    {
+      "engine": "a1",
+      "profile": "iterations64_16_idle808",
+      "target_min": 0.9918722242158294,
+      "target_max": 0.9920218538206378,
+      "passed": true,
+      "iterations": [
+        64,
+        16
+      ],
+      "ball_iterations": [
+        64,
+        16
+      ],
+      "idle_steps": 808
+    }
+  ],
+  "T1": [
+    {
+      "side": "left",
+      "angle_deg": 0,
+      "trigger_n": 7.632,
+      "width_n": 0.41600000000000037,
+      "passed": true
+    },
+    {
+      "side": "left",
+      "angle_deg": 12,
+      "trigger_n": 7.792,
+      "width_n": 0.41600000000000037,
+      "passed": true
+    },
+    {
+      "side": "left",
+      "angle_deg": 20,
+      "trigger_n": 8.112,
+      "width_n": 0.4479999999999986,
+      "passed": true
+    },
+    {
+      "side": "right",
+      "angle_deg": 0,
+      "trigger_n": 7.632,
+      "width_n": 0.41600000000000037,
+      "passed": true
+    },
+    {
+      "side": "right",
+      "angle_deg": 12,
+      "trigger_n": 7.808,
+      "width_n": 0.4320000000000004,
+      "passed": true
+    },
+    {
+      "side": "right",
+      "angle_deg": 20,
+      "trigger_n": 8.128,
+      "width_n": 0.4319999999999986,
+      "passed": true
+    }
+  ],
+  "T2": [
+    {
+      "side": "left",
+      "multiplier": 0.5,
+      "value": 1.1266768767947966e-08,
+      "passed": true
+    },
+    {
+      "side": "left",
+      "multiplier": 0.8,
+      "value": 0.0,
+      "passed": true
+    },
+    {
+      "side": "left",
+      "multiplier": 0.95,
+      "value": 0.0,
+      "passed": true
+    },
+    {
+      "side": "left",
+      "multiplier": 1.1,
+      "value": 0.9889216016745195,
+      "passed": true
+    },
+    {
+      "side": "left",
+      "multiplier": 1.3,
+      "value": 0.9889811190078035,
+      "passed": true
+    },
+    {
+      "side": "left",
+      "multiplier": 1.6,
+      "value": 0.9890726505545899,
+      "passed": true
+    },
+    {
+      "side": "right",
+      "multiplier": 0.5,
+      "value": 0.0,
+      "passed": true
+    },
+    {
+      "side": "right",
+      "multiplier": 0.8,
+      "value": 0.0,
+      "passed": true
+    },
+    {
+      "side": "right",
+      "multiplier": 0.95,
+      "value": 1.36621494824761e-09,
+      "passed": true
+    },
+    {
+      "side": "right",
+      "multiplier": 1.1,
+      "value": 0.9878465061774477,
+      "passed": true
+    },
+    {
+      "side": "right",
+      "multiplier": 1.3,
+      "value": 0.9879103163257241,
+      "passed": true
+    },
+    {
+      "side": "right",
+      "multiplier": 1.6,
+      "value": 0.9880093421088532,
+      "passed": true
+    }
+  ],
+  "cone_written_criteria": [
+    {
+      "side": "left",
+      "direction": "diagonal45",
+      "steady_min_deg": 22.897610178326257,
+      "steady_max_deg": 22.897626183158298,
+      "return_max_deg": 0.0001874144977031158,
+      "control_min_deg": 26.975158075872752,
+      "passed": true
+    },
+    {
+      "side": "left",
+      "direction": "positive_x",
+      "steady_min_deg": 22.93720242025838,
+      "steady_max_deg": 22.937220807503607,
+      "return_max_deg": 0.00018639660077945336,
+      "control_min_deg": 20.842782738089436,
+      "passed": true
+    },
+    {
+      "side": "left",
+      "direction": "positive_y",
+      "steady_min_deg": 22.93386029268342,
+      "steady_max_deg": 22.933881583263332,
+      "return_max_deg": 0.0002133341005455135,
+      "control_min_deg": 20.11814479232893,
+      "passed": true
+    },
+    {
+      "side": "right",
+      "direction": "diagonal45",
+      "steady_min_deg": 22.890405359193384,
+      "steady_max_deg": 22.89044534953063,
+      "return_max_deg": 0.001372555786887925,
+      "control_min_deg": 24.99805975072076,
+      "passed": true
+    },
+    {
+      "side": "right",
+      "direction": "positive_x",
+      "steady_min_deg": 22.93049663376873,
+      "steady_max_deg": 22.930496633772158,
+      "return_max_deg": 0.0013944865592485957,
+      "control_min_deg": 19.302055199816035,
+      "passed": true
+    },
+    {
+      "side": "right",
+      "direction": "positive_y",
+      "steady_min_deg": 22.92650702848182,
+      "steady_max_deg": 22.92652227011946,
+      "return_max_deg": 0.001366867343442802,
+      "control_min_deg": 18.598297349582808,
+      "passed": true
+    }
+  ],
+  "T3": [
+    {
+      "side": "left",
+      "force_n": 1,
+      "valid": true,
+      "hold_max": 0.04101959348190576,
+      "positive_min": null,
+      "passed": true
+    },
+    {
+      "side": "left",
+      "force_n": 2,
+      "valid": true,
+      "hold_max": 0.039751203075866215,
+      "positive_min": null,
+      "passed": true
+    },
+    {
+      "side": "left",
+      "force_n": 4,
+      "valid": true,
+      "hold_max": 0.03705681365318014,
+      "positive_min": null,
+      "passed": true
+    },
+    {
+      "side": "left",
+      "force_n": 6,
+      "valid": true,
+      "hold_max": 0.03364557187524042,
+      "positive_min": null,
+      "passed": true
+    },
+    {
+      "side": "left",
+      "force_n": 8.14,
+      "valid": true,
+      "hold_max": 0.9999999747378752,
+      "positive_min": 0.9999999747378752,
+      "passed": true
+    },
+    {
+      "side": "right",
+      "force_n": 1,
+      "valid": true,
+      "hold_max": 0.04771655767399352,
+      "positive_min": null,
+      "passed": true
+    },
+    {
+      "side": "right",
+      "force_n": 2,
+      "valid": true,
+      "hold_max": 0.04609820734913228,
+      "positive_min": null,
+      "passed": true
+    },
+    {
+      "side": "right",
+      "force_n": 4,
+      "valid": true,
+      "hold_max": 0.042687502173066605,
+      "positive_min": null,
+      "passed": true
+    },
+    {
+      "side": "right",
+      "force_n": 6,
+      "valid": true,
+      "hold_max": 0.03842683781840606,
+      "positive_min": null,
+      "passed": true
+    },
+    {
+      "side": "right",
+      "force_n": 8.14,
+      "valid": true,
+      "hold_max": 0.9999999747378752,
+      "positive_min": 0.9999999747378752,
+      "passed": true
+    }
+  ],
+  "T3_baseline": [
+    {
+      "model": "main_73c8676",
+      "side": "left",
+      "vertical_force_n": 1,
+      "fixture_valid": true,
+      "hold_min_angle_deg": 22.999688842450546,
+      "hold_max_angle_deg": 22.999691987868296,
+      "hold_click_max": 0.0,
+      "hold_raw_max": 0.0,
+      "positive_control_final_hold_min": null,
+      "low_force_pass": true,
+      "positive_control_pass": null,
+      "unload_final_signal": 0.0,
+      "unload_pass": true,
+      "physics_passed": true,
+      "status": "passed"
+    },
+    {
+      "model": "main_73c8676",
+      "side": "left",
+      "vertical_force_n": 2,
+      "fixture_valid": true,
+      "hold_min_angle_deg": 22.999193486293787,
+      "hold_max_angle_deg": 22.999198212494672,
+      "hold_click_max": 0.0,
+      "hold_raw_max": 0.0,
+      "positive_control_final_hold_min": null,
+      "low_force_pass": true,
+      "positive_control_pass": null,
+      "unload_final_signal": 0.0,
+      "unload_pass": true,
+      "physics_passed": true,
+      "status": "passed"
+    },
+    {
+      "model": "main_73c8676",
+      "side": "left",
+      "vertical_force_n": 4,
+      "fixture_valid": true,
+      "hold_min_angle_deg": 22.99818230298986,
+      "hold_max_angle_deg": 22.99820210431478,
+      "hold_click_max": 0.0,
+      "hold_raw_max": 0.0,
+      "positive_control_final_hold_min": null,
+      "low_force_pass": true,
+      "positive_control_pass": null,
+      "unload_final_signal": 0.0,
+      "unload_pass": true,
+      "physics_passed": true,
+      "status": "passed"
+    },
+    {
+      "model": "main_73c8676",
+      "side": "left",
+      "vertical_force_n": 6,
+      "fixture_valid": true,
+      "hold_min_angle_deg": 22.997172337146853,
+      "hold_max_angle_deg": 22.997177047134088,
+      "hold_click_max": 0.053944686442264356,
+      "hold_raw_max": 0.053944686442264356,
+      "positive_control_final_hold_min": null,
+      "low_force_pass": false,
+      "positive_control_pass": null,
+      "unload_final_signal": 0.0,
+      "unload_pass": true,
+      "physics_passed": false,
+      "status": "failed"
+    },
+    {
+      "model": "main_73c8676",
+      "side": "left",
+      "vertical_force_n": 8.14,
+      "fixture_valid": true,
+      "hold_min_angle_deg": 22.995982100992613,
+      "hold_max_angle_deg": 22.996015267938045,
+      "hold_click_max": 0.6617051985813305,
+      "hold_raw_max": 0.6617051985813305,
+      "positive_control_final_hold_min": 0.66168955527246,
+      "low_force_pass": null,
+      "positive_control_pass": false,
+      "unload_final_signal": 0.0,
+      "unload_pass": true,
+      "physics_passed": false,
+      "status": "failed"
+    },
+    {
+      "model": "main_73c8676",
+      "side": "right",
+      "vertical_force_n": 1,
+      "fixture_valid": true,
+      "hold_min_angle_deg": 22.997849096502843,
+      "hold_max_angle_deg": 22.997868990295377,
+      "hold_click_max": 0.0,
+      "hold_raw_max": 0.0,
+      "positive_control_final_hold_min": null,
+      "low_force_pass": true,
+      "positive_control_pass": null,
+      "unload_final_signal": 0.0,
+      "unload_pass": true,
+      "physics_passed": true,
+      "status": "passed"
+    },
+    {
+      "model": "main_73c8676",
+      "side": "right",
+      "vertical_force_n": 2,
+      "fixture_valid": true,
+      "hold_min_angle_deg": 22.99439616691213,
+      "hold_max_angle_deg": 22.994421366300738,
+      "hold_click_max": 0.0,
+      "hold_raw_max": 0.0,
+      "positive_control_final_hold_min": null,
+      "low_force_pass": true,
+      "positive_control_pass": null,
+      "unload_final_signal": 0.0,
+      "unload_pass": true,
+      "physics_passed": true,
+      "status": "passed"
+    },
+    {
+      "model": "main_73c8676",
+      "side": "right",
+      "vertical_force_n": 4,
+      "fixture_valid": true,
+      "hold_min_angle_deg": 22.98760717789932,
+      "hold_max_angle_deg": 22.98766244935452,
+      "hold_click_max": 0.0,
+      "hold_raw_max": 0.0,
+      "positive_control_final_hold_min": null,
+      "low_force_pass": true,
+      "positive_control_pass": null,
+      "unload_final_signal": 0.0,
+      "unload_pass": true,
+      "physics_passed": true,
+      "status": "passed"
+    },
+    {
+      "model": "main_73c8676",
+      "side": "right",
+      "vertical_force_n": 6,
+      "fixture_valid": true,
+      "hold_min_angle_deg": 22.980879721714764,
+      "hold_max_angle_deg": 22.980968201467835,
+      "hold_click_max": 0.056552835303591564,
+      "hold_raw_max": 0.056552835303591564,
+      "positive_control_final_hold_min": null,
+      "low_force_pass": false,
+      "positive_control_pass": null,
+      "unload_final_signal": 0.0,
+      "unload_pass": true,
+      "physics_passed": false,
+      "status": "failed"
+    },
+    {
+      "model": "main_73c8676",
+      "side": "right",
+      "vertical_force_n": 8.14,
+      "fixture_valid": true,
+      "hold_min_angle_deg": 22.9731624367158,
+      "hold_max_angle_deg": 22.973350392614336,
+      "hold_click_max": 0.64710526203271,
+      "hold_raw_max": 0.64710526203271,
+      "positive_control_final_hold_min": 0.6470835069194436,
+      "low_force_pass": null,
+      "positive_control_pass": false,
+      "unload_final_signal": 0.0,
+      "unload_pass": true,
+      "physics_passed": false,
+      "status": "failed"
+    }
+  ],
+  "T4": {
+    "T4_candidate64": {
+      "completed": 26,
+      "passed_cases": 23,
+      "failures": [
+        "Pair",
+        "L3",
+        "R3"
+      ],
+      "regressions": [],
+      "results": [
+        {
+          "case": "A",
+          "passed": true,
+          "target_min": 0.9894497944500115,
+          "baseline_passed": true,
+          "regressed": false
+        },
+        {
+          "case": "B",
+          "passed": true,
+          "target_min": 0.9878639696685018,
+          "baseline_passed": true,
+          "regressed": false
+        },
+        {
+          "case": "X",
+          "passed": true,
+          "target_min": 0.9898958941463565,
+          "baseline_passed": true,
+          "regressed": false
+        },
+        {
+          "case": "Y",
+          "passed": true,
+          "target_min": 0.9897422640905029,
+          "baseline_passed": true,
+          "regressed": false
+        },
+        {
+          "case": "LB",
+          "passed": true,
+          "target_min": 0.9607147208365293,
+          "baseline_passed": true,
+          "regressed": false
+        },
+        {
+          "case": "RB",
+          "passed": true,
+          "target_min": 0.9822931193168852,
+          "baseline_passed": true,
+          "regressed": false
+        },
+        {
+          "case": "View",
+          "passed": true,
+          "target_min": 0.9918730514065194,
+          "baseline_passed": true,
+          "regressed": false
+        },
+        {
+          "case": "Menu",
+          "passed": true,
+          "target_min": 0.9918742152807092,
+          "baseline_passed": true,
+          "regressed": false
+        },
+        {
+          "case": "Guide",
+          "passed": true,
+          "target_min": 0.9876294267877633,
+          "baseline_passed": true,
+          "regressed": false
+        },
+        {
+          "case": "Pair",
+          "passed": false,
+          "target_min": 0.013995807168722528,
+          "baseline_passed": false,
+          "regressed": false
+        },
+        {
+          "case": "L3",
+          "passed": false,
+          "target_min": 0.8830978913465515,
+          "baseline_passed": false,
+          "regressed": false
+        },
+        {
+          "case": "R3",
+          "passed": false,
+          "target_min": 0.8923475252231583,
+          "baseline_passed": false,
+          "regressed": false
+        },
+        {
+          "case": "Dpad_up",
+          "passed": true,
+          "target_min": 0.950982235308903,
+          "baseline_passed": true,
+          "regressed": false
+        },
+        {
+          "case": "Dpad_down",
+          "passed": true,
+          "target_min": 0.9508609990956803,
+          "baseline_passed": true,
+          "regressed": false
+        },
+        {
+          "case": "Dpad_left",
+          "passed": true,
+          "target_min": 0.924719141797875,
+          "baseline_passed": true,
+          "regressed": false
+        },
+        {
+          "case": "Dpad_right",
+          "passed": true,
+          "target_min": 0.9302355602547395,
+          "baseline_passed": true,
+          "regressed": false
+        },
+        {
+          "case": "left_x_pos",
+          "passed": true,
+          "target_min": 0.9831261444712674,
+          "baseline_passed": true,
+          "regressed": false
+        },
+        {
+          "case": "left_x_neg",
+          "passed": true,
+          "target_min": 0.9816871275508071,
+          "baseline_passed": true,
+          "regressed": false
+        },
+        {
+          "case": "left_y_pos",
+          "passed": true,
+          "target_min": 0.9806813821955227,
+          "baseline_passed": true,
+          "regressed": false
+        },
+        {
+          "case": "left_y_neg",
+          "passed": true,
+          "target_min": 0.9800738665653247,
+          "baseline_passed": true,
+          "regressed": false
+        },
+        {
+          "case": "right_x_pos",
+          "passed": true,
+          "target_min": 0.9818761456119686,
+          "baseline_passed": true,
+          "regressed": false
+        },
+        {
+          "case": "right_x_neg",
+          "passed": true,
+          "target_min": 0.9815629220455742,
+          "baseline_passed": true,
+          "regressed": false
+        },
+        {
+          "case": "right_y_pos",
+          "passed": true,
+          "target_min": 0.9814577222841186,
+          "baseline_passed": true,
+          "regressed": false
+        },
+        {
+          "case": "right_y_neg",
+          "passed": true,
+          "target_min": 0.9815873473959756,
+          "baseline_passed": true,
+          "regressed": false
+        },
+        {
+          "case": "LT",
+          "passed": true,
+          "target_min": 0.9819168405357607,
+          "baseline_passed": true,
+          "regressed": false
+        },
+        {
+          "case": "RT",
+          "passed": true,
+          "target_min": 0.9792396517404149,
+          "baseline_passed": true,
+          "regressed": false
+        }
+      ]
+    },
+    "T4_default10": {
+      "completed": 26,
+      "passed_cases": 21,
+      "failures": [
+        "View",
+        "Menu",
+        "Guide",
+        "Pair",
+        "R3"
+      ],
+      "regressions": [
+        "View",
+        "Menu",
+        "Guide"
+      ],
+      "results": [
+        {
+          "case": "A",
+          "passed": true,
+          "target_min": 0.9830855023970858,
+          "baseline_passed": true,
+          "regressed": false
+        },
+        {
+          "case": "B",
+          "passed": true,
+          "target_min": 0.9865037234286305,
+          "baseline_passed": true,
+          "regressed": false
+        },
+        {
+          "case": "X",
+          "passed": true,
+          "target_min": 0.9811631228286224,
+          "baseline_passed": true,
+          "regressed": false
+        },
+        {
+          "case": "Y",
+          "passed": true,
+          "target_min": 0.983211078268827,
+          "baseline_passed": true,
+          "regressed": false
+        },
+        {
+          "case": "LB",
+          "passed": true,
+          "target_min": 0.9840657614483919,
+          "baseline_passed": true,
+          "regressed": false
+        },
+        {
+          "case": "RB",
+          "passed": true,
+          "target_min": 0.9866438422509028,
+          "baseline_passed": true,
+          "regressed": false
+        },
+        {
+          "case": "View",
+          "passed": false,
+          "target_min": 0.7771959280410394,
+          "baseline_passed": true,
+          "regressed": true
+        },
+        {
+          "case": "Menu",
+          "passed": false,
+          "target_min": 0.8414310049616774,
+          "baseline_passed": true,
+          "regressed": true
+        },
+        {
+          "case": "Guide",
+          "passed": false,
+          "target_min": 0.3064911863556199,
+          "baseline_passed": true,
+          "regressed": true
+        },
+        {
+          "case": "Pair",
+          "passed": false,
+          "target_min": 0.0,
+          "baseline_passed": false,
+          "regressed": false
+        },
+        {
+          "case": "L3",
+          "passed": true,
+          "target_min": 0.9715441410662606,
+          "baseline_passed": false,
+          "regressed": false
+        },
+        {
+          "case": "R3",
+          "passed": false,
+          "target_min": 0.0,
+          "baseline_passed": false,
+          "regressed": false
+        },
+        {
+          "case": "Dpad_up",
+          "passed": true,
+          "target_min": 0.9870431785334721,
+          "baseline_passed": true,
+          "regressed": false
+        },
+        {
+          "case": "Dpad_down",
+          "passed": true,
+          "target_min": 0.9874987534868218,
+          "baseline_passed": true,
+          "regressed": false
+        },
+        {
+          "case": "Dpad_left",
+          "passed": true,
+          "target_min": 0.9644424431931501,
+          "baseline_passed": true,
+          "regressed": false
+        },
+        {
+          "case": "Dpad_right",
+          "passed": true,
+          "target_min": 0.9706112320058139,
+          "baseline_passed": true,
+          "regressed": false
+        },
+        {
+          "case": "left_x_pos",
+          "passed": true,
+          "target_min": 0.9818125951562128,
+          "baseline_passed": true,
+          "regressed": false
+        },
+        {
+          "case": "left_x_neg",
+          "passed": true,
+          "target_min": 0.9809560745860558,
+          "baseline_passed": true,
+          "regressed": false
+        },
+        {
+          "case": "left_y_pos",
+          "passed": true,
+          "target_min": 0.9807337222320973,
+          "baseline_passed": true,
+          "regressed": false
+        },
+        {
+          "case": "left_y_neg",
+          "passed": true,
+          "target_min": 0.9803196791342585,
+          "baseline_passed": true,
+          "regressed": false
+        },
+        {
+          "case": "right_x_pos",
+          "passed": true,
+          "target_min": 0.9817816365813878,
+          "baseline_passed": true,
+          "regressed": false
+        },
+        {
+          "case": "right_x_neg",
+          "passed": true,
+          "target_min": 0.9816452555215475,
+          "baseline_passed": true,
+          "regressed": false
+        },
+        {
+          "case": "right_y_pos",
+          "passed": true,
+          "target_min": 0.9813174064413869,
+          "baseline_passed": true,
+          "regressed": false
+        },
+        {
+          "case": "right_y_neg",
+          "passed": true,
+          "target_min": 0.981493209571328,
+          "baseline_passed": true,
+          "regressed": false
+        },
+        {
+          "case": "LT",
+          "passed": true,
+          "target_min": 0.9819330879403387,
+          "baseline_passed": true,
+          "regressed": false
+        },
+        {
+          "case": "RT",
+          "passed": true,
+          "target_min": 0.9803986669055001,
+          "baseline_passed": true,
+          "regressed": false
+        }
+      ]
+    }
+  },
+  "holdouts": {
+    "static960_comparison.json": {
+      "old_raw_peak": 1.7435867707620889e-06,
+      "new_raw_peak": 0.001252816801911238,
+      "used_for_selection": false
+    },
+    "shake240_comparison.json": {
+      "old_raw_peak": 0.010096143820099752,
+      "new_raw_peak": 0.011427877982598386,
+      "used_for_selection": false
+    }
+  },
+  "extra_stress": [
+    {
+      "side": "left",
+      "cone": true,
+      "loaded_angle_min": 23.077330943131514,
+      "loaded_angle_max": 23.077350259165744,
+      "loaded_click_min": 0.9141047485172749,
+      "release_click_max": 0.0,
+      "release_angle_max": 0.00018624793728996906,
+      "subsystem_passed": false
+    },
+    {
+      "side": "left",
+      "cone": false,
+      "loaded_angle_min": 32.07765302263853,
+      "loaded_angle_max": 32.07765302263853,
+      "loaded_click_min": 0.988470928859897,
+      "release_click_max": 0.0,
+      "release_angle_max": 0.00018554212337557106,
+      "subsystem_passed": true
+    },
+    {
+      "side": "right",
+      "cone": true,
+      "loaded_angle_min": 23.090507823820083,
+      "loaded_angle_max": 23.090529480100145,
+      "loaded_click_min": 0.8993421215564013,
+      "release_click_max": 0.0,
+      "release_angle_max": 0.001411246258468646,
+      "subsystem_passed": false
+    },
+    {
+      "side": "right",
+      "cone": false,
+      "loaded_angle_min": 32.07764286209995,
+      "loaded_angle_max": 32.077646140276244,
+      "loaded_click_min": 0.9872619557427242,
+      "release_click_max": 0.0,
+      "release_angle_max": 0.0014307142287434496,
+      "subsystem_passed": true
+    }
+  ],
+  "saturation": {
+    "source": "State-based audit of63 existing cases; not native internal force readback",
+    "single_axis_cone_peak_uncapped_demand_Nm": 0.08165923002348861,
+    "tilt_drive_cap_Nm": 0.024,
+    "T3_conservative_bound_peak_Nm": 0.050567655187335254,
+    "limitation": "Damping and spring share cap. Below-cap samples do not exclude unsampled substep saturation; a conservative bound above cap does not prove actual per-axis saturation."
+  },
+  "evidence_scope": "Small public summaries/protocols only; full step traces, screenshots, private run receipts and engine build intermediates excluded",
+  "frozen_candidate_config_sha256": "cd6dd15ca0cf1d89799aa01883d3613497056994f47e4611426ecab9ed54ddae",
+  "v042_default_verification": {
+    "runtime": "3.0.3+concon.physx5.6.1.a2",
+    "normal_DAG_without_external_calibration": true,
+    "mechanism_geometry_mass_inertia_match_frozen_a2_candidate": true,
+    "actual_native20_joint_policy_equal": true,
+    "preload_qf_and64_16_equal": true,
+    "signal_roundtrip": {
+      "method": "Physical12N load, encode joint state, decode through original motion controller and serialize GamepadState. No q/qvel or drive-target writes.",
+      "loaded_public_signal": 0.9880152356345206,
+      "loaded_raw_fraction": 0.9880152356345206,
+      "decoded_q_m": 0.00039520609425380826,
+      "actual_q_m": 0.00039520609425380826,
+      "decode_error_m": 0.0,
+      "serialized_values_equal": true,
+      "released_signal": 0.0
+    },
+    "old_left_profile_dof": 2,
+    "old_left_profile_qf": [
+      0,
+      0
+    ],
+    "representative_passed": {
+      "T1_right20": 1,
+      "cone_diagonal_and_single_axis": 2,
+      "T3_right6_and8_14": 2
+    },
+    "comment_only_URDF_byte_difference": "Updated public usage notice; every mechanism XML element matches",
+    "a3_execution": null
+  }
+}

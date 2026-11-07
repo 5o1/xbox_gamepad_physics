@@ -1,7 +1,9 @@
 # RoboTwin/SAPIEN user examples
 
 Install the wheel with `[build,robotwin,example]`, import its input zip, and set
-`XBOX_GAMEPAD_PHYSICS_RESOURCES`. Use SAPIEN 3.0.3 for the default SDF collision.
+`XBOX_GAMEPAD_PHYSICS_RESOURCES`. The full-controls default requires the supplied SAPIEN
+`3.0.3+concon.physx5.6.1.a3` wheel (Python 3.10, Linux x86_64, glibc 2.35+);
+the validated a2 build is also supported. Use CPU PhysX for click preload.
 
 ## Export a standalone example
 

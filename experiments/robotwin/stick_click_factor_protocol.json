@@ -1,0 +1,28 @@
+{
+  "protocol_id": "stick_click_single_factor_ruling3_20261106_v1",
+  "purpose": "Distinguish an accidental click friction mapping from the native velocity cap using the identical left-neutral T1 fixture.",
+  "side": "left",
+  "tilt_angle_deg": 0,
+  "dt_s": 0.004,
+  "ramp_up_s": 3,
+  "peak_force_n": 12,
+  "conditions": [
+    {"name": "a_new_baseline", "model": "new", "override": null},
+    {"name": "b_click_friction_zero", "model": "new", "override": {"friction": 0}},
+    {"name": "c_click_velocity_relaxed", "model": "new", "override": {"max_velocity": 1000}},
+    {"name": "d_main_baseline", "model": "main_73c8676", "override": null}
+  ],
+  "override_timing": "After the unchanged 1 s T1 settle prefix, immediately before the force scan; no position/velocity/target write. Each condition starts in a fresh scene.",
+  "velocity_override_unit": "m/s for the selected prismatic joint",
+  "velocity_override_basis": "Fixed diagnostic-only nonbinding cap, selected before results; uses the prototype's 1000 numerical scale only to remove limiting in this short scan. It is neither a measured speed nor an approved production value.",
+  "readback": ["type", "dof", "limits", "drive_mode", "target", "stiffness", "damping", "force_limit", "max_velocity", "friction"],
+  "unchanged": "All non-click parameters and the click physical return law, cap force point and direction, timestep, fixed root, gravity and SDF. No cone attached during this diagnosis.",
+  "measurements": "Every step: applied world force, native positive click axis, projection, q, raw travel fraction, unchanged signal, qvel; every joint policy before/after the single override.",
+  "detection": {"motion_fraction": 0.05, "full_fraction": 0.95},
+  "interpretation": {
+    "friction_mapping": "Confirm only if native baseline click friction is wrongly nonzero and b changes only that field and restores motion while a does not. If native friction is already zero, this hypothesis is refuted.",
+    "velocity_contribution": "Confirm a causal velocity-cap contribution if c changes only the click max_velocity and restores motion while a/b do not. Do not claim the precise internal solver mechanism or adopt the override.",
+    "old_model": "d establishes the response of the frozen main model under the same fixture; it is a requested multi-model control, not a single-parameter comparison.",
+    "stop": "If velocity semantics or another non-mapping parameter is implicated, preserve production values, write a proposal and stop before T1/T2 acceptance or cone integration. No tuning sweep."
+  }
+}

@@ -58,7 +58,7 @@ class CommonMotionAssetTest(unittest.TestCase):
         for side in ("left", "right"):
             limit = limits[f"{side}_stick_circular_limit"]
             self.assertEqual(limit["reference_link"], "controller_body")
-            self.assertEqual(limit["moving_link"], f"{side}_stick_y_frame")
+            self.assertEqual(limit["moving_link"], f"{side}_stick")
             self.assertEqual(limit["independent_of"], [f"{side}_stick_click"])
             self.assertAlmostEqual(limit["max_angle_rad"], motion.joint_by_name[f"{side}_stick_x"].upper)
             self.assertEqual(limit["coordinate_space"], "relative_shaft_direction")

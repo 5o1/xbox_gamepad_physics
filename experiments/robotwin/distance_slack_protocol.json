@@ -1,0 +1,11 @@
+{
+ "id":"distance_slack_ruling10_20261107_v1",
+ "fine_angles_deg":[18,19,20,21,22],"sides":["left","right"],"variants":["with_distance","without_distance","maximum_plus1mm"],
+ "fixture":"Original T1 holding fixture K100,D1,effort10, fixedroot,SDF,CPU TGS,dt.004,1s settle+6s observation,no cap push,no q/qvel writes; all production parameters unchanged.",
+ "margin_m":0.001,
+ "margin_basis":"Owner-authorized diagnostic-only fixed1mm increase selected before results; not an adopted angular boundary.",
+ "fixed_click_controls":"At20deg each side with/without distance: same full URDF and native parameters, only selected click joint type becomes fixed in diagnostic URDF. Its persistent preload qf DOF no longer exists; use equivalent outward native7.4N force on fixed click frame per step. Other DOFs/other click qf unchanged. This preserves subtree loading while removing the selected prismatic. Same two-hinge local topology as cone prototype; no prototype solver/damping/friction relaxations imported.",
+ "observations":"Before and after every native step including settling: actual anchor world positions/local poses/radii, d,dmax,gap and actual shaft direction, click q/qvel when DOF exists, click-frame incoming joint wrench. Direct distance force null if unbound; paired incoming X differences are state-dependent estimates not isolated constraint forces.",
+ "unexposed_parameters":"No SDK patch to expose tolerance/contactDistance/getForce; preserve fixed-version source-defined0 tolerance and hardK=C0. Vary only exposed maximum via set_limit.",
+ "stop":"Complete preregistered diagnostic batch, do not tune or modify production/shared layer. Geometric bug may be fixed only if proven; native closed-loop behavior goes to owner decision."
+}

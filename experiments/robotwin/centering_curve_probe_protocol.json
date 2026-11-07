@@ -1,0 +1,96 @@
+{
+  "protocol_id": "centering_curve_a1_20261107",
+  "entrypoint": "experiments/robotwin/centering_curve_probe.py",
+  "purpose": "Mechanism diagnosis only: center-strong smooth proxy curves, not measured Xbox spring laws or production adoption.",
+  "conditions": [
+    {
+      "name": "linear",
+      "center_multiplier": null,
+      "legacy_coefficient": 0,
+      "friction_params": [
+        0.002,
+        0.002,
+        0
+      ],
+      "click_qf_n": -7.4
+    },
+    {
+      "name": "center_5",
+      "center_multiplier": 5,
+      "legacy_coefficient": 0,
+      "friction_params": [
+        0.002,
+        0.002,
+        0
+      ],
+      "click_qf_n": -7.4
+    },
+    {
+      "name": "center_10",
+      "center_multiplier": 10,
+      "legacy_coefficient": 0,
+      "friction_params": [
+        0.002,
+        0.002,
+        0
+      ],
+      "click_qf_n": -7.4
+    }
+  ],
+  "sides": [
+    "left",
+    "right"
+  ],
+  "directions": [
+    "diagonal45",
+    "positive_x",
+    "positive_y"
+  ],
+  "planned_cases": 18,
+  "theta_max_rad": 0.4014257279586958,
+  "theta_source": "Existing common motion envelope 23 degrees; joint-coordinate radial normalization, not hardware curve measurement.",
+  "formula": {
+    "r": "sqrt(q_x^2+q_y^2)",
+    "epsilon": "theta_max / center_multiplier",
+    "tau_end": "native_readback_k * theta_max",
+    "nonzero_r": "K_eff=tau_end*tanh(r/epsilon)/(r*tanh(theta_max/epsilon))",
+    "zero_r": "K_eff=tau_end/(epsilon*tanh(theta_max/epsilon))",
+    "elastic_component": "tau_i=-K_eff*q_i; estimate only, not solver total effort"
+  },
+  "drive_update": "Every pre-step including linear: set_drive_properties(K_eff, original damping, original force_limit, mode=force), both tested tilt axes share K_eff; target stays0. No qf torque substitute, no q/qvel write.",
+  "unchanged": "CPU TGS, dt .004s, gravity, 10/1 original solver iterations, collisions/mass/inertia/cone, click -7.4N + K1000 target0, original tilt damping and force limit, other-side joints. Original cone force/point/timing and scoring reused.",
+  "baseline_summary": "build/experiments/stick_click_threshold/full_model_effort_a1/summary.json",
+  "baseline_condition": "effort_7p4",
+  "mechanism_hypothesis": "Stronger centering near zero with the same nominal endpoint effort reduces residual angle at fixed friction and all other settings.",
+  "support": {
+    "linear_same_direction_absolute_difference_max_deg": 0.05,
+    "center_5_residual_strictly_less_than_linear_fraction": 0.5,
+    "center_10_residual_strictly_less_than_linear_fraction": 0.5,
+    "require_all_six_directions_for_each_curve": true
+  },
+  "scoring": "Original cone runner remains authoritative; <=.1deg and <=.01rad/s return gate unchanged. No multiplier search.",
+  "overshoot_observation": "Release-start q vector from final loaded state defines positive direction. Maximum negative q projection during release, converted to degrees, is joint-space reverse overshoot. Also report unsigned total-angle peak and max absolute tilt joint speed during whole release. Not an added acceptance gate.",
+  "sources": {
+    "local_reference": "references/left_stick.json: reference14mNm /23deg is a linear equivalent estimate, not measured pure spring torque.",
+    "supervisor_checked_ALPS": "https://tech.alpsalpine.com/e/products/detail/RKJXV122400R/ ;14+-10mNm and return precision+-5deg refer to reference component, not identified Xbox1708 mechanism; +-5deg does not replace project<=.1deg.",
+    "supervisor_checked_patent": "https://patents.google.com/patent/US5724068A/en ; mechanism feasibility only, no Xbox identification or adopted preload/spring constants.",
+    "native_setter": "SAPIEN src/physx/articulation_link_component.cpp:220-225 -> PxArticulationJoint::setDriveParams; wheel set_drive_properties force-mode binding."
+  },
+  "registration_before_physics": true,
+  "test_values_only": true,
+  "repair_log": [],
+  "critical_gates": [
+    "resource/API mismatch",
+    "nonfinite state",
+    "unexpected damping/target/force-limit/mode/friction/qf mutation",
+    "executor exception"
+  ],
+  "noncritical": [
+    "failed cone/return score",
+    "no residual improvement",
+    "oscillation",
+    "linear mismatch (report confounding; complete batch)"
+  ],
+  "reuse_protocol": "tests/acceptance/robotwin/stick_cone_production_protocol.json",
+  "trace_join": "Original trace covers500 load/release steps; shared state observer covers750 including settle. Step diagnostics contain before-step q/qvel, requested/readback K and elastic estimate, and post-step native drive readback."
+}

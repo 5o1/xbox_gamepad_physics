@@ -1,0 +1,10 @@
+{
+  "id": "stick_click_ruling4_2x2_20261106_v1",
+  "conditions": ["A_old_chain_old_law", "B_old_chain_new_law", "C_new_chain_old_law", "D_new_chain_new_law"],
+  "fixture": "Unchanged left-neutral T1 setup, 1 s settling, fixed root, SDF, dt=.004 s; 0 to12 N linear ramp in3 s; force on actual cap at its center along current shaft.",
+  "law_swap": "Swap only both click return laws: manifest stiffness/damping/target/force_limit and URDF passive damping, plus matching common physical evidence. All other records and geometry remain unchanged.",
+  "structure": "Read native names/type/dof/qpos offset/parent/child/local positive X axis/limits and every link mass; preserve exact URDF joint fragments.",
+  "direct_drive": {"chain":"new", "base_law":"new", "target_m":0.0002, "stiffness_n_per_m":18500, "damping_ns_per_m":12.043255373859676, "effort_limit_n":10.4, "hold_s":1, "external_force_n":0, "final_error_tolerance_m":0.00001, "basis":"Use the existing old-law stiffness/damping as an already documented large drive; numerical diagnostic only, not a new approved return law."},
+  "interpretation": "Compare B against A and D against C for law effect; C against A and D against B for chain effect. Moving direct drive rules out a locked/missing click DOF. Factor causality does not automatically identify a lower-level solver mechanism. Only if evidence points to force-link transfer run the conditional cap versus click-child contrast.",
+  "stop": "No production changes before confirmed root cause. If numerical changes are needed, propose and stop; no parameter search."
+}
