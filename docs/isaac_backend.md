@@ -1,4 +1,4 @@
-# Isaac Lab 预览（0.4.1）
+# Isaac Lab 预览（v0.4.2 组件）
 
 本版随包交付 Isaac **预览**。外部前置为 Python 3.11、Isaac Lab 2.3.2、Isaac Sim 5.1
 及其兼容 torch；本项目不安装或升级这些平台依赖。默认 SDF 0.5 mm，CoACD 只作对照。
@@ -10,7 +10,7 @@
 ```sh
 /path/to/isaac-python -m venv --system-site-packages ./isaac_preview_env
 ./isaac_preview_env/bin/python -m pip install \
-  "./xbox_gamepad_physics-0.4.1-py3-none-any.whl[build,isaac]"
+  "./xbox_gamepad_physics-0.4.2-py3-none-any.whl[build,isaac]"
 ```
 
 `[isaac]` 为空；`[build]` 只提供公共构建依赖。不要用 pip 替换平台自带 torch/Isaac。
@@ -32,7 +32,6 @@ from isaaclab.app import AppLauncher
 
 app = AppLauncher(headless=True).app
 try:
-    from isaaclab.assets import Articulation
     from isaaclab.sim import SimulationCfg, SimulationContext
     from xbox_gamepad_physics import prepare_resources
     from xbox_gamepad_physics.backends.common.appearance import (
@@ -49,7 +48,7 @@ try:
     prepare_resources(
         backends=("robotwin",), targets=("common_physical", "sim_visual"),
         resources=resources,
-        archive=Path("./xbox_gamepad_physics-resources-0.4.1.zip"), offline=True,
+        archive=Path("./xbox_gamepad_physics-resources-0.4.2.zip"), offline=True,
     )
     common = resources / "common/xbox_one_s"
     motion = motion_from_dict(json.loads((common / "motion/full_controls.json").read_text()))
@@ -65,9 +64,10 @@ try:
         visual_directory=common / "visual", root_mode="fixed",
     )
     sim = SimulationContext(SimulationCfg(dt=0.004, device="cuda:0"))
-    native = Articulation(make_articulation_cfg(
+    cfg = make_articulation_cfg(
         artifact.usd_path, motion=motion, physical=physical,
-    ))
+    )
+    native = cfg.class_type(cfg)
     sim.reset()
     native.update(sim.get_physics_dt())
     pad = bind_articulation(native, motion=motion, physical=physical)
@@ -80,16 +80,28 @@ finally:
 不要把状态同步当接触按压；`isaac.step` 是原生 flush/step/update 的便利包装，没有步后关节修正。
 源码检出的 `examples/isaac/` 提供用户加载和具名驱动示例；诊断、探针和审查脚本在 `experiments/isaac/`，冻结用例及评分在 `tests/acceptance/`。这些 checkout 工具不随 wheel 分发，上述运行时 API 随包提供。
 
-## 已知问题与负责人决定
+## click 运行时预压及生命周期
 
-- 当前26项为22通过：Guide最低保持信号约0.931，低于0.95且相对基线退化；Pair、L3、R3也失败。
-  负责人2026-10-21决定 Guide 暂不诊断、L3/R3暂不调查，本版没有修复或调低阈值。
-- 原生半角按已批准0.998数值补偿为22.954°，公共定义与信号归一化仍为23°。
-  这不是实测尺寸或严格瞬态保证；曾有23.001294°瞬态样本，严格逐子步门槛未通过。
-- free / N=1024行排列的根位置差4.2915 µm超过原3 µm门槛；不能声称完整大批量隔离通过。
-- 最终补偿模型的完整扩展曲线没有重跑；历史性能曲线不能代替当前模型的资格验证。
-- RTX实时 `RaytracedLighting` 下ABXY偏模糊，路径追踪更清楚，高质量出图用后者。
-  PreviewSurface不是源glTF全部高光语义的无损实现。
-- 可加载、读回和软件接口不等于完整接触就绪；以上分数也不代表硬件标定。
+公共链为`controller_body → click（壳体系−Z）→ x → y → stick`。圆锥闭环接在随click平移的框架和杆端之间，只限制倾角，不锁住前置click平移。
 
-负责人决定、其他后端分母见 [plan.md](plan.md)；公共资源导入见 [importing.md](importing.md)。
+原生force drive的click目标为0，刚度/阻尼沿用公共输入；另由公共`k × neutral_target`得到−7.4 N原生关节力。因此静态恢复律为`−7.4−1000q N`，click行程0–.4 mm，ABXY行程1.22 mm。10.4 N是弹簧drive的原生力限，额外预压不属于同一drive限幅；不声称任意高速下与单一总力限完全等价。硬件未知干摩擦/armature仍为null。
+
+`make_articulation_cfg`返回带专用`class_type`的配置。直接创建用`cfg.class_type(cfg)`；`InteractiveScene`会自动使用此类型。资产的物理初始化回调在原生缓冲区/actuator可用后，一次设置Lab effort buffer并提交native effort。普通循环继续`write_data_to_sim()`；该函数每步覆盖原生effort，但使用持久buffer，所以预压不会丢失。调用方若为click覆盖新的effort target，须在新命令中保留−7.4 N偏置。
+
+**裸USD只包含零目标弹簧，不包含运行时预压。** 不要用`Articulation(cfg)`绕开`class_type`；旧代码绑定handle时会补齐，但新示例在资产初始化时就安装预压。绑定handle同时恢复全部被动位置目标。已实测Lab2.3.2普通asset reset保留buffer；完整stop/play重建自动重装来自初始化源码推导，尚未单独实测。
+
+`examples/isaac/load_and_read.py --build`从本版公共motion/physical/kinematics/visual资源重新生成USD，不需要历史`review_binding.json`或旧预制USD。AppLauncher必须先于pxr/native模块和USD authoring；示例记录实际package路径与版本供检查wheel是否被源码遮蔽。
+
+## 历史证据与未完成边界
+
+以下是2026-11-07原源码工作区及冻结公共输入的实测，**不是即将集成的v0.4.2 wheel实测**。版本化标量证据在[Isaac验收摘要](../tests/acceptance/isaac/data/source_native_20261107.json)。最终集成wheel须重新完成构建/加载/预压及所需验收边界，不能继承旧工作区“已通过”身份。
+
+- 原登记T1为6/6、T2为12/12；T3单点外力v2新模型10/10。旧小球版夹具无效，不作物理结论。
+- T4完整26项为23通过：历史22项全部保持，L3新增通过（保持最小值约.972153）；Guide=.931170、Pair=0、R3=.949565874仍失败。R3不足.95，未四舍五入或放宽阈值。
+- 单点v2旧模型没有出现预期低档误按；两侧正对照均失败。右侧正对照末半秒最小值约.332497，并非零；旧低档零信号不能证明其物理正确。
+- 数值沿用4 ms、TGS、原生articulation32/1读回、SDF .5 mm；.998余量对应22.954°，公共上限仍23°。没有采用其他后端的数值设置。
+- 旧补偿链曾有23.001294°瞬态；新click前置链没有任意负载下严格逐子步23°保证。以前的稳态加载结果不能自动算作新链的完整限位资格。
+- 旧free/N=1024行排列根位置差4.2915 µm超过原3 µm；新配置完整批量/扩展曲线未复验。单实例预压与fixed/free读回不能替代大批量资格。
+- RTX实时ABXY可能较模糊，路径追踪更清楚；PreviewSurface不完全等价于源glTF全部高光语义。
+
+可加载、信号读回、点力检测与接触就绪分开；本后端继续preview，不声称硬件标定或RL性能。验收入口和原协议见[Isaac检测说明](../tests/acceptance/isaac/README.md)；公共资源导入见[importing.md](importing.md)。

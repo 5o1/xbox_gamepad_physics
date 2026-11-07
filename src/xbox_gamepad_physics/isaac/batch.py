@@ -9,6 +9,7 @@ from ..backends.common.handle import ResetRequest, SignalHandleMixin, validate_e
 from ..backends.common.model import Pose
 from ..backends.common.signals_torch import NamedJointBatch, SignalBatch
 from .signals_torch import IsaacTorchSignalMapper
+from .preload import passive_target, click_efforts, initialize_click_preload
 from .constraints import require_supported_constraints, verify_native_cones
 
 
@@ -42,12 +43,13 @@ class IsaacBatchedGamepadHandle:
         self._check(env_origins, self.num_envs, 3)
         self.env_origins=env_origins.clone()
         self.mapper=IsaacTorchSignalMapper(motion,self.joint_names,device=self.device,dtype=self.dtype)
-        self._passive=torch.tensor([physical.return_laws[n].neutral_target.value for n in self.joint_names],device=self.device,dtype=self.dtype)
+        self._passive=torch.tensor([passive_target(n, physical.return_laws[n]) for n in self.joint_names],device=self.device,dtype=self.dtype)
         self._initial=torch.tensor([physical.return_laws[n].initial_position.value for n in self.joint_names],device=self.device,dtype=self.dtype)
         verify_native_cones(articulation,motion)
         from .shaft_limits import ShaftLimits
         self._shaft_limits=ShaftLimits(articulation,motion)
         self._shaft_limits.validate_initial_state()
+        self.restore_passive_targets()
 
     def _check(self,value,rows,width):
         if not isinstance(value,torch.Tensor) or value.device!=self.device or value.dtype!=self.dtype or tuple(value.shape)!=(rows,width):
@@ -142,7 +144,9 @@ class IsaacBatchedGamepadHandle:
 
     def restore_passive_targets(self,env_ids=None):
         ids=self._ids(env_ids)
-        if len(ids):self.articulation.set_joint_position_target(self._passive.expand(len(ids),-1),env_ids=ids)
+        if len(ids):
+            self.articulation.set_joint_position_target(self._passive.expand(len(ids),-1),env_ids=ids)
+            initialize_click_preload(self.articulation, click_efforts(self.physical), env_ids=ids)
 
     def reset(self,request=ResetRequest(),env_ids=None):
         ids=self._ids(env_ids);k=len(ids)

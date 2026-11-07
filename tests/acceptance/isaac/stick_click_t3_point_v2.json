@@ -1,0 +1,73 @@
+{
+  "protocol_id": "stick_click_t3_point_v2_20261107",
+  "registered_before_execution": true,
+  "approval": "Owner ruling 2, 2026-11-07; shared point-force T3 v2",
+  "baseline_commit": "73c867636804ef80217c54564bcee01c18c7c695",
+  "dt_s": 0.004,
+  "gravity_m_s2": [
+    0,
+    0,
+    -9.81
+  ],
+  "horizontal_force_n": 1.0,
+  "vertical_forces_n": [
+    1,
+    2,
+    4,
+    6,
+    8.14
+  ],
+  "positive_control_n": 8.14,
+  "reference_click_force_n": 7.4,
+  "low_force_limit_n": 6.66,
+  "sides": {
+    "left": {
+      "shell_horizontal_axis": [
+        1,
+        0,
+        0
+      ]
+    },
+    "right": {
+      "shell_horizontal_axis": [
+        -1,
+        0,
+        0
+      ]
+    }
+  },
+  "shell_vertical_axis": [
+    0,
+    0,
+    -1
+  ],
+  "point": {
+    "definition": "Neutral cap top center plus 0.5 cap radius along shell pushing direction, projected onto actual cap top; fixed in stick link coordinates.",
+    "radius_fraction": 0.5,
+    "geometry_method": "Highest cap collision component supplies neutral XY bounding-box center and mean X/Y half-span radius; at the prescribed XY, the topmost native cooked-SDF zero crossing defines top Z. Record all dimensions and stick-local point."
+  },
+  "timing_s": {
+    "settle": 1.0,
+    "load": 0.5,
+    "hold": 1.0,
+    "unload": 0.5,
+    "observe": 0.5
+  },
+  "criteria": {
+    "minimum_hold_tilt_deg": 1.0,
+    "low_hold_signal_max": 0.05,
+    "positive_tail_s": 0.5,
+    "positive_tail_signal_min": 0.95,
+    "unloaded_signal_max": 0.05,
+    "hold_tilt_scoring": "Minimum tilt over all complete hold ticks must be >=1 degree; otherwise fixture invalid, not a physical conclusion.",
+    "low_scoring": "For Fv<6.66N, maximum unchanged signal and raw travel ratio over hold must be <=0.05.",
+    "positive_scoring": "For Fv=8.14N, minimum unchanged signal and raw ratio over last 0.5s hold must be >=0.95.",
+    "unloaded_scoring": "Maximum signal and raw ratio during the 0.5s observation after unloading must be <=0.05; final endpoint also reported."
+  },
+  "application": "Native articulation apply_forces_and_torques_at_position in world coordinates after Lab write_data_to_sim; point follows stick body link pose, force directions follow fixed shell frame. No sphere, no contact servo, no joint position/target writes during trajectory.",
+  "solver_policy": "Unchanged inherited Isaac preview: TGS, 4ms, articulation 32/1, default scene iteration bounds, external_forces_every_iteration=false; read back actual values.",
+  "comparison": "Run identical old/new conditions; baseline signal failures are descriptive. No threshold changes or tuning to observed physics scores.",
+  "stop_policy": "Stop on execution error, invalid fixture, or a new-model physical gate failure; old-model signal failures are descriptive. Frozen T4 retains first historical-passing regression stop rule. At most three repair attempts from ruling 2.",
+  "visualization": "Five force-level PNGs, old/new x left/right native geometry, fixed application point marker, horizontal/vertical arrows and shaft direction or point trajectory; no sphere. Copy to Pictures/v042_review/isaac/t3v2.",
+  "travel_m": 0.0004
+}

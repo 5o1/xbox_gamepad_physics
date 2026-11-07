@@ -16,15 +16,17 @@ Keep filled settings in `configs/local/teleop_site.env` or another untracked
 file. Use the base Isaac environment's library directory even when the selected
 interpreter is a venv.
 
-Provide the prepared resource tree containing `common/`, `usd/` and
-`review_binding.json`, as described in [backend usage](../../docs/isaac_backend.md).
-Keep relative USD/texture paths intact.
+Prepare the common `motion`, `physical`, `visual`, `collision` and `kinematics`
+resources from the matching Release input zip, as described in
+[backend usage](../../docs/isaac_backend.md). Use `--build` to author matching USD
+inside the caller-owned AppLauncher process; no archived `review_binding.json`
+is needed. Keep generated USD/texture relative paths intact.
 
 ```sh
 python examples/isaac/launch.py --site-config "$TELEOP_SITE_CONFIG" -- \
-  --headless --device cuda:0 --root-mode fixed --drive-demo
+  --headless --device cuda:0 --root-mode fixed --build --drive-demo
 python examples/isaac/launch.py --site-config "$TELEOP_SITE_CONFIG" -- \
-  --headless --device cuda:0 --root-mode free --num-envs 64 --drive-demo
+  --headless --device cuda:0 --root-mode free --num-envs 64 --build --drive-demo
 ```
 
 The launcher applies the selected interpreter, library path and GPU only to its
@@ -45,8 +47,9 @@ The example writes `preview_result.json` with installed versions, joint names,
 initial/final signals and optional drive/batch observations. It records completed
 execution without declaring physical qualification.
 
-For a caller-owned scene, construct `make_articulation_cfg(...)`, initialize the
-native articulation through the caller's reset, then call `bind_articulation` or
+For a caller-owned scene, use `cfg = make_articulation_cfg(...)` followed by
+`native = cfg.class_type(cfg)`, or let `InteractiveScene` construct the configured
+class. After the caller's reset, call `bind_articulation` or
 `bind_batched_articulation(..., env_origins=scene.env_origins)`. Read
 `gamepad_state()` and set `set_gamepad_targets(state)` by channel name. The caller
 owns reset, stepping, other actors and application lifetime.
@@ -55,3 +58,14 @@ Root mode is selected at USD creation. There is no runtime root switch.
 `isaac.step(sim, gamepads=(handle,))` wraps native flush/step/update and does not
 project state after solving. The preview retains the documented contact and
 strict transient-limit limitations; use path tracing for clear ABXY images.
+
+The configured asset installs the constant click preload during native physics
+initialization. USD alone contains only a zero-target spring. Keep the normal
+`write_data_to_sim()` loop; the persistent Lab effort buffer preserves the bias.
+A caller that replaces click effort targets must include the -7.4 N bias in its
+new commands. Plain `Articulation(cfg)` skips this automatic initialization; use
+`cfg.class_type(cfg)` even when a handle will later be bound.
+
+`preview_result.json` includes the imported package path and installed version.
+Historical source validation is not an integrated-wheel test; inspect this
+provenance when checking a new Release wheel.

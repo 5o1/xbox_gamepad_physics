@@ -22,7 +22,7 @@ def main():
     args = parser.parse_args()
     app = AppLauncher(args).app
     try:
-        from isaaclab.assets import Articulation
+        import xbox_gamepad_physics
         from isaaclab.scene import InteractiveScene, InteractiveSceneCfg
         from isaaclab.sim import SimulationCfg, SimulationContext
         from isaaclab.utils import configclass
@@ -40,22 +40,24 @@ def main():
         physical = load_physical(resource_directory=common / 'physical')
         usd = args.resources / 'usd' / (args.root_mode + '.usda')
         if args.build:
-            from xbox_gamepad_physics.backends.common.appearance import load_appearance
+            from xbox_gamepad_physics.backends.common.appearance import bind_appearance_to_motion, load_appearance
             from xbox_gamepad_physics.backends.common.collision import load_collision_sources
-            appearance = load_appearance(directory=common / 'visual', binding=json.loads(
-                (args.resources / 'review_binding.json').read_text()))
+            appearance = bind_appearance_to_motion(
+                load_appearance(directory=common / 'visual'),
+                json.loads((args.resources / 'kinematics/xbox_one_s.json').read_text()), motion)
             usd = build_usd(args.output / (args.root_mode + '.usda'), motion=motion,
                             physical=physical, appearance=appearance,
                             collision_sources=load_collision_sources(directory=common / 'collision'),
                             visual_directory=common / 'visual', root_mode=args.root_mode).usd_path
         if not usd.is_file():
-            raise FileNotFoundError('Extract the prepared resources first, or use --build')
+            raise FileNotFoundError('Prepare the common resources, then use --build to author the matching USD')
 
         dt = .004  # Existing demonstration timestep; not a calibrated physical parameter.
         sim = SimulationContext(SimulationCfg(dt=dt, device=args.device, gravity=(0., 0., 0.),
                                              log_dir=str(args.output / 'lab_logs')))
         if args.num_envs == 1:
-            native = Articulation(make_articulation_cfg(usd, motion=motion, physical=physical))
+            cfg = make_articulation_cfg(usd, motion=motion, physical=physical)
+            native = cfg.class_type(cfg)
             sim.reset()
             native.update(dt)
             handle = bind_articulation(native, motion=motion, physical=physical)
@@ -75,9 +77,15 @@ def main():
             first = handle.select(0)
         if bool(native.is_fixed_base) != (args.root_mode == 'fixed'):
             raise ValueError('Loaded root mode differs from requested birth mode')
+        try:
+            package_version = importlib.metadata.version('xbox-gamepad-physics')
+        except importlib.metadata.PackageNotFoundError:
+            package_version = None  # Source checkouts need not have distribution metadata.
         result = {
             'scope': 'load, named drive and canonical signal readout; contact qualification is separate',
             'root_mode': args.root_mode, 'num_envs': args.num_envs,
+            'package_file': str(Path(xbox_gamepad_physics.__file__).resolve()),
+            'package_version': package_version,
             'versions': {n: importlib.metadata.version(n) for n in ['isaaclab', 'isaacsim', 'torch']},
             'joint_names': list(first.joint_names),
             'tensor_layout_id': TENSOR_LAYOUT_ID, 'channel_names': list(CHANNEL_NAMES),

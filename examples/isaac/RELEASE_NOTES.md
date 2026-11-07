@@ -1,28 +1,31 @@
-# Isaac preview — 0.4.1
+# Isaac preview component for v0.4.2
 
-The prepared 0.4.1 package includes the Isaac adapter as a preview. User examples
-load prepared resources, drive named controls and read signals; contact acceptance
-and diagnostics are separate checkout tools.
+This component consumes the click-first common chain, authors a zero-target
+click spring, and initializes the constant native generalized preload through
+the configured Isaac Lab asset class. USD alone does not carry that runtime
+preload. Direct callers use `cfg.class_type(cfg)`; `InteractiveScene` uses the
+configured class automatically. The application must exist before USD authoring.
 
-Included capabilities:
+The regular native spherical cone follows the click frame, preserving axial
+travel while limiting shaft tilt. The approved 0.998 inward margin remains:
+22.954-degree authored half-angles against the unchanged 23-degree common bound.
+The component retains 4 ms/TGS and the historical 32/1 articulation readback;
+it does not adopt another backend's solver policy.
 
-- Direct pxr USD generation with explicit mass, principal inertia, joint limits,
-  passive laws, native material bindings and individual frozen collision shapes.
-- Fixed or free root selected at asset creation; caller-owned application,
-  scene and stepping lifecycle.
-- Scalar and CUDA batched handles, canonical32 values and masks, physical events,
-  ordered subsets, partial reset and copy/borrow reads.
-- Two regular native spherical cone constraints alongside the existing stick
-  hinges; no post-step joint correction or custom mass-matrix solve.
-- SDF 0.5 mm default under the owner's ruling; frozen CoACD comparison option.
-- Named-drive and canonical signal-readout examples, using a caller-owned
-  application and the existing private site configuration.
+Historical native source validation on 2026-11-07 recorded T1 6/6, T2 12/12,
+new-model point-force T3 v2 10/10, and frozen SDF T4 23/26. The prior 22 passing
+cases stayed passing and L3 improved; Guide, Pair and R3 remained failed. These
+are source-worktree results, **not a test of the final integrated v0.4.2 wheel**.
+The old model's point-force positive controls failed, so its zero low-load
+signals are not evidence of correct physics. Sphere-based T3 fixtures were
+invalidated and remain historical records.
 
-Release preparation also makes USD texture references relative and removes
-machine-specific runtime paths from the adapter and diagnostic tools. The
-launcher reuses the project's private site settings parser. Common-layer integration is part of the package. Acceptance execution, native
-readback audits and diagnostic renders remain outside the wheel.
+The loading example builds from standard common resources and no longer needs
+an archived `review_binding.json`. It records import provenance to help detect
+an unintended source checkout during installed-wheel validation. Acceptance
+execution and scores remain separate from user loading examples and the wheel.
 
-The latest frozen suite is **22/26**, including all eight stick directions.
-Guide, Pair, L3 and R3 remain failed. L3/R3 diagnosis is recorded and parked.
-See [KNOWN_ISSUES.md](KNOWN_ISSUES.md) before using this preview for physics work.
+See [known issues](KNOWN_ISSUES.md) and
+[versioned source evidence](../../tests/acceptance/isaac/data/source_native_20261107.json).
+The backend remains a preview; strict transient limits, full batch/scaling
+qualification, contact readiness, hardware calibration and RL are not established.

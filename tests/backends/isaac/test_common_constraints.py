@@ -23,7 +23,7 @@ def required_motion(tmp_path):
         raw['joint_space_constraints'].append({
             'id': side+'_stick_circular_limit', 'type': 'shaft_tilt_limit',
             'enforcement': 'hard', 'reference_link': 'controller_body',
-            'moving_link': side+'_stick_y_frame',
+            'moving_link': next(j['child'] for j in raw['joints'] if j['name'] == side+'_stick_y'),
             'reference_axis': [0., 0., 1.], 'moving_axis': [0., 0., 1.],
             'max_angle_rad': math.radians(23.)})
     return motion_from_dict(raw)
@@ -58,7 +58,7 @@ def test_actual_cone_and_gradient(required_motion):
         plus[:, column] += 1e-6; minus[:, column] -= 1e-6
         derivative = (limit.geometry(plus)[0]-limit.geometry(minus)[0])/2e-6
         torch.testing.assert_close(derivative, gradient[:, :, column], atol=1e-10, rtol=1e-9)
-    # Click is downstream from the shaft frame and must not change its cone.
+    # Shell-fixed click translates the pivot and must not change its cone.
     q[:, names.index('left_stick_click')] = -.001
     torch.testing.assert_close(limit.geometry(q)[0], angle)
 
@@ -186,3 +186,14 @@ def test_shared_value_and_legacy_contract(required_motion):
     legacy = replace(required_motion, joint_space_constraints=tuple(
         c for c in required_motion.joint_space_constraints if c.get('enforcement') != 'hard'))
     assert require_supported_constraints(legacy) == ()
+
+
+def test_new_chain_keeps_click_translation_free(required_motion):
+    from xbox_gamepad_physics.isaac.constraints import joint_chain
+    for limit in require_supported_constraints(required_motion):
+        chain = joint_chain(required_motion, limit)
+        assert [j.name.rsplit('_', 1)[-1] for j in chain] == ['x', 'y']
+        click = next(j for j in required_motion.joints if j.child == chain[0].parent)
+        assert click.kind == 'prismatic' and click.parent == 'controller_body'
+        assert click.axis == (0., 0., -1.)
+        assert chain[0].origin == (0., 0., 0.)
