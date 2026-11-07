@@ -8,7 +8,8 @@ def readback_usd(artifact, *, motion, physical, appearance, collision_sources):
     import numpy as np
     from xbox_gamepad_physics.backends.common.collision import bind_collision_to_links
     from xbox_gamepad_physics.backends.common.transforms import neutral_link_poses, rotate, multiply
-    from xbox_gamepad_physics.isaac.constraints import NATIVE_CONE_ANGLE_SCALE, require_supported_constraints
+    from xbox_gamepad_physics.isaac.constraints import NATIVE_CONE_ANGLE_SCALE, require_supported_constraints, joint_chain
+    from xbox_gamepad_physics.isaac.preload import passive_target
     from pxr import Tf
     stage = Usd.Stage.Open(str(artifact.usd_path))
     comparisons = []
@@ -26,6 +27,8 @@ def readback_usd(artifact, *, motion, physical, appearance, collision_sources):
         cone = UsdPhysics.SphericalJoint(stage.GetPrimAtPath(
             '/Gamepad/ShaftLimits/'+Tf.MakeValidIdentifier(limit.name)))
         assert cone and cone.GetExcludeFromArticulationAttr().Get()
+        assert list(map(str, cone.GetBody0Rel().GetTargets())) == [artifact.link_paths[joint_chain(motion, limit)[0].parent]]
+        compare(limit.name+'.pivot', cone.GetLocalPos0Attr().Get(), joint_chain(motion, limit)[0].origin)
         for axis, attribute in enumerate((cone.GetConeAngle0LimitAttr(), cone.GetConeAngle1LimitAttr())):
             compare(limit.name+'.native_half_angle_'+str(axis), attribute.Get(),
                     math.degrees(limit.maximum_rad)*NATIVE_CONE_ANGLE_SCALE)
@@ -65,14 +68,15 @@ def readback_usd(artifact, *, motion, physical, appearance, collision_sources):
             ('drive_damping',drive.GetDampingAttr().Get()*scale,law.drive_damping.value),
             ('passive_damping',p.GetAttribute('physxJointAxis:'+('angular' if angular else 'linear')+':viscousFrictionCoefficient').Get()*scale,law.passive_damping.value),
             ('effort',drive.GetMaxForceAttr().Get(),law.effort_limit.value),
-            ('target',drive.GetTargetPositionAttr().Get()/scale,law.neutral_target.value),
+            ('target',drive.GetTargetPositionAttr().Get()/scale,passive_target(j.name,law)),
             ('target_velocity',drive.GetTargetVelocityAttr().Get(),0.),
             ('velocity_limit',PhysxSchema.PhysxJointAPI(p).GetMaxJointVelocityAttr().Get()/scale,law.velocity_limit.value)):
             compare(j.name+'.'+field,actual,expected)
     colliders=[p for p in stage.Traverse() if p.HasAPI(UsdPhysics.CollisionAPI)]
-    expected=sum(len(i.source.convex_hulls) for i in bind_collision_to_links(collision_sources,motion))
-    assert artifact.collision_mode=='coacd' and len(colliders)==expected
-    assert all(UsdPhysics.MeshCollisionAPI(p).GetApproximationAttr().Get()=='convexHull' for p in colliders)
+    bindings=bind_collision_to_links(collision_sources,motion)
+    expected=sum(len(i.source.convex_hulls if artifact.collision_mode=='coacd' else i.source.triangle_shells) for i in bindings)
+    assert len(colliders)==expected
+    assert all(UsdPhysics.MeshCollisionAPI(p).GetApproximationAttr().Get()==('convexHull' if artifact.collision_mode=='coacd' else 'sdf') for p in colliders)
     for c in physical.contact_materials:
         api=UsdPhysics.MaterialAPI(stage.GetPrimAtPath('/Gamepad/Looks/Contact_'+c.material_id))
         compare('contact.static',api.GetStaticFrictionAttr().Get(),c.static_friction.value)

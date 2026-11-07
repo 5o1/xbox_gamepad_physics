@@ -6,6 +6,7 @@ from pathlib import Path
 
 from ..backends.common.handle import ResetRequest, SignalHandleMixin
 from ..backends.common.model import Pose, finite_value
+from .preload import passive_target, click_efforts, initialize_click_preload
 from .constraints import require_supported_constraints, validate_initial_positions, verify_native_cones
 
 
@@ -19,7 +20,7 @@ def make_articulation_cfg(usd_path, *, motion, physical, prim_path='/World/Gamep
     """
     require_supported_constraints(motion)
     validate_initial_positions(motion, physical)
-    from isaaclab.assets import ArticulationCfg
+    from .native_asset import IsaacGamepadArticulationCfg as ArticulationCfg
     from isaaclab.actuators import ImplicitActuatorCfg
     from isaaclab.sim import UsdFileCfg
     if set(physical.return_laws) != set(motion.joint_by_name):
@@ -33,7 +34,7 @@ def make_articulation_cfg(usd_path, *, motion, physical, prim_path='/World/Gamep
             result[name] = float(value)
         return result
     return ArticulationCfg(
-        prim_path=prim_path,
+        prim_path=prim_path, click_preload_efforts=click_efforts(physical),
         spawn=UsdFileCfg(usd_path=str(Path(usd_path).resolve()),activate_contact_sensors=activate_contact_sensors),
         init_state=ArticulationCfg.InitialStateCfg(pos=root_pose.position_m,
             rot=root_pose.orientation_wxyz, joint_pos=values('initial_position'), joint_vel={'.*': 0.}),
@@ -118,7 +119,8 @@ class IsaacGamepadHandle(SignalHandleMixin):
 
     def restore_passive_targets(self):
         for name, law in self.physical.return_laws.items():
-            self.set_joint_target(name, law.neutral_target.value)
+            self.set_joint_target(name, passive_target(name, law))
+        initialize_click_preload(self.articulation, click_efforts(self.physical))
 
     def root_pose(self):
         data = self.articulation.data.root_state_w[0, :7].detach().cpu().tolist()

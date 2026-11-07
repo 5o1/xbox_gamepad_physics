@@ -1,39 +1,34 @@
 # Experimental preview: known issues
 
-The current asset is suitable for native loading, visual inspection, drive and
-signal integration experiments. It has not passed complete contact acceptance
-and is distributed as a preview. Failed scores retain the frozen thresholds.
+Native loading, drive and signal integration are separate from contact readiness.
+The following native scores describe the 2026-11-07 source worktree with frozen
+common inputs. The final integrated v0.4.2 wheel still needs its own validation.
 
-| Area | Observed result | Delivery status |
+| Area | Historical observation | Boundary |
 | --- | --- | --- |
-| Frozen 26-case SDF 0.5 mm suite | 22 pass; Guide, Pair, L3 and R3 fail; all eight stick directions pass | Publish the complete comparison and recorded videos |
-| Guide | Regression against the passing SAPIEN baseline | Open; no fitted geometry or physical parameters adopted |
-| Pair | Fails in both the current Isaac run and the SAPIEN baseline | Open; outside the canonical32 game tensor, exposed as a physical event |
-| L3 / R3 | Persistent click-travel oscillation during contact; minimum hold signals 0.719 / 0.659 | Investigation parked by owner; no fix claimed |
-| Native circular limit | Authored half-angle 22.954 degrees, from approved 0.998 compensation of the shared 23-degree limit | Tested steady loading stays below 23 degrees; strict transient guarantee is not established |
-| Strict transient limit | A compensated free/N=64 sample reached 23.001294 degrees | Original strict per-substep gate remains failed |
-| Free/N=1024 row permutation | Root difference 4.2915 micrometres exceeds the frozen 3-micrometre gate | Open; do not claim full large-batch isolation acceptance |
-| Full scaling qualification | Historical curves exist; the final compensated asset has no new complete contact/scaling qualification | Not completed; historical curves are labeled as such |
-| CoACD comparison | Four large convex hulls were changed by the SDK to 32–38 vertices | Comparison representation; not evidence of unchanged cooked hulls |
-| Appearance | PreviewSurface, linear coverage 64/255; shadow exception limited to four ABXY BLEND domes | Not a complete glTF KHR dielectric-specular implementation |
-| Generic build CLI / registry | The unified USD DAG is not wired; the builder requires a caller-owned AppLauncher process | Use the dedicated load/build example or the public native builder |
-| Training and hardware calibration | Not run / not established | No RL performance or hardware-identified physics claim |
+| Frozen SDF 0.5 mm T4 | 23/26; all prior 22 passes retained, L3 newly passed | Guide, Pair and R3 still fail; thresholds unchanged |
+| Guide | Minimum hold signal 0.931170017, below 0.95 | Contact readiness remains open |
+| Pair | Physical event remains zero | Separate from the canonical32 game tensor; not fixed |
+| L3 / R3 | L3 minimum 0.972152629; R3 minimum 0.949565874 | R3 fails even though its peak reaches one; no rounding into a pass |
+| Point-force T3 v2 | New model 10/10, including 8.14 N positive controls and unloading | No sphere/contact servo; not a contact-physics qualification |
+| Old-model point controls | Low loads are zero; both positive controls fail | The right positive-control tail is about 0.332497, not zero; no expected low-load misfire was reproduced |
+| Sphere T3 v1 | Fixture invalidated by the owner | Retain records; do not use for physical conclusions |
+| Native cone | Authored half-angle 22.954 degrees from approved 0.998 margin | Shared 23-degree bound unchanged; new chain has no arbitrary-load strict transient guarantee |
+| Earlier transient limit | Earlier compensated topology had a free/N=64 sample at 23.001294 degrees | Historical failure is not erased or relabeled as current-wheel validation |
+| Earlier free/N=1024 permutation | Root difference 4.2915 micrometres exceeded the 3-micrometre gate | No fresh full batch/scaling qualification for this component |
+| Runtime preload | Naked USD lacks the -7.4 N generalized effort | Construct `cfg.class_type(cfg)`; keep Lab's persistent effort buffer in normal writes |
+| Caller effort override | Replacing click effort targets removes the initialized bias | Compose new click commands with -7.4 N; other joints are unaffected |
+| CoACD comparison | Earlier SDK cooking changed four large hulls to 32–38 vertices | Not evidence that cooked hulls equal the source geometry |
+| Appearance | PreviewSurface and linear ABXY coverage; real-time RTX can blur ABXY | Not complete glTF dielectric-specular equivalence; path tracing is clearer |
+| Generic build CLI | Native USD authoring requires caller-owned AppLauncher | Use the dedicated example/direct builder; no automatic platform startup |
+| Training and hardware calibration | Not established | No RL or hardware-identified physics claim |
 
-## L3 / R3 investigation record
+The historical native initialization check confirmed fixed/free scalar preload
+buffers before binding, ordinary flushes, and asset reset under Lab 2.3.2. Full
+stop/play reinitialization behavior follows the lifecycle implementation but was
+not separately exercised. Historical batch results do not prove that a final
+integrated wheel has passed the same boundaries.
 
-The latest frozen run maintains probe contact throughout each 125-sample hold
-window, without shell contact or saturation at the 16 N force cap. The scalar
-signals agree with actual click displacement. This confirms a physical-response
-problem rather than a canonical32 mapping error.
-
-Nine completed diagnostic application windows tested the original SDF, unilateral
-CoACD, prescribed axial force, temporary tilt restraint and direct axial loads.
-None establishes a production fix. Diagnostic changes were not adopted. The
-unmodified side in unilateral controls reproduced its original trace exactly.
-The SAPIEN baseline also fails L3/R3, but its force-capped, nearly stationary
-response differs from the Isaac oscillation; a common cause is not established.
-
-The interaction between external loading and native implicit drives remains a
-candidate explanation. A global solver-policy control was proposed but has not
-been run or adopted. Further diagnosis is parked; do not silently enable that
-policy, tune physical parameters or relax the frozen scoring thresholds.
+Versioned scalar evidence and protocol digests are in
+[the Isaac source summary](../../tests/acceptance/isaac/data/source_native_20261107.json).
+Full private experiment archives are not required to load this preview.

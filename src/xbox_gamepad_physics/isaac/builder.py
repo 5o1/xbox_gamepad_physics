@@ -13,6 +13,7 @@ from pathlib import Path
 
 from ..backends.common.collision import bind_collision_to_links, iter_frozen_hulls
 from ..backends.common.transforms import neutral_link_poses, point
+from .preload import passive_target, click_efforts
 from .constraints import NATIVE_CONE_ANGLE_SCALE, joint_chain, require_supported_constraints, validate_initial_positions
 
 
@@ -177,7 +178,7 @@ def build_usd(output_path, *, motion, physical, appearance, collision_sources,
         drive.CreateStiffnessAttr(law.stiffness.value/scale)
         drive.CreateDampingAttr(law.drive_damping.value/scale)
         drive.CreateMaxForceAttr(law.effort_limit.value)
-        drive.CreateTargetPositionAttr(law.neutral_target.value*scale)
+        drive.CreateTargetPositionAttr(passive_target(j.name, law)*scale)
         drive.CreateTargetVelocityAttr(0.)
         PhysxSchema.PhysxJointAPI.Apply(usd.GetPrim()).CreateMaxJointVelocityAttr(law.velocity_limit.value*scale)
         # Sim 5.1 ships this codeless schema in PhysxSchemaAddition. The native
@@ -192,7 +193,7 @@ def build_usd(output_path, *, motion, physical, appearance, collision_sources,
     for limit in shaft_limits:
         path = root+'/ShaftLimits/'+Tf.MakeValidIdentifier(limit.name)
         native = UsdPhysics.SphericalJoint.Define(stage, path)
-        native.CreateBody0Rel().SetTargets([link_paths[limit.reference_link]])
+        native.CreateBody0Rel().SetTargets([link_paths[joint_chain(motion, limit)[0].parent]])
         native.CreateBody1Rel().SetTargets([link_paths[limit.moving_link]])
         native.CreateLocalPos0Attr(Gf.Vec3f(*joint_chain(motion, limit)[0].origin))
         native.CreateLocalPos1Attr(Gf.Vec3f(0))
@@ -359,6 +360,9 @@ def build_usd(output_path, *, motion, physical, appearance, collision_sources,
     stage.GetRootLayer().Save()
     artifact = UsdArtifact(output, root, link_paths, joint_paths, root_mode, collision_mode)
     sidecar = {**asdict(artifact), 'usd_path': output.name, 'physical': asdict(physical),
+               'click_drive_target_m': 0.,
+               'runtime_click_preload_n': click_efforts(physical),
+               'click_preload_binding': 'Runtime generalized effort; cfg.class_type initializes Lab persistent effort buffers and native forces. USD alone does not contain this preload.',
                'shaft_cone_paths': constraint_paths,
                'shaft_cone_angle_scale': NATIVE_CONE_ANGLE_SCALE,
                'shaft_cone_angles_deg': {limit.name: {

@@ -1,0 +1,880 @@
+{
+  "schema_version": 1,
+  "scope": "Historical native source-worktree validation, 2026-11-07; not an integrated v0.4.2 wheel test.",
+  "base_commit": "73c867636804ef80217c54564bcee01c18c7c695",
+  "source_state": "Uncommitted Isaac component plus frozen common motion/physical inputs; see source archive digest.",
+  "integrated_wheel_validation": "not_run",
+  "environment": {
+    "python": "3.11",
+    "isaac_lab": "2.3.2",
+    "isaac_sim": "5.1.0.0",
+    "torch": "2.7.0+cu128",
+    "physx_sdk": "5.6.1 (same binary digest as earlier SDK identification)"
+  },
+  "numerics": {
+    "dt_s": 0.004,
+    "solver": "TGS",
+    "articulation_position_iterations": 32,
+    "articulation_velocity_iterations": 1,
+    "native_cone_angle_scale": 0.998,
+    "common_cone_max_deg": 23,
+    "authored_cone_half_angle_deg": 22.954,
+    "external_forces_every_iteration": false
+  },
+  "source_archive_sha256": {
+    "axial": "1909b81b9f350614ac0d38b0eaed9f57c512c9955ae70ee8fd984fdd936b83b3",
+    "point_and_T4": "3e598b8714d244b7ca81a18096a049a34852ead9e3f20593ff83cab8bb226570"
+  },
+  "protocol_sha256": {
+    "T1_T2": "57e6152d0873729de785941ddb062050744c7a8ce4247975d6f202233d3aa2db",
+    "T3_point_v2": "56309fabc7f077f0155eb0a2acfe8e7b000b4bceccd40ea0d6ffc4964a47d576"
+  },
+  "T1": {
+    "passed": 6,
+    "total": 6,
+    "cases": [
+      {
+        "side": "left",
+        "angle_deg": 0.0,
+        "trigger_force_n": 7.6,
+        "predicted_force_n": 7.4,
+        "transition_window_n": 0.4480000000000004,
+        "max_angle_error_deg": 0.0,
+        "passed": true
+      },
+      {
+        "side": "left",
+        "angle_deg": 12.0,
+        "trigger_force_n": 7.776,
+        "predicted_force_n": 7.565321129182909,
+        "transition_window_n": 0.4800000000000004,
+        "max_angle_error_deg": 2.5909750009489585e-05,
+        "passed": true
+      },
+      {
+        "side": "left",
+        "angle_deg": 20.0,
+        "trigger_force_n": 8.096,
+        "predicted_force_n": 7.874917550573654,
+        "transition_window_n": 0.5280000000000005,
+        "max_angle_error_deg": 7.061959020404629e-05,
+        "passed": true
+      },
+      {
+        "side": "right",
+        "angle_deg": 0.0,
+        "trigger_force_n": 7.6160000000000005,
+        "predicted_force_n": 7.4,
+        "transition_window_n": 0.5440000000000005,
+        "max_angle_error_deg": 0.0,
+        "passed": true
+      },
+      {
+        "side": "right",
+        "angle_deg": 12.0,
+        "trigger_force_n": 7.792,
+        "predicted_force_n": 7.565321129182909,
+        "transition_window_n": 0.5760000000000005,
+        "max_angle_error_deg": 2.5909750009489585e-05,
+        "passed": true
+      },
+      {
+        "side": "right",
+        "angle_deg": 20.0,
+        "trigger_force_n": 8.112,
+        "predicted_force_n": 7.874917550573654,
+        "transition_window_n": 0.6240000000000006,
+        "max_angle_error_deg": 7.061959020404629e-05,
+        "passed": true
+      }
+    ]
+  },
+  "T2": {
+    "passed": 12,
+    "total": 12,
+    "cases": [
+      {
+        "side": "left",
+        "multiplier": 0.5,
+        "stable_min": 0.0,
+        "stable_max": 1.556425995030697e-07,
+        "stable_middle_time_fraction": 0.0,
+        "passed": true
+      },
+      {
+        "side": "left",
+        "multiplier": 0.8,
+        "stable_min": 0.0,
+        "stable_max": 0.0,
+        "stable_middle_time_fraction": 0.0,
+        "passed": true
+      },
+      {
+        "side": "left",
+        "multiplier": 0.95,
+        "stable_min": 0.0,
+        "stable_max": 0.0,
+        "stable_middle_time_fraction": 0.0,
+        "passed": true
+      },
+      {
+        "side": "left",
+        "multiplier": 1.1,
+        "stable_min": 0.998276227619499,
+        "stable_max": 0.9982763003790751,
+        "stable_middle_time_fraction": 0.0,
+        "passed": true
+      },
+      {
+        "side": "left",
+        "multiplier": 1.3,
+        "stable_min": 0.998445539153181,
+        "stable_max": 0.998445539153181,
+        "stable_middle_time_fraction": 0.0,
+        "passed": true
+      },
+      {
+        "side": "left",
+        "multiplier": 1.6,
+        "stable_min": 0.9985587530536577,
+        "stable_max": 0.9985588258132339,
+        "stable_middle_time_fraction": 0.0,
+        "passed": true
+      },
+      {
+        "side": "right",
+        "multiplier": 0.5,
+        "stable_min": 0.0,
+        "stable_max": 2.5920049440131265e-06,
+        "stable_middle_time_fraction": 0.0,
+        "passed": true
+      },
+      {
+        "side": "right",
+        "multiplier": 0.8,
+        "stable_min": 0.0,
+        "stable_max": 0.0,
+        "stable_middle_time_fraction": 0.0,
+        "passed": true
+      },
+      {
+        "side": "right",
+        "multiplier": 0.95,
+        "stable_min": 0.0,
+        "stable_max": 6.087492315787202e-07,
+        "stable_middle_time_fraction": 0.0,
+        "passed": true
+      },
+      {
+        "side": "right",
+        "multiplier": 1.1,
+        "stable_min": 0.9981134644476697,
+        "stable_max": 0.9981134644476697,
+        "stable_middle_time_fraction": 0.0,
+        "passed": true
+      },
+      {
+        "side": "right",
+        "multiplier": 1.3,
+        "stable_min": 0.9983027848647907,
+        "stable_max": 0.9983027848647907,
+        "stable_middle_time_fraction": 0.0,
+        "passed": true
+      },
+      {
+        "side": "right",
+        "multiplier": 1.6,
+        "stable_min": 0.9984205098589882,
+        "stable_max": 0.9984207281377167,
+        "stable_middle_time_fraction": 0.0,
+        "passed": true
+      }
+    ]
+  },
+  "T3_point_v2": {
+    "new_passed": 10,
+    "new_total": 10,
+    "old_baseline_limitations": "All low-force holds have zero click signal; positive control fails on both sides. The old right positive-control tail is about 0.332497, not zero. Do not infer old-model correctness from low-force zeros.",
+    "cases": [
+      {
+        "model": "old",
+        "side": "left",
+        "vertical_force_n": 1.0,
+        "point_local_m": [
+          0.004794908920302987,
+          -5.122274160385132e-09,
+          0.017070993364770894
+        ],
+        "cap_radius_m": 0.009589883964508772,
+        "hold_tilt_min_deg": 3.3547382832039605,
+        "hold_signal_max": 0.0,
+        "positive_tail_signal_min": 0.0,
+        "unloaded_signal_max": 0.0,
+        "fixture_valid": true,
+        "passed": true
+      },
+      {
+        "model": "old",
+        "side": "left",
+        "vertical_force_n": 2.0,
+        "point_local_m": [
+          0.004794908920302987,
+          -5.122274160385132e-09,
+          0.017070993364770894
+        ],
+        "cap_radius_m": 0.009589883964508772,
+        "hold_tilt_min_deg": 3.3535708813536513,
+        "hold_signal_max": 0.0,
+        "positive_tail_signal_min": 0.0,
+        "unloaded_signal_max": 0.0,
+        "fixture_valid": true,
+        "passed": true
+      },
+      {
+        "model": "old",
+        "side": "left",
+        "vertical_force_n": 4.0,
+        "point_local_m": [
+          0.004794908920302987,
+          -5.122274160385132e-09,
+          0.017070993364770894
+        ],
+        "cap_radius_m": 0.009589883964508772,
+        "hold_tilt_min_deg": 4.626010632453734,
+        "hold_signal_max": 0.0,
+        "positive_tail_signal_min": 0.0,
+        "unloaded_signal_max": 0.0,
+        "fixture_valid": true,
+        "passed": true
+      },
+      {
+        "model": "old",
+        "side": "left",
+        "vertical_force_n": 6.0,
+        "point_local_m": [
+          0.004794908920302987,
+          -5.122274160385132e-09,
+          0.017070993364770894
+        ],
+        "cap_radius_m": 0.009589883964508772,
+        "hold_tilt_min_deg": 4.628846805157491,
+        "hold_signal_max": 0.0,
+        "positive_tail_signal_min": 0.0,
+        "unloaded_signal_max": 0.0,
+        "fixture_valid": true,
+        "passed": true
+      },
+      {
+        "model": "old",
+        "side": "left",
+        "vertical_force_n": 8.14,
+        "point_local_m": [
+          0.004794908920302987,
+          -5.122274160385132e-09,
+          0.017070993364770894
+        ],
+        "cap_radius_m": 0.009589883964508772,
+        "hold_tilt_min_deg": 4.959501676395162,
+        "hold_signal_max": 0.0,
+        "positive_tail_signal_min": 0.0,
+        "unloaded_signal_max": 0.0,
+        "fixture_valid": true,
+        "passed": false
+      },
+      {
+        "model": "old",
+        "side": "right",
+        "vertical_force_n": 1.0,
+        "point_local_m": [
+          -0.004722648533061147,
+          -8.96095298230648e-05,
+          0.017066024809567232
+        ],
+        "cap_radius_m": 0.009589882101863623,
+        "hold_tilt_min_deg": 3.041823779325358,
+        "hold_signal_max": 0.0,
+        "positive_tail_signal_min": 0.0,
+        "unloaded_signal_max": 0.0,
+        "fixture_valid": true,
+        "passed": true
+      },
+      {
+        "model": "old",
+        "side": "right",
+        "vertical_force_n": 2.0,
+        "point_local_m": [
+          -0.004722648533061147,
+          -8.96095298230648e-05,
+          0.017066024809567232
+        ],
+        "cap_radius_m": 0.009589882101863623,
+        "hold_tilt_min_deg": 3.4256555980502146,
+        "hold_signal_max": 0.0,
+        "positive_tail_signal_min": 0.0,
+        "unloaded_signal_max": 0.0,
+        "fixture_valid": true,
+        "passed": true
+      },
+      {
+        "model": "old",
+        "side": "right",
+        "vertical_force_n": 4.0,
+        "point_local_m": [
+          -0.004722648533061147,
+          -8.96095298230648e-05,
+          0.017066024809567232
+        ],
+        "cap_radius_m": 0.009589882101863623,
+        "hold_tilt_min_deg": 4.19582008039768,
+        "hold_signal_max": 0.0,
+        "positive_tail_signal_min": 0.0,
+        "unloaded_signal_max": 0.0,
+        "fixture_valid": true,
+        "passed": true
+      },
+      {
+        "model": "old",
+        "side": "right",
+        "vertical_force_n": 6.0,
+        "point_local_m": [
+          -0.004722648533061147,
+          -8.96095298230648e-05,
+          0.017066024809567232
+        ],
+        "cap_radius_m": 0.009589882101863623,
+        "hold_tilt_min_deg": 4.197360117339536,
+        "hold_signal_max": 0.0,
+        "positive_tail_signal_min": 0.0,
+        "unloaded_signal_max": 0.0,
+        "fixture_valid": true,
+        "passed": true
+      },
+      {
+        "model": "old",
+        "side": "right",
+        "vertical_force_n": 8.14,
+        "point_local_m": [
+          -0.004722648533061147,
+          -8.96095298230648e-05,
+          0.017066024809567232
+        ],
+        "cap_radius_m": 0.009589882101863623,
+        "hold_tilt_min_deg": 4.567374631658424,
+        "hold_signal_max": 0.335702789016068,
+        "positive_tail_signal_min": 0.33249725674977526,
+        "unloaded_signal_max": 0.0,
+        "fixture_valid": true,
+        "passed": false
+      },
+      {
+        "model": "new",
+        "side": "left",
+        "vertical_force_n": 1.0,
+        "point_local_m": [
+          0.004794908920302987,
+          -5.122274160385132e-09,
+          0.017070993364770894
+        ],
+        "cap_radius_m": 0.009589883964508772,
+        "hold_tilt_min_deg": 3.1878859470331804,
+        "hold_signal_max": 0.0006581328904076145,
+        "positive_tail_signal_min": 0.0006580312117421272,
+        "unloaded_signal_max": 3.8555197229284133e-07,
+        "fixture_valid": true,
+        "passed": true
+      },
+      {
+        "model": "new",
+        "side": "left",
+        "vertical_force_n": 2.0,
+        "point_local_m": [
+          0.004794908920302987,
+          -5.122274160385132e-09,
+          0.017070993364770894
+        ],
+        "cap_radius_m": 0.009589883964508772,
+        "hold_tilt_min_deg": 3.1847524438299932,
+        "hold_signal_max": 0.0007626020703810354,
+        "positive_tail_signal_min": 0.0007624414166684801,
+        "unloaded_signal_max": 3.9312216676412604e-07,
+        "fixture_valid": true,
+        "passed": true
+      },
+      {
+        "model": "new",
+        "side": "left",
+        "vertical_force_n": 4.0,
+        "point_local_m": [
+          0.004794908920302987,
+          -5.122274160385132e-09,
+          0.017070993364770894
+        ],
+        "cap_radius_m": 0.009589883964508772,
+        "hold_tilt_min_deg": 4.324995797548789,
+        "hold_signal_max": 0.002041558673226973,
+        "positive_tail_signal_min": 0.002039145954313426,
+        "unloaded_signal_max": 3.5016427257783533e-07,
+        "fixture_valid": true,
+        "passed": true
+      },
+      {
+        "model": "new",
+        "side": "left",
+        "vertical_force_n": 6.0,
+        "point_local_m": [
+          0.004794908920302987,
+          -5.122274160385132e-09,
+          0.017070993364770894
+        ],
+        "cap_radius_m": 0.009589883964508772,
+        "hold_tilt_min_deg": 4.3833820922350375,
+        "hold_signal_max": 0.0015878978842920333,
+        "positive_tail_signal_min": 0.0014732606246070645,
+        "unloaded_signal_max": 4.42512033960174e-07,
+        "fixture_valid": true,
+        "passed": true
+      },
+      {
+        "model": "new",
+        "side": "left",
+        "vertical_force_n": 8.14,
+        "point_local_m": [
+          0.004794908920302987,
+          -5.122274160385132e-09,
+          0.017070993364770894
+        ],
+        "cap_radius_m": 0.009589883964508772,
+        "hold_tilt_min_deg": 4.8055449291627115,
+        "hold_signal_max": 0.9997730376198888,
+        "positive_tail_signal_min": 0.999768017209135,
+        "unloaded_signal_max": 4.299488542969243e-07,
+        "fixture_valid": true,
+        "passed": true
+      },
+      {
+        "model": "new",
+        "side": "right",
+        "vertical_force_n": 1.0,
+        "point_local_m": [
+          -0.004722648533061147,
+          -8.96095298230648e-05,
+          0.017066024809567232
+        ],
+        "cap_radius_m": 0.009589882101863623,
+        "hold_tilt_min_deg": 2.888866488238651,
+        "hold_signal_max": 0.0005401646063774024,
+        "positive_tail_signal_min": 0.0005351876097847708,
+        "unloaded_signal_max": 3.469089251972868e-07,
+        "fixture_valid": true,
+        "passed": true
+      },
+      {
+        "model": "new",
+        "side": "right",
+        "vertical_force_n": 2.0,
+        "point_local_m": [
+          -0.004722648533061147,
+          -8.96095298230648e-05,
+          0.017066024809567232
+        ],
+        "cap_radius_m": 0.009589882101863623,
+        "hold_tilt_min_deg": 3.2729727854825224,
+        "hold_signal_max": 0.001317369822118053,
+        "positive_tail_signal_min": 0.0013172663670957263,
+        "unloaded_signal_max": 3.8081510167486954e-07,
+        "fixture_valid": true,
+        "passed": true
+      },
+      {
+        "model": "new",
+        "side": "right",
+        "vertical_force_n": 4.0,
+        "point_local_m": [
+          -0.004722648533061147,
+          -8.96095298230648e-05,
+          0.017066024809567232
+        ],
+        "cap_radius_m": 0.009589882101863623,
+        "hold_tilt_min_deg": 3.9207145157037013,
+        "hold_signal_max": 0.0018205030016815726,
+        "positive_tail_signal_min": 0.0018170906912473583,
+        "unloaded_signal_max": 3.655396818569301e-07,
+        "fixture_valid": true,
+        "passed": true
+      },
+      {
+        "model": "new",
+        "side": "right",
+        "vertical_force_n": 6.0,
+        "point_local_m": [
+          -0.004722648533061147,
+          -8.96095298230648e-05,
+          0.017066024809567232
+        ],
+        "cap_radius_m": 0.009589882101863623,
+        "hold_tilt_min_deg": 3.927202113041816,
+        "hold_signal_max": 0.001972446739273437,
+        "positive_tail_signal_min": 0.0019723820798844827,
+        "unloaded_signal_max": 3.9988966998860676e-07,
+        "fixture_valid": true,
+        "passed": true
+      },
+      {
+        "model": "new",
+        "side": "right",
+        "vertical_force_n": 8.14,
+        "point_local_m": [
+          -0.004722648533061147,
+          -8.96095298230648e-05,
+          0.017066024809567232
+        ],
+        "cap_radius_m": 0.009589882101863623,
+        "hold_tilt_min_deg": 4.351901989389086,
+        "hold_signal_max": 0.9996187873184681,
+        "positive_tail_signal_min": 0.9996131848311052,
+        "unloaded_signal_max": 4.354872018552669e-07,
+        "fixture_valid": true,
+        "passed": true
+      }
+    ]
+  },
+  "T4": {
+    "passed": 23,
+    "total": 26,
+    "historical_before_change_passed": 22,
+    "regressions": [],
+    "newly_passed": [
+      "L3"
+    ],
+    "failed": [
+      "Guide",
+      "Pair",
+      "R3"
+    ],
+    "cases": [
+      {
+        "case": "A",
+        "historical_22_passed": true,
+        "historical_target_min": 0.9991980339122332,
+        "physics_passed": true,
+        "target_min": 0.9992268684579702,
+        "target_max": 0.9992828814038,
+        "signal_passed": true,
+        "return_passed": true,
+        "misfires": {},
+        "contact_observed": true
+      },
+      {
+        "case": "B",
+        "historical_22_passed": true,
+        "historical_target_min": 0.9991217227197824,
+        "physics_passed": true,
+        "target_min": 0.9989604491312973,
+        "target_max": 0.9990425123909458,
+        "signal_passed": true,
+        "return_passed": true,
+        "misfires": {},
+        "contact_observed": true
+      },
+      {
+        "case": "X",
+        "historical_22_passed": true,
+        "historical_target_min": 0.9989559855550156,
+        "physics_passed": true,
+        "target_min": 0.9992002456097818,
+        "target_max": 0.9992562585556116,
+        "signal_passed": true,
+        "return_passed": true,
+        "misfires": {},
+        "contact_observed": true
+      },
+      {
+        "case": "Y",
+        "historical_22_passed": true,
+        "historical_target_min": 0.9992215490097628,
+        "physics_passed": true,
+        "target_min": 0.999397483700123,
+        "target_max": 0.9994012051735257,
+        "signal_passed": true,
+        "return_passed": true,
+        "misfires": {},
+        "contact_observed": true
+      },
+      {
+        "case": "LB",
+        "historical_22_passed": true,
+        "historical_target_min": 0.9834997560386092,
+        "physics_passed": true,
+        "target_min": 0.9834997560386092,
+        "target_max": 0.9837949314646081,
+        "signal_passed": true,
+        "return_passed": true,
+        "misfires": {},
+        "contact_observed": true
+      },
+      {
+        "case": "RB",
+        "historical_22_passed": true,
+        "historical_target_min": 0.9793463845685683,
+        "physics_passed": true,
+        "target_min": 0.9793463845685683,
+        "target_max": 0.9796428134204573,
+        "signal_passed": true,
+        "return_passed": true,
+        "misfires": {},
+        "contact_observed": true
+      },
+      {
+        "case": "View",
+        "historical_22_passed": true,
+        "historical_target_min": 0.9967760863562161,
+        "physics_passed": true,
+        "target_min": 0.9967760863562161,
+        "target_max": 0.9991915750810122,
+        "signal_passed": true,
+        "return_passed": true,
+        "misfires": {},
+        "contact_observed": true
+      },
+      {
+        "case": "Menu",
+        "historical_22_passed": true,
+        "historical_target_min": 0.9994570685857714,
+        "physics_passed": true,
+        "target_min": 0.9994570685857714,
+        "target_max": 0.9994642375682059,
+        "signal_passed": true,
+        "return_passed": true,
+        "misfires": {},
+        "contact_observed": true
+      },
+      {
+        "case": "Guide",
+        "historical_22_passed": false,
+        "historical_target_min": 0.9311700170907034,
+        "physics_passed": false,
+        "target_min": 0.9311700170907034,
+        "target_max": 0.9311788464235514,
+        "signal_passed": false,
+        "return_passed": true,
+        "misfires": {},
+        "contact_observed": true
+      },
+      {
+        "case": "Pair",
+        "historical_22_passed": false,
+        "historical_target_min": 0.0,
+        "physics_passed": false,
+        "target_min": 0.0,
+        "target_max": 0.0,
+        "signal_passed": false,
+        "return_passed": true,
+        "misfires": {},
+        "contact_observed": true
+      },
+      {
+        "case": "L3",
+        "historical_22_passed": false,
+        "historical_target_min": 0.7193550118245184,
+        "physics_passed": true,
+        "target_min": 0.9721526294015348,
+        "target_max": 0.9999999747378752,
+        "signal_passed": true,
+        "return_passed": true,
+        "misfires": {},
+        "contact_observed": true
+      },
+      {
+        "case": "R3",
+        "historical_22_passed": false,
+        "historical_target_min": 0.6590130215045065,
+        "physics_passed": false,
+        "target_min": 0.9495658741798252,
+        "target_max": 0.9999999747378752,
+        "signal_passed": false,
+        "return_passed": true,
+        "misfires": {},
+        "contact_observed": true
+      },
+      {
+        "case": "Dpad_up",
+        "historical_22_passed": true,
+        "historical_target_min": 0.989998097786739,
+        "physics_passed": true,
+        "target_min": 0.989998097786739,
+        "target_max": 0.99235819119668,
+        "signal_passed": true,
+        "return_passed": true,
+        "misfires": {},
+        "contact_observed": true
+      },
+      {
+        "case": "Dpad_down",
+        "historical_22_passed": true,
+        "historical_target_min": 0.9876218680075733,
+        "physics_passed": true,
+        "target_min": 0.9876218680075733,
+        "target_max": 0.9934451336125523,
+        "signal_passed": true,
+        "return_passed": true,
+        "misfires": {},
+        "contact_observed": true
+      },
+      {
+        "case": "Dpad_left",
+        "historical_22_passed": true,
+        "historical_target_min": 0.9888554891659221,
+        "physics_passed": true,
+        "target_min": 0.9888554891659221,
+        "target_max": 0.9999999718188438,
+        "signal_passed": true,
+        "return_passed": true,
+        "misfires": {},
+        "contact_observed": true
+      },
+      {
+        "case": "Dpad_right",
+        "historical_22_passed": true,
+        "historical_target_min": 0.9927850792714079,
+        "physics_passed": true,
+        "target_min": 0.9927850792714079,
+        "target_max": 0.9999999999998452,
+        "signal_passed": true,
+        "return_passed": true,
+        "misfires": {},
+        "contact_observed": true
+      },
+      {
+        "case": "left_x_pos",
+        "historical_22_passed": true,
+        "historical_target_min": 0.9815772505945939,
+        "physics_passed": true,
+        "target_min": 0.9795523222292449,
+        "target_max": 0.9821387366890809,
+        "signal_passed": true,
+        "return_passed": true,
+        "misfires": {},
+        "contact_observed": true
+      },
+      {
+        "case": "left_x_neg",
+        "historical_22_passed": true,
+        "historical_target_min": 0.9801825556625519,
+        "physics_passed": true,
+        "target_min": 0.981162242361329,
+        "target_max": 0.9828966649633925,
+        "signal_passed": true,
+        "return_passed": true,
+        "misfires": {},
+        "contact_observed": true
+      },
+      {
+        "case": "left_y_pos",
+        "historical_22_passed": true,
+        "historical_target_min": 0.9811459093002702,
+        "physics_passed": true,
+        "target_min": 0.9822621255412609,
+        "target_max": 0.9831438138736855,
+        "signal_passed": true,
+        "return_passed": true,
+        "misfires": {},
+        "contact_observed": true
+      },
+      {
+        "case": "left_y_neg",
+        "historical_22_passed": true,
+        "historical_target_min": 0.980626666440976,
+        "physics_passed": true,
+        "target_min": 0.9828099512574079,
+        "target_max": 0.9844999776298663,
+        "signal_passed": true,
+        "return_passed": true,
+        "misfires": {},
+        "contact_observed": true
+      },
+      {
+        "case": "right_x_pos",
+        "historical_22_passed": true,
+        "historical_target_min": 0.9824332514764443,
+        "physics_passed": true,
+        "target_min": 0.9849799469014329,
+        "target_max": 0.9857810093051768,
+        "signal_passed": true,
+        "return_passed": true,
+        "misfires": {},
+        "contact_observed": true
+      },
+      {
+        "case": "right_x_neg",
+        "historical_22_passed": true,
+        "historical_target_min": 0.9820761513687513,
+        "physics_passed": true,
+        "target_min": 0.9833969763200958,
+        "target_max": 0.9844931474406963,
+        "signal_passed": true,
+        "return_passed": true,
+        "misfires": {},
+        "contact_observed": true
+      },
+      {
+        "case": "right_y_pos",
+        "historical_22_passed": true,
+        "historical_target_min": 0.9814134002957001,
+        "physics_passed": true,
+        "target_min": 0.9842946265076461,
+        "target_max": 0.9861142779919615,
+        "signal_passed": true,
+        "return_passed": true,
+        "misfires": {},
+        "contact_observed": true
+      },
+      {
+        "case": "right_y_neg",
+        "historical_22_passed": true,
+        "historical_target_min": 0.9812648436812524,
+        "physics_passed": true,
+        "target_min": 0.9822395562205252,
+        "target_max": 0.984838443199715,
+        "signal_passed": true,
+        "return_passed": true,
+        "misfires": {},
+        "contact_observed": true
+      },
+      {
+        "case": "LT",
+        "historical_22_passed": true,
+        "historical_target_min": 0.9816628360803389,
+        "physics_passed": true,
+        "target_min": 0.9816628360803389,
+        "target_max": 0.9827585771915706,
+        "signal_passed": true,
+        "return_passed": true,
+        "misfires": {},
+        "contact_observed": true
+      },
+      {
+        "case": "RT",
+        "historical_22_passed": true,
+        "historical_target_min": 0.9812877329572547,
+        "physics_passed": true,
+        "target_min": 0.9812877329572547,
+        "target_max": 0.982565929394431,
+        "signal_passed": true,
+        "return_passed": true,
+        "misfires": {},
+        "contact_observed": true
+      }
+    ]
+  },
+  "sphere_T3_v1": {
+    "status": "fixture_invalid",
+    "use_for_physical_conclusions": false
+  },
+  "boundaries": [
+    "Fixed/free native readback and automatic click preload were checked in the source worktree, not the future integrated wheel.",
+    "The new chain has not passed an arbitrary-load strict 23-degree transient guarantee.",
+    "The 0.998 cone margin is an owner-approved numerical setting, not hardware identification.",
+    "Older free/N=1024 permutation exceeded its 3 micrometre root-position bound; no new full batch/scaling qualification.",
+    "No RL or hardware calibration claim."
+  ]
+}

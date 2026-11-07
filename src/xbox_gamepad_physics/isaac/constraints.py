@@ -13,7 +13,7 @@ NATIVE_CONE_ANGLE_SCALE = .998
 
 
 def joint_chain(motion, limit):
-    """Return the ancestor chain, excluding the independent click joint."""
+    """Return concurrent tilt hinges, excluding the shell-fixed click slide."""
     incoming = {joint.child: joint for joint in motion.joints}
     chain = []
     link = limit.moving_link
@@ -24,6 +24,11 @@ def joint_chain(motion, limit):
         chain.append(joint)
         link = joint.parent
     chain.reverse()
+    if chain and chain[0].kind == 'prismatic':
+        slide = chain.pop(0)
+        if (not slide.name.endswith('_stick_click') or
+                slide.origin_orientation_wxyz != (1., 0., 0., 0.)):
+            raise NotImplementedError(f'{limit.name}: cone needs a shell-fixed click slide')
     # A spherical loop is redundant in translation only for concurrent hinges.
     # Adding it to another topology would change the public mechanism.
     if not chain or any(j.kind != 'revolute' for j in chain) or any(
@@ -92,7 +97,7 @@ def verify_native_cones(articulation, motion):
                 if any(abs(a-b) > 8e-9 for a, b in zip(actual, expected)):
                     raise ValueError(f'{limit.name}: native cone pivot differs from common')
             for link, relation, axis, rotation in (
-                    (limit.reference_link, native.GetBody0Rel(), limit.reference_axis, native.GetLocalRot0Attr()),
+                    (joint_chain(motion, limit)[0].parent, native.GetBody0Rel(), limit.reference_axis, native.GetLocalRot0Attr()),
                     (limit.moving_link, native.GetBody1Rel(), limit.moving_axis, native.GetLocalRot1Attr())):
                 if [str(p) for p in relation.GetTargets()] != [path+'/Links/'+Tf.MakeValidIdentifier(link)]:
                     raise ValueError(f'{limit.name}: native cone body binding differs from common')
