@@ -9,6 +9,8 @@ import math
 import xml.etree.ElementTree as ET
 
 from xbox_gamepad_physics.backends.common.constraints import ShaftTiltLimit
+from xbox_gamepad_physics.backends.common.model import Pose
+from xbox_gamepad_physics.backends.common.transforms import compose, inverse, point, rotate
 from xbox_gamepad_physics.errors import AssetImportError, StateValidationError
 from ._backend import require_mujoco
 from .numerics import limit_policy
@@ -22,12 +24,39 @@ def _vector(values):
     return ' '.join(format(float(value), '.17g') for value in values)
 
 
+def _reference_anchor(xml, definition, pivot):
+    """Follow translations before the first hinge, retaining shell orientation.
+
+    With click first, both tendon endpoints must share the click translation.
+    A slide changes position but not direction, so this changes neither the
+    public shell-relative angle nor the cone. No extra body/joint is created.
+    """
+    bodies = {body.get('name'): body for body in xml.iter('body')}
+    parents = {child.get('name'): body.get('name') for body in xml.iter('body')
+               for child in body.findall('body')}
+    path, name = [], definition.moving_link
+    while name != definition.reference_link:
+        if name not in parents:
+            raise AssetImportError(f'{definition.name}: moving frame is not below reference frame')
+        path.append(bodies[name])
+        name = parents[name]
+    anchor, pose = bodies[definition.reference_link], Pose()
+    for body in reversed(path):
+        if any(joint.get('type', 'hinge') != 'slide' for joint in body.findall('joint')) or body.find('freejoint') is not None:
+            break
+        local = Pose(tuple(map(float, body.get('pos', '0 0 0').split())),
+                     tuple(map(float, body.get('quat', '1 0 0 0').split())))
+        pose, anchor = compose(pose, local), body
+    transform = inverse(pose)
+    return anchor, point(transform, pivot), rotate(transform.orientation_wxyz, definition.reference_axis)
+
+
 def append_native_tilt_limits(xml, descriptions, *, policy=None):
     """Encode the common cone on the existing two-hinge motion chain.
 
-    Both sites are measured from the common pivot. Separation is 2*L*sin(theta/2),
-    so one native upper length limit defines the circular cone. Sites are upstream
-    of the click slide and add neither mass nor degrees of freedom.
+    Both sites share the translated pivot on a click-first chain. Separation is
+    2*L*sin(theta/2), so one native upper length limit defines the circular cone.
+    The reference endpoint follows translations only; both sites add no mass/DOF.
     """
     if not descriptions:
         return []
@@ -36,7 +65,7 @@ def append_native_tilt_limits(xml, descriptions, *, policy=None):
     mappings = []
     for record in descriptions:
         definition = ShaftTiltLimit.from_record(record)
-        sites = []
+        sites, site_links = [], []
         for side, link, axis in (
             ('reference', definition.reference_link, definition.reference_axis),
             ('moving', definition.moving_link, definition.moving_axis),
@@ -48,11 +77,14 @@ def append_native_tilt_limits(xml, descriptions, *, policy=None):
                 pivot = record[f'pivot_in_{side}_m']
             except KeyError as exc:
                 raise AssetImportError(f'{definition.name}: native cone needs the common {side} pivot') from exc
+            if side == 'reference':
+                body, pivot, axis = _reference_anchor(xml, definition, pivot)
             name = f'{definition.name}_{side}'
             position = [pivot[i] + DIRECTION_SCALE_M * axis[i] for i in range(3)]
             ET.SubElement(body, 'site', name=name, pos=_vector(position),
                           size='0.001', group='5', rgba='0 0 0 0')
             sites.append(name)
+            site_links.append(body.get('name'))
         maximum_length = 2 * DIRECTION_SCALE_M * math.sin(definition.maximum_rad / 2)
         name = definition.name + '_native'
         tendon = ET.SubElement(tendons, 'spatial', name=name, limited='true',
@@ -64,6 +96,7 @@ def append_native_tilt_limits(xml, descriptions, *, policy=None):
             ET.SubElement(tendon, 'site', site=site)
         mappings.append({
             'id': definition.name, 'tendon': name, 'sites': sites,
+            'site_links': site_links,
             'direction_scale_m': DIRECTION_SCALE_M, 'range_m': [0., maximum_length],
             'equation': 'length = 2*direction_scale_m*sin(shaft_angle_rad/2)',
             'response': 'native_compliant_limit', 'strict_hard_limit_satisfied': False,

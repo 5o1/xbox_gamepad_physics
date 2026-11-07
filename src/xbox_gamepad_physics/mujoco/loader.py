@@ -85,8 +85,8 @@ def _paths(resource_root, profile):
         if not required.is_file():
             raise MissingResourceError(f"Missing MuJoCo resource {required}; run xbox-gamepad-physics build-resources --backend mujoco --archive INPUT.zip --offline")
     # Historical resources have a different identity and remain gated.
-    if not manifest.get("bindings", {}).get("actuators"):
-        raise AssetImportError("This is not a generated full-controls artifact (no return actuator bindings)")
+    if not manifest.get("bindings", {}).get("joints"):
+        raise AssetImportError("This is not a generated full-controls artifact (no joint bindings)")
     entry = Path(manifest.get("entrypoint", "xbox_one_s.xml"))
     if entry.is_absolute() or ".." in entry.parts:
         raise AssetImportError("Unsafe MuJoCo manifest entrypoint")

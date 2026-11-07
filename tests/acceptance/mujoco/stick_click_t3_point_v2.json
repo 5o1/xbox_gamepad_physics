@@ -1,0 +1,68 @@
+{
+  "protocol_id": "stick_click_t3_point_20261107_v2",
+  "registered_before_execution": true,
+  "owner_approval_date": "2026-11-07",
+  "scope": "Native force at a moving material point on both stick caps; v1 sphere results remain fixture-invalid history.",
+  "baseline_commit": "73c867636804ef80217c54564bcee01c18c7c695",
+  "gravity_m_s2": [
+    0,
+    0,
+    -9.81
+  ],
+  "physics_timestep_s": 0.0005,
+  "outer_timestep_s": 0.004,
+  "substeps": 8,
+  "point": {
+    "definition": "Neutral upper thumbpad top center displaced in shell push direction by 0.5 thumbpad radius, projected onto that actual upper shell; point then fixed in stick local coordinates.",
+    "radial_fraction": 0.5,
+    "geometry_method": "Select the actual stick shell with highest neutral shell-frame Z maximum as upper thumbpad. Use that shell XY bounding-box center and half X extent, excluding lower dome/stem; intersect only its top triangles along shell -Z at displaced XY."
+  },
+  "horizontal_force_n": 1.0,
+  "push_directions_shell": {
+    "left": [
+      1,
+      0,
+      0
+    ],
+    "right": [
+      -1,
+      0,
+      0
+    ]
+  },
+  "vertical_direction_shell": [
+    0,
+    0,
+    -1
+  ],
+  "vertical_forces_n": [
+    1,
+    2,
+    4,
+    6,
+    8.14
+  ],
+  "threshold_force_n": 7.4,
+  "travel_m": 0.0004,
+  "timing_s": {
+    "settle": 1.0,
+    "ramp_up": 0.5,
+    "hold": 1.0,
+    "ramp_down": 0.5,
+    "observe": 0.5
+  },
+  "criteria": {
+    "minimum_hold_tilt_deg": 1.0,
+    "low_force_bound_n": 6.66,
+    "low_signal_max": 0.05,
+    "positive_force_n": 8.14,
+    "positive_last_hold_window_s": 0.5,
+    "positive_signal_min": 0.95,
+    "unloaded_signal_max": 0.05,
+    "fixture_rule": "Hold tilt must remain at least1degree; invalid fixture gives null physics conclusion. Original low/positive/unload signal criteria are not changed.",
+    "unload_rule": "Evaluate maximum public signal over the entire zero-load0.5s observe interval; also retain unload endpoint and final endpoint."
+  },
+  "signals": "Record unchanged public signal and unclipped q/travel; no threshold, hysteresis, latch or snapping.",
+  "visualization": "One figure per force level with actual cap geometry, material point, horizontal/vertical force arrows and actual tilt trajectory; no sphere.",
+  "numerics": "Existing approved discrete/Newton100/tolerance1e-8/refsafe disabled, 0.5ms x8; new-model click stop uses ruling2 approval; old model retains its original production parameters."
+}

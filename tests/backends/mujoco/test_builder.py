@@ -273,3 +273,52 @@ def test_public_cones_use_native_tendons_and_report_strict_limit_unsupported(com
     scene.step(nstep=10)
     assert scene.data.time==pytest.approx(.005)
     assert scene.gamepad.tilt_limit_state()[limit['id']]['angle_rad']<=.4
+
+
+def test_click_uses_only_native_spring_with_common_damping_and_approved_stops(common_root):
+    mj = pytest.importorskip('mujoco')
+    from xbox_gamepad_physics.mujoco import load_standalone
+    common = common_root / 'common/xbox_one_s'
+    motion_path = common / 'motion/full_controls.json'
+    motion = json.loads(motion_path.read_text())
+    motion['joints'][0].update(name='left_stick_click', upper=.0004)
+    motion['bindings']['scalars'][0]['joint'] = 'left_stick_click'
+    _write(motion_path, motion)
+    kin = common_root / 'kinematics/xbox_one_s.json'
+    kinematics = json.loads(kin.read_text())
+    kinematics['nodes'][0]['joint_ids'] = ['left_stick_click']
+    _write(kin, kinematics)
+    physical_path = common / 'physical/full_controls.json'
+    physical = json.loads(physical_path.read_text())
+    law = physical['return_laws'].pop('a_press')
+    for field, value in {'stiffness': 1000., 'drive_damping': 2.8,
+                         'passive_damping': .14, 'rest_position': -.0074,
+                         'neutral_target': -.0074, 'effort_limit': 10.4}.items():
+        law[field]['value'] = value
+    physical['return_laws']['left_stick_click'] = law
+    _write(physical_path, physical)
+    manifest = build(common_root / 'mujoco/full_controls', resource_root=common_root)
+    scene = load_standalone(resource_root=common_root)
+    model, data = scene.model, scene.data
+    assert model.nu == 0
+    assert manifest['bindings']['actuators'] == {}
+    assert manifest['backend_options']['mujoco']['click_limit_response']['approval_status'] == 'approved'
+    joint = model.joint('left_stick_click')
+    dof = joint.dofadr[0]
+    assert model.qpos_spring[joint.qposadr[0]] == pytest.approx(-.0074)
+    assert joint.stiffness[0] == 1000
+    assert model.dof_damping[dof] == pytest.approx(2.94)
+    assert model.jnt_solref[joint.id] == pytest.approx([1e-6, 5.])
+    assert model.jnt_margin[joint.id] == pytest.approx(1e-8, abs=1e-15)
+    assert manifest['backend_options']['mujoco']['click_limit_response']['approval_date'] == '2026-11-07'
+    for q in (0., .0002, .0004):
+        for velocity in (0., .001):
+            data.joint('left_stick_click').qpos[0] = q
+            data.joint('left_stick_click').qvel[0] = velocity
+            mj.mj_forward(model, data)
+            assert data.qfrc_passive[dof] == pytest.approx(-7.4 - 1000*q - 2.94*velocity)
+            assert data.qfrc_actuator[dof] == 0
+    scene.gamepad.set_joint_target('left_stick_click', -.006)
+    assert model.qpos_spring[joint.qposadr[0]] == -.006
+    scene.gamepad.restore_passive_targets()
+    assert model.qpos_spring[joint.qposadr[0]] == -.0074

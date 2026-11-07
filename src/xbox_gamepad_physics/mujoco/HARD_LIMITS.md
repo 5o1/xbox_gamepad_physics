@@ -30,8 +30,12 @@ Two invisible, massless sites are placed on the common reference and moving
 shaft directions, each a distance L from their common pivot. Their separation
 is `2*L*sin(shaft_angle/2)`. A native upper length bound of
 `2*L*sin(max_angle/2)` therefore describes the circular cone exactly in geometry.
-The sites are upstream of the click slide. The existing two hinges, slide,
-inertias and ReturnLaw actuators remain unchanged.
+The frozen chain places the shell-fixed click slide before the two hinges.
+The reference site is attached to the translated frame before the first hinge,
+with the shell direction/pivot transformed into that frame. Both endpoints
+therefore share click translation: tendon length and its click Jacobian remain
+independent of click travel. No bodies, inertias or extra degrees of freedom are
+introduced. Legacy tilt-first chains retain their shell reference site.
 
 L=1 m is a mathematical unit-direction coordinate, not a hardware dimension or
 an internal cable. There is no tendon spring, damping, friction or armature.
@@ -52,6 +56,35 @@ unchanged. Redundant individual tilt-hinge limits remain disabled; the coupled
 native tendon now provides the cone limit. Click scalar limits remain enabled.
 Attachment reports differences from the recommended timestep, integrator and
 refsafe, but never applies those global options to a caller-owned model.
+
+## Click threshold spring (approved 2026-11-07)
+
+Both click joints use native passive springs with common stiffness 1000 N/m
+and `springref=-0.0074 m`, producing `-(7.4 N + 1000 N/m*q)` at rest.
+Common drive damping 2.8 N s/m and passive damping 0.14 N s/m are summed
+once as joint damping 2.94 N s/m. Their return actuators and affine biases are
+removed. Passive springs have no native actuator force clamp; the common
+10.4 N drive effort limit is retained as metadata and explicitly unmapped.
+Neither callback forces nor signal thresholds are added.
+
+`backend_options.mujoco.click_limit_response` applies the owner-approved
+stiff limit profile above to the two scalar click stops, with native joint
+`margin=1e-8 m` (10 nm). Owner ruling 4 approved it on 2026-11-07,
+using the interior of the passing 1-30 nm set summarized in
+`docs/mujoco_backend.md`.
+This is a numerical policy, not hardware physical data. The margin activates
+the stop at q=0 on the first preloaded step and shifts its reference 10 nm
+into the allowed range. Other scalar stops, tendon settings and
+contact geoms are unchanged. Step size remains 0.0005 s, with eight physics
+steps per 0.004 s outer tick. Startup theory and controls are recorded in
+`docs/mujoco_backend.md`; loading and contact checks of a newly integrated
+wheel remain separate from those historical native results.
+
+For passive click joints `set_joint_target` changes `model.qpos_spring`, and
+`restore_passive_targets`/default reset restore the common rest reference.
+This model parameter is shared by all `MjData` instances using that compiled
+model; separately prefixed attachments address distinct coordinates. It does
+not alter the observed signal or write the click position.
 
 ## Accuracy and observation
 

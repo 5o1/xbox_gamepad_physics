@@ -8,9 +8,30 @@ from pathlib import Path
 
 POLICY_RESOURCE = Path(__file__).resolve().parents[1] / 'build_data/calibration/mujoco_m2.json'
 
+# The common calibration remains frozen; the approved extension belongs here.
+CLICK_LIMIT_RESPONSE = {
+    'policy_id': 'mujoco-click-stop-margin10nm-20261107-approved',
+    'approval_status': 'approved',
+    'approval_date': '2026-11-07',
+    'approval_source': 'Owner ruling 4, 2026-11-07: adopt 10 nm inside the tested passing 1-30 nm range, retaining room on both sides.',
+    'classification': 'Numerical policy, not hardware physical properties.',
+    'solreflimit': [1e-6, 5.0],
+    'solimplimit': [.9999, .9999, .001, .5, 2.0],
+    'margin_m': 1e-8,
+    'scope': 'Left/right stick click scalar joint limits only.',
+    'units': {'solreflimit': ['s', '1'], 'solimplimit': ['1', '1', 'm', '1', '1'], 'margin_m': 'm'},
+    'derivation': 'Keep the approved native response. Ruling3 tested 1/3/10/30 nm as passing; 10 nm is interior, leaving room before the steady signal approaches the deadzone and before first-step stop activation loses margin. The native limit reference shifts inward by 10 nm.',
+    'evidence': 'docs/mujoco_backend.md: approved click-stop policy and historical native checks; owner ruling4, 2026-11-07',
+    'source': 'https://mujoco.readthedocs.io/en/stable/modeling.html#solver-parameters',
+    'applicability': 'Test with existing discrete/Newton/100, refsafe disabled, dt=0.0005 s; caller options remain owned by caller.',
+    'uncertainty': None,
+    'uncertainty_reason': 'Numerical activation distance, not measured hardware. Native constraints remain compliant; contact/loading acceptance is separate.',
+}
+
 
 def _backend_options(options):
     defaults = json.loads(POLICY_RESOURCE.read_text())['backend_options']['mujoco']
+    defaults['click_limit_response'] = copy.deepcopy(CLICK_LIMIT_RESPONSE)
     if options is not None and set(options) - set(defaults):
         raise ValueError('Unknown MuJoCo backend options')
     return defaults, {**defaults, **(options or {})}
@@ -72,6 +93,16 @@ def limit_policy(mujoco_options=None):
     """Resolve the owner-selected tendon response, separate from contact geoms."""
     _, options = _backend_options(mujoco_options)
     return copy.deepcopy(options['limit_response'])
+
+
+def click_limit_policy(mujoco_options=None):
+    """Resolve native scalar-stop settings without approval-status gates."""
+    defaults, options = _backend_options(mujoco_options)
+    policy = copy.deepcopy({**defaults['click_limit_response'], **options['click_limit_response']})
+    margin = policy['margin_m']
+    if isinstance(margin, bool) or not isinstance(margin, (int, float)) or not math.isfinite(margin) or margin < 0:
+        raise ValueError('click limit margin_m must be finite and nonnegative')
+    return policy
 
 
 def standalone_option_attributes(policy):

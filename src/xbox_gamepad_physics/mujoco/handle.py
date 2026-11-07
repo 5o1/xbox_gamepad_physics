@@ -23,7 +23,8 @@ class MujocoGamepadHandle(SignalHandleMixin):
     """A handle belongs to one compiled model/data pair; rebind after compile.
 
     Position synchronization changes state and calls forward. Targets instead
-    change named actuator controls, leaving the coordinates to native dynamics.
+    change named actuator controls or passive spring references, leaving the
+    coordinates to native dynamics.
     Root mode is structural and must be chosen before compilation.
     """
     asset_id = "xbox_one_s"
@@ -43,11 +44,16 @@ class MujocoGamepadHandle(SignalHandleMixin):
         self._model_joints, self._data_joints = _bind_kind(model, data, "joint", joints)
         self._model_sensors, self._data_sensors = _bind_kind(model, data, "sensor", sensors)
         self._model_actuators, self._data_actuators = _bind_kind(model, data, "actuator", actuators)
-        if set(actuators) != set(joints):
-            raise AssetImportError("Every control joint requires one named return actuator")
+        if set(actuators) - set(joints):
+            raise AssetImportError("Return actuator bindings must refer to control joints")
+        self._spring_joints = set(joints) - set(actuators)
         for name, view in self._data_joints.items():
             if len(view.qpos) != 1 or len(view.qvel) != 1:
                 raise AssetImportError(f"Control joint {name!r} must be scalar")
+            if name in self._spring_joints:
+                if float(self._model_joints[name].stiffness[0]) <= 0:
+                    raise AssetImportError(f"Control {name!r} requires a return actuator or native passive spring")
+                continue
             actuator = self._model_actuators[name]
             if int(actuator.trnid[0]) != int(self._model_joints[name].id):
                 raise AssetImportError(f"Actuator {actuators[name]!r} does not drive control {name!r}")
@@ -121,6 +127,10 @@ class MujocoGamepadHandle(SignalHandleMixin):
         mj.mj_forward(self.model, self.data)
 
     def set_joint_target(self, name, target):
+        if name in self._spring_joints:
+            joint = self._model_joints[name]
+            self.model.qpos_spring[int(joint.qposadr[0])] = _finite(target)
+            return
         actuator = _lookup(self._data_actuators, name, "actuator")
         actuator.ctrl[0] = _finite(target)
 
