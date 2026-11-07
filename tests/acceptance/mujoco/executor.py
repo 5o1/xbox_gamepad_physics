@@ -67,45 +67,53 @@ class MujocoPressExecutor:
 
         self._mj, self._np = mujoco, np
         self.suite, self.case = suite, case
-        factory = self._spec_factory or make_spec
-        self.asset = factory(resource_root=self.resource_root, fixed_root=True,
-                             pose=case.root_pose, attach_visual=False, collision=self.collision)
-        configured = getattr(self.asset, 'numerical_policy', None)
-        self.policy = numerical_policy({'numerical_stability': configured} if configured else None,
-                                       physics_timestep_s=self._requested_physics_timestep)
-        if suite.fixture['dt_s'] != self.policy['acceptance_step_s']:
-            raise ValueError('Numerical policy must preserve the frozen acceptance timestep')
-        self._step_seconds = []
-        spec = self.asset.spec
-        apply_standalone_policy(spec.option, self.policy)
-        if self.collision == 'sdf':
-            spec.option.sdf_iterations = self.asset.sdf_policy['sdf_iterations']
-            spec.option.sdf_initpoints = self.asset.sdf_policy['sdf_initpoints']
-        spec.option.gravity = suite.fixture["gravity_m_s2"]
-        start = np.asarray(case.plan["start_m"]) - np.asarray(case.plan["direction"]) * 0.015
-        body = spec.worldbody.add_body(name="ruling20_probe", pos=start)
-        mass, radius = suite.settings["mass_kg"], suite.settings["radius_m"]
-        body.mass = mass
-        body.ipos = [0, 0, 0]
-        body.iquat = [1, 0, 0, 0]
-        body.inertia = [2 * mass * radius ** 2 / 5] * 3
-        body.explicitinertial = True
-        body.add_freejoint(name="ruling20_probe_free")
-        for i, axis in enumerate(np.eye(3)):
-            name = f"ruling20_probe_{i}"
-            spec.add_actuator(name=name, target="ruling20_probe_free", trntype=mujoco.mjtTrn.mjTRN_JOINT,
-                              gear=[*axis, 0, 0, 0], gainprm=[1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                              ctrllimited=False, forcelimited=False)
-        # Deliberately omit solref/solmix: this represents an unchanged caller finger.
-        probe_numerics = {k: v for k, v in CONTACT_NUMERICS.items() if k not in {'solref', 'solmix'}}
-        body.add_geom(name="ruling20_probe", type=mujoco.mjtGeom.mjGEOM_SPHERE,
-                      size=[radius, 0, 0], contype=1, conaffinity=1,
-                      rgba=[0.8, 0.1, 0.1, 1], **probe_numerics)
-        self.model = spec.compile()
+        cache_key = (case.root_pose, self.collision, self._requested_physics_timestep)
+        if getattr(self, '_compiled_key', None) == cache_key:
+            self._step_seconds = []
+        else:
+            factory = self._spec_factory or make_spec
+            self.asset = factory(resource_root=self.resource_root, fixed_root=True,
+                                 pose=case.root_pose, attach_visual=False, collision=self.collision)
+            configured = getattr(self.asset, 'numerical_policy', None)
+            self.policy = numerical_policy({'numerical_stability': configured} if configured else None,
+                                           physics_timestep_s=self._requested_physics_timestep)
+            if suite.fixture['dt_s'] != self.policy['acceptance_step_s']:
+                raise ValueError('Numerical policy must preserve the frozen acceptance timestep')
+            self._step_seconds = []
+            spec = self.asset.spec
+            apply_standalone_policy(spec.option, self.policy)
+            if self.collision == 'sdf':
+                spec.option.sdf_iterations = self.asset.sdf_policy['sdf_iterations']
+                spec.option.sdf_initpoints = self.asset.sdf_policy['sdf_initpoints']
+            spec.option.gravity = suite.fixture["gravity_m_s2"]
+            start = np.asarray(case.plan["start_m"]) - np.asarray(case.plan["direction"]) * 0.015
+            body = spec.worldbody.add_body(name="ruling20_probe", pos=start)
+            mass, radius = suite.settings["mass_kg"], suite.settings["radius_m"]
+            body.mass = mass
+            body.ipos = [0, 0, 0]
+            body.iquat = [1, 0, 0, 0]
+            body.inertia = [2 * mass * radius ** 2 / 5] * 3
+            body.explicitinertial = True
+            body.add_freejoint(name="ruling20_probe_free")
+            for i, axis in enumerate(np.eye(3)):
+                name = f"ruling20_probe_{i}"
+                spec.add_actuator(name=name, target="ruling20_probe_free", trntype=mujoco.mjtTrn.mjTRN_JOINT,
+                                  gear=[*axis, 0, 0, 0], gainprm=[1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                                  ctrllimited=False, forcelimited=False)
+            # Deliberately omit solref/solmix: this represents an unchanged caller finger.
+            probe_numerics = {k: v for k, v in CONTACT_NUMERICS.items() if k not in {'solref', 'solmix'}}
+            body.add_geom(name="ruling20_probe", type=mujoco.mjtGeom.mjGEOM_SPHERE,
+                          size=[radius, 0, 0], contype=1, conaffinity=1,
+                          rgba=[0.8, 0.1, 0.1, 1], **probe_numerics)
+            self.model = spec.compile()
+            self._compiled_key = cache_key
         self.data = mujoco.MjData(self.model)
         # Bind initializes every control from the public physical initial state.
         # No gamepad coordinates or targets are written during the press loop.
         self.gamepad = self.asset.bind(self.model, self.data)
+        # Every case uses fresh data; only the fixture start is case-dependent.
+        start = np.asarray(case.plan["start_m"]) - np.asarray(case.plan["direction"]) * 0.015
+        self.data.joint("ruling20_probe_free").qpos[:3] = start
         self._ball_id = self.model.body("ruling20_probe").id
         self._ball_geom_id = self.model.geom("ruling20_probe").id
         self._actuator_ids = [self.model.actuator(f"ruling20_probe_{i}").id for i in range(3)]
@@ -216,9 +224,13 @@ class MujocoPressExecutor:
         }
 
 
-def execute_suite(output, *, resource_root=None, suite=None, case_ids=None, physics_timestep_s=None, collision="sdf"):
+def execute_suite(output, *, resource_root=None, suite=None, case_ids=None, physics_timestep_s=None, collision="sdf",
+                  historical_results=None, stop_on_regression=False):
     """Archive incrementally; retain null results and stop on execution errors."""
     suite = suite or load_suite()
+    historical = {}
+    if historical_results is not None:
+        historical = {r['case']: r for r in json.loads(Path(historical_results).read_text())['results']}
     output = Path(output)
     output.mkdir(parents=True, exist_ok=True)
     selected = set(case_ids) if case_ids is not None else {c.case_id for c in suite.cases}
@@ -234,6 +246,7 @@ def execute_suite(output, *, resource_root=None, suite=None, case_ids=None, phys
     def persist():
         report["summary"] = summarize(rows, planned=len(suite.cases))
         report["regressions"] = [r["case"] for r in rows if r["regressed"]]
+        report["historical_regressions"] = [r["case"] for r in rows if r.get("historical_regressed")]
         path = output / "results.json"
         temporary = path.with_suffix(".tmp")
         temporary.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
@@ -259,5 +272,14 @@ def execute_suite(output, *, resource_root=None, suite=None, case_ids=None, phys
             raise
         finally:
             sink.close()
+        if case.case_id in historical:
+            old = historical[case.case_id]
+            rows[index]['historical_mujoco_passed'] = old['physics_passed']
+            rows[index]['historical_mujoco_target_min'] = old['target_min']
+            rows[index]['historical_regressed'] = bool(old['physics_passed'] and not result['physics_passed'])
         persist()
+        if stop_on_regression and (rows[index]['regressed'] or rows[index].get('historical_regressed')):
+            report['stop_reason'] = f"First frozen or historical baseline regression: {case.case_id}"
+            persist()
+            break
     return report

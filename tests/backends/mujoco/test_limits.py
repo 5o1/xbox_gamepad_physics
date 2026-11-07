@@ -35,15 +35,19 @@ def _scene(*, free=False):
       <option timestep=".0005" integrator="implicitfast" gravity="0 0 0"/>
       <worldbody><body name="controller_body">
         <inertial mass=".1" pos="0 0 0" diaginertia=".001 .001 .001"/>
+        <body name="click_frame"><joint name="click" type="slide" axis="0 0 -1"
+            stiffness="1000" springref="-.0074" damping="2.94" limited="true" range="0 .0004"/>
+          <inertial mass=".001" pos="0 0 0" diaginertia=".000001 .000001 .000001"/>
         <body name="tilt_x_frame"><joint name="tilt_x" axis="0 1 0"/>
           <inertial mass=".001" pos="0 0 0" diaginertia=".000001 .000001 .000001"/>
           <body name="tilt_y_frame"><joint name="tilt_y" axis="1 0 0"/>
             <inertial mass=".001" pos="0 0 0" diaginertia=".000001 .000001 .000001"/>
-            <body name="stick"><joint name="click" type="slide" axis="0 0 -1"/>
+            <body name="stick">
               <inertial mass=".001" pos="0 0 .03" diaginertia=".000001 .000001 .000001"/>
               <geom name="cap" type="sphere" size=".004" pos="0 0 .03"/>
             </body>
           </body>
+        </body>
         </body>
       </body>
       <body name="probe" pos="1 0 0"><freejoint name="probe_free"/>
@@ -51,7 +55,6 @@ def _scene(*, free=False):
       </body></worldbody><actuator>
         <position name="return_tilt_x" joint="tilt_x" kp=".02" kv=".0001"/>
         <position name="return_tilt_y" joint="tilt_y" kp=".02" kv=".0001"/>
-        <position name="return_click" joint="click" kp=".02" kv=".0001"/>
       </actuator></mujoco>''')
     if free:
         ET.SubElement(xml.find('worldbody/body'), 'freejoint', name='root_free')
@@ -60,9 +63,9 @@ def _scene(*, free=False):
     data = mj.MjData(model)
     names = ('tilt_x', 'tilt_y', 'click')
     handle = MujocoGamepadHandle(model, data, joints={name: name for name in names},
-        actuators={name: 'return_'+name for name in names}, sensors={}, signal_controller=None,
+        actuators={name: 'return_'+name for name in names[:2]}, sensors={}, signal_controller=None,
         root_body='controller_body', root_joint='root_free' if free else None,
-        initial_positions=dict.fromkeys(names, 0.), neutral_targets=dict.fromkeys(names, 0.),
+        initial_positions=dict.fromkeys(names, 0.), neutral_targets={'tilt_x': 0., 'tilt_y': 0., 'click': -.0074},
         hard_limits=(DESCRIPTION,))
     return mj, model, data, handle
 
@@ -85,7 +88,12 @@ def test_native_geometry_matches_shaft_angle_and_click_is_independent(free):
                 assert sample['angle_rad'] == pytest.approx(math.radians(degrees), abs=1e-14)
                 lengths.append(float(data.ten_length[0]))
                 assert lengths[-1] == pytest.approx(2*math.sin(sample['angle_rad']/2), abs=1e-14)
-            assert lengths[0] == lengths[1]
+            assert lengths[0] == pytest.approx(lengths[1], abs=1e-14)
+            # The cone has no click Jacobian: it cannot inject click preload.
+            start = model.ten_J_rowadr[0]
+            end = start + model.ten_J_rownnz[0]
+            jacobian = dict(zip(model.ten_J_colind[start:end], data.ten_J[start:end]))
+            assert jacobian.get(model.joint('click').dofadr[0], 0.) == pytest.approx(0., abs=1e-14)
 
 
 @pytest.mark.parametrize('free', (False, True))
@@ -128,3 +136,14 @@ def test_reset_preserves_requested_velocity_without_a_separate_impulse():
         joint_velocities={'tilt_x': 1., 'tilt_y': .3, 'click': 0.}))
     assert data.joint('tilt_x').qvel[0] == 1.
     assert data.joint('tilt_y').qvel[0] == .3
+
+
+def test_passive_click_target_and_reset_use_native_reference():
+    _, model, data, handle = _scene()
+    address = model.joint('click').qposadr[0]
+    before = data.qpos.copy()
+    handle.set_joint_target('click', -.006)
+    assert model.qpos_spring[address] == -.006
+    np.testing.assert_array_equal(data.qpos, before)
+    handle.reset(ResetRequest())
+    assert model.qpos_spring[address] == -.0074

@@ -18,6 +18,7 @@ from ..backends.common.physical import load_physical
 from ..backends.common.transforms import compose
 from ..motion import motion_from_dict
 from .numerics import (numerical_policy, contact_policy, sdf_policy, limit_policy,
+                       click_limit_policy,
                        standalone_option_attributes, standalone_flag_attributes, POLICY_RESOURCE)
 from .limits import append_native_tilt_limits
 
@@ -140,6 +141,7 @@ def build(output: Path, *, resource_root: Path, kinematics: Path | None = None):
     response = contact_policy(configured)
     sdf = sdf_policy(configured)
     limit_response = limit_policy(configured)
+    click_response = click_limit_policy(configured)
     collision_numerics = {**CONTACT_NUMERICS,
         'solref': [response['solref_time_constant_s'], response['solref_damping_ratio']],
         'solmix': response['solmix_weight']}
@@ -176,7 +178,7 @@ def build(output: Path, *, resource_root: Path, kinematics: Path | None = None):
             mass=_vec([_number(link.mass_kg, name + '.mass')]),
             fullinertia=_vec([tensor[0][0], tensor[1][1], tensor[2][2], tensor[0][1], tensor[0][2], tensor[1][2]]))
     actuator = ET.SubElement(xml, "actuator")
-    return_mapping, initials, targets = {}, {}, {}
+    return_mapping, initials, targets, actuator_bindings = {}, {}, {}, {}
     for joint in motion.joints:
         law = physical.return_laws[joint.name]
         if law.saturation_scope != "drive":
@@ -184,6 +186,7 @@ def build(output: Path, *, resource_root: Path, kinematics: Path | None = None):
         k = _number(law.stiffness, joint.name + '.stiffness')
         d = _number(law.drive_damping, joint.name + '.drive_damping')
         effort = _number(law.effort_limit, joint.name + '.effort_limit')
+        passive_click = joint.name in {'left_stick_click', 'right_stick_click'}
         attributes = dict(name=joint.name, type="slide" if joint.kind == "prismatic" else "hinge",
             axis=_vec(joint.axis), limited="false" if joint.name in cone_joints else "true", range=_vec([joint.lower, joint.upper]),
             ref="0", stiffness="0", damping=_vec([_number(law.passive_damping, joint.name + '.passive_damping')]))
@@ -193,11 +196,20 @@ def build(output: Path, *, resource_root: Path, kinematics: Path | None = None):
                 if parameter.unit != expected or not parameter.evidence:
                     raise ValueError(f"{joint.name}.{field}: applicable {expected} evidence is required")
                 attributes[field] = _vec([parameter.value])
+        if passive_click:
+            attributes.update(stiffness=_vec([k]),
+                springref=_vec([_number(law.rest_position, joint.name + '.rest_position')]),
+                damping=_vec([d + _number(law.passive_damping, joint.name + '.passive_damping')]),
+                solreflimit=_vec(click_response['solreflimit']),
+                solimplimit=_vec(click_response['solimplimit']),
+                margin=_vec([click_response['margin_m']]))
+        else:
+            ET.SubElement(actuator, "general", name="return_" + joint.name, joint=joint.name,
+                gear="1", dyntype="none", gaintype="fixed", gainprm=_vec([k]),
+                biastype="affine", biasprm=_vec([0, -k, -d]), ctrllimited="false",
+                forcelimited="true", forcerange=_vec([-effort, effort]))
+            actuator_bindings[joint.name] = 'return_' + joint.name
         ET.SubElement(bodies[joint.child], "joint", **attributes)
-        ET.SubElement(actuator, "general", name="return_" + joint.name, joint=joint.name,
-            gear="1", dyntype="none", gaintype="fixed", gainprm=_vec([k]),
-            biastype="affine", biasprm=_vec([0, -k, -d]), ctrllimited="false",
-            forcelimited="true", forcerange=_vec([-effort, effort]))
         initials[joint.name] = _number(law.initial_position, joint.name + '.initial_position')
         targets[joint.name] = _number(law.neutral_target, joint.name + '.neutral_target')
         return_mapping[joint.name] = {
@@ -211,6 +223,19 @@ def build(output: Path, *, resource_root: Path, kinematics: Path | None = None):
                          "armature": law.armature.missing_reason},
             "missing_native_terms": "Null frictionloss/armature are omitted and native zero means disabled, not measured zero.",
         }
+        if passive_click:
+            return_mapping[joint.name].update({
+                'actuator': None, 'native_joint_spring': joint.name,
+                'springref_m': _number(law.rest_position, joint.name + '.rest_position'),
+                'stiffness_n_per_m': k, 'damping_ns_per_m': d + law.passive_damping.value,
+                'equation': 'K*(springref-q) - (D_drive+D_passive)*qvel',
+                'removed_terms': ['return actuator gain/control term', 'affine position and velocity bias',
+                                  'actuator force saturation (passive springs have no native force clamp)'],
+                'damping_mapping': 'Common drive and passive damping are summed once on the native joint; neither is also applied by an actuator.',
+                'effort_limit_mapping': 'Retained as common metadata; native passive spring is unsaturated. No identified physical force cap is asserted.',
+                'limit_policy_id': click_response['policy_id'],
+                'limit_margin_m': click_response['margin_m'],
+            })
     collision_records = []
     for instance in collision:
         for index, hull in enumerate(iter_frozen_hulls(instance.source)):
@@ -302,7 +327,7 @@ def build(output: Path, *, resource_root: Path, kinematics: Path | None = None):
     mapping = {
         "schema_version": 1, "backend": "mujoco", "version": SUPPORTED_VERSION,
         "source": XML_REFERENCE, "configuration_id": physical.configuration_id,
-        "backend_options": {'mujoco': {'numerical_stability': numerics, 'contact_response': response, 'sdf': sdf, 'limit_response': limit_response}},
+        "backend_options": {'mujoco': {'numerical_stability': numerics, 'contact_response': response, 'sdf': sdf, 'limit_response': limit_response, 'click_limit_response': click_response}},
         "return_laws": return_mapping, "contact_materials": [asdict(m) for m in physical.contact_materials],
         "contact_physical_mapping": {"static_friction": None, "dynamic_friction": None, "restitution": None,
                                      "rolling_resistance_length": None, "torsional_resistance_length": None},
@@ -317,7 +342,7 @@ def build(output: Path, *, resource_root: Path, kinematics: Path | None = None):
                 "Metallic/roughness, normal, occlusion, emissive and specular texture roles are preserved upstream but not reproduced by the classic adapter.",
                 "Classic transparent-geometry sorting and double-sided rendering differ from the approved Cycles reference."]},
         "joint_space_constraints": [dict(c) for c in motion.joint_space_constraints],
-        "joint_space_constraint_mapping": "Shaft cones use native spatial-tendon length limits, solved jointly with contacts. Native compliance does not satisfy the exact common hard-bound guarantee. No post-step state correction. Redundant scalar tilt limits remain disabled; click limits and signal mapping are unchanged.",
+        "joint_space_constraint_mapping": "Shaft cones use native spatial-tendon length limits sharing click translation, solved jointly with contacts. Native compliance does not satisfy the exact common hard-bound guarantee. No post-step state correction. Redundant scalar tilt limits remain disabled; click ranges follow common motion, click scalar stops use the owner-approved response and activation margin, and signal mapping is unchanged.",
         "hard_limits": hard_limits,
         "native_tilt_limits": native_tilt_limits,
         "collision": collision_records, "coacd_comparison": coacd_records, "visual": visual_records,
@@ -348,7 +373,7 @@ def build(output: Path, *, resource_root: Path, kinematics: Path | None = None):
         'Override the SDF policy through backend_options.mujoco.sdf, rebuild and compile with make_spec, '
         'or edit the fragment mesh settings and your own model options before compilation.')
     usage['hard_limits'] = (
-        'Circular shaft limits are encoded in MJCF as native spatial-tendon length constraints upstream of click travel. '
+        'Circular shaft limits are encoded in MJCF as native spatial-tendon length constraints sharing click translation. '
         'Use ordinary mujoco.mj_step; scene.step is a convenience wrapper for the same native call. '
         'MuJoCo solves limit reactions together with external contacts, including floating-root coupling. '
         'No position projection, velocity correction or extra impulse is applied after stepping or during reset. '
@@ -360,7 +385,10 @@ def build(output: Path, *, resource_root: Path, kinematics: Path | None = None):
         'Override backend_options.mujoco.limit_response in an explicit calibration and rebuild, or edit the instance tendons before compilation. '
         'Native limits are compliant: the exact common hard-bound guarantee is unsupported and reported as an error finding. '
         'Read tilt_limit_state() for actual angles and excess, which are never hidden by state correction. '
-        'Out-of-range explicit state writes are rejected. Return laws, click limits, caller options and external geoms are retained.')
+        'Out-of-range explicit state writes are rejected. Click joints use unsaturated native passive springs, with common stiffness/rest position and summed common damping, without return actuators. '
+        f"The click-stop response and activation margin {click_response['margin_m']:.17g} m were approved on 2026-11-07; see backend_options.mujoco.click_limit_response. "
+        'set_joint_target on these joints updates their native spring reference in the bound model; restore_passive_targets restores the common rest reference. '
+        'Caller options and external geoms are retained.')
     (output / "README.md").write_text(
         "# Generated MuJoCo Xbox One S resources\n\n" + usage["warning"] + "\n\n```python\n" + usage["example"] + "```\n\n"
         "The asset fragment has no global options, lights or cameras. Root fixation is selected before compilation. "
@@ -378,7 +406,7 @@ def build(output: Path, *, resource_root: Path, kinematics: Path | None = None):
     manifest = {"schema_version": 1, "asset_id": "xbox_one_s", "backend": "mujoco", "profile": "full_controls",
         "hardware_calibrated": False,
         "reason": None,
-        "backend_options": {'mujoco': {'numerical_stability': numerics, 'contact_response': response, 'sdf': sdf, 'limit_response': limit_response}},
+        "backend_options": {'mujoco': {'numerical_stability': numerics, 'contact_response': response, 'sdf': sdf, 'limit_response': limit_response, 'click_limit_response': click_response}},
         "entrypoint": "xbox_one_s.xml", "default_collision": "sdf",
         "collision_variants": {
             "sdf": {"entrypoint": "xbox_one_s.xml", "mesh_names": [r['mesh_name'] for r in sdf_records],
@@ -389,7 +417,7 @@ def build(output: Path, *, resource_root: Path, kinematics: Path | None = None):
         "required_files": required, "mujoco_version": SUPPORTED_VERSION,
         "motion_contract": "common/xbox_one_s/motion/full_controls.json", "root_body": "controller_body",
         "bindings": {"joints": {j.name: j.name for j in motion.joints}, "sensors": {},
-                     "actuators": {j.name: "return_" + j.name for j in motion.joints},
+                     "actuators": actuator_bindings,
                      "bodies": {name: name for name in bodies}, "root_body": "controller_body", "root_joint": "root_free"},
         "initial_positions": initials, "neutral_targets": targets,
         "collision_geoms": [r["geom"] for r in collision_records], "visual_geoms": [r["geom"] for r in visual_records],

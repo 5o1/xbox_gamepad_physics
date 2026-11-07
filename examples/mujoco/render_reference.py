@@ -84,9 +84,14 @@ def main():
     parser.add_argument("--resource-root", required=True)
     parser.add_argument("--camera-plan", required=True)
     parser.add_argument("--output", required=True)
+    parser.add_argument("--egl-device-id", type=int,
+                        help="Caller-selected EGL device; otherwise preserve the environment selection.")
     args = parser.parse_args()
+    if args.egl_device_id is not None and args.egl_device_id < 0:
+        parser.error("--egl-device-id must be nonnegative")
     os.environ["MUJOCO_GL"] = "egl"
-    os.environ["MUJOCO_EGL_DEVICE_ID"] = "3"
+    if args.egl_device_id is not None:
+        os.environ["MUJOCO_EGL_DEVICE_ID"] = str(args.egl_device_id)
     render(args.resource_root, args.camera_plan, args.output)
 
 
