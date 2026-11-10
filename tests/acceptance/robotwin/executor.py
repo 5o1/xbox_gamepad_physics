@@ -97,10 +97,10 @@ class RobotwinPressExecutor:
                     if not lo <= positions[n] <= hi}}
 
 
-def execute_suite(output, *, case_ids=None, stop_on_regression=True):
+def execute_suite(output, *, case_ids=None, stop_on_regression=True, suite=None):
     output = Path(output)
     output.mkdir(parents=True, exist_ok=True)
-    suite = load_suite()
+    suite = load_suite() if suite is None else suite
     selected = set(case_ids) if case_ids is not None else {c.case_id for c in suite.cases}
     unknown = selected - {c.case_id for c in suite.cases}
     if unknown:

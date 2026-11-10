@@ -1,0 +1,3534 @@
+{
+  "date": "2026-11-10",
+  "base_commit": "af2c7b7d9136161bba6baf74c3a6ffa28045deff",
+  "branch": "feat/robotwin-timestep-solver-policy",
+  "scope": "CPU-only simulation on designated compute node, affinity [8]; no hardware or capture-station connection; local commit only",
+  "acceptance": {
+    "1ms": {
+      "entrypoint": "tests.acceptance.robotwin.timestep_suite",
+      "timestep_s": 0.001,
+      "timing": {
+        "dt_s": 0.001,
+        "settle_steps": 1000,
+        "T1": {
+          "ramp_steps": 3000,
+          "samples": 6001
+        },
+        "T2": {
+          "hold_steps": 1000,
+          "stable_steps": 500
+        },
+        "cone": {
+          "total_steps": 2000,
+          "load_steps": 1000,
+          "release_steps": 1000
+        },
+        "T3v2": {
+          "settle": 1000,
+          "ramp_up": 500,
+          "hold": 1000,
+          "ramp_down": 500,
+          "observe": 500,
+          "stable": 500
+        },
+        "T4": {
+          "stable_steps": 500,
+          "blocked_intervals": 100,
+          "maximum_steps": 40000
+        }
+      },
+      "solver_override": null,
+      "scene": "CPU-only, no renderer; TGS; cpu_workers=0",
+      "versions": {
+        "sapien": "3.0.3+concon.physx5.6.1.a3",
+        "xbox-gamepad-physics": "0.4.2"
+      },
+      "cpu_affinity": [
+        8
+      ],
+      "runtime_readbacks": [
+        {
+          "suite": "T1",
+          "case_index": 1,
+          "requested_timestep_s": 0.001,
+          "actual_timestep_s": 0.0010000000474974513,
+          "art_iterations": [
+            10,
+            1
+          ],
+          "solver_policy": {
+            "timestep_s": 0.0010000000474974513,
+            "validated_timestep_s": 0.001,
+            "iterations": [
+              10,
+              1
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T1",
+          "case_index": 2,
+          "requested_timestep_s": 0.001,
+          "actual_timestep_s": 0.0010000000474974513,
+          "art_iterations": [
+            10,
+            1
+          ],
+          "solver_policy": {
+            "timestep_s": 0.0010000000474974513,
+            "validated_timestep_s": 0.001,
+            "iterations": [
+              10,
+              1
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T1",
+          "case_index": 3,
+          "requested_timestep_s": 0.001,
+          "actual_timestep_s": 0.0010000000474974513,
+          "art_iterations": [
+            10,
+            1
+          ],
+          "solver_policy": {
+            "timestep_s": 0.0010000000474974513,
+            "validated_timestep_s": 0.001,
+            "iterations": [
+              10,
+              1
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T1",
+          "case_index": 4,
+          "requested_timestep_s": 0.001,
+          "actual_timestep_s": 0.0010000000474974513,
+          "art_iterations": [
+            10,
+            1
+          ],
+          "solver_policy": {
+            "timestep_s": 0.0010000000474974513,
+            "validated_timestep_s": 0.001,
+            "iterations": [
+              10,
+              1
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T1",
+          "case_index": 5,
+          "requested_timestep_s": 0.001,
+          "actual_timestep_s": 0.0010000000474974513,
+          "art_iterations": [
+            10,
+            1
+          ],
+          "solver_policy": {
+            "timestep_s": 0.0010000000474974513,
+            "validated_timestep_s": 0.001,
+            "iterations": [
+              10,
+              1
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T1",
+          "case_index": 6,
+          "requested_timestep_s": 0.001,
+          "actual_timestep_s": 0.0010000000474974513,
+          "art_iterations": [
+            10,
+            1
+          ],
+          "solver_policy": {
+            "timestep_s": 0.0010000000474974513,
+            "validated_timestep_s": 0.001,
+            "iterations": [
+              10,
+              1
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T2",
+          "case_index": 1,
+          "requested_timestep_s": 0.001,
+          "actual_timestep_s": 0.0010000000474974513,
+          "art_iterations": [
+            10,
+            1
+          ],
+          "solver_policy": {
+            "timestep_s": 0.0010000000474974513,
+            "validated_timestep_s": 0.001,
+            "iterations": [
+              10,
+              1
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T2",
+          "case_index": 2,
+          "requested_timestep_s": 0.001,
+          "actual_timestep_s": 0.0010000000474974513,
+          "art_iterations": [
+            10,
+            1
+          ],
+          "solver_policy": {
+            "timestep_s": 0.0010000000474974513,
+            "validated_timestep_s": 0.001,
+            "iterations": [
+              10,
+              1
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T2",
+          "case_index": 3,
+          "requested_timestep_s": 0.001,
+          "actual_timestep_s": 0.0010000000474974513,
+          "art_iterations": [
+            10,
+            1
+          ],
+          "solver_policy": {
+            "timestep_s": 0.0010000000474974513,
+            "validated_timestep_s": 0.001,
+            "iterations": [
+              10,
+              1
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T2",
+          "case_index": 4,
+          "requested_timestep_s": 0.001,
+          "actual_timestep_s": 0.0010000000474974513,
+          "art_iterations": [
+            10,
+            1
+          ],
+          "solver_policy": {
+            "timestep_s": 0.0010000000474974513,
+            "validated_timestep_s": 0.001,
+            "iterations": [
+              10,
+              1
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T2",
+          "case_index": 5,
+          "requested_timestep_s": 0.001,
+          "actual_timestep_s": 0.0010000000474974513,
+          "art_iterations": [
+            10,
+            1
+          ],
+          "solver_policy": {
+            "timestep_s": 0.0010000000474974513,
+            "validated_timestep_s": 0.001,
+            "iterations": [
+              10,
+              1
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T2",
+          "case_index": 6,
+          "requested_timestep_s": 0.001,
+          "actual_timestep_s": 0.0010000000474974513,
+          "art_iterations": [
+            10,
+            1
+          ],
+          "solver_policy": {
+            "timestep_s": 0.0010000000474974513,
+            "validated_timestep_s": 0.001,
+            "iterations": [
+              10,
+              1
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T2",
+          "case_index": 7,
+          "requested_timestep_s": 0.001,
+          "actual_timestep_s": 0.0010000000474974513,
+          "art_iterations": [
+            10,
+            1
+          ],
+          "solver_policy": {
+            "timestep_s": 0.0010000000474974513,
+            "validated_timestep_s": 0.001,
+            "iterations": [
+              10,
+              1
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T2",
+          "case_index": 8,
+          "requested_timestep_s": 0.001,
+          "actual_timestep_s": 0.0010000000474974513,
+          "art_iterations": [
+            10,
+            1
+          ],
+          "solver_policy": {
+            "timestep_s": 0.0010000000474974513,
+            "validated_timestep_s": 0.001,
+            "iterations": [
+              10,
+              1
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T2",
+          "case_index": 9,
+          "requested_timestep_s": 0.001,
+          "actual_timestep_s": 0.0010000000474974513,
+          "art_iterations": [
+            10,
+            1
+          ],
+          "solver_policy": {
+            "timestep_s": 0.0010000000474974513,
+            "validated_timestep_s": 0.001,
+            "iterations": [
+              10,
+              1
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T2",
+          "case_index": 10,
+          "requested_timestep_s": 0.001,
+          "actual_timestep_s": 0.0010000000474974513,
+          "art_iterations": [
+            10,
+            1
+          ],
+          "solver_policy": {
+            "timestep_s": 0.0010000000474974513,
+            "validated_timestep_s": 0.001,
+            "iterations": [
+              10,
+              1
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T2",
+          "case_index": 11,
+          "requested_timestep_s": 0.001,
+          "actual_timestep_s": 0.0010000000474974513,
+          "art_iterations": [
+            10,
+            1
+          ],
+          "solver_policy": {
+            "timestep_s": 0.0010000000474974513,
+            "validated_timestep_s": 0.001,
+            "iterations": [
+              10,
+              1
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T2",
+          "case_index": 12,
+          "requested_timestep_s": 0.001,
+          "actual_timestep_s": 0.0010000000474974513,
+          "art_iterations": [
+            10,
+            1
+          ],
+          "solver_policy": {
+            "timestep_s": 0.0010000000474974513,
+            "validated_timestep_s": 0.001,
+            "iterations": [
+              10,
+              1
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "cone",
+          "case_index": 1,
+          "requested_timestep_s": 0.001,
+          "actual_timestep_s": 0.0010000000474974513,
+          "art_iterations": [
+            10,
+            1
+          ],
+          "solver_policy": {
+            "timestep_s": 0.0010000000474974513,
+            "validated_timestep_s": 0.001,
+            "iterations": [
+              10,
+              1
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "cone",
+          "case_index": 2,
+          "requested_timestep_s": 0.001,
+          "actual_timestep_s": 0.0010000000474974513,
+          "art_iterations": [
+            10,
+            1
+          ],
+          "solver_policy": {
+            "timestep_s": 0.0010000000474974513,
+            "validated_timestep_s": 0.001,
+            "iterations": [
+              10,
+              1
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "cone",
+          "case_index": 3,
+          "requested_timestep_s": 0.001,
+          "actual_timestep_s": 0.0010000000474974513,
+          "art_iterations": [
+            10,
+            1
+          ],
+          "solver_policy": {
+            "timestep_s": 0.0010000000474974513,
+            "validated_timestep_s": 0.001,
+            "iterations": [
+              10,
+              1
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "cone",
+          "case_index": 4,
+          "requested_timestep_s": 0.001,
+          "actual_timestep_s": 0.0010000000474974513,
+          "art_iterations": [
+            10,
+            1
+          ],
+          "solver_policy": {
+            "timestep_s": 0.0010000000474974513,
+            "validated_timestep_s": 0.001,
+            "iterations": [
+              10,
+              1
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "cone",
+          "case_index": 5,
+          "requested_timestep_s": 0.001,
+          "actual_timestep_s": 0.0010000000474974513,
+          "art_iterations": [
+            10,
+            1
+          ],
+          "solver_policy": {
+            "timestep_s": 0.0010000000474974513,
+            "validated_timestep_s": 0.001,
+            "iterations": [
+              10,
+              1
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "cone",
+          "case_index": 6,
+          "requested_timestep_s": 0.001,
+          "actual_timestep_s": 0.0010000000474974513,
+          "art_iterations": [
+            10,
+            1
+          ],
+          "solver_policy": {
+            "timestep_s": 0.0010000000474974513,
+            "validated_timestep_s": 0.001,
+            "iterations": [
+              10,
+              1
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T3v2",
+          "case_index": 1,
+          "requested_timestep_s": 0.001,
+          "actual_timestep_s": 0.0010000000474974513,
+          "art_iterations": [
+            10,
+            1
+          ],
+          "solver_policy": {
+            "timestep_s": 0.0010000000474974513,
+            "validated_timestep_s": 0.001,
+            "iterations": [
+              10,
+              1
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T3v2",
+          "case_index": 2,
+          "requested_timestep_s": 0.001,
+          "actual_timestep_s": 0.0010000000474974513,
+          "art_iterations": [
+            10,
+            1
+          ],
+          "solver_policy": {
+            "timestep_s": 0.0010000000474974513,
+            "validated_timestep_s": 0.001,
+            "iterations": [
+              10,
+              1
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T3v2",
+          "case_index": 3,
+          "requested_timestep_s": 0.001,
+          "actual_timestep_s": 0.0010000000474974513,
+          "art_iterations": [
+            10,
+            1
+          ],
+          "solver_policy": {
+            "timestep_s": 0.0010000000474974513,
+            "validated_timestep_s": 0.001,
+            "iterations": [
+              10,
+              1
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T3v2",
+          "case_index": 4,
+          "requested_timestep_s": 0.001,
+          "actual_timestep_s": 0.0010000000474974513,
+          "art_iterations": [
+            10,
+            1
+          ],
+          "solver_policy": {
+            "timestep_s": 0.0010000000474974513,
+            "validated_timestep_s": 0.001,
+            "iterations": [
+              10,
+              1
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T3v2",
+          "case_index": 5,
+          "requested_timestep_s": 0.001,
+          "actual_timestep_s": 0.0010000000474974513,
+          "art_iterations": [
+            10,
+            1
+          ],
+          "solver_policy": {
+            "timestep_s": 0.0010000000474974513,
+            "validated_timestep_s": 0.001,
+            "iterations": [
+              10,
+              1
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T3v2",
+          "case_index": 6,
+          "requested_timestep_s": 0.001,
+          "actual_timestep_s": 0.0010000000474974513,
+          "art_iterations": [
+            10,
+            1
+          ],
+          "solver_policy": {
+            "timestep_s": 0.0010000000474974513,
+            "validated_timestep_s": 0.001,
+            "iterations": [
+              10,
+              1
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T3v2",
+          "case_index": 7,
+          "requested_timestep_s": 0.001,
+          "actual_timestep_s": 0.0010000000474974513,
+          "art_iterations": [
+            10,
+            1
+          ],
+          "solver_policy": {
+            "timestep_s": 0.0010000000474974513,
+            "validated_timestep_s": 0.001,
+            "iterations": [
+              10,
+              1
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T3v2",
+          "case_index": 8,
+          "requested_timestep_s": 0.001,
+          "actual_timestep_s": 0.0010000000474974513,
+          "art_iterations": [
+            10,
+            1
+          ],
+          "solver_policy": {
+            "timestep_s": 0.0010000000474974513,
+            "validated_timestep_s": 0.001,
+            "iterations": [
+              10,
+              1
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T3v2",
+          "case_index": 9,
+          "requested_timestep_s": 0.001,
+          "actual_timestep_s": 0.0010000000474974513,
+          "art_iterations": [
+            10,
+            1
+          ],
+          "solver_policy": {
+            "timestep_s": 0.0010000000474974513,
+            "validated_timestep_s": 0.001,
+            "iterations": [
+              10,
+              1
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T3v2",
+          "case_index": 10,
+          "requested_timestep_s": 0.001,
+          "actual_timestep_s": 0.0010000000474974513,
+          "art_iterations": [
+            10,
+            1
+          ],
+          "solver_policy": {
+            "timestep_s": 0.0010000000474974513,
+            "validated_timestep_s": 0.001,
+            "iterations": [
+              10,
+              1
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T4",
+          "case_index": 1,
+          "requested_timestep_s": 0.001,
+          "actual_timestep_s": 0.0010000000474974513,
+          "art_iterations": [
+            10,
+            1
+          ],
+          "solver_policy": {
+            "timestep_s": 0.0010000000474974513,
+            "validated_timestep_s": 0.001,
+            "iterations": [
+              10,
+              1
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T4",
+          "case_index": 2,
+          "requested_timestep_s": 0.001,
+          "actual_timestep_s": 0.0010000000474974513,
+          "art_iterations": [
+            10,
+            1
+          ],
+          "solver_policy": {
+            "timestep_s": 0.0010000000474974513,
+            "validated_timestep_s": 0.001,
+            "iterations": [
+              10,
+              1
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T4",
+          "case_index": 3,
+          "requested_timestep_s": 0.001,
+          "actual_timestep_s": 0.0010000000474974513,
+          "art_iterations": [
+            10,
+            1
+          ],
+          "solver_policy": {
+            "timestep_s": 0.0010000000474974513,
+            "validated_timestep_s": 0.001,
+            "iterations": [
+              10,
+              1
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T4",
+          "case_index": 4,
+          "requested_timestep_s": 0.001,
+          "actual_timestep_s": 0.0010000000474974513,
+          "art_iterations": [
+            10,
+            1
+          ],
+          "solver_policy": {
+            "timestep_s": 0.0010000000474974513,
+            "validated_timestep_s": 0.001,
+            "iterations": [
+              10,
+              1
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T4",
+          "case_index": 5,
+          "requested_timestep_s": 0.001,
+          "actual_timestep_s": 0.0010000000474974513,
+          "art_iterations": [
+            10,
+            1
+          ],
+          "solver_policy": {
+            "timestep_s": 0.0010000000474974513,
+            "validated_timestep_s": 0.001,
+            "iterations": [
+              10,
+              1
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T4",
+          "case_index": 6,
+          "requested_timestep_s": 0.001,
+          "actual_timestep_s": 0.0010000000474974513,
+          "art_iterations": [
+            10,
+            1
+          ],
+          "solver_policy": {
+            "timestep_s": 0.0010000000474974513,
+            "validated_timestep_s": 0.001,
+            "iterations": [
+              10,
+              1
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T4",
+          "case_index": 7,
+          "requested_timestep_s": 0.001,
+          "actual_timestep_s": 0.0010000000474974513,
+          "art_iterations": [
+            10,
+            1
+          ],
+          "solver_policy": {
+            "timestep_s": 0.0010000000474974513,
+            "validated_timestep_s": 0.001,
+            "iterations": [
+              10,
+              1
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T4",
+          "case_index": 8,
+          "requested_timestep_s": 0.001,
+          "actual_timestep_s": 0.0010000000474974513,
+          "art_iterations": [
+            10,
+            1
+          ],
+          "solver_policy": {
+            "timestep_s": 0.0010000000474974513,
+            "validated_timestep_s": 0.001,
+            "iterations": [
+              10,
+              1
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T4",
+          "case_index": 9,
+          "requested_timestep_s": 0.001,
+          "actual_timestep_s": 0.0010000000474974513,
+          "art_iterations": [
+            10,
+            1
+          ],
+          "solver_policy": {
+            "timestep_s": 0.0010000000474974513,
+            "validated_timestep_s": 0.001,
+            "iterations": [
+              10,
+              1
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T4",
+          "case_index": 10,
+          "requested_timestep_s": 0.001,
+          "actual_timestep_s": 0.0010000000474974513,
+          "art_iterations": [
+            10,
+            1
+          ],
+          "solver_policy": {
+            "timestep_s": 0.0010000000474974513,
+            "validated_timestep_s": 0.001,
+            "iterations": [
+              10,
+              1
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T4",
+          "case_index": 11,
+          "requested_timestep_s": 0.001,
+          "actual_timestep_s": 0.0010000000474974513,
+          "art_iterations": [
+            10,
+            1
+          ],
+          "solver_policy": {
+            "timestep_s": 0.0010000000474974513,
+            "validated_timestep_s": 0.001,
+            "iterations": [
+              10,
+              1
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T4",
+          "case_index": 12,
+          "requested_timestep_s": 0.001,
+          "actual_timestep_s": 0.0010000000474974513,
+          "art_iterations": [
+            10,
+            1
+          ],
+          "solver_policy": {
+            "timestep_s": 0.0010000000474974513,
+            "validated_timestep_s": 0.001,
+            "iterations": [
+              10,
+              1
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T4",
+          "case_index": 13,
+          "requested_timestep_s": 0.001,
+          "actual_timestep_s": 0.0010000000474974513,
+          "art_iterations": [
+            10,
+            1
+          ],
+          "solver_policy": {
+            "timestep_s": 0.0010000000474974513,
+            "validated_timestep_s": 0.001,
+            "iterations": [
+              10,
+              1
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T4",
+          "case_index": 14,
+          "requested_timestep_s": 0.001,
+          "actual_timestep_s": 0.0010000000474974513,
+          "art_iterations": [
+            10,
+            1
+          ],
+          "solver_policy": {
+            "timestep_s": 0.0010000000474974513,
+            "validated_timestep_s": 0.001,
+            "iterations": [
+              10,
+              1
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T4",
+          "case_index": 15,
+          "requested_timestep_s": 0.001,
+          "actual_timestep_s": 0.0010000000474974513,
+          "art_iterations": [
+            10,
+            1
+          ],
+          "solver_policy": {
+            "timestep_s": 0.0010000000474974513,
+            "validated_timestep_s": 0.001,
+            "iterations": [
+              10,
+              1
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T4",
+          "case_index": 16,
+          "requested_timestep_s": 0.001,
+          "actual_timestep_s": 0.0010000000474974513,
+          "art_iterations": [
+            10,
+            1
+          ],
+          "solver_policy": {
+            "timestep_s": 0.0010000000474974513,
+            "validated_timestep_s": 0.001,
+            "iterations": [
+              10,
+              1
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T4",
+          "case_index": 17,
+          "requested_timestep_s": 0.001,
+          "actual_timestep_s": 0.0010000000474974513,
+          "art_iterations": [
+            10,
+            1
+          ],
+          "solver_policy": {
+            "timestep_s": 0.0010000000474974513,
+            "validated_timestep_s": 0.001,
+            "iterations": [
+              10,
+              1
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T4",
+          "case_index": 18,
+          "requested_timestep_s": 0.001,
+          "actual_timestep_s": 0.0010000000474974513,
+          "art_iterations": [
+            10,
+            1
+          ],
+          "solver_policy": {
+            "timestep_s": 0.0010000000474974513,
+            "validated_timestep_s": 0.001,
+            "iterations": [
+              10,
+              1
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T4",
+          "case_index": 19,
+          "requested_timestep_s": 0.001,
+          "actual_timestep_s": 0.0010000000474974513,
+          "art_iterations": [
+            10,
+            1
+          ],
+          "solver_policy": {
+            "timestep_s": 0.0010000000474974513,
+            "validated_timestep_s": 0.001,
+            "iterations": [
+              10,
+              1
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T4",
+          "case_index": 20,
+          "requested_timestep_s": 0.001,
+          "actual_timestep_s": 0.0010000000474974513,
+          "art_iterations": [
+            10,
+            1
+          ],
+          "solver_policy": {
+            "timestep_s": 0.0010000000474974513,
+            "validated_timestep_s": 0.001,
+            "iterations": [
+              10,
+              1
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T4",
+          "case_index": 21,
+          "requested_timestep_s": 0.001,
+          "actual_timestep_s": 0.0010000000474974513,
+          "art_iterations": [
+            10,
+            1
+          ],
+          "solver_policy": {
+            "timestep_s": 0.0010000000474974513,
+            "validated_timestep_s": 0.001,
+            "iterations": [
+              10,
+              1
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T4",
+          "case_index": 22,
+          "requested_timestep_s": 0.001,
+          "actual_timestep_s": 0.0010000000474974513,
+          "art_iterations": [
+            10,
+            1
+          ],
+          "solver_policy": {
+            "timestep_s": 0.0010000000474974513,
+            "validated_timestep_s": 0.001,
+            "iterations": [
+              10,
+              1
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T4",
+          "case_index": 23,
+          "requested_timestep_s": 0.001,
+          "actual_timestep_s": 0.0010000000474974513,
+          "art_iterations": [
+            10,
+            1
+          ],
+          "solver_policy": {
+            "timestep_s": 0.0010000000474974513,
+            "validated_timestep_s": 0.001,
+            "iterations": [
+              10,
+              1
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T4",
+          "case_index": 24,
+          "requested_timestep_s": 0.001,
+          "actual_timestep_s": 0.0010000000474974513,
+          "art_iterations": [
+            10,
+            1
+          ],
+          "solver_policy": {
+            "timestep_s": 0.0010000000474974513,
+            "validated_timestep_s": 0.001,
+            "iterations": [
+              10,
+              1
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T4",
+          "case_index": 25,
+          "requested_timestep_s": 0.001,
+          "actual_timestep_s": 0.0010000000474974513,
+          "art_iterations": [
+            10,
+            1
+          ],
+          "solver_policy": {
+            "timestep_s": 0.0010000000474974513,
+            "validated_timestep_s": 0.001,
+            "iterations": [
+              10,
+              1
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T4",
+          "case_index": 26,
+          "requested_timestep_s": 0.001,
+          "actual_timestep_s": 0.0010000000474974513,
+          "art_iterations": [
+            10,
+            1
+          ],
+          "solver_policy": {
+            "timestep_s": 0.0010000000474974513,
+            "validated_timestep_s": 0.001,
+            "iterations": [
+              10,
+              1
+            ],
+            "source": "timestep_policy"
+          }
+        }
+      ],
+      "results": {
+        "T1": {
+          "passed": 6,
+          "executed": 6,
+          "passed_cases": [
+            [
+              "left",
+              0
+            ],
+            [
+              "left",
+              12
+            ],
+            [
+              "left",
+              20
+            ],
+            [
+              "right",
+              0
+            ],
+            [
+              "right",
+              12
+            ],
+            [
+              "right",
+              20
+            ]
+          ],
+          "failed_cases": [],
+          "results_sha256": "34e869cc066ca9619e2c293feb4a1aff65bdcbb74c4340ef314e810f45d46aa5"
+        },
+        "T2": {
+          "passed": 12,
+          "executed": 12,
+          "passed_cases": [
+            [
+              "left",
+              0.5
+            ],
+            [
+              "left",
+              0.8
+            ],
+            [
+              "left",
+              0.95
+            ],
+            [
+              "left",
+              1.1
+            ],
+            [
+              "left",
+              1.3
+            ],
+            [
+              "left",
+              1.6
+            ],
+            [
+              "right",
+              0.5
+            ],
+            [
+              "right",
+              0.8
+            ],
+            [
+              "right",
+              0.95
+            ],
+            [
+              "right",
+              1.1
+            ],
+            [
+              "right",
+              1.3
+            ],
+            [
+              "right",
+              1.6
+            ]
+          ],
+          "failed_cases": [],
+          "results_sha256": "63cb80990bc8e14064caf5fe652afb9e0e73dfd466023e49feaaef7b10e7023e"
+        },
+        "cone": {
+          "passed": 6,
+          "executed": 6,
+          "passed_cases": [
+            [
+              "left",
+              "diagonal45"
+            ],
+            [
+              "left",
+              "positive_x"
+            ],
+            [
+              "left",
+              "positive_y"
+            ],
+            [
+              "right",
+              "diagonal45"
+            ],
+            [
+              "right",
+              "positive_x"
+            ],
+            [
+              "right",
+              "positive_y"
+            ]
+          ],
+          "failed_cases": [],
+          "results_sha256": "af2d77dad377c3130d272c6ed684edebe6ce4a0edb73ad8c8b26ee1da0699493"
+        },
+        "T3v2": {
+          "passed": 10,
+          "executed": 10,
+          "passed_cases": [
+            [
+              "left",
+              1
+            ],
+            [
+              "left",
+              2
+            ],
+            [
+              "left",
+              4
+            ],
+            [
+              "left",
+              6
+            ],
+            [
+              "left",
+              8.14
+            ],
+            [
+              "right",
+              1
+            ],
+            [
+              "right",
+              2
+            ],
+            [
+              "right",
+              4
+            ],
+            [
+              "right",
+              6
+            ],
+            [
+              "right",
+              8.14
+            ]
+          ],
+          "failed_cases": [],
+          "results_sha256": "db28d3736bd4308016e93f07910a550aaa3426f7a78e9a66ae2805b77d66f56c"
+        },
+        "T4": {
+          "passed": 25,
+          "executed": 26,
+          "passed_cases": [
+            "A",
+            "B",
+            "X",
+            "Y",
+            "LB",
+            "RB",
+            "View",
+            "Menu",
+            "Guide",
+            "L3",
+            "R3",
+            "Dpad_up",
+            "Dpad_down",
+            "Dpad_left",
+            "Dpad_right",
+            "left_x_pos",
+            "left_x_neg",
+            "left_y_pos",
+            "left_y_neg",
+            "right_x_pos",
+            "right_x_neg",
+            "right_y_pos",
+            "right_y_neg",
+            "LT",
+            "RT"
+          ],
+          "failed_cases": [
+            "Pair"
+          ],
+          "results_sha256": "a409c1e240424634c7266b845fbb3c5651d267b5573f3dd2e9418ca045c29b80"
+        }
+      },
+      "protocol_sha256": {
+        "stick_click_protocol.json": "57e6152d0873729de785941ddb062050744c7a8ce4247975d6f202233d3aa2db",
+        "stick_cone_production_protocol.json": "c53aeb0b137954430b78676e6436887327a77e031fd4501d5f6e9ad3ce88a70e",
+        "stick_click_t3_point_v2.json": "5a8f151a344d3981e3fa870ea1f77c98713d86ecc9a4b4169c4c4e04328f19e2",
+        "ruling20_sdf303_v1.json": "fa6b38f77316f1dce959ce3ed23856d6a5c87d77f93ef48348e718797fff30fa"
+      },
+      "elapsed_s": 65.67058342602104,
+      "regressions": [],
+      "expected_passed": {
+        "T1": 6,
+        "T2": 12,
+        "cone": 6,
+        "T3v2": 10,
+        "T4": 25
+      },
+      "expected_iterations": [
+        10,
+        1
+      ],
+      "expected_failed_t4": [
+        "Pair"
+      ],
+      "readbacks_match": true,
+      "accepted": true
+    },
+    "4ms": {
+      "entrypoint": "tests.acceptance.robotwin.timestep_suite",
+      "timestep_s": 0.004,
+      "timing": {
+        "dt_s": 0.004,
+        "settle_steps": 250,
+        "T1": {
+          "ramp_steps": 750,
+          "samples": 1501
+        },
+        "T2": {
+          "hold_steps": 250,
+          "stable_steps": 125
+        },
+        "cone": {
+          "total_steps": 500,
+          "load_steps": 250,
+          "release_steps": 250
+        },
+        "T3v2": {
+          "settle": 250,
+          "ramp_up": 125,
+          "hold": 250,
+          "ramp_down": 125,
+          "observe": 125,
+          "stable": 125
+        },
+        "T4": {
+          "stable_steps": 125,
+          "blocked_intervals": 25,
+          "maximum_steps": 10000
+        }
+      },
+      "solver_override": null,
+      "scene": "CPU-only, no renderer; TGS; cpu_workers=0",
+      "versions": {
+        "sapien": "3.0.3+concon.physx5.6.1.a3",
+        "xbox-gamepad-physics": "0.4.2"
+      },
+      "cpu_affinity": [
+        8
+      ],
+      "runtime_readbacks": [
+        {
+          "suite": "T1",
+          "case_index": 1,
+          "requested_timestep_s": 0.004,
+          "actual_timestep_s": 0.004000000189989805,
+          "art_iterations": [
+            64,
+            16
+          ],
+          "solver_policy": {
+            "timestep_s": 0.004000000189989805,
+            "validated_timestep_s": 0.004,
+            "iterations": [
+              64,
+              16
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T1",
+          "case_index": 2,
+          "requested_timestep_s": 0.004,
+          "actual_timestep_s": 0.004000000189989805,
+          "art_iterations": [
+            64,
+            16
+          ],
+          "solver_policy": {
+            "timestep_s": 0.004000000189989805,
+            "validated_timestep_s": 0.004,
+            "iterations": [
+              64,
+              16
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T1",
+          "case_index": 3,
+          "requested_timestep_s": 0.004,
+          "actual_timestep_s": 0.004000000189989805,
+          "art_iterations": [
+            64,
+            16
+          ],
+          "solver_policy": {
+            "timestep_s": 0.004000000189989805,
+            "validated_timestep_s": 0.004,
+            "iterations": [
+              64,
+              16
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T1",
+          "case_index": 4,
+          "requested_timestep_s": 0.004,
+          "actual_timestep_s": 0.004000000189989805,
+          "art_iterations": [
+            64,
+            16
+          ],
+          "solver_policy": {
+            "timestep_s": 0.004000000189989805,
+            "validated_timestep_s": 0.004,
+            "iterations": [
+              64,
+              16
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T1",
+          "case_index": 5,
+          "requested_timestep_s": 0.004,
+          "actual_timestep_s": 0.004000000189989805,
+          "art_iterations": [
+            64,
+            16
+          ],
+          "solver_policy": {
+            "timestep_s": 0.004000000189989805,
+            "validated_timestep_s": 0.004,
+            "iterations": [
+              64,
+              16
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T1",
+          "case_index": 6,
+          "requested_timestep_s": 0.004,
+          "actual_timestep_s": 0.004000000189989805,
+          "art_iterations": [
+            64,
+            16
+          ],
+          "solver_policy": {
+            "timestep_s": 0.004000000189989805,
+            "validated_timestep_s": 0.004,
+            "iterations": [
+              64,
+              16
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T2",
+          "case_index": 1,
+          "requested_timestep_s": 0.004,
+          "actual_timestep_s": 0.004000000189989805,
+          "art_iterations": [
+            64,
+            16
+          ],
+          "solver_policy": {
+            "timestep_s": 0.004000000189989805,
+            "validated_timestep_s": 0.004,
+            "iterations": [
+              64,
+              16
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T2",
+          "case_index": 2,
+          "requested_timestep_s": 0.004,
+          "actual_timestep_s": 0.004000000189989805,
+          "art_iterations": [
+            64,
+            16
+          ],
+          "solver_policy": {
+            "timestep_s": 0.004000000189989805,
+            "validated_timestep_s": 0.004,
+            "iterations": [
+              64,
+              16
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T2",
+          "case_index": 3,
+          "requested_timestep_s": 0.004,
+          "actual_timestep_s": 0.004000000189989805,
+          "art_iterations": [
+            64,
+            16
+          ],
+          "solver_policy": {
+            "timestep_s": 0.004000000189989805,
+            "validated_timestep_s": 0.004,
+            "iterations": [
+              64,
+              16
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T2",
+          "case_index": 4,
+          "requested_timestep_s": 0.004,
+          "actual_timestep_s": 0.004000000189989805,
+          "art_iterations": [
+            64,
+            16
+          ],
+          "solver_policy": {
+            "timestep_s": 0.004000000189989805,
+            "validated_timestep_s": 0.004,
+            "iterations": [
+              64,
+              16
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T2",
+          "case_index": 5,
+          "requested_timestep_s": 0.004,
+          "actual_timestep_s": 0.004000000189989805,
+          "art_iterations": [
+            64,
+            16
+          ],
+          "solver_policy": {
+            "timestep_s": 0.004000000189989805,
+            "validated_timestep_s": 0.004,
+            "iterations": [
+              64,
+              16
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T2",
+          "case_index": 6,
+          "requested_timestep_s": 0.004,
+          "actual_timestep_s": 0.004000000189989805,
+          "art_iterations": [
+            64,
+            16
+          ],
+          "solver_policy": {
+            "timestep_s": 0.004000000189989805,
+            "validated_timestep_s": 0.004,
+            "iterations": [
+              64,
+              16
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T2",
+          "case_index": 7,
+          "requested_timestep_s": 0.004,
+          "actual_timestep_s": 0.004000000189989805,
+          "art_iterations": [
+            64,
+            16
+          ],
+          "solver_policy": {
+            "timestep_s": 0.004000000189989805,
+            "validated_timestep_s": 0.004,
+            "iterations": [
+              64,
+              16
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T2",
+          "case_index": 8,
+          "requested_timestep_s": 0.004,
+          "actual_timestep_s": 0.004000000189989805,
+          "art_iterations": [
+            64,
+            16
+          ],
+          "solver_policy": {
+            "timestep_s": 0.004000000189989805,
+            "validated_timestep_s": 0.004,
+            "iterations": [
+              64,
+              16
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T2",
+          "case_index": 9,
+          "requested_timestep_s": 0.004,
+          "actual_timestep_s": 0.004000000189989805,
+          "art_iterations": [
+            64,
+            16
+          ],
+          "solver_policy": {
+            "timestep_s": 0.004000000189989805,
+            "validated_timestep_s": 0.004,
+            "iterations": [
+              64,
+              16
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T2",
+          "case_index": 10,
+          "requested_timestep_s": 0.004,
+          "actual_timestep_s": 0.004000000189989805,
+          "art_iterations": [
+            64,
+            16
+          ],
+          "solver_policy": {
+            "timestep_s": 0.004000000189989805,
+            "validated_timestep_s": 0.004,
+            "iterations": [
+              64,
+              16
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T2",
+          "case_index": 11,
+          "requested_timestep_s": 0.004,
+          "actual_timestep_s": 0.004000000189989805,
+          "art_iterations": [
+            64,
+            16
+          ],
+          "solver_policy": {
+            "timestep_s": 0.004000000189989805,
+            "validated_timestep_s": 0.004,
+            "iterations": [
+              64,
+              16
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T2",
+          "case_index": 12,
+          "requested_timestep_s": 0.004,
+          "actual_timestep_s": 0.004000000189989805,
+          "art_iterations": [
+            64,
+            16
+          ],
+          "solver_policy": {
+            "timestep_s": 0.004000000189989805,
+            "validated_timestep_s": 0.004,
+            "iterations": [
+              64,
+              16
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "cone",
+          "case_index": 1,
+          "requested_timestep_s": 0.004,
+          "actual_timestep_s": 0.004000000189989805,
+          "art_iterations": [
+            64,
+            16
+          ],
+          "solver_policy": {
+            "timestep_s": 0.004000000189989805,
+            "validated_timestep_s": 0.004,
+            "iterations": [
+              64,
+              16
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "cone",
+          "case_index": 2,
+          "requested_timestep_s": 0.004,
+          "actual_timestep_s": 0.004000000189989805,
+          "art_iterations": [
+            64,
+            16
+          ],
+          "solver_policy": {
+            "timestep_s": 0.004000000189989805,
+            "validated_timestep_s": 0.004,
+            "iterations": [
+              64,
+              16
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "cone",
+          "case_index": 3,
+          "requested_timestep_s": 0.004,
+          "actual_timestep_s": 0.004000000189989805,
+          "art_iterations": [
+            64,
+            16
+          ],
+          "solver_policy": {
+            "timestep_s": 0.004000000189989805,
+            "validated_timestep_s": 0.004,
+            "iterations": [
+              64,
+              16
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "cone",
+          "case_index": 4,
+          "requested_timestep_s": 0.004,
+          "actual_timestep_s": 0.004000000189989805,
+          "art_iterations": [
+            64,
+            16
+          ],
+          "solver_policy": {
+            "timestep_s": 0.004000000189989805,
+            "validated_timestep_s": 0.004,
+            "iterations": [
+              64,
+              16
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "cone",
+          "case_index": 5,
+          "requested_timestep_s": 0.004,
+          "actual_timestep_s": 0.004000000189989805,
+          "art_iterations": [
+            64,
+            16
+          ],
+          "solver_policy": {
+            "timestep_s": 0.004000000189989805,
+            "validated_timestep_s": 0.004,
+            "iterations": [
+              64,
+              16
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "cone",
+          "case_index": 6,
+          "requested_timestep_s": 0.004,
+          "actual_timestep_s": 0.004000000189989805,
+          "art_iterations": [
+            64,
+            16
+          ],
+          "solver_policy": {
+            "timestep_s": 0.004000000189989805,
+            "validated_timestep_s": 0.004,
+            "iterations": [
+              64,
+              16
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T3v2",
+          "case_index": 1,
+          "requested_timestep_s": 0.004,
+          "actual_timestep_s": 0.004000000189989805,
+          "art_iterations": [
+            64,
+            16
+          ],
+          "solver_policy": {
+            "timestep_s": 0.004000000189989805,
+            "validated_timestep_s": 0.004,
+            "iterations": [
+              64,
+              16
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T3v2",
+          "case_index": 2,
+          "requested_timestep_s": 0.004,
+          "actual_timestep_s": 0.004000000189989805,
+          "art_iterations": [
+            64,
+            16
+          ],
+          "solver_policy": {
+            "timestep_s": 0.004000000189989805,
+            "validated_timestep_s": 0.004,
+            "iterations": [
+              64,
+              16
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T3v2",
+          "case_index": 3,
+          "requested_timestep_s": 0.004,
+          "actual_timestep_s": 0.004000000189989805,
+          "art_iterations": [
+            64,
+            16
+          ],
+          "solver_policy": {
+            "timestep_s": 0.004000000189989805,
+            "validated_timestep_s": 0.004,
+            "iterations": [
+              64,
+              16
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T3v2",
+          "case_index": 4,
+          "requested_timestep_s": 0.004,
+          "actual_timestep_s": 0.004000000189989805,
+          "art_iterations": [
+            64,
+            16
+          ],
+          "solver_policy": {
+            "timestep_s": 0.004000000189989805,
+            "validated_timestep_s": 0.004,
+            "iterations": [
+              64,
+              16
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T3v2",
+          "case_index": 5,
+          "requested_timestep_s": 0.004,
+          "actual_timestep_s": 0.004000000189989805,
+          "art_iterations": [
+            64,
+            16
+          ],
+          "solver_policy": {
+            "timestep_s": 0.004000000189989805,
+            "validated_timestep_s": 0.004,
+            "iterations": [
+              64,
+              16
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T3v2",
+          "case_index": 6,
+          "requested_timestep_s": 0.004,
+          "actual_timestep_s": 0.004000000189989805,
+          "art_iterations": [
+            64,
+            16
+          ],
+          "solver_policy": {
+            "timestep_s": 0.004000000189989805,
+            "validated_timestep_s": 0.004,
+            "iterations": [
+              64,
+              16
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T3v2",
+          "case_index": 7,
+          "requested_timestep_s": 0.004,
+          "actual_timestep_s": 0.004000000189989805,
+          "art_iterations": [
+            64,
+            16
+          ],
+          "solver_policy": {
+            "timestep_s": 0.004000000189989805,
+            "validated_timestep_s": 0.004,
+            "iterations": [
+              64,
+              16
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T3v2",
+          "case_index": 8,
+          "requested_timestep_s": 0.004,
+          "actual_timestep_s": 0.004000000189989805,
+          "art_iterations": [
+            64,
+            16
+          ],
+          "solver_policy": {
+            "timestep_s": 0.004000000189989805,
+            "validated_timestep_s": 0.004,
+            "iterations": [
+              64,
+              16
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T3v2",
+          "case_index": 9,
+          "requested_timestep_s": 0.004,
+          "actual_timestep_s": 0.004000000189989805,
+          "art_iterations": [
+            64,
+            16
+          ],
+          "solver_policy": {
+            "timestep_s": 0.004000000189989805,
+            "validated_timestep_s": 0.004,
+            "iterations": [
+              64,
+              16
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T3v2",
+          "case_index": 10,
+          "requested_timestep_s": 0.004,
+          "actual_timestep_s": 0.004000000189989805,
+          "art_iterations": [
+            64,
+            16
+          ],
+          "solver_policy": {
+            "timestep_s": 0.004000000189989805,
+            "validated_timestep_s": 0.004,
+            "iterations": [
+              64,
+              16
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T4",
+          "case_index": 1,
+          "requested_timestep_s": 0.004,
+          "actual_timestep_s": 0.004000000189989805,
+          "art_iterations": [
+            64,
+            16
+          ],
+          "solver_policy": {
+            "timestep_s": 0.004000000189989805,
+            "validated_timestep_s": 0.004,
+            "iterations": [
+              64,
+              16
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T4",
+          "case_index": 2,
+          "requested_timestep_s": 0.004,
+          "actual_timestep_s": 0.004000000189989805,
+          "art_iterations": [
+            64,
+            16
+          ],
+          "solver_policy": {
+            "timestep_s": 0.004000000189989805,
+            "validated_timestep_s": 0.004,
+            "iterations": [
+              64,
+              16
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T4",
+          "case_index": 3,
+          "requested_timestep_s": 0.004,
+          "actual_timestep_s": 0.004000000189989805,
+          "art_iterations": [
+            64,
+            16
+          ],
+          "solver_policy": {
+            "timestep_s": 0.004000000189989805,
+            "validated_timestep_s": 0.004,
+            "iterations": [
+              64,
+              16
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T4",
+          "case_index": 4,
+          "requested_timestep_s": 0.004,
+          "actual_timestep_s": 0.004000000189989805,
+          "art_iterations": [
+            64,
+            16
+          ],
+          "solver_policy": {
+            "timestep_s": 0.004000000189989805,
+            "validated_timestep_s": 0.004,
+            "iterations": [
+              64,
+              16
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T4",
+          "case_index": 5,
+          "requested_timestep_s": 0.004,
+          "actual_timestep_s": 0.004000000189989805,
+          "art_iterations": [
+            64,
+            16
+          ],
+          "solver_policy": {
+            "timestep_s": 0.004000000189989805,
+            "validated_timestep_s": 0.004,
+            "iterations": [
+              64,
+              16
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T4",
+          "case_index": 6,
+          "requested_timestep_s": 0.004,
+          "actual_timestep_s": 0.004000000189989805,
+          "art_iterations": [
+            64,
+            16
+          ],
+          "solver_policy": {
+            "timestep_s": 0.004000000189989805,
+            "validated_timestep_s": 0.004,
+            "iterations": [
+              64,
+              16
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T4",
+          "case_index": 7,
+          "requested_timestep_s": 0.004,
+          "actual_timestep_s": 0.004000000189989805,
+          "art_iterations": [
+            64,
+            16
+          ],
+          "solver_policy": {
+            "timestep_s": 0.004000000189989805,
+            "validated_timestep_s": 0.004,
+            "iterations": [
+              64,
+              16
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T4",
+          "case_index": 8,
+          "requested_timestep_s": 0.004,
+          "actual_timestep_s": 0.004000000189989805,
+          "art_iterations": [
+            64,
+            16
+          ],
+          "solver_policy": {
+            "timestep_s": 0.004000000189989805,
+            "validated_timestep_s": 0.004,
+            "iterations": [
+              64,
+              16
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T4",
+          "case_index": 9,
+          "requested_timestep_s": 0.004,
+          "actual_timestep_s": 0.004000000189989805,
+          "art_iterations": [
+            64,
+            16
+          ],
+          "solver_policy": {
+            "timestep_s": 0.004000000189989805,
+            "validated_timestep_s": 0.004,
+            "iterations": [
+              64,
+              16
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T4",
+          "case_index": 10,
+          "requested_timestep_s": 0.004,
+          "actual_timestep_s": 0.004000000189989805,
+          "art_iterations": [
+            64,
+            16
+          ],
+          "solver_policy": {
+            "timestep_s": 0.004000000189989805,
+            "validated_timestep_s": 0.004,
+            "iterations": [
+              64,
+              16
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T4",
+          "case_index": 11,
+          "requested_timestep_s": 0.004,
+          "actual_timestep_s": 0.004000000189989805,
+          "art_iterations": [
+            64,
+            16
+          ],
+          "solver_policy": {
+            "timestep_s": 0.004000000189989805,
+            "validated_timestep_s": 0.004,
+            "iterations": [
+              64,
+              16
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T4",
+          "case_index": 12,
+          "requested_timestep_s": 0.004,
+          "actual_timestep_s": 0.004000000189989805,
+          "art_iterations": [
+            64,
+            16
+          ],
+          "solver_policy": {
+            "timestep_s": 0.004000000189989805,
+            "validated_timestep_s": 0.004,
+            "iterations": [
+              64,
+              16
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T4",
+          "case_index": 13,
+          "requested_timestep_s": 0.004,
+          "actual_timestep_s": 0.004000000189989805,
+          "art_iterations": [
+            64,
+            16
+          ],
+          "solver_policy": {
+            "timestep_s": 0.004000000189989805,
+            "validated_timestep_s": 0.004,
+            "iterations": [
+              64,
+              16
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T4",
+          "case_index": 14,
+          "requested_timestep_s": 0.004,
+          "actual_timestep_s": 0.004000000189989805,
+          "art_iterations": [
+            64,
+            16
+          ],
+          "solver_policy": {
+            "timestep_s": 0.004000000189989805,
+            "validated_timestep_s": 0.004,
+            "iterations": [
+              64,
+              16
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T4",
+          "case_index": 15,
+          "requested_timestep_s": 0.004,
+          "actual_timestep_s": 0.004000000189989805,
+          "art_iterations": [
+            64,
+            16
+          ],
+          "solver_policy": {
+            "timestep_s": 0.004000000189989805,
+            "validated_timestep_s": 0.004,
+            "iterations": [
+              64,
+              16
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T4",
+          "case_index": 16,
+          "requested_timestep_s": 0.004,
+          "actual_timestep_s": 0.004000000189989805,
+          "art_iterations": [
+            64,
+            16
+          ],
+          "solver_policy": {
+            "timestep_s": 0.004000000189989805,
+            "validated_timestep_s": 0.004,
+            "iterations": [
+              64,
+              16
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T4",
+          "case_index": 17,
+          "requested_timestep_s": 0.004,
+          "actual_timestep_s": 0.004000000189989805,
+          "art_iterations": [
+            64,
+            16
+          ],
+          "solver_policy": {
+            "timestep_s": 0.004000000189989805,
+            "validated_timestep_s": 0.004,
+            "iterations": [
+              64,
+              16
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T4",
+          "case_index": 18,
+          "requested_timestep_s": 0.004,
+          "actual_timestep_s": 0.004000000189989805,
+          "art_iterations": [
+            64,
+            16
+          ],
+          "solver_policy": {
+            "timestep_s": 0.004000000189989805,
+            "validated_timestep_s": 0.004,
+            "iterations": [
+              64,
+              16
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T4",
+          "case_index": 19,
+          "requested_timestep_s": 0.004,
+          "actual_timestep_s": 0.004000000189989805,
+          "art_iterations": [
+            64,
+            16
+          ],
+          "solver_policy": {
+            "timestep_s": 0.004000000189989805,
+            "validated_timestep_s": 0.004,
+            "iterations": [
+              64,
+              16
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T4",
+          "case_index": 20,
+          "requested_timestep_s": 0.004,
+          "actual_timestep_s": 0.004000000189989805,
+          "art_iterations": [
+            64,
+            16
+          ],
+          "solver_policy": {
+            "timestep_s": 0.004000000189989805,
+            "validated_timestep_s": 0.004,
+            "iterations": [
+              64,
+              16
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T4",
+          "case_index": 21,
+          "requested_timestep_s": 0.004,
+          "actual_timestep_s": 0.004000000189989805,
+          "art_iterations": [
+            64,
+            16
+          ],
+          "solver_policy": {
+            "timestep_s": 0.004000000189989805,
+            "validated_timestep_s": 0.004,
+            "iterations": [
+              64,
+              16
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T4",
+          "case_index": 22,
+          "requested_timestep_s": 0.004,
+          "actual_timestep_s": 0.004000000189989805,
+          "art_iterations": [
+            64,
+            16
+          ],
+          "solver_policy": {
+            "timestep_s": 0.004000000189989805,
+            "validated_timestep_s": 0.004,
+            "iterations": [
+              64,
+              16
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T4",
+          "case_index": 23,
+          "requested_timestep_s": 0.004,
+          "actual_timestep_s": 0.004000000189989805,
+          "art_iterations": [
+            64,
+            16
+          ],
+          "solver_policy": {
+            "timestep_s": 0.004000000189989805,
+            "validated_timestep_s": 0.004,
+            "iterations": [
+              64,
+              16
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T4",
+          "case_index": 24,
+          "requested_timestep_s": 0.004,
+          "actual_timestep_s": 0.004000000189989805,
+          "art_iterations": [
+            64,
+            16
+          ],
+          "solver_policy": {
+            "timestep_s": 0.004000000189989805,
+            "validated_timestep_s": 0.004,
+            "iterations": [
+              64,
+              16
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T4",
+          "case_index": 25,
+          "requested_timestep_s": 0.004,
+          "actual_timestep_s": 0.004000000189989805,
+          "art_iterations": [
+            64,
+            16
+          ],
+          "solver_policy": {
+            "timestep_s": 0.004000000189989805,
+            "validated_timestep_s": 0.004,
+            "iterations": [
+              64,
+              16
+            ],
+            "source": "timestep_policy"
+          }
+        },
+        {
+          "suite": "T4",
+          "case_index": 26,
+          "requested_timestep_s": 0.004,
+          "actual_timestep_s": 0.004000000189989805,
+          "art_iterations": [
+            64,
+            16
+          ],
+          "solver_policy": {
+            "timestep_s": 0.004000000189989805,
+            "validated_timestep_s": 0.004,
+            "iterations": [
+              64,
+              16
+            ],
+            "source": "timestep_policy"
+          }
+        }
+      ],
+      "results": {
+        "T1": {
+          "passed": 6,
+          "executed": 6,
+          "passed_cases": [
+            [
+              "left",
+              0
+            ],
+            [
+              "left",
+              12
+            ],
+            [
+              "left",
+              20
+            ],
+            [
+              "right",
+              0
+            ],
+            [
+              "right",
+              12
+            ],
+            [
+              "right",
+              20
+            ]
+          ],
+          "failed_cases": [],
+          "results_sha256": "be5c6cae6432137733f2fae2b92ff37bd105da3ce997e87b103b10ec44082536"
+        },
+        "T2": {
+          "passed": 12,
+          "executed": 12,
+          "passed_cases": [
+            [
+              "left",
+              0.5
+            ],
+            [
+              "left",
+              0.8
+            ],
+            [
+              "left",
+              0.95
+            ],
+            [
+              "left",
+              1.1
+            ],
+            [
+              "left",
+              1.3
+            ],
+            [
+              "left",
+              1.6
+            ],
+            [
+              "right",
+              0.5
+            ],
+            [
+              "right",
+              0.8
+            ],
+            [
+              "right",
+              0.95
+            ],
+            [
+              "right",
+              1.1
+            ],
+            [
+              "right",
+              1.3
+            ],
+            [
+              "right",
+              1.6
+            ]
+          ],
+          "failed_cases": [],
+          "results_sha256": "d1bb7d70db7f342cca9a68a257607dcd6b39b22c7dec25a0bd50ac5be236d4b3"
+        },
+        "cone": {
+          "passed": 6,
+          "executed": 6,
+          "passed_cases": [
+            [
+              "left",
+              "diagonal45"
+            ],
+            [
+              "left",
+              "positive_x"
+            ],
+            [
+              "left",
+              "positive_y"
+            ],
+            [
+              "right",
+              "diagonal45"
+            ],
+            [
+              "right",
+              "positive_x"
+            ],
+            [
+              "right",
+              "positive_y"
+            ]
+          ],
+          "failed_cases": [],
+          "results_sha256": "308be9f8f2304826b097ecf6dca4f8516a732e4b73a81b10bc496fdeb58680b2"
+        },
+        "T3v2": {
+          "passed": 10,
+          "executed": 10,
+          "passed_cases": [
+            [
+              "left",
+              1
+            ],
+            [
+              "left",
+              2
+            ],
+            [
+              "left",
+              4
+            ],
+            [
+              "left",
+              6
+            ],
+            [
+              "left",
+              8.14
+            ],
+            [
+              "right",
+              1
+            ],
+            [
+              "right",
+              2
+            ],
+            [
+              "right",
+              4
+            ],
+            [
+              "right",
+              6
+            ],
+            [
+              "right",
+              8.14
+            ]
+          ],
+          "failed_cases": [],
+          "results_sha256": "c1ddb061e58cb4476756a99a66cb31e06ce8316ee3255a4642f3612acf9c783f"
+        },
+        "T4": {
+          "passed": 23,
+          "executed": 26,
+          "passed_cases": [
+            "A",
+            "B",
+            "X",
+            "Y",
+            "LB",
+            "RB",
+            "View",
+            "Menu",
+            "Guide",
+            "Dpad_up",
+            "Dpad_down",
+            "Dpad_left",
+            "Dpad_right",
+            "left_x_pos",
+            "left_x_neg",
+            "left_y_pos",
+            "left_y_neg",
+            "right_x_pos",
+            "right_x_neg",
+            "right_y_pos",
+            "right_y_neg",
+            "LT",
+            "RT"
+          ],
+          "failed_cases": [
+            "Pair",
+            "L3",
+            "R3"
+          ],
+          "results_sha256": "7a35bfebb96eec39f7de0ffd680a3f3675ea0fe79b8880e20f3930d17a4c9588"
+        }
+      },
+      "protocol_sha256": {
+        "stick_click_protocol.json": "57e6152d0873729de785941ddb062050744c7a8ce4247975d6f202233d3aa2db",
+        "stick_cone_production_protocol.json": "c53aeb0b137954430b78676e6436887327a77e031fd4501d5f6e9ad3ce88a70e",
+        "stick_click_t3_point_v2.json": "5a8f151a344d3981e3fa870ea1f77c98713d86ecc9a4b4169c4c4e04328f19e2",
+        "ruling20_sdf303_v1.json": "fa6b38f77316f1dce959ce3ed23856d6a5c87d77f93ef48348e718797fff30fa"
+      },
+      "elapsed_s": 32.42091134702787,
+      "regressions": [],
+      "expected_passed": {
+        "T1": 6,
+        "T2": 12,
+        "cone": 6,
+        "T3v2": 10,
+        "T4": 23
+      },
+      "expected_iterations": [
+        64,
+        16
+      ],
+      "expected_failed_t4": [
+        "L3",
+        "Pair",
+        "R3"
+      ],
+      "readbacks_match": true,
+      "accepted": true
+    }
+  },
+  "contact_benchmark": {
+    "distribution": {
+      "native": {
+        "trials": [
+          {
+            "median_us": 338.644,
+            "p95_us": 462.026,
+            "max_us": 1138.641,
+            "over_800us_steps": 4,
+            "measured_steps": 3000,
+            "mean_us": 354.7774973333334
+          },
+          {
+            "median_us": 335.0165,
+            "p95_us": 355.01559999999995,
+            "max_us": 383.91,
+            "over_800us_steps": 0,
+            "measured_steps": 3000,
+            "mean_us": 338.3978236666667
+          },
+          {
+            "median_us": 335.3165,
+            "p95_us": 354.99625,
+            "max_us": 398.041,
+            "over_800us_steps": 0,
+            "measured_steps": 3000,
+            "mean_us": 338.7745036666667
+          }
+        ],
+        "median_us": 335.3165,
+        "p95_us": 355.01559999999995,
+        "max_us": 1138.641,
+        "over_800us_steps": 4,
+        "measured_steps": 9000,
+        "median_range_us": [
+          335.0165,
+          338.644
+        ],
+        "p95_range_us": [
+          354.99625,
+          462.026
+        ]
+      },
+      "total": {
+        "trials": [
+          {
+            "median_us": 401.636,
+            "p95_us": 559.8836499999999,
+            "max_us": 1222.549,
+            "over_800us_steps": 9,
+            "measured_steps": 3000,
+            "mean_us": 418.93057866666663
+          },
+          {
+            "median_us": 388.9995,
+            "p95_us": 412.18025,
+            "max_us": 445.459,
+            "over_800us_steps": 0,
+            "measured_steps": 3000,
+            "mean_us": 392.22481466666665
+          },
+          {
+            "median_us": 389.6775,
+            "p95_us": 412.56915,
+            "max_us": 468.669,
+            "over_800us_steps": 0,
+            "measured_steps": 3000,
+            "mean_us": 392.769115
+          }
+        ],
+        "median_us": 389.6775,
+        "p95_us": 412.56915,
+        "max_us": 1222.549,
+        "over_800us_steps": 9,
+        "measured_steps": 9000,
+        "median_range_us": [
+          388.9995,
+          401.636
+        ],
+        "p95_range_us": [
+          412.18025,
+          559.8836499999999
+        ]
+      }
+    },
+    "pad_states": [
+      {
+        "sleeping": false,
+        "actual_timestep_s": 0.0010000000474974513,
+        "art_iterations": [
+          10,
+          1
+        ],
+        "solver_policy": {
+          "timestep_s": 0.0010000000474974513,
+          "validated_timestep_s": 0.001,
+          "iterations": [
+            10,
+            1
+          ],
+          "source": "timestep_policy"
+        },
+        "always_awake": {
+          "calls": 5200,
+          "sleeping_after_wake": 0,
+          "sleeping_after_step": 0
+        },
+        "sleep_threshold": 0.004999999888241291,
+        "qf": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          -7.400000095367432,
+          -7.400000095367432,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "qpos": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          5.18614172051457e-07,
+          0.0,
+          0.0,
+          0.00039999998989515007,
+          8.301091584950182e-12,
+          8.349541894858703e-05,
+          8.351698488695547e-05,
+          0.0,
+          0.0,
+          0.0,
+          0.00016287034668494016,
+          -0.3950546383857727,
+          1.1606883163040038e-05,
+          -0.18082547187805176,
+          0.004878071136772633
+        ],
+        "qvel": [
+          -6.845424650236964e-05,
+          -5.695410072803497e-05,
+          -2.1518615540117025e-05,
+          -2.161542943213135e-05,
+          -9.249302092939615e-05,
+          -0.00010881076013902202,
+          -9.678764035925269e-05,
+          -9.678973583504558e-05,
+          -0.0012714378535747528,
+          -6.192631474277732e-08,
+          -0.15480820834636688,
+          -0.1547946035861969,
+          -6.56982883810997e-05,
+          -8.425104897469282e-05,
+          -6.701250094920397e-05,
+          -0.03516819700598717,
+          -14.603715896606445,
+          -0.00040080887265503407,
+          11.445318222045898,
+          -0.07668162882328033
+        ],
+        "robot_dof": {
+          "left": 28,
+          "right": 28
+        },
+        "contact_bodies": [
+          [
+            "left_stick",
+            "thumb_distal"
+          ],
+          [
+            "ring_distal",
+            "controller_body"
+          ],
+          [
+            "pinky_distal",
+            "controller_body"
+          ]
+        ],
+        "contact_owners": [
+          [
+            "gamepad",
+            "left"
+          ],
+          [
+            "left",
+            "gamepad"
+          ],
+          [
+            "left",
+            "gamepad"
+          ]
+        ]
+      },
+      {
+        "sleeping": false,
+        "actual_timestep_s": 0.0010000000474974513,
+        "art_iterations": [
+          10,
+          1
+        ],
+        "solver_policy": {
+          "timestep_s": 0.0010000000474974513,
+          "validated_timestep_s": 0.001,
+          "iterations": [
+            10,
+            1
+          ],
+          "source": "timestep_policy"
+        },
+        "always_awake": {
+          "calls": 5200,
+          "sleeping_after_wake": 0,
+          "sleeping_after_step": 0
+        },
+        "sleep_threshold": 0.004999999888241291,
+        "qf": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          -7.400000095367432,
+          -7.400000095367432,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "qpos": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          5.18614172051457e-07,
+          0.0,
+          0.0,
+          0.00039999998989515007,
+          8.301091584950182e-12,
+          8.349541894858703e-05,
+          8.351698488695547e-05,
+          0.0,
+          0.0,
+          0.0,
+          0.00016287034668494016,
+          -0.3950546383857727,
+          1.1606883163040038e-05,
+          -0.18082547187805176,
+          0.004878071136772633
+        ],
+        "qvel": [
+          -6.845424650236964e-05,
+          -5.695410072803497e-05,
+          -2.1518615540117025e-05,
+          -2.161542943213135e-05,
+          -9.249302092939615e-05,
+          -0.00010881076013902202,
+          -9.678764035925269e-05,
+          -9.678973583504558e-05,
+          -0.0012714378535747528,
+          -6.192631474277732e-08,
+          -0.15480820834636688,
+          -0.1547946035861969,
+          -6.56982883810997e-05,
+          -8.425104897469282e-05,
+          -6.701250094920397e-05,
+          -0.03516819700598717,
+          -14.603715896606445,
+          -0.00040080887265503407,
+          11.445318222045898,
+          -0.07668162882328033
+        ],
+        "robot_dof": {
+          "left": 28,
+          "right": 28
+        },
+        "contact_bodies": [
+          [
+            "ring_distal",
+            "controller_body"
+          ],
+          [
+            "pinky_distal",
+            "controller_body"
+          ],
+          [
+            "left_stick",
+            "thumb_distal"
+          ]
+        ],
+        "contact_owners": [
+          [
+            "left",
+            "gamepad"
+          ],
+          [
+            "left",
+            "gamepad"
+          ],
+          [
+            "gamepad",
+            "left"
+          ]
+        ]
+      },
+      {
+        "sleeping": false,
+        "actual_timestep_s": 0.0010000000474974513,
+        "art_iterations": [
+          10,
+          1
+        ],
+        "solver_policy": {
+          "timestep_s": 0.0010000000474974513,
+          "validated_timestep_s": 0.001,
+          "iterations": [
+            10,
+            1
+          ],
+          "source": "timestep_policy"
+        },
+        "always_awake": {
+          "calls": 5200,
+          "sleeping_after_wake": 0,
+          "sleeping_after_step": 0
+        },
+        "sleep_threshold": 0.004999999888241291,
+        "qf": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          -7.400000095367432,
+          -7.400000095367432,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "qpos": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          5.18614172051457e-07,
+          0.0,
+          0.0,
+          0.00039999998989515007,
+          8.301091584950182e-12,
+          8.349541894858703e-05,
+          8.351698488695547e-05,
+          0.0,
+          0.0,
+          0.0,
+          0.00016287034668494016,
+          -0.3950546383857727,
+          1.1606883163040038e-05,
+          -0.18082547187805176,
+          0.004878071136772633
+        ],
+        "qvel": [
+          -6.845424650236964e-05,
+          -5.695410072803497e-05,
+          -2.1518615540117025e-05,
+          -2.161542943213135e-05,
+          -9.249302092939615e-05,
+          -0.00010881076013902202,
+          -9.678764035925269e-05,
+          -9.678973583504558e-05,
+          -0.0012714378535747528,
+          -6.192631474277732e-08,
+          -0.15480820834636688,
+          -0.1547946035861969,
+          -6.56982883810997e-05,
+          -8.425104897469282e-05,
+          -6.701250094920397e-05,
+          -0.03516819700598717,
+          -14.603715896606445,
+          -0.00040080887265503407,
+          11.445318222045898,
+          -0.07668162882328033
+        ],
+        "robot_dof": {
+          "left": 28,
+          "right": 28
+        },
+        "contact_bodies": [
+          [
+            "ring_distal",
+            "controller_body"
+          ],
+          [
+            "pinky_distal",
+            "controller_body"
+          ],
+          [
+            "left_stick",
+            "thumb_distal"
+          ]
+        ],
+        "contact_owners": [
+          [
+            "left",
+            "gamepad"
+          ],
+          [
+            "left",
+            "gamepad"
+          ],
+          [
+            "gamepad",
+            "left"
+          ]
+        ]
+      }
+    ],
+    "versions": {
+      "sapien": "3.0.3+concon.physx5.6.1.a3",
+      "xbox-gamepad-physics": "0.4.2"
+    },
+    "aq_trials": [
+      {
+        "total_us": 420.43112233333335,
+        "native_scene_step_us": 354.7774973333334,
+        "host_motion_us": 2.9126296666666667,
+        "target_writes_us": 0.42976133333333333,
+        "contact_query_us": 22.711310333333333,
+        "contact_pairs_mean": 3.0,
+        "contact_pairs_max": 3,
+        "contact_points_mean": 25.0,
+        "contact_points_max": 25,
+        "robot_qvel_max": 0.3908030092716217,
+        "gamepad_iterations": [
+          10,
+          1
+        ],
+        "enable_tgs": true,
+        "gamepad_sleeping": false,
+        "gamepad_contact_offsets": [
+          0.00019999999494757503
+        ],
+        "robot_sleeping": {
+          "left": false,
+          "right": false
+        },
+        "robot_iterations": {
+          "left": [
+            10,
+            1
+          ],
+          "right": [
+            10,
+            1
+          ]
+        },
+        "other_us": 39.59992366666664
+      },
+      {
+        "total_us": 393.58739033333336,
+        "native_scene_step_us": 338.3978236666667,
+        "host_motion_us": 2.8208343333333334,
+        "target_writes_us": 0.41685300000000003,
+        "contact_query_us": 15.092427333333333,
+        "contact_pairs_mean": 3.0,
+        "contact_pairs_max": 3,
+        "contact_points_mean": 25.0,
+        "contact_points_max": 25,
+        "robot_qvel_max": 0.3908030092716217,
+        "gamepad_iterations": [
+          10,
+          1
+        ],
+        "enable_tgs": true,
+        "gamepad_sleeping": false,
+        "gamepad_contact_offsets": [
+          0.00019999999494757503
+        ],
+        "robot_sleeping": {
+          "left": false,
+          "right": false
+        },
+        "robot_iterations": {
+          "left": [
+            10,
+            1
+          ],
+          "right": [
+            10,
+            1
+          ]
+        },
+        "other_us": 36.85945200000001
+      },
+      {
+        "total_us": 394.150909,
+        "native_scene_step_us": 338.7745036666667,
+        "host_motion_us": 2.8797466666666662,
+        "target_writes_us": 0.46427633333333335,
+        "contact_query_us": 14.948019666666667,
+        "contact_pairs_mean": 3.0,
+        "contact_pairs_max": 3,
+        "contact_points_mean": 25.0,
+        "contact_points_max": 25,
+        "robot_qvel_max": 0.3908030092716217,
+        "gamepad_iterations": [
+          10,
+          1
+        ],
+        "enable_tgs": true,
+        "gamepad_sleeping": false,
+        "gamepad_contact_offsets": [
+          0.00019999999494757503
+        ],
+        "robot_sleeping": {
+          "left": false,
+          "right": false
+        },
+        "robot_iterations": {
+          "left": [
+            10,
+            1
+          ],
+          "right": [
+            10,
+            1
+          ]
+        },
+        "other_us": 37.08436266666664
+      }
+    ],
+    "settings": {
+      "variant": "default",
+      "condition": "contact",
+      "steps_per_repeat": 3000,
+      "repetitions": 3,
+      "always_awake": true,
+      "solver_override": null,
+      "sleep_override": null,
+      "batch_override": null
+    }
+  },
+  "benchmark_provenance": {
+    "aq_probe_sha256": "a359b8e163deaa70b1cd91732b2843808dbe8e8ad4922ebf92fb3cf09241932b",
+    "script_sha256": "68e15550a8fbd7740aa442d9e6c12a5873594ea743b5d074dbf140e73372f0d4",
+    "python": "3.10.12",
+    "cpu_affinity": [
+      8
+    ],
+    "cpu_workers": 0,
+    "omp_threads": "1",
+    "openblas_threads": "1",
+    "cuda": "",
+    "manifest_sha256": "4f9bae3e25db4addf9c51702816445b0c1de32342bb356657b4e9ce424cd2e51",
+    "step_times_sha256": "34fdbad233cea4dd348e0995ae323df5ebd7964ed9be3b883bc90ba374a7ddae"
+  },
+  "unchanged_physics": {
+    "joint_dynamics": true,
+    "contact_material": true,
+    "motion_contract": true,
+    "collision_variants": true,
+    "other_backend_options": true,
+    "urdf_physics": true,
+    "common_motion_bytes": true,
+    "collision_mesh_bytes": true
+  },
+  "resource_configuration": {
+    "asset_id": "xbox_one_s",
+    "profile": "full_controls",
+    "configuration_id": "default:full_controls",
+    "motion_revision": "motion-v1",
+    "physical": {},
+    "signal_policy": {},
+    "spawn": {},
+    "backend_options": {},
+    "source_chain": {}
+  },
+  "performance_800us": {
+    "all_measured_steps_at_or_below": false,
+    "median_and_p95_at_or_below": true,
+    "note": "Strict per-step <=800 us requirement not met; no samples discarded and no physical parameters tuned."
+  },
+  "local_regression": {
+    "command": "python3 scripts/run_regression.py fast",
+    "exit_code": 0,
+    "unittest": {
+      "run": 333,
+      "passed": 316,
+      "skipped": [
+        {
+          "test": "acceptance.robotwin.test_candidate_mapping.NativeTest.test_a1_rejects_native_d6_even_with_same_setter_name.test_a1_rejects_native_d6_even_with_same_setter_name",
+          "reason": "requires private a1 resource copy"
+        },
+        {
+          "test": "acceptance.robotwin.test_candidate_mapping.NativeTest.test_native_implicit_viscous_mapping_is_not_double_counted.test_native_implicit_viscous_mapping_is_not_double_counted",
+          "reason": "requires private resource copy"
+        },
+        {
+          "test": "acceptance.robotwin.test_candidate_mapping.NativeTest.test_native_new_and_legacy_resources.test_native_new_and_legacy_resources",
+          "reason": "requires private a1 resource copy"
+        },
+        {
+          "test": "infrastructure.test_common_runtime.GamepadStateTests.test_numeric_action_mask_preserves_gradients_on_active_channels.test_numeric_action_mask_preserves_gradients_on_active_channels",
+          "reason": "Torch is an optional training dependency"
+        },
+        {
+          "test": "infrastructure.test_muble_adapter.MuBlEPoseExportTest.test_public_mujoco_handle_exports_muble_trace.test_public_mujoco_handle_exports_muble_trace",
+          "reason": "Historical resource tree is retained for provenance only."
+        },
+        {
+          "test": "infrastructure.test_scene_injection.SceneInjectionTest.test_existing_scene_is_preserved.test_existing_scene_is_preserved",
+          "reason": "SAPIEN is not installed"
+        },
+        {
+          "test": "test_backend_torch_signals.TorchSignalsTest.test_all_discontinuities_and_partial_asymmetric_mapping.test_all_discontinuities_and_partial_asymmetric_mapping",
+          "reason": "Optional torch is not installed"
+        },
+        {
+          "test": "test_backend_torch_signals.TorchSignalsTest.test_both_cpu_dtypes_match_oracle_and_preserve_pair.test_both_cpu_dtypes_match_oracle_and_preserve_pair",
+          "reason": "Optional torch is not installed"
+        },
+        {
+          "test": "test_backend_torch_signals.TorchSignalsTest.test_masks_and_invalid_inputs.test_masks_and_invalid_inputs",
+          "reason": "Optional torch is not installed"
+        },
+        {
+          "test": "test_run_robotwin.SapienSmokeTest.test_smoke_twenty_steps_passes.test_smoke_twenty_steps_passes",
+          "reason": "SAPIEN is an optional backend dependency"
+        },
+        {
+          "test": "test_teleop_shutdown.GatewayShutdownTest.test_detached_gateway_logs_to_file_and_checked_cleanup.test_detached_gateway_logs_to_file_and_checked_cleanup",
+          "reason": "gateway process tests need aiohttp or XBOX_TELEOP_TEST_PYTHON"
+        },
+        {
+          "test": "test_teleop_shutdown.GatewayShutdownTest.test_idle_watchdog_exits_with_broken_stdout.test_idle_watchdog_exits_with_broken_stdout",
+          "reason": "gateway process tests need aiohttp or XBOX_TELEOP_TEST_PYTHON"
+        },
+        {
+          "test": "test_teleop_shutdown.GatewayShutdownTest.test_shutdown_with_broken_stdout.test_shutdown_with_broken_stdout",
+          "reason": "gateway process tests need aiohttp or XBOX_TELEOP_TEST_PYTHON"
+        },
+        {
+          "test": "test_teleop_shutdown.GatewayShutdownTest.test_sigint_exits_with_broken_stdout.test_sigint_exits_with_broken_stdout",
+          "reason": "gateway process tests need aiohttp or XBOX_TELEOP_TEST_PYTHON"
+        },
+        {
+          "test": "test_teleop_shutdown.GatewayShutdownTest.test_sigterm_exits_with_broken_stdout.test_sigterm_exits_with_broken_stdout",
+          "reason": "gateway process tests need aiohttp or XBOX_TELEOP_TEST_PYTHON"
+        },
+        {
+          "test": "test_teleop_shutdown.GatewayShutdownTest.test_stop_reason_and_stdout_errors_do_not_block_shutdown.test_stop_reason_and_stdout_errors_do_not_block_shutdown",
+          "reason": "gateway process tests need aiohttp or XBOX_TELEOP_TEST_PYTHON"
+        },
+        {
+          "test": "test_teleop_slow_clients.GatewaySlowClientsTest.test_real_gateway_slow_client_and_cancellation_contract.test_real_gateway_slow_client_and_cancellation_contract",
+          "reason": "gateway video process tests need aiohttp and FFmpeg"
+        }
+      ]
+    },
+    "pytest_mujoco_passed": 30,
+    "javascript_passed": 35,
+    "log_sha256": "f143903ed4eae2c54c6c47757a348a9803f58be6cb5e4aa24fccb87a9d237afe"
+  }
+}

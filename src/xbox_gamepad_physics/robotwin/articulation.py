@@ -119,6 +119,16 @@ class XboxOneSArticulation(SignalHandleMixin):
         return self._articulation
 
     @property
+    def solver_policy(self):
+        """Immutable load-time timestep, selected point, iterations and source.
+
+        Read current native counts from ``articulation`` if the caller changes
+        them after loading. A subsequent scene timestep change does not trigger
+        automatic reselection.
+        """
+        return self._solver_policy
+
+    @property
     def root_fixed(self) -> bool:
         """Whether the existing articulation root is fixed (read-only)."""
         kind = self._articulation.root.joint.type

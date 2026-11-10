@@ -13,6 +13,10 @@
     "reason"
   ],
   "properties": {
+    "backend_options": {
+      "type": "object",
+      "description": "Backend numerical options. RoboTwin solver_iterations accepts the historical {position: Parameter, velocity: Parameter}, or {validated_points: [{timestep_s: Parameter(s), position: Parameter(1), velocity: Parameter(1)}]}. Each known Parameter includes evidence with source, locator, applicability, derivation, category and uncertainty or uncertainty_reason. Timestep selection is the smallest verified point >= scene.timestep (float32 equality tolerance 1e-7 relative); above maximum uses maximum and warns, never blocks. This is numerical policy, not mechanical identification."
+    },
     "schema_version": {
       "const": 1
     },

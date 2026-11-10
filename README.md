@@ -75,7 +75,7 @@ provided separately.
 | MuJoCo | 25/26 |
 | Isaac | 23/26 |
 
-⁷ SDF results with the frozen rules: SAPIEN fails Pair/L3/R3; MuJoCo fails Pair; Isaac fails Guide/Pair/R3. The RoboTwin full-controls profile explicitly uses its documented 64/16 articulation solver policy. These are simulation observations, not hardware calibration or qualification for arbitrary loads. See [the current plan and known issues](docs/plan.md), [MuJoCo usage](docs/mujoco_backend.md) and [Isaac preview usage](docs/isaac_backend.md).
+⁷ SDF results with the frozen rules: SAPIEN fails Pair/L3/R3; MuJoCo fails Pair; Isaac fails Guide/Pair/R3. The RoboTwin full-controls profile selects articulation solver iterations from the scene timestep: 10/1 at 1 ms and 64/16 at 4 ms (ceiling selection between verified points). At 1 ms, the resampled suite passes 25/26 with Pair still failing. See the [timestep policy and repeatable acceptance entry](docs/robotwin_backend.md#按物理步长选择迭代2026-11-10). These are simulation observations, not hardware calibration or qualification for arbitrary loads. See [the current plan and known issues](docs/plan.md), [MuJoCo usage](docs/mujoco_backend.md) and [Isaac preview usage](docs/isaac_backend.md).
 
 <table>
 <tr>

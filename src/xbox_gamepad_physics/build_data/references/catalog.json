@@ -134,7 +134,7 @@
     "robotwin_v042_policy": {
       "kind": "backend_simulation_compatibility_policy",
       "path": "references/robotwin_v042_policy.json",
-      "scope": "v0.4.2 RoboTwin full_controls dimensional friction, implicit drive damping, native angular cone and64/16 numerical policy",
+      "scope": "v0.4.2 RoboTwin full_controls dimensional friction, implicit drive damping, native angular cone and timestep-selected numerical solver policy (1 ms 10/1; 4 ms 64/16)",
       "limitation": "Not hardware identification; capped-force mapping, holdout differences and historical contact failures remain explicit"
     }
   },

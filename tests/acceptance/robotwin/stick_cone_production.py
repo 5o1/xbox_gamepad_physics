@@ -28,18 +28,21 @@ def score_trace(direction, rows, protocol):
          'upper_bound_pass':upper_pass,'return_pass':returned,
          'passed':upper_pass and returned and (direction=='diagonal45' or boundary)}
 
-def run(out,cases=None):
+def run(out,cases=None,*,timestep=None):
  from tests.acceptance.robotwin.stick_click import setup,save
- p=json.loads(P.read_text());out.mkdir(parents=True,exist_ok=True);save(out/'registration.json',{'protocol':p,'sha256':hashlib.sha256(P.read_bytes()).hexdigest()});results=[]
+ p=json.loads(P.read_text())
+ if timestep is not None:p['dt_s']=timestep
+ dt=p['dt_s'];load_steps=round(p['load_s']/dt);total_steps=round((p['load_s']+p['release_s'])/dt)
+ out.mkdir(parents=True,exist_ok=True);save(out/'registration.json',{'protocol':p,'sha256':hashlib.sha256(P.read_bytes()).hexdigest()});results=[]
  for side in p['sides']:
   for name,vector in [('diagonal45',[2**-.5,2**-.5,0]),('positive_x',[1,0,0]),('positive_y',[0,1,0])]:
    if cases is not None and (side,name) not in cases:continue
-   e=setup(side,hold=False);cap=e.cap;folder=out/(side+'_'+name);sink=ResultSink(folder/'trace.jsonl');rows=[]
+   e=setup(side,hold=False,timestep=dt);cap=e.cap;folder=out/(side+'_'+name);sink=ResultSink(folder/'trace.jsonl');rows=[]
    save(folder/'policy.json',{'joints':{n:{'K':j.stiffness,'D':j.damping,'friction':j.get_friction(),'velocity':j.get_max_velocity(),'target':j.get_drive_target().tolist(),'effort':j.force_limit} for n,j in e.joints.items()},'qf':e.art.get_qf().tolist()})
    try:
-    for i in range(500):
-     t=(i+1)*.004;matrix=cap.entity_pose.to_transformation_matrix();point=matrix[:3,3]+matrix[:3,:3]@np.array([0,0,.017914746775954664]);force=np.array(vector)*p['force_n'] if i<250 else np.zeros(3)
-     if i<250:cap.add_force_at_point(force,point)
+    for i in range(total_steps):
+     t=(i+1)*dt;matrix=cap.entity_pose.to_transformation_matrix();point=matrix[:3,3]+matrix[:3,:3]@np.array([0,0,.017914746775954664]);force=np.array(vector)*p['force_n'] if i<load_steps else np.zeros(3)
+     if i<load_steps:cap.add_force_at_point(force,point)
      e.scene.step();axis=cap.entity_pose.to_transformation_matrix()[:3,2].astype(float);ref=e.links['controller_body'].entity_pose.to_transformation_matrix()[:3,2].astype(float);theta=math.degrees(math.acos(float(np.clip(axis@ref/np.linalg.norm(axis)/np.linalg.norm(ref),-1,1))))
      row={'time_s':t,'angle_deg':theta,'tilt_qvel_rad_s':[e.gamepad.joint_velocity(side+'_stick_'+s) for s in ['x','y']],'q':e.gamepad.joint_positions(),'force_world_n':force.tolist(),'point_world_m':point.tolist()};rows.append(row);sink.write(row)
    finally:sink.close()

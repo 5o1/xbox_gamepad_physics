@@ -24,8 +24,10 @@ def fixed_iterations():
             return d
         opts = copy.deepcopy(d.backend_options)
         if 'solver_iterations' in opts:
-            for name, count in [('position', 10), ('velocity', 1)]:
-                opts['solver_iterations'][name]['value'] = count
+            raw = opts['solver_iterations']
+            for point in raw.get('validated_points', [raw]):
+                for name, count in [('position', 10), ('velocity', 1)]:
+                    point[name]['value'] = count
         return replace(d, backend_options=opts)
 
     with patch.object(loader, '_validated_description', side_effect=description):

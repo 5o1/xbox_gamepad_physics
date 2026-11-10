@@ -42,7 +42,7 @@ from .errors import (
     RoboTwinManifestError,
     SceneCompatibilityError,
 )
-from .physical import joint_friction_params, require_native_cone_engine, viscous_mapping, solver_iterations
+from .physical import joint_friction_params, require_native_cone_engine, viscous_mapping, solver_iteration_points, select_solver_iterations
 
 
 _BACKEND = "robotwin"
@@ -224,7 +224,7 @@ def _validated_description(profile: str) -> RoboTwinAssetDescription:
                          damping=d.damping + (resolved_friction[d.name][2] if channel == "drive_damping" else 0),
                          friction_params=(resolved_friction[d.name][:2] + (0.0,) if channel == "drive_damping" else resolved_friction[d.name]))
                          if d.name in resolved_friction else d for d in dynamics)
-    solver_iterations(options)
+    solver_iteration_points(options)
     raw_contact = _field(manifest, "contact_material", "manifest")
     contact = ContactMaterial(
         static_friction=float(_field(raw_contact, "static_friction", "contact_material")),
@@ -453,6 +453,7 @@ def load_into_scene(
     profile: str = "full_controls",
     attach_visual: bool = True,
     collision: str = "sdf",
+    solver_iterations: tuple[int, int] | None = None,
 ) -> XboxOneSArticulation:
     """Load the packaged Xbox One S URDF into a caller-owned SAPIEN scene.
 
@@ -466,6 +467,11 @@ def load_into_scene(
     wrapper. Mass, center of mass, inertia, joint dynamics and visual binding
     remain backend resources; joint limits and signal constraints come from
     the public common motion contract.
+
+    Solver iterations are selected once from ``scene.timestep`` (seconds).
+    ``solver_iterations=(position, velocity)`` explicitly overrides the resource
+    policy. The caller must reselect/configure iterations if it later changes
+    the scene timestep; see ``handle.solver_policy`` for the load-time record.
     """
 
     if collision not in ("coacd", "sdf"):
@@ -486,6 +492,11 @@ def load_into_scene(
             raise SceneCompatibilityError(str(error)) from error
     physx = _sdf_physx() if collision == "sdf" else None
     resolved_scene = _resolve_scene(scene)
+    try:
+        selected_solver = select_solver_iterations(description.backend_options or {},
+                                                   getattr(resolved_scene, "timestep", None), solver_iterations)
+    except ValueError as error:
+        raise SceneCompatibilityError(str(error)) from error
     if (description.backend_options or {}).get("stick_click_preload") and type(resolved_scene.physx_system).__name__ == "PhysxGpuSystem":
         raise SceneCompatibilityError("SAPIEN GPU mode currently does not support stick-click preload; use a CPU PhysX scene.")
     root_pose = _coerce_pose(pose)
@@ -508,7 +519,7 @@ def load_into_scene(
             "SAPIEN URDF loader exposes neither load_multiple() nor load()"
         )
     articulation = _extract_one_articulation(result)
-    iterations = solver_iterations(description.backend_options or {})
+    iterations = selected_solver.iterations
     if iterations is not None:
         articulation.set_solver_position_iterations(iterations[0])
         articulation.set_solver_velocity_iterations(iterations[1])
@@ -543,6 +554,7 @@ def load_into_scene(
         if configured["profile"] == profile:
             wrapper.configuration_id = configured["configuration_id"]
     wrapper.profile = profile
+    wrapper._solver_policy = selected_solver
     wrapper._passive_targets = {item.name: item.target for item in description.joint_dynamics}
     options = description.backend_options or {}
     from .mappings import apply_preload, attach_shaft_limits

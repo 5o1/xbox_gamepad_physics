@@ -5,6 +5,7 @@ All scene construction, station gains, input scheduling and contact preparation
 come from that probe. Individual step arrays are saved outside Git.
 """
 import argparse
+from dataclasses import asdict
 import hashlib
 import importlib.metadata
 import importlib.util
@@ -37,6 +38,8 @@ def main():
     p.add_argument("--batch-library", type=Path)
     p.add_argument("--steps", type=int, default=3000)
     p.add_argument("--repetitions", type=int, default=3)
+    p.add_argument("--always-awake", action="store_true",
+                   help="Wake the gamepad before every backend step; include wake/readback in full-step timing")
     a = p.parse_args()
     a.output.mkdir(parents=True, exist_ok=False)
     aq = load_probe(a.aq_probe)
@@ -67,10 +70,18 @@ def main():
         samples = []
         total_arrays.append(samples)
         original_step = backend.step
+        root = backend.gamepad.articulation.root
+        awake_record = dict(calls=0, sleeping_after_wake=0, sleeping_after_step=0)
 
         def step(*args, **kwargs):
             start = time.perf_counter_ns()
+            if a.always_awake:
+                root.wake_up()
+                awake_record["sleeping_after_wake"] += int(root.sleeping)
             result = original_step(*args, **kwargs)
+            if a.always_awake:
+                awake_record["calls"] += 1
+                awake_record["sleeping_after_step"] += int(root.sleeping)
             samples.append(time.perf_counter_ns() - start)
             return result
 
@@ -84,6 +95,10 @@ def main():
                       for link in robot.get_links()}
             owners.update({link._physx_pointer: "gamepad" for link in art.get_links()})
             pad_states.append(dict(sleeping=bool(art.get_links()[0].sleeping),
+                actual_timestep_s=float(backend.scene.timestep),
+                art_iterations=[art.get_solver_position_iterations(), art.get_solver_velocity_iterations()],
+                solver_policy=asdict(backend.gamepad.solver_policy),
+                always_awake=awake_record if a.always_awake else None,
                 sleep_threshold=art.get_sleep_threshold(), qf=art.get_qf().tolist(),
                 qpos=art.get_qpos().tolist(), qvel=art.get_qvel().tolist(),
                 robot_dof={side:len(robot.get_qpos()) for side,robot in backend.robots.items()},
@@ -114,10 +129,16 @@ def main():
             arrays[f"{name}_{i}_ns"] = values
             trials.append(dict(median_us=float(np.median(values)/1000),
                                p95_us=float(np.percentile(values, 95)/1000),
+                               max_us=float(np.max(values)/1000),
+                               over_800us_steps=int(np.count_nonzero(values > 800_000)),
+                               measured_steps=len(values),
                                mean_us=float(np.mean(values)/1000)))
         distribution[name] = dict(trials=trials,
             median_us=float(np.median([r["median_us"] for r in trials])),
             p95_us=float(np.median([r["p95_us"] for r in trials])),
+            max_us=max(r["max_us"] for r in trials),
+            over_800us_steps=sum(r["over_800us_steps"] for r in trials),
+            measured_steps=sum(r["measured_steps"] for r in trials),
             median_range_us=[min(r["median_us"] for r in trials), max(r["median_us"] for r in trials)],
             p95_range_us=[min(r["p95_us"] for r in trials), max(r["p95_us"] for r in trials)])
     np.savez_compressed(a.output/"step_times.npz", **arrays)

@@ -723,38 +723,108 @@
       },
       "joint_friction_viscous_mapping": "drive_damping",
       "solver_iterations": {
-        "position": {
-          "value": 64,
-          "unit": "1",
-          "evidence": [
-            {
-              "source": "docs/reports/v0.4.2/robotwin_validation.json#view_same_input",
-              "locator": "Same-input official3.0.3/a1 View default/iterations/idle matrix",
-              "applicability": "RoboTwin per-articulation numerical policy, not a mechanical parameter",
-              "derivation": "Both official3.0.3 and a1 fail isolated View at10/1; both pass at64/16; idle-only control fails. Owner authorized explicit per-articulation numerical policy. This is not a spring/friction-family derivation.",
-              "category": "simulation_estimate",
-              "uncertainty": null,
-              "uncertainty_reason": "Historical gripper64/16 was recorded; historical gamepad effective solver-group count was not"
+        "validated_points": [
+          {
+            "timestep_s": {
+              "value": 0.001,
+              "unit": "s",
+              "evidence": [
+                {
+                  "source": "docs/reports/2026-11-10-station-rtf/click_switch.md",
+                  "locator": "1 ms deployment diagnostic: complete results and time-resampling table; A-10-1",
+                  "applicability": "RoboTwin full_controls CPU TGS, SAPIEN 3.0.3+concon.physx5.6.1.a3; per-articulation numerical policy, not a mechanical parameter",
+                  "derivation": "Owner-selected timestep policy (a): unchanged v0.4.2 model at 0.001 s and 10/1 yields T1 6/6, T2 12/12, cone 6/6, T3v2 10/10, T4 25/26; 64/16 control has identical passes. Physical durations resampled from 0.004 s; forces and thresholds unchanged.",
+                  "category": "simulation_estimate",
+                  "uncertainty": null,
+                  "uncertainty_reason": "Validated only at the recorded timestep and finite simulated cases; no hardware identification, statistical confidence interval or guarantee for intervening timesteps and arbitrary scenes"
+                }
+              ],
+              "missing_reason": null
+            },
+            "position": {
+              "value": 10,
+              "unit": "1",
+              "evidence": [
+                {
+                  "source": "docs/reports/2026-11-10-station-rtf/click_switch.md",
+                  "locator": "1 ms deployment diagnostic: complete results and time-resampling table; A-10-1",
+                  "applicability": "RoboTwin full_controls CPU TGS, SAPIEN 3.0.3+concon.physx5.6.1.a3; per-articulation numerical policy, not a mechanical parameter",
+                  "derivation": "Owner-selected timestep policy (a): unchanged v0.4.2 model at 0.001 s and 10/1 yields T1 6/6, T2 12/12, cone 6/6, T3v2 10/10, T4 25/26; 64/16 control has identical passes. Physical durations resampled from 0.004 s; forces and thresholds unchanged.",
+                  "category": "simulation_estimate",
+                  "uncertainty": null,
+                  "uncertainty_reason": "Validated only at the recorded timestep and finite simulated cases; no hardware identification, statistical confidence interval or guarantee for intervening timesteps and arbitrary scenes"
+                }
+              ],
+              "missing_reason": null
+            },
+            "velocity": {
+              "value": 1,
+              "unit": "1",
+              "evidence": [
+                {
+                  "source": "docs/reports/2026-11-10-station-rtf/click_switch.md",
+                  "locator": "1 ms deployment diagnostic: complete results and time-resampling table; A-10-1",
+                  "applicability": "RoboTwin full_controls CPU TGS, SAPIEN 3.0.3+concon.physx5.6.1.a3; per-articulation numerical policy, not a mechanical parameter",
+                  "derivation": "Owner-selected timestep policy (a): unchanged v0.4.2 model at 0.001 s and 10/1 yields T1 6/6, T2 12/12, cone 6/6, T3v2 10/10, T4 25/26; 64/16 control has identical passes. Physical durations resampled from 0.004 s; forces and thresholds unchanged.",
+                  "category": "simulation_estimate",
+                  "uncertainty": null,
+                  "uncertainty_reason": "Validated only at the recorded timestep and finite simulated cases; no hardware identification, statistical confidence interval or guarantee for intervening timesteps and arbitrary scenes"
+                }
+              ],
+              "missing_reason": null
             }
-          ],
-          "missing_reason": null
-        },
-        "velocity": {
-          "value": 16,
-          "unit": "1",
-          "evidence": [
-            {
-              "source": "docs/reports/v0.4.2/robotwin_validation.json#view_same_input",
-              "locator": "Same-input official3.0.3/a1 View default/iterations/idle matrix",
-              "applicability": "RoboTwin per-articulation numerical policy, not a mechanical parameter",
-              "derivation": "Both official3.0.3 and a1 fail isolated View at10/1; both pass at64/16; idle-only control fails. Owner authorized explicit per-articulation numerical policy. This is not a spring/friction-family derivation.",
-              "category": "simulation_estimate",
-              "uncertainty": null,
-              "uncertainty_reason": "Historical gripper64/16 was recorded; historical gamepad effective solver-group count was not"
+          },
+          {
+            "timestep_s": {
+              "value": 0.004,
+              "unit": "s",
+              "evidence": [
+                {
+                  "source": "docs/reports/v0.4.2/robotwin_validation.json#view_same_input",
+                  "locator": "Same-input official3.0.3/a1 View default/iterations/idle matrix",
+                  "applicability": "RoboTwin full_controls at 0.004 s; per-articulation numerical policy, not a mechanical parameter",
+                  "derivation": "Both official3.0.3 and a1 fail isolated View at10/1; both pass at64/16; idle-only control fails. Owner authorized explicit per-articulation numerical policy. This is not a spring/friction-family derivation. Frozen 4 ms protocol; no claim about 1 ms requirements.",
+                  "category": "simulation_estimate",
+                  "uncertainty": null,
+                  "uncertainty_reason": "Historical gripper64/16 was recorded; historical gamepad effective solver-group count was not"
+                }
+              ],
+              "missing_reason": null
+            },
+            "position": {
+              "value": 64,
+              "unit": "1",
+              "evidence": [
+                {
+                  "source": "docs/reports/v0.4.2/robotwin_validation.json#view_same_input",
+                  "locator": "Same-input official3.0.3/a1 View default/iterations/idle matrix",
+                  "applicability": "RoboTwin full_controls at 0.004 s; per-articulation numerical policy, not a mechanical parameter",
+                  "derivation": "Both official3.0.3 and a1 fail isolated View at10/1; both pass at64/16; idle-only control fails. Owner authorized explicit per-articulation numerical policy. This is not a spring/friction-family derivation. Frozen 4 ms protocol; no claim about 1 ms requirements.",
+                  "category": "simulation_estimate",
+                  "uncertainty": null,
+                  "uncertainty_reason": "Historical gripper64/16 was recorded; historical gamepad effective solver-group count was not"
+                }
+              ],
+              "missing_reason": null
+            },
+            "velocity": {
+              "value": 16,
+              "unit": "1",
+              "evidence": [
+                {
+                  "source": "docs/reports/v0.4.2/robotwin_validation.json#view_same_input",
+                  "locator": "Same-input official3.0.3/a1 View default/iterations/idle matrix",
+                  "applicability": "RoboTwin full_controls at 0.004 s; per-articulation numerical policy, not a mechanical parameter",
+                  "derivation": "Both official3.0.3 and a1 fail isolated View at10/1; both pass at64/16; idle-only control fails. Owner authorized explicit per-articulation numerical policy. This is not a spring/friction-family derivation. Frozen 4 ms protocol; no claim about 1 ms requirements.",
+                  "category": "simulation_estimate",
+                  "uncertainty": null,
+                  "uncertainty_reason": "Historical gripper64/16 was recorded; historical gamepad effective solver-group count was not"
+                }
+              ],
+              "missing_reason": null
             }
-          ],
-          "missing_reason": null
-        }
+          }
+        ]
       }
     }
   }

@@ -22,11 +22,12 @@ def save(path, value):
     path.write_text(json.dumps(value, indent=2, allow_nan=False)+"\n")
 
 
-def setup(side, angle=0, hold=True):
+def setup(side, angle=0, hold=True, *, timestep=None):
     suite = load_suite()
     case = suite.case("L3" if side == "left" else "R3")
     e = RobotwinPressExecutor()
-    e.setup([*case.root_pose.position_m, *case.root_pose.orientation_wxyz], P["dt_s"])
+    e.setup([*case.root_pose.position_m, *case.root_pose.orientation_wxyz],
+            P["dt_s"] if timestep is None else timestep)
     e.side = side
     e.cap = e.links[side+"_stick"]
     # Store the actual cooked neutral cap center in link coordinates.
@@ -72,13 +73,13 @@ def axial_step(e, force):
             "application_point_m": center.tolist()}
 
 
-def t1(output, *, stop_on_failure=True, cases=None):
+def t1(output, *, stop_on_failure=True, cases=None, timestep=None):
     results = []
     for side in ("left", "right"):
         for angle in P["T1"]["angles_deg"]:
             if cases is not None and (side, angle) not in cases:
                 continue
-            e = setup(side, angle)
+            e = setup(side, angle, timestep=timestep)
             rows = []
             sink = ResultSink(output/f"{side}_{angle}"/"trace.jsonl")
             try:
@@ -111,11 +112,11 @@ def t1(output, *, stop_on_failure=True, cases=None):
     return True
 
 
-def t2(output):
+def t2(output, *, timestep=None):
     results = []
     for side in ("left", "right"):
         for multiplier in P["T2"]["force_multipliers"]:
-            e = setup(side)
+            e = setup(side, timestep=timestep)
             rows = []
             sink = ResultSink(output/f"{side}_{multiplier}"/"trace.jsonl")
             try:

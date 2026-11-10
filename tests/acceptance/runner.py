@@ -45,7 +45,7 @@ class PressStop:
 class PressTrajectory:
     def __init__(self,suite,case,*,start_step=0):
         self.suite,self.case=suite,case
-        self.dt=.004
+        self.dt=suite.fixture["dt_s"]
         self.phase="approach"
         self.phase_start=start_step
         self.stroke=0.
@@ -82,21 +82,24 @@ class PressTrajectory:
             if self.termination:self.enter("hold",step+1)
 
 
-def run_case(executor,suite,case,sink,*,maximum_steps=10000):
+def run_case(executor,suite,case,sink,*,maximum_steps=None):
     from .scoring import target_value,score_case
     executor.reset_case(suite,case)
     trajectory=PressTrajectory(suite,case)
+    dt=trajectory.dt
+    if maximum_steps is None:
+        maximum_steps=round(40/dt)
     samples=[]
     for step in range(maximum_steps):
         target=trajectory.before_step(step)
         state=executor.ball_state()
         force=ball_force(suite.settings,target,state["position_m"],state["velocity_m_s"],suite.fixture["gravity_m_s2"])
         executor.apply_ball_force(force)
-        executor.step(.004)
+        executor.step(dt)
         row=dict(executor.sample())
         trajectory.after_step(step,target_value(case.plan,row["signals"],row["probe"]["events"]),row["probe"]["pose"][:3],force)
         row["step"]=step
-        row["probe"].update(phase=trajectory.phase,phase_age_s=(step-trajectory.phase_start)*.004,
+        row["probe"].update(phase=trajectory.phase,phase_age_s=(step-trajectory.phase_start)*dt,
                             target_m=target,force_n=force,stroke_m=trajectory.stroke,termination=trajectory.termination)
         samples.append(row);sink.write(row)
         if trajectory.phase=="done":return score_case(suite,case,samples)

@@ -1,6 +1,6 @@
 # Xbox One S 物理手柄：计划
 
-更新于 2026-11-07。目标是把 Xbox One S 手柄做成可交互的物理资产，供下游的灵巧手操作、游戏强化学习和视觉-语言-动作实验使用。
+更新于 2026-11-10。目标是把 Xbox One S 手柄做成可交互的物理资产，供下游的灵巧手操作、游戏强化学习和视觉-语言-动作实验使用。
 
 - **当前版本**：v0.4.2 整合摇杆按压、回中与ABXY行程；包含RoboTwin/SAPIEN、MuJoCo和Isaac预览。安装与制品见 [Release](https://github.com/5o1/xbox_gamepad_physics/releases/tag/v0.4.2)。
 - **默认碰撞体**：三个后端均使用 SDF；SAPIEN full_controls 需要随Release提供的 PhysX 5.6.1/a3 port，MuJoCo 需要负责人 fork，Isaac 预览默认使用 0.5 mm 网格。CoACD 保留为可显式选择的变体。
@@ -27,6 +27,10 @@
 | SAPIEN 小球端到端按压（26 项，信号到 overlay） | SDF 下 23 项通过；Pair、L3、R3 未通过，见第 4 节（2026-10-12） | 遥操作阶段 2 报告第 26 节 |
 | MuJoCo 小球端到端按压（同一份 26 项冻结用例） | SDF 下 25/26；仅 Pair 失败，不是实时性能验收 | `build/experiments/mb_m2/acceptance_round_20261020/` |
 | Isaac 小球端到端按压（同一份 26 项冻结用例） | SDF 0.5 mm 下 22/26；Guide、Pair、L3、R3 失败，预览交付 | `build/experiments/mb_i2/` |
+
+### 按步长选择 RoboTwin 求解迭代（2026-11-10）
+
+负责人选定方案 (a)：full_controls 默认在 1 ms 使用 10/1、4 ms 使用 64/16，介于两点取不小于实际步长的最小点；超出最大点提示未经验证并继续。提供显式覆盖和 handle 加载时读回；不采用限位切换或休眠策略。正式 CPU 验收入口位于 `tests/acceptance/robotwin/timestep_suite.py`，原 4 ms 冻结协议及物性不变。两组完整默认路径复跑与始终唤醒接触基准见[本轮记录](reports/2026-11-10-timestep-solver/README.md)，选择规则见[RoboTwin 文档](robotwin_backend.md#按物理步长选择迭代2026-11-10)。仅本地提交，无版本变更或发布。
 
 ### 版本 v0.4.2（2026-11-07）
 

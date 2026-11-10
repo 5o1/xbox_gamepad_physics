@@ -60,6 +60,14 @@ class FakeArticulation:
         self.root_poses = []
         self.mass_writes = []
         self.links = [FakeLink()]
+        self.position_iterations = 10
+        self.velocity_iterations = 1
+
+    def set_solver_position_iterations(self, count):
+        self.position_iterations = count
+
+    def set_solver_velocity_iterations(self, count):
+        self.velocity_iterations = count
 
     def get_active_joints(self):
         return self.joints
@@ -238,7 +246,8 @@ def ready_urdf():
 
 
 class RoboTwinRuntimeTest(unittest.TestCase):
-    def _load(self, *, use_multiple=True, task_wrapper=False, collision="coacd", version="3.0.3"):
+    def _load(self, *, use_multiple=True, task_wrapper=False, collision="coacd", version="3.0.3",
+              backend_options=None, timestep=None, iterations=None):
         temporary = tempfile.TemporaryDirectory()
         self.addCleanup(temporary.cleanup)
         urdf = Path(temporary.name).resolve() / "mobility.urdf"
@@ -246,6 +255,7 @@ class RoboTwinRuntimeTest(unittest.TestCase):
         articulation = FakeArticulation()
         fake_loader = FakeLoader(articulation, use_multiple=use_multiple)
         scene = FakeScene(fake_loader)
+        scene.timestep = timestep
         passed_scene = SimpleNamespace(scene=scene) if task_wrapper else scene
         link_builder = SimpleNamespace(name="shell", collision_records=["original"])
         link_builder.add_nonconvex_collision_from_file = lambda path: link_builder.collision_records.append(path)
@@ -258,6 +268,8 @@ class RoboTwinRuntimeTest(unittest.TestCase):
             PhysxCollisionShapeTriangleMesh=type("Triangle", (), {}),
         )
         manifest = ready_manifest()
+        if backend_options is not None:
+            manifest['backend_options'] = {'robotwin': backend_options}
         manifest["collision_variants"] = {"sdf": {"spacing_m": 0.001, "links": {"shell": ["collision/sdf/shell_0.obj"]}}}
         pose = SimpleNamespace(p=(1, 2, 3), q=(1, 0, 0, 0))
 
@@ -286,9 +298,33 @@ class RoboTwinRuntimeTest(unittest.TestCase):
         ):
             wrapper = loader_module.load_into_scene(
                 passed_scene, pose, fixed_root=True, profile="test_ready",
+                solver_iterations=iterations,
                 **({"collision": collision} if collision is not None else {})
             )
         return wrapper, articulation, fake_loader, pose, urdf
+
+    def test_loader_uses_callers_scene_timestep_and_exposes_selection(self):
+        import json
+        options = json.loads((ROOT/'references/full_controls.json').read_text())['backend_options']['robotwin']
+        options = {'solver_iterations': options['solver_iterations']}
+        for dt, expected, point in ((.0005,(10,1),.001),(.0010000000474974513,(10,1),.001),
+                                    (.002,(64,16),.004),(.004000000189989805,(64,16),.004)):
+            with self.subTest(dt=dt):
+                pad, art, *_ = self._load(backend_options=options, timestep=dt, task_wrapper=True)
+                self.assertEqual((art.position_iterations,art.velocity_iterations),expected)
+                self.assertEqual(pad.solver_policy.timestep_s,dt)
+                self.assertEqual(pad.solver_policy.validated_timestep_s,point)
+                self.assertEqual(pad.solver_policy.iterations,expected)
+                self.assertEqual(pad.solver_policy.source,'timestep_policy')
+        with self.assertWarnsRegex(RuntimeWarning,'unvalidated'):
+            pad, art, *_ = self._load(backend_options=options, timestep=.008)
+        self.assertEqual((art.position_iterations,art.velocity_iterations),(64,16))
+        pad, art, *_ = self._load(backend_options=options, timestep=.001, iterations=(20,2))
+        self.assertEqual((art.position_iterations,art.velocity_iterations),(20,2))
+        self.assertEqual(pad.solver_policy.source,'override')
+        self.assertIsNone(pad.solver_policy.validated_timestep_s)
+        with self.assertRaisesRegex(SceneCompatibilityError,'scene.timestep'):
+            self._load(backend_options=options)
 
     def test_direct_scene_loads_absolute_resource_and_configures_by_name(self):
         wrapper, articulation, fake_loader, pose, urdf = self._load()

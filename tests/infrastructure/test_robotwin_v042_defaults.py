@@ -29,13 +29,18 @@ class RoboTwinDefaultsTest(unittest.TestCase):
         self.assertEqual(options['shaft_tilt_limit']['mechanism'],'native_d6_cone')
         self.assertEqual(options['joint_friction_viscous_mapping'],'drive_damping')
         self.assertEqual(options['stick_click_preload']['drive_target_m'],0)
-        self.assertEqual([options['solver_iterations'][k]['value'] for k in ('position','velocity')],[64,16])
+        points=options['solver_iterations']['validated_points']
+        self.assertEqual([[p[k]['value'] for k in ('timestep_s','position','velocity')] for p in points],
+                         [[.001,10,1],[.004,64,16]])
         for record in options['joint_friction_params'].values():
             self.assertEqual([record[k]['value'] for k in ('static_effort','dynamic_effort','viscous')],[0,0,.0018707873827064705])
-        source=options['solver_iterations']['position']['evidence'][0]
+        source=points[1]['position']['evidence'][0]
         self.assertIn('View',source['locator'])
         self.assertIn('official3.0.3',source['derivation'])
         self.assertIn('idle-only',source['derivation'])
+        self.assertIn('A-10-1',points[0]['position']['evidence'][0]['locator'])
+        policy=load(ROOT/'references/robotwin_v042_policy.json')
+        self.assertEqual(policy['solver_policy']['solver_iterations'],options['solver_iterations'])
 
     def test_default_generator_clears_legacy_without_calibration(self):
         source=load(ROOT/'references/full_controls.json')

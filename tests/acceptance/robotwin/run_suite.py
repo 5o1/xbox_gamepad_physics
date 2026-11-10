@@ -8,7 +8,7 @@ def cpu_scene(*,timestep,**kwargs):
  import sapien
  scene=sapien.Scene([sapien.physx.PhysxCpuSystem()]);scene.set_timestep(timestep);return scene
 
-def run(resources,out,cases=None,iterations=None,idle_steps=0,collect_all=False):
+def run(resources,out,cases=None,iterations=None,idle_steps=0,collect_all=False,*,suite=None):
  import sapien
  from importlib.metadata import version
  os.environ['XBOX_GAMEPAD_PHYSICS_RESOURCES']=str(resources.resolve())
@@ -28,7 +28,7 @@ def run(resources,out,cases=None,iterations=None,idle_steps=0,collect_all=False)
   for _ in range(idle_steps):
    state=e.ball_state();force=ball_force(suite.settings,target,state['position_m'],state['velocity_m_s'],suite.fixture['gravity_m_s2']);e.apply_ball_force(force);e.scene.step()
   rec['post_idle_probe']=e.ball_state();rec['post_idle_q']=e.gamepad.joint_positions();receipts.append(rec)
- with patch.object(executor,'create_scene',side_effect=cpu_scene),patch.object(executor.RobotwinPressExecutor,'reset_case',observed_reset):result=executor.execute_suite(out,case_ids=cases,stop_on_regression=not collect_all)
+ with patch.object(executor,'create_scene',side_effect=cpu_scene),patch.object(executor.RobotwinPressExecutor,'reset_case',observed_reset):result=executor.execute_suite(out,case_ids=cases,stop_on_regression=not collect_all,suite=suite)
  receipt={'sapien':version('sapien'),'resources':str(resources.resolve()),'scene':'CPU-only, no renderer','selected_cases':cases,'collect_all_diagnostic_records':collect_all,'summary':result['summary'],'regressions':result['regressions']}
  (out/'runtime.json').write_text(json.dumps(receipt,indent=2)+'\n');print(json.dumps(receipt))
  manifest=json.loads((resources/'robotwin/full_controls/manifest.json').read_text());paths=[resources/'robotwin/full_controls'/p for p in manifest['required_files']]+[resources/'robotwin/full_controls/manifest.json',resources/manifest['motion_contract'],Path(__file__),Path(executor.__file__),Path(__file__).parent.parent/'data/ruling20_sdf303_v1.json']

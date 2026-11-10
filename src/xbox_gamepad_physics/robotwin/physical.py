@@ -1,5 +1,8 @@
 """RoboTwin-only projection of neutral return laws and contact policies."""
 from __future__ import annotations
+from dataclasses import dataclass
+import math
+import warnings
 from ..backends.common.calibration import ResolvedCalibration
 from ..backends.common.model import Parameter
 
@@ -22,6 +25,7 @@ def viscous_mapping(options):
 
 
 def solver_iterations(options):
+    """Parse the historical fixed-iteration resource format."""
     if "solver_iterations" not in options:
         return None
     raw = options["solver_iterations"]
@@ -34,6 +38,74 @@ def solver_iterations(options):
             raise ValueError(f"robotwin.solver_iterations.{key}: requires positive integer, unit1")
         values.append(p.value)
     return tuple(values)
+
+
+@dataclass(frozen=True)
+class SolverIterationPoint:
+    timestep_s: float | None
+    iterations: tuple[int, int]
+
+
+def solver_iteration_points(options):
+    """Parse explicit numerical policy; historical resources remain loadable."""
+    raw = options.get("solver_iterations")
+    if raw is None and "solver_iterations" not in options:
+        return ()
+    if isinstance(raw, dict) and set(raw) == {"validated_points"}:
+        points = raw["validated_points"]
+        if not isinstance(points, list) or not points:
+            raise ValueError("robotwin.solver_iterations.validated_points requires a nonempty list")
+        parsed = []
+        for point in points:
+            if not isinstance(point, dict) or set(point) != {"timestep_s", "position", "velocity"}:
+                raise ValueError("solver iteration point requires timestep_s, position and velocity Parameters")
+            dt = Parameter.from_dict(point["timestep_s"])
+            if dt.unit != "s" or isinstance(dt.value, bool) or not isinstance(dt.value, (int, float)) or not math.isfinite(dt.value) or dt.value <= 0:
+                raise ValueError("solver iteration timestep_s requires a finite positive value in s")
+            counts = solver_iterations({"solver_iterations": {key: point[key] for key in ("position", "velocity")}})
+            parsed.append(SolverIterationPoint(float(dt.value), counts))
+        parsed.sort(key=lambda p: p.timestep_s)
+        if len({p.timestep_s for p in parsed}) != len(parsed):
+            raise ValueError("solver iteration timesteps must be distinct")
+        return tuple(parsed)
+    counts = solver_iterations(options)
+    return (SolverIterationPoint(None, counts),)
+
+
+@dataclass(frozen=True)
+class SolverIterationSelection:
+    """Load-time observation; numerical policy, not a mechanical parameter."""
+    timestep_s: float | None
+    validated_timestep_s: float | None
+    iterations: tuple[int, int] | None
+    source: str
+
+
+def select_solver_iterations(options, timestep_s, override=None):
+    points = solver_iteration_points(options)
+    if timestep_s is not None and (isinstance(timestep_s, bool) or not isinstance(timestep_s, (int, float)) or not math.isfinite(timestep_s) or timestep_s <= 0):
+        raise ValueError("scene timestep must be finite and positive in seconds")
+    if override is not None:
+        if not isinstance(override, (tuple, list)) or len(override) != 2 or any(type(n) is not int or n < 1 for n in override):
+            raise ValueError("solver_iterations override requires two positive integers (position, velocity)")
+        return SolverIterationSelection(timestep_s, None, tuple(override), "override")
+    if not points:
+        return SolverIterationSelection(timestep_s, None, None, "scene_default")
+    if points[0].timestep_s is None:
+        return SolverIterationSelection(timestep_s, None, points[0].iterations, "legacy_fixed")
+    if timestep_s is None:
+        raise ValueError("scene.timestep is required for timestep-based solver iterations")
+    for point in points:
+        # SAPIEN stores dt as float32 (1 ms reads back 0.001000000047...).
+        if timestep_s <= point.timestep_s or math.isclose(timestep_s, point.timestep_s, rel_tol=1e-7):
+            return SolverIterationSelection(timestep_s, point.timestep_s, point.iterations, "timestep_policy")
+    point = points[-1]
+    warnings.warn(
+        f"RoboTwin scene timestep {timestep_s:g} s exceeds maximum validated timestep "
+        f"{point.timestep_s:g} s; using solver iterations {point.iterations[0]}/{point.iterations[1]}. "
+        "This timestep is unvalidated.", RuntimeWarning, stacklevel=2,
+    )
+    return SolverIterationSelection(timestep_s, point.timestep_s, point.iterations, "timestep_policy")
 
 
 def joint_friction_params(raw, joint_units):
@@ -116,7 +188,7 @@ def require_robotwin_dynamics(records: dict, calibration: ResolvedCalibration | 
         if unknown:
             raise ValueError(f"unsupported robotwin calibration options: {sorted(unknown)}")
         viscous_mapping(options)
-        solver_iterations(options)
+        solver_iteration_points(options)
         for name, value in options.get("joint_friction_coefficients", {}).items():
             parameter = Parameter.from_dict(value)
             if name not in records or parameter.unit != "1" or parameter.value is None or parameter.value < 0:

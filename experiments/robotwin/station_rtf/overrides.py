@@ -18,8 +18,10 @@ def policy(iterations=None, sleep_threshold=None, batch_size=None, batch_library
         if iterations is None:
             return result
         options = copy.deepcopy(result.backend_options)
-        for key, count in zip(("position", "velocity"), iterations):
-            options["solver_iterations"][key]["value"] = count
+        raw = options["solver_iterations"]
+        for point in raw.get("validated_points", [raw]):
+            for key, count in zip(("position", "velocity"), iterations):
+                point[key]["value"] = count
         return replace(result, backend_options=options)
 
     def preload(articulation, scene, values):

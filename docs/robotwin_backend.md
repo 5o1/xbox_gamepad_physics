@@ -260,7 +260,7 @@ SAPIEN3.0.3没有gpu_init后的原生钩子；加载器不替调用方初始化�
 
 本版本将已验证的 RoboTwin full_controls 策略纳入默认 reference 和 packaged build_data，正常构建不再需要外传实验 calibration，也不依赖忽略的 build 目录。上方2026-11-07的“候选”节保留为历史过程。当前证据见[版本报告](reports/v0.4.2/robotwin.md)、[公开验证摘要](reports/v0.4.2/robotwin_validation.json)和[版本化参数记录](../references/robotwin_v042_policy.json)。
 
-默认四个倾斜关节 static/dynamic effort=0Nm，b=.0018707873827064705N*m*s/rad，旧 coefficient 清零；0是独立仿真兼容族的选择，不是硬件干摩擦识别。原线性K不变，D总=D原+b，native friction getter 的 viscous 为0。弹簧/粘性共享原力限，饱和区间不等价于无界线性粘性。显式per-articulation64/16来自双引擎同输入View数值对照；球体属性不改，关联求解组仍可能取组内最大次数。
+默认四个倾斜关节 static/dynamic effort=0Nm，b=.0018707873827064705N*m*s/rad，旧 coefficient 清零；0是独立仿真兼容族的选择，不是硬件干摩擦识别。原线性K不变，D总=D原+b，native friction getter 的 viscous 为0。弹簧/粘性共享原力限，饱和区间不等价于无界线性粘性。原 4 ms 的 per-articulation 64/16 来自双引擎同输入 View 数值对照；当前按物理步长选迭代，见下一节。球体属性不改。
 
 默认角锥为native_d6_cone；click.child和stick共pivot，只限两swing，角度读公共23°，平移/twist为FREE。CPU加载继续叠加−7.4N预压，target0弹簧1000N/m，click行程0.4mm。ABXY1.22mm、原信号/死区保持。历史distance和旧mu=.1来源留在版本化记录，历史资源仍可加载。
 
@@ -272,3 +272,53 @@ export XBOX_GAMEPAD_PHYSICS_RESOURCES="$PWD/gamepad_resources"
 ```
 
 调用方仍通过load_into_scene加载自己创建的CPU场景；场景设置和生命周期由调用方管理。a3制品及最终集成验证由发布流程提供，历史完整物理结果来自a2，不把依赖声明冒充a3实测。
+
+
+## 按物理步长选择迭代（2026-11-10）
+
+负责人选定方案 (a)：保持力学参数、持续预压和角锥机制，按调用方场景的物理步长选择数值求解策略。`references/full_controls.json` 的 `backend_options.robotwin.solver_iterations.validated_points` 与 packaged build_data 同步；每个点的 `timestep_s`、`position`、`velocity` 都使用带单位和完整证据的 Parameter。这是数值策略，不是机械参数。
+
+| 已验证物理步长 | 位置/速度迭代 | 完整 T1 / T2 / 圆锥 / T3v2 / T4 |
+|---|---|---|
+| 1 ms | 10/1 | 6/6、12/12、6/6、10/10、25/26（Pair 失败） |
+| 4 ms | 64/16 | 6/6、12/12、6/6、10/10、23/26（Pair/L3/R3 失败） |
+
+加载器在加载时读取 `scene.timestep`，选“不小于实际步长的最小已验证步长”：0.5 ms 使用 1 ms 的 10/1，2 ms 使用 4 ms 的 64/16。大于 4 ms 时沿用最大点 64/16，并发出 `RuntimeWarning` 明确提示步长未经验证；继续加载。中间点的选择规则不代表它们已通过完整验收。SAPIEN 用单精度保存步长，1 ms 实际读回约 0.001000000047 s，因此边界相等使用 1e-7 相对容差；该容差只处理数值表示误差。
+
+[SAPIEN 3.0 场景源码](https://sapien-sim.github.io/docs/_modules/sapien/wrapper/scene.html)定义了 `timestep` 属性；`get_timestep()` 返回该属性。本次在指定计算节点的 3.0.3/a3 CPU 环境核对了两者的原生读回和实现。
+
+```python
+scene.set_timestep(0.001)  # 必须在加载前设置
+pad = load_into_scene(scene, pose, fixed_root=True)
+print(pad.solver_policy)
+# 加载时的 timestep_s、validated_timestep_s、iterations、source
+print(pad.articulation.get_solver_position_iterations())
+print(pad.articulation.get_solver_velocity_iterations())
+
+# 调用方明确覆盖；source="override"，不宣称该组合已验证
+pad = load_into_scene(scene, pose, fixed_root=True, solver_iterations=(20, 2))
+```
+
+`pad.solver_policy` 是不可变的加载时记录。**场景在加载后改变步长时，由调用方负责重新选择/设置迭代；加载器不会逐步监控或自动重配。** 原生迭代随后被调用方修改时，当前值应从 articulation getter 读取。历史固定 `position`/`velocity` 资源仍可加载。
+
+迭代数也会扩散到机器人：[PhysX TGS 源码](https://github.com/NVIDIA-Omniverse/PhysX/blob/5ca9f472105a90d70d957c243cb0ef36fe251a9f/physx/source/lowleveldynamics/src/DyTGSDynamics.cpp#L1671-L1707)按岛聚合，并在合批时取最大迭代。手柄与手接触形成同岛时，或独立岛被合批时，手和机器人可能承担手柄的高迭代成本。1 kHz 下的 10/1 选择降低本次已验证场景的主要开销；不依赖休眠，不切换限位，不改变全局迭代或球体属性。本次始终唤醒的冻结接触基准完整步中位数 389.7 µs、p95 412.6 µs，但 9000 步中 9 步超过 800 µs、最大 1222.5 µs，因此严格逐步 ≤800 µs 的要求未满足。
+
+证据包括[原 4 ms View 对照](reports/v0.4.2/robotwin_validation.json)、[1 ms 完整部署诊断及 64/16 对照](reports/2026-11-10-station-rtf/click_switch.md)与[正式默认路径复跑](reports/2026-11-10-timestep-solver/README.md)。1 ms 与 4 ms 的原通过病例均须逐项保留，不能用总分抵消退化。该证据范围限于仿真验收，不等于任意接触负载或实物标定。
+
+### 正式 CPU 验收入口
+
+在具备批准输入资源和 a3 环境的 checkout 中运行（先把 checkout 与 `src` 加入 `PYTHONPATH`）：
+
+```sh
+export DISPLAY='' CUDA_VISIBLE_DEVICES='' PYTHONDONTWRITEBYTECODE=1
+export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1
+export PYTHONPATH="$PWD:$PWD/src"
+python3 -m tests.acceptance.robotwin.timestep_suite \
+  --timestep .001 --resources "$VALIDATION_RESOURCES" --output build/acceptance-1ms
+python3 -m tests.acceptance.robotwin.timestep_suite \
+  --timestep .004 --resources "$VALIDATION_RESOURCES" --output build/acceptance-4ms
+```
+
+输出目录需为新目录。指定节点运行时用 `taskset -c 8`，只用 CPU、无 renderer。入口通过公共资源解析和默认加载器运行，不传求解器 override；每个病例归档实际步长、选中策略和原生迭代读回，`summary.json` 列出完整通过集合、T4 原通过项退化及 `accepted`，不满足预期时返回非零退出码。
+
+4 ms 冻结协议 JSON 保持原样；1 ms 在内存中按相同物理时长换算：圆锥共 2000 步、加载 1000 步；T3v2 各阶段 1000/500/1000/500/500；T4 稳态窗口 500 样本，阻塞窗口 100 个间隔，40 s 预算 40000 步，返中计时使用实际协议步长。T1/T2 原有秒时钟同步取 1 ms。球体半径仍 4 mm、质量 50 g，力学参数和评分阈值不变。换算表见 `tests/acceptance/robotwin/timestep_protocol.py`。
