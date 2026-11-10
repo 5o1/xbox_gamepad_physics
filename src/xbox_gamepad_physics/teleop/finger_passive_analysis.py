@@ -11,8 +11,7 @@ import xml.etree.ElementTree as ET
 
 import numpy as np
 
-from .finger_validate import finite
-from .record import iter_records
+from .record import finite, iter_records
 
 
 def rotation(q):

@@ -50,7 +50,7 @@ provided separately.
 
 | Backend | Version | Raster | Ray tracing | Status⁶ |
 | --- | --- | --- | --- | --- |
-| SAPIEN | 3.0.3 port / PhysX 5.6.1 | Yes¹ | Optional² | Ready |
+| SAPIEN | 3.0.3 port / PhysX 5.6.1 | Yes¹ | Optional² | Ready; timestep-selected iterations⁷ |
 | Blender | 4.5.9 | — | Cycles³ | Reference |
 | MuJoCo | 3.16.0 | Yes⁴ | — | Ready |
 | Isaac Sim | 5.1 | — | Yes⁵ | Preview |
@@ -71,11 +71,11 @@ provided separately.
 
 | Backend | Passed⁷ |
 | --- | --- |
-| SAPIEN | 23/26 |
+| SAPIEN | 23/26 at 4 ms; 25/26 at 1 ms |
 | MuJoCo | 25/26 |
 | Isaac | 23/26 |
 
-⁷ SDF results with the frozen rules: SAPIEN fails Pair/L3/R3; MuJoCo fails Pair; Isaac fails Guide/Pair/R3. The RoboTwin full-controls profile selects articulation solver iterations from the scene timestep: 10/1 at 1 ms and 64/16 at 4 ms (ceiling selection between verified points). At 1 ms, the resampled suite passes 25/26 with Pair still failing. See the [timestep policy and repeatable acceptance entry](docs/robotwin_backend.md#按物理步长选择迭代2026-11-10). These are simulation observations, not hardware calibration or qualification for arbitrary loads. See [the current plan and known issues](docs/plan.md), [MuJoCo usage](docs/mujoco_backend.md) and [Isaac preview usage](docs/isaac_backend.md).
+⁷ At 4 ms, SDF results with the frozen rules: SAPIEN fails Pair/L3/R3; MuJoCo fails Pair; Isaac fails Guide/Pair/R3. The RoboTwin full-controls profile selects articulation solver iterations from the scene timestep: 10/1 at 1 ms and 64/16 at 4 ms (ceiling selection between verified points). At 1 ms, the resampled suite passes 25/26 with Pair still failing. See the [timestep policy and repeatable acceptance entry](docs/robotwin_backend.md#按物理步长选择迭代2026-11-10). These are simulation observations, not hardware calibration or qualification for arbitrary loads. See [the current plan and known issues](docs/plan.md), [MuJoCo usage](docs/mujoco_backend.md) and [Isaac preview usage](docs/isaac_backend.md).
 
 <table>
 <tr>
@@ -107,9 +107,9 @@ Download the wheel and resource zip from the
 The package is distributed through Release attachments rather than PyPI.
 
 ```sh
-python3.10 -m pip install "./xbox_gamepad_physics-0.4.2-py3-none-any.whl[build,robotwin]"
+python3.10 -m pip install "./xbox_gamepad_physics-0.4.3-py3-none-any.whl[build,robotwin]"
 python3.10 -m xbox_gamepad_physics build-resources \
-  --archive ./xbox_gamepad_physics-resources-0.4.2.zip \
+  --archive ./xbox_gamepad_physics-resources-0.4.3.zip \
   --resources ./gamepad_resources --offline
 export XBOX_GAMEPAD_PHYSICS_RESOURCES="$PWD/gamepad_resources"
 ```
@@ -118,7 +118,7 @@ For MuJoCo on Linux x86_64 with Python 3.10 or 3.11, install the `mujoco`
 extra (add `build` when generating resources):
 
 ```sh
-python -m pip install "./xbox_gamepad_physics-0.4.2-py3-none-any.whl[mujoco]"
+python -m pip install "./xbox_gamepad_physics-0.4.3-py3-none-any.whl[mujoco]"
 ```
 
 The extra selects a matching wheel directly from the owner-maintained
@@ -135,7 +135,7 @@ installation and its compatible torch. Install the wheel in that environment
 (or a venv inheriting it); these platform dependencies are external:
 
 ```sh
-python -m pip install "./xbox_gamepad_physics-0.4.2-py3-none-any.whl[build,isaac]"
+python -m pip install "./xbox_gamepad_physics-0.4.3-py3-none-any.whl[build,isaac]"
 ```
 
 Start AppLauncher before the dedicated `isaac.build_usd` path. The generic

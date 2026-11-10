@@ -7,8 +7,7 @@ import json
 import math
 from pathlib import Path
 
-from .finger_validate import finite
-from .record import iter_records
+from .record import finite, iter_records
 
 
 def penetration(row):

@@ -1,0 +1,66 @@
+{
+  "robotwin-release-v043": {
+    "python": "3.10.12",
+    "cpu_affinity": [
+      8
+    ],
+    "distributions": {
+      "xbox-gamepad-physics": "0.4.3",
+      "trimesh": "4.5.3",
+      "attrs": "26.1.0",
+      "aiosignal": "1.4.0",
+      "frozenlist": "1.8.0",
+      "requests": "2.34.2",
+      "pillow": "12.3.0",
+      "async-timeout": "5.0.1",
+      "yarl": "1.25.1",
+      "propcache": "0.5.4",
+      "aiohttp": "3.14.5",
+      "lxml": "6.1.3",
+      "pyperclip": "1.11.0",
+      "setuptools": "84.2.1",
+      "networkx": "3.4.2",
+      "importlib_resources": "7.1.0",
+      "transforms3d": "0.4.2",
+      "sapien": "3.0.3+concon.physx5.6.1.a3",
+      "charset-normalizer": "3.5.2",
+      "urllib3": "2.8.0",
+      "aiohappyeyeballs": "2.7.1",
+      "manifold3d": "3.5.4",
+      "multidict": "7.1.0",
+      "PyYAML": "6.0.3",
+      "numpy": "2.2.6",
+      "pip": "26.2.2",
+      "idna": "3.20",
+      "typing_extensions": "4.16.0",
+      "certifi": "2026.10.23",
+      "opencv-python": "5.0.0.93"
+    },
+    "include_system_site_packages": false
+  },
+  "mujoco-release-v043": {
+    "python": "3.10.12",
+    "cpu_affinity": [
+      8
+    ],
+    "distributions": {
+      "xbox-gamepad-physics": "0.4.3",
+      "trimesh": "4.5.3",
+      "fsspec": "2026.9.0",
+      "websockets": "16.1.1",
+      "pillow": "12.3.0",
+      "glfw": "2.11.0",
+      "importlib_resources": "7.1.0",
+      "manifold3d": "3.5.4",
+      "numpy": "2.2.6",
+      "etils": "1.13.0",
+      "mujoco": "3.16.0+concon.sdf3689.2",
+      "pip": "26.2.2",
+      "typing_extensions": "4.16.0",
+      "PyOpenGL": "3.1.10",
+      "absl-py": "2.5.1",
+      "zipp": "4.1.2"
+    },
+    "include_system_site_packages": false
+  }
+}

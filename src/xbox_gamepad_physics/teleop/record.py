@@ -53,6 +53,15 @@ class TruncatedRecordWarning(UserWarning):
     """Only complete blocks were yielded; an unfinished tail was discarded."""
 
 
+def finite(value):
+    """Return whether every float in a nested record is finite."""
+    if isinstance(value, dict):
+        return all(finite(v) for v in value.values())
+    if isinstance(value, (list, tuple)):
+        return all(finite(v) for v in value)
+    return not isinstance(value, float) or math.isfinite(value)
+
+
 def _json(value):
     return json.dumps(value,allow_nan=False,separators=(',',':'),ensure_ascii=True).encode('utf-8')
 

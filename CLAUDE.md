@@ -14,8 +14,8 @@ Python 3.10 is the RoboTwin/SAPIEN baseline. Common code and MuJoCo support Pyth
 
 ```sh
 # User installation: Release wheel + input zip; not on PyPI
-python3.10 -m pip install "./xbox_gamepad_physics-0.4.2-py3-none-any.whl[build,robotwin]"
-python3.10 -m xbox_gamepad_physics build-resources --archive ./xbox_gamepad_physics-resources-0.4.2.zip --resources ./gamepad_resources --offline
+python3.10 -m pip install "./xbox_gamepad_physics-0.4.3-py3-none-any.whl[build,robotwin]"
+python3.10 -m xbox_gamepad_physics build-resources --archive ./xbox_gamepad_physics-resources-0.4.3.zip --resources ./gamepad_resources --offline
 export XBOX_GAMEPAD_PHYSICS_RESOURCES="$PWD/gamepad_resources"
 # Maintainer checkout: thin wrappers call the same packaged build chain; default build/resources
 python3 scripts/build_resources.py
@@ -48,7 +48,7 @@ npm run gamepad-overlay   # Open the printed canonical overlay URL
 
 Many tests `skipIf` optional deps (numpy, torch, OpenCV, mujoco, sapien) and only fully run in the GPU-node environments. A skipped test is not a pass — say which ones skipped.
 
-v0.4.2 includes the supplied SAPIEN 3.0.3+concon.physx5.6.1.a3 port (PhysX 5.6.1, Python 3.10 Linux x86_64/glibc 2.35+), the MuJoCo 3.16.0+concon.sdf3689.2 fork and an Isaac preview. MuJoCo's extra selects the fork Release wheel on Python 3.10/3.11 Linux x86_64. Isaac/Sim/torch are external prerequisites; native USD authoring requires an AppLauncher process, and the generic USD builder requires a caller-owned platform process. SDF frozen contact scores are 23/26, 25/26 and 23/26 respectively; consult docs/plan.md for failures. Preserve the historical resource_data/mujoco tree; the new adapter uses the current DAG builder.
+v0.4.3 includes the supplied SAPIEN 3.0.3+concon.physx5.6.1.a3 port (PhysX 5.6.1, Python 3.10 Linux x86_64/glibc 2.35+), the MuJoCo 3.16.0+concon.sdf3689.2 fork and an Isaac preview. MuJoCo's extra selects the fork Release wheel on Python 3.10/3.11 Linux x86_64. Isaac/Sim/torch are external prerequisites; native USD authoring requires an AppLauncher process, and the generic USD builder requires a caller-owned platform process. SDF frozen contact scores are 23/26, 25/26 and 23/26 respectively; consult docs/plan.md for failures. RoboTwin selects articulation solver iterations by scene timestep (1 ms: 10/1; 4 ms: 64/16), with 25/26 frozen contacts passing at 1 ms; explicit overrides and pad.solver_policy readback are available. Preserve the historical resource_data/mujoco tree; the new adapter uses the current DAG builder.
 
 ## Architecture
 

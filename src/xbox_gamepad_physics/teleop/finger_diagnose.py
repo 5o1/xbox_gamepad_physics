@@ -10,8 +10,7 @@ import json
 import math
 from pathlib import Path
 
-from .finger_validate import finite
-from .record import iter_records, open_writer, read_header
+from .record import finite, iter_records, open_writer, read_header
 from .runtime import make_session
 from .session import Command, pose_data
 

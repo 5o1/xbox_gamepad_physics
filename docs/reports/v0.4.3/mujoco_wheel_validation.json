@@ -1,0 +1,63 @@
+{
+  "release": "0.4.3",
+  "scope": "Fresh independent Python3.10 environment; installed final wheel; offline normal DAG; public SDF load/step/physical signal smoke only",
+  "provenance": {
+    "wheel_sha256": "1d98b767afcc316a545a9bd6119a76819951c6eebff7cd8016649a3654ef9a77",
+    "input_zip_sha256": "96dc0a6fd4a936dc82912ce331d2c4493e87cc02105332f4c4eeffa236f659ce",
+    "engine_wheel_sha256": "cc0a30b40bb75bf117ef2d0aa1fef3e4d62aad1cfe7bbdb9ac36fbefd06fc22a"
+  },
+  "identity": {
+    "wheel_sha256": "1d98b767afcc316a545a9bd6119a76819951c6eebff7cd8016649a3654ef9a77",
+    "package_version": "0.4.3",
+    "runtime_version": "0.4.3",
+    "python_version": "3.10.12",
+    "engine_version": "3.16.0+concon.sdf3689.2",
+    "package_file": "$NODE_ENVS/mujoco-release-v043/lib/python3.10/site-packages/xbox_gamepad_physics/__init__.py",
+    "source_shadowing": false,
+    "payload_files_compared": 161,
+    "payload_mismatches": [],
+    "cpu_affinity": [
+      8
+    ],
+    "display": "",
+    "cuda_visible_devices": "",
+    "qa_pythonpath_has_package_src": false,
+    "passed": true
+  },
+  "public_load_step_signal_smoke": {
+    "scope": "CPU public SDF load, 4100 native steps, physical load/release and signal roundtrip; no contact suite",
+    "versions": {
+      "xbox-gamepad-physics": "0.4.3",
+      "mujoco": "3.16.0+concon.sdf3689.2"
+    },
+    "cpu_affinity": [
+      8
+    ],
+    "native_joint_count": 20,
+    "timestep_s": 0.0005,
+    "steps": 4100,
+    "finite": true,
+    "signal_roundtrip": {
+      "method": "12 N generalized external force on the native right click coordinate, then zero force; no state or drive-target writes",
+      "loaded_signal": 1.0,
+      "actual_q_m": 0.00040000862647311734,
+      "decoded_q_m": 0.0004,
+      "decode_error_m": 8.62647311732339e-09,
+      "serialized_values_equal": true,
+      "released_signal": 0.0
+    },
+    "passed": true
+  },
+  "pip_check_exit_code": 0,
+  "installation_note": "Pinned MuJoCo Release wheel downloaded directly, SHA verified, and dependencies installed first. Final main wheel [build,mujoco] installed with --no-index --no-deps to reuse those dependencies. No dependency pins or package bytes were changed.",
+  "accepted": true,
+  "full_frozen_suite_executed": false,
+  "historical_T4": {
+    "release": "0.4.2",
+    "passed": 25,
+    "executed": 26,
+    "failures": [
+      "Pair"
+    ]
+  }
+}

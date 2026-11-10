@@ -1,0 +1,59 @@
+{
+  "command": "python3 scripts/run_regression.py fast",
+  "exit_code": 0,
+  "unittest": {
+    "executed": 337,
+    "passed": 327,
+    "skipped": 10,
+    "skip_details": [
+      {
+        "test": "acceptance.robotwin.test_candidate_mapping.NativeTest.test_a1_rejects_native_d6_even_with_same_setter_name",
+        "reason": "requires private a1 resource copy"
+      },
+      {
+        "test": "acceptance.robotwin.test_candidate_mapping.NativeTest.test_native_implicit_viscous_mapping_is_not_double_counted",
+        "reason": "requires private resource copy"
+      },
+      {
+        "test": "acceptance.robotwin.test_candidate_mapping.NativeTest.test_native_new_and_legacy_resources",
+        "reason": "requires private a1 resource copy"
+      },
+      {
+        "test": "infrastructure.test_common_runtime.GamepadStateTests.test_numeric_action_mask_preserves_gradients_on_active_channels",
+        "reason": "Torch is an optional training dependency"
+      },
+      {
+        "test": "infrastructure.test_muble_adapter.MuBlEPoseExportTest.test_public_mujoco_handle_exports_muble_trace",
+        "reason": "Historical resource tree is retained for provenance only."
+      },
+      {
+        "test": "infrastructure.test_scene_injection.SceneInjectionTest.test_existing_scene_is_preserved",
+        "reason": "SAPIEN is not installed"
+      },
+      {
+        "test": "test_backend_torch_signals.TorchSignalsTest.test_all_discontinuities_and_partial_asymmetric_mapping",
+        "reason": "Optional torch is not installed"
+      },
+      {
+        "test": "test_backend_torch_signals.TorchSignalsTest.test_both_cpu_dtypes_match_oracle_and_preserve_pair",
+        "reason": "Optional torch is not installed"
+      },
+      {
+        "test": "test_backend_torch_signals.TorchSignalsTest.test_masks_and_invalid_inputs",
+        "reason": "Optional torch is not installed"
+      },
+      {
+        "test": "test_run_robotwin.SapienSmokeTest.test_smoke_twenty_steps_passes",
+        "reason": "SAPIEN is an optional backend dependency"
+      }
+    ]
+  },
+  "mujoco_pytest": {
+    "passed": 30
+  },
+  "node": {
+    "passed": 35,
+    "skipped": 0
+  },
+  "dependency_note": "Installed optional aiohttp to run the required gateway --help subprocess; existing gateway process/video tests now execute rather than skip."
+}

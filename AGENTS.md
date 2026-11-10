@@ -5,8 +5,8 @@ Do not modify sibling game RL, VLA, or original asset directories as an implicit
 part of work here. No hardware IO or physical robot commands.
 
 The user-selected visual reference is the Boiler Room Cycles frame recorded
-in `assets/xbox_one_s/approved_render.json`. The v0.4.2 delivery includes native RoboTwin/SAPIEN and MuJoCo assets, plus
-an Isaac Lab preview. Keep preview and known contact/limit failures explicit.
+in `assets/xbox_one_s/approved_render.json`. The v0.4.3 delivery includes native RoboTwin/SAPIEN and MuJoCo assets, plus
+an Isaac Lab preview. RoboTwin selects articulation solver iterations by scene timestep (1 ms: 10/1; 4 ms: 64/16), with explicit overrides and pad.solver_policy readback. Keep preview and known contact/limit failures explicit.
 Isaac Sim, Isaac Lab and torch are external prerequisites; USD authoring must
 run after AppLauncher. Preserve the historical MuJoCo resource tree; use the
 new backend builder for current outputs. Reuse the source geometry, 2K textures and material evidence;

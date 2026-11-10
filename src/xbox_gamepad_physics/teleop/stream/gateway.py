@@ -377,8 +377,7 @@ def main():
     parser.add_argument("--record-format",choices=['binary','jsonl'],help='override stream.record_format')
     parser.add_argument('--tunnel-timeout-s',type=tunnel_timeout_argument,default=60)
     parser.add_argument("--stream-off",action="store_true")
-    from ..ball_probe import CASES
-    parser.add_argument("--ball-case",choices=CASES)
+    parser.add_argument("--ball-case", help="checkout-only sphere contact experiment")
     parser.add_argument("--ball-radius-m",type=float)
     parser.add_argument("--ball-plan",type=Path)
     parser.add_argument("--physics-python")

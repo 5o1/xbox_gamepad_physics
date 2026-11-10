@@ -2,7 +2,7 @@
 
 更新于 2026-11-10。目标是把 Xbox One S 手柄做成可交互的物理资产，供下游的灵巧手操作、游戏强化学习和视觉-语言-动作实验使用。
 
-- **当前版本**：v0.4.2 整合摇杆按压、回中与ABXY行程；包含RoboTwin/SAPIEN、MuJoCo和Isaac预览。安装与制品见 [Release](https://github.com/5o1/xbox_gamepad_physics/releases/tag/v0.4.2)。
+- **当前发布准备**：v0.4.3 纳入按物理步长选择 RoboTwin 求解迭代；包含RoboTwin/SAPIEN、MuJoCo和Isaac预览。当前已发布版本仍为 [v0.4.2](https://github.com/5o1/xbox_gamepad_physics/releases/tag/v0.4.2)。
 - **默认碰撞体**：三个后端均使用 SDF；SAPIEN full_controls 需要随Release提供的 PhysX 5.6.1/a3 port，MuJoCo 需要负责人 fork，Isaac 预览默认使用 0.5 mm 网格。CoACD 保留为可显式选择的变体。
 - **完整过程与证据**：见阶段报告 `docs/reports/xbox_one_s_physics_asset_report.html`。
 - **需要负责人确认或实物测量的事项**：见 `docs/pending_user_review.md`。
@@ -27,6 +27,12 @@
 | SAPIEN 小球端到端按压（26 项，信号到 overlay） | SDF 下 23 项通过；Pair、L3、R3 未通过，见第 4 节（2026-10-12） | 遥操作阶段 2 报告第 26 节 |
 | MuJoCo 小球端到端按压（同一份 26 项冻结用例） | SDF 下 25/26；仅 Pair 失败，不是实时性能验收 | `build/experiments/mb_m2/acceptance_round_20261020/` |
 | Isaac 小球端到端按压（同一份 26 项冻结用例） | SDF 0.5 mm 下 22/26；Guide、Pair、L3、R3 失败，预览交付 | `build/experiments/mb_i2/` |
+
+### 版本 v0.4.3 发布准备（2026-11-10）
+
+负责人已批准发布 `d5bf88e` 的按步长求解策略（基于诊断提交 `af2c7b7`）；在 `release/v0.4.3` 准备主 wheel、仅 One S 输入 zip 和发布说明。1 ms 默认 10/1、4 ms 默认 64/16，超过 4 ms 警告，可显式覆盖并读回 `pad.solver_policy`。按键与摇杆物性、MuJoCo/Isaac 实现、SAPIEN a3 引擎和源几何/2K 贴图保持不变。原 4 ms 冻结 T4 为 23/26，1 ms 正式入口的历史复跑为 25/26，分别保留 Pair/L3/R3 与 Pair 失败。
+
+已在指定计算节点两个新隔离环境安装最终 wheel，CPU 绑定 8 号核，从匹配输入 zip offline 构建资源：RoboTwin 公开加载/物理信号往返及 1 ms 的 6/12/6/10/25、4 ms 的 6/12/6/10/23 正式验收通过，120 条迭代读回一致且无原通过项退化；MuJoCo 公开 SDF 加载、4100 步及信号加载/释放冒烟通过。Isaac 11 模块与 v0.4.2 tag 源码逐字节相同，没有运行平台。干净 wheel 的 167 项清单匹配，移除旧 wheel 17 个非公开 API 构建残留，并修复 `9851f97` 遗留的 gateway/三处诊断导入。fast 回归 unittest 337 项（10 跳过）、MuJoCo 30 项、Node 35 项通过，完整范围与跳过清单见 [发布验收记录](reports/v0.4.3/README.md)。既有单节点诊断仍有 9/9000 完整步超过 800 µs，不能据此宣称硬实时保证。本轮只提交本地发布准备；不合并 main、不 push、不打 tag、不创建 Release 或上传资产，由主助手发布。
 
 ### 按步长选择 RoboTwin 求解迭代（2026-11-10）
 
